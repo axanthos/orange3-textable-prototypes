@@ -31,6 +31,6 @@ Widgets
 .. toctree::
     :maxdepth: 1
 
-    Theatre Classique <theatre_classique>
+    Theatre Classique <widgets/theatre_classique>
 
 
