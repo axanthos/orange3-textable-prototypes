@@ -1,32 +1,66 @@
 <?xml version='1.0' encoding='utf-8'?>
-<scheme description="This workflow is used as an illustration for an example add-on" title="Example add-on tutorial" version="2.0">
+<scheme description="This workflow shows how to use the Theatre Classique widget to import a play in XML-TEI format." title="Importing a play with Theatre Classique" version="2.0">
 	<nodes>
-		<node id="0" name="Select Integer" position="(150, 150)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.select_int.SelectInt" title="Select Integer" version="" />
-		<node id="1" name="Select Integer" position="(150, 450)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.select_int.SelectInt" title="Select Integer (1)" version="" />
-		<node id="2" name="Add" position="(300, 300)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.add.Add" title="Add" version="" />
-		<node id="3" name="Display Integer" position="(450, 300)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.display_int.SelectInt" title="Display Integer" version="" />
+		<node id="0" name="Theatre Classique" position="(147.0, 215.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.TheatreClassique.TheatreClassique" title="Theatre Classique" version="" />
+		<node id="1" name="Display" position="(306.0, 215.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
 	</nodes>
 	<links>
-		<link enabled="true" id="0" sink_channel="A" sink_node_id="2" source_channel="Integer" source_node_id="0" />
-		<link enabled="true" id="1" sink_channel="B" sink_node_id="2" source_channel="Integer" source_node_id="1" />
-		<link enabled="true" id="2" sink_channel="Integer" sink_node_id="3" source_channel="A + B" source_node_id="2" />
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="XML-TEI data" source_node_id="0" />
 	</links>
-	<annotations />
+	<annotations>
+		<arrow end="(343.0, 255.0)" fill="#C1272D" id="0" start="(396.0, 326.0)" />
+		<arrow end="(178.0, 179.0)" fill="#C1272D" id="1" start="(231.0, 118.0)" />
+		<text font-family="Helvetica" font-size="16" id="2" rect="(240.0, 95.0, 261.0, 35.0)">1. Choose a play and click Send</text>
+		<text font-family="Helvetica" font-size="16" id="3" rect="(407.0, 330.0, 262.0, 34.0)">2. View the play in TEI-XML format</text>
+	</annotations>
 	<thumbnail />
 	<node_properties>
-		<properties format="pickle" node_id="0">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAAC+QAAAcoAAAONAAAC
-BgAAAvwAAAHkAAADigAAAgMAAAAAAABxAlgMAAAAc2VsZWN0ZWRfaW50cQNLHlgLAAAAX192ZXJz
-aW9uX19xBEsBdS4=
+		<properties format="pickle" node_id="0">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAACkQAAAR0AAAP+AAAD
+IQAAApkAAAE8AAAD9gAAAxkAAAAAAABxAlghAAAAX1RleHRhYmxlVXRpbHNfc2V0dGluZ3NfdmVy
+c2lvbl9fcQNLAEsBhnEEWAsAAABfX3ZlcnNpb25fX3EFSwFYCwAAAGZpbHRlclZhbHVlcQZYBwAA
+AE1PTElFUkVxB1gXAAAAZGlzcGxheUFkdmFuY2VkU2V0dGluZ3NxCIhYBQAAAGxhYmVscQlYDAAA
+AHhtbF90ZWlfZGF0YXEKWAwAAABpbXBvcnRlZFVSTHNxC11xDFgmAAAAZG9jdW1lbnRzL01PTElF
+UkVfTUFMQURFSU1BR0lOQUlSRS54bWxxDWFYDgAAAHNlbGVjdGVkVGl0bGVzcQ5jY29weXJlZwpf
+cmVjb25zdHJ1Y3RvcgpxD2NidWlsdGlucwpsaXN0CnEQaBAph3ERUnESSxJhWAQAAAB1dWlkcRNY
+JAAAAGRhYzVkNTNjLTZlYjAtNGJkYS1iNzNmLWFiMzMxMTVmMmViZHEUWAgAAABhdXRvU2VuZHEV
+iVgPAAAAZmlsdGVyQ3JpdGVyaW9ucRZYBgAAAGF1dGhvcnEXWAsAAAB0aXRsZUxhYmVsc3EYXXEZ
+KFgaAAAAQU1QSFlUUklPTiAoMTY2ODsgQ29tZWRpZSlxGlglAAAARE9OIEdBUkNJRSBERSBOQVZB
+UlJFICgxNjgyOyBDb21lZGllKXEbWC8AAABET04gSlVBTiBPVSBMRSBGRVNUSU4gREUgUElFUlJF
+ICgxNjgyOyBDb21lZGllKXEcWB0AAABHRU9SR0UgREFORElOICgxNjY5OyBDb21lZGllKXEdWB8A
+AABMJ0FNT1VSIE1FREVDSU4gKDE2NjU7IENvbWVkaWUpcR5YFwAAAEwnQVZBUkUgKDE2Njk7IENv
+bWVkaWUpcR9YIgAAAEwnRUNPTEUgREVTIEZFTU1FUyAoMTY2MzsgQ29tZWRpZSlxIFghAAAATCdF
+Q09MRSBERVMgTUFSSVMgKDE2NjE7IENvbWVkaWUpcSFYGQAAAEwnRVRPVVJESSAoMTY2MzsgQ29t
+ZWRpZSlxIlgpAAAATCdJTVBST01QVFUgREUgVkVSU0FJTExFUyAoMTY4MjsgQ29tZWRpZSlxI1gp
+AAAATEEgQ09NVEVTU0UgRCdFU0NBUkJBR05BUyAoMTY3MTsgQ29tZWRpZSlxJFgxAAAATEEgQ1JJ
+VElRVUUgREUgTCdFQ09MRSBERVMgRkVNTUVTICgxNjYzOyBDb21lZGllKXElWCcAAABMQSBKQUxP
+VVNJRSBEVSBCQVJCT1VJTExFICgxNjUwOyBGYXJjZSlxJlgsAAAATEEgUFJJTkNFU1NFIEQnRUxJ
+REUgKDE2NjQ7IENvbWVkaWUgZ2FsYW50ZSlxJ1gvAAAATEUgQk9VUkdFT0lTIEdFTlRJTEhPTU1F
+ICgxNjcxOyBDb21lZGllLWJhbGxldClxKFghAAAATEUgREVQSVQgQU1PVVJFVVggKDE2NTY7IENv
+bWVkaWUpcSlYNAAAAExFIERJVkVSVElTU0VNRU5UIERFIENIQU1CT1JEICgxNjcwOyBEaXZlcnRp
+c3NlbWVudClxKlgjAAAATEUgRkVTVElOIERFIFBJRVJSRSAoMTY2NTsgQ29tZWRpZSlxK1gkAAAA
+TEUgTUFMQURFIElNQUdJTkFJUkUgKDE2ODI7IENvbWVkaWUpcSxYJwAAAExFIE1BUklBR0UgRk9S
+Q0UgKDE2Njg7IENvbWVkaWUtYmFsbGV0KXEtWCUAAABMRSBNRURFQ0lOIE1BTEdSRSBMVUkgKDE2
+Njg7IENvbWVkaWUpcS5YHwAAAExFIE1FREVDSU4gVk9MQU5UICgxNjgyOyBGYXJjZSlxL1geAAAA
+TEUgTUlTQU5USFJPUEUgKDE2Njc7IENvbWVkaWUpcTBYGwAAAExFIFNJQ0lMSUVOICgxNjU1OyBD
+b21lZGllKXExWBsAAABMRSBUQVJUVUZGRSAoMTY2OTsgQ29tZWRpZSlxMlgqAAAATEUgVEFSVFVG
+RkUgb3UgTCdIWVBPQ1JJVEUgKDIwMTE7IENvbWVkaWUpcTNYJgAAAExFUyBBTUFOVFMgTUFHTklG
+SVFVRVMgKDE2NzA7IENvbWVkaWUpcTRYIgAAAExFUyBGQUNIRVVYICgxNjYyOyBDb21lZGllLWJh
+bGxldClxNVgjAAAATEVTIEZFTU1FUyBTQVZBTlRFUyAoMTY3MjsgQ29tZWRpZSlxNlgoAAAATEVT
+IEZPVVJCRVJJRVMgREUgU0NBUElOICgxNjcxOyBDb21lZGllKXE3WCgAAABMRVMgUFJFQ0lFVVNF
+UyBSSURJQ1VMRVMgKDE2NjA7IENvbWVkaWUpcThYIgAAAE1FTElDRVJURSAoMTY4MjsgQ29tZWRp
+ZSBoZXJvaXF1ZSlxOVgvAAAATU9OU0lFVVIgREUgUE9VUkNFQVVHTkFDICgxNjY1OyBDb21lZGll
+LWJhbGxldClxOlgcAAAAUFNZQ0hFICgxNjY2OyBUcmFnaS1jb21lZGllKXE7WBoAAABTR0FOQVJF
+TExFICgxNjYwOyBDb21lZGllKXE8ZXUu
 </properties>
-		<properties format="pickle" node_id="1">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAAC+QAAAcoAAAONAAAC
-BgAAAvwAAAHkAAADigAAAgMAAAAAAABxAlgMAAAAc2VsZWN0ZWRfaW50cQNLFFgLAAAAX192ZXJz
-aW9uX19xBEsBdS4=
-</properties>
-		<properties format="pickle" node_id="2">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAADPwAAAdkAAAPGAAAC
-CwAAA0cAAAH4AAADvgAAAgMAAAAAAABxAlgLAAAAX192ZXJzaW9uX19xA0sBdS4=
-</properties>
-		<properties format="pickle" node_id="3">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAADIAAAAdMAAAODAAAC
-CAAAAyMAAAHtAAADgAAAAgUAAAAAAABxAlgLAAAAX192ZXJzaW9uX19xA0sBdS4=
+		<properties format="pickle" node_id="1">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAAAVAAAARMAAANiAAAD
+WQAAAFwAAAEyAAADWgAAA1EAAAAAAABxAlghAAAAX1RleHRhYmxlVXRpbHNfc2V0dGluZ3NfdmVy
+c2lvbl9fcQNLAEsQhnEEWAgAAABlbmNvZGluZ3EFWAUAAAB1dGYtOHEGWAwAAABjdXN0b21Gb3Jt
+YXRxB1hLAAAAeyJyZWdleCI6IlxcYiUocmVnZXgpc1xcYiIsICJyZXBsYWNlbWVudF9zdHJpbmci
+OiAiJShyZXBsYWNlbWVudF9zdHJpbmcpcyJ9cQhYEAAAAGN1c3RvbUZvcm1hdHRpbmdxCYhYDAAA
+AGxhc3RMb2NhdGlvbnEKWAEAAAAucQtYFwAAAGRpc3BsYXlBZHZhbmNlZFNldHRpbmdzcQyJWAYA
+AABmb290ZXJxDVgDAAAAXG5dcQ5YBgAAAGhlYWRlcnEPWAMAAABbXG5xEFgEAAAAdXVpZHERWCQA
+AAAzMTczN2E5Yy1hMTQwLTQxYTAtOWRiOC1mZGQ4MzI1NzgxYzlxElgIAAAAYXV0b1NlbmRxE4hY
+CwAAAF9fdmVyc2lvbl9fcRRLAVgQAAAAc2VnbWVudERlbGltaXRlcnEVWAMAAAAsXG5xFnUu
 </properties>
 	</node_properties>
 </scheme>

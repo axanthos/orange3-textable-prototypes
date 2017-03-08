@@ -28,7 +28,7 @@ from os import path, walk
 import sys
 
 if sys.version_info < (3, ):
-    raise RuntimeError("Orange3-Textable requires Python 3")
+    raise RuntimeError("Orange3-Textable-Prototypes requires Python 3")
 
 from setuptools import setup, find_packages
 

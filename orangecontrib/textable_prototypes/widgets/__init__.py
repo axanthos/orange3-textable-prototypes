@@ -8,22 +8,12 @@ ICON = "icons/Category-Textable-Prototypes.png"
 # and widget icon background in workflow.
 BACKGROUND = "#ddecf9"
 
-# Location of widget help files.
-WIDGET_HELP_PATH = (
-    # Development documentation
-    # You need to build help pages manually using
-    # make htmlhelp
-    # inside doc folder
-    ("{DEVELOP_ROOT}/doc/build/htmlhelp/index.html", None),
+DESCRIPTION = """Additional widgets for Textable"""
 
-    # Documentation included in wheel
-    # Correct DATA_FILES entry is needed in setup.py and documentation has to be built
-    # before the wheel is created.
-    ("{}/help/orange3-textable-prototypes/index.html".format(sysconfig.get_path("data")), None),
-
-    # Online documentation url, used when the local documentation is not available.
-    # Url should point to a page with a section Widgets. This section should
-    # includes links to documentation pages of each widget. Matching is
-    # performed by comparing link caption to widget name.
-    ("http://orange3-textable-prototypes.readthedocs.io/en/latest/", "")
-)
+LONG_DESCRIPTION = """
+Textable Prototypes collects text-analytic widgets that couldn't be included 
+in the core Textable distribution for various reasons (notably because they 
+introduce dependencies to third-party packages, or simply because they're not 
+yet production-ready), but that may still be found useful by Orange 
+Canvas/Textable users.
+"""
