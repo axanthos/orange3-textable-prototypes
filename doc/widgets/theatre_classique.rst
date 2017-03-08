@@ -9,7 +9,7 @@
 Theatre Classique
 =================
 
-.. image:: figures/Theatre_Classique_54.png
+.. image:: figures/theatre_classique.png
 
 Import theater plays from the `theatre-classique 
 <http://www.theatre-classique.fr>`_ website (in TEI-XML).
