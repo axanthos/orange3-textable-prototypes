@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="This workflow is used as an illustration for an example add-on" title="Example add-on tutorial" version="2.0">
+	<nodes>
+		<node id="0" name="Select Integer" position="(150, 150)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.select_int.SelectInt" title="Select Integer" version="" />
+		<node id="1" name="Select Integer" position="(150, 450)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.select_int.SelectInt" title="Select Integer (1)" version="" />
+		<node id="2" name="Add" position="(300, 300)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.add.Add" title="Add" version="" />
+		<node id="3" name="Display Integer" position="(450, 300)" project_name="Orange3-Example-Add-on" qualified_name="orangecontrib.example.widgets.display_int.SelectInt" title="Display Integer" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="A" sink_node_id="2" source_channel="Integer" source_node_id="0" />
+		<link enabled="true" id="1" sink_channel="B" sink_node_id="2" source_channel="Integer" source_node_id="1" />
+		<link enabled="true" id="2" sink_channel="Integer" sink_node_id="3" source_channel="A + B" source_node_id="2" />
+	</links>
+	<annotations />
+	<thumbnail />
+	<node_properties>
+		<properties format="pickle" node_id="0">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAAC+QAAAcoAAAONAAAC
+BgAAAvwAAAHkAAADigAAAgMAAAAAAABxAlgMAAAAc2VsZWN0ZWRfaW50cQNLHlgLAAAAX192ZXJz
+aW9uX19xBEsBdS4=
+</properties>
+		<properties format="pickle" node_id="1">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAAC+QAAAcoAAAONAAAC
+BgAAAvwAAAHkAAADigAAAgMAAAAAAABxAlgMAAAAc2VsZWN0ZWRfaW50cQNLFFgLAAAAX192ZXJz
+aW9uX19xBEsBdS4=
+</properties>
+		<properties format="pickle" node_id="2">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAADPwAAAdkAAAPGAAAC
+CwAAA0cAAAH4AAADvgAAAgMAAAAAAABxAlgLAAAAX192ZXJzaW9uX19xA0sBdS4=
+</properties>
+		<properties format="pickle" node_id="3">gAN9cQAoWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQFDLgHZ0MsAAQAAAAADIAAAAdMAAAODAAAC
+CAAAAyMAAAHtAAADgAAAAgUAAAAAAABxAlgLAAAAX192ZXJzaW9uX19xA0sBdS4=
+</properties>
+	</node_properties>
+</scheme>
