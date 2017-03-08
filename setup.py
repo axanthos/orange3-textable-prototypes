@@ -134,7 +134,7 @@ def include_documentation(local_dir, install_dir):
     DATA_FILES.extend(doc_files)
 
 if __name__ == '__main__':
-    include_documentation('doc/build/html', 'help/orange3-textable-prototypes')
+    include_documentation('doc/_build', 'help/orange3-textable-prototypes')
     setup(
         name=NAME,
         version=VERSION,
