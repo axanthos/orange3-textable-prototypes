@@ -1,5 +1,5 @@
 ﻿######################################
-Specification widget Arborescence
+Spécification widget Arborescence
 ######################################
 
 1 Introduction
