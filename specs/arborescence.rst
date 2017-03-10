@@ -59,7 +59,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 2.2 Fonctionnalités minimales
 =============================
 
-.. image:: images/arborescence_folder_input.png
+.. image:: images/win_arborescence_folder_input.png
 
 * permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence.
 
@@ -68,7 +68,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 2.3 Fonctionnalités principales
 =============================
 
-.. image:: images/arborescence_folder_input.png
+.. image:: images/win_arborescence_folder_input.png
 
 * permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence.
 
