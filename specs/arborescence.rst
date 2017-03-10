@@ -1,5 +1,5 @@
 ﻿######################################
-Specification widget Theatre-Classique
+Specification widget Arborescence
 ######################################
 
 1 Introduction
@@ -61,33 +61,31 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 
 .. image:: images/arborescence_folder_input.png
 
-* permettre le choix et l'importation de multiples titres en format XML-TEI à partir des données du site Théâtre-Classique.
+* permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence.
 
-* créer et émettre une segmentation avec un segment (=Input) pour chaque pièce importée.
+* créer et émettre une segmentation avec un segment pour chaque fichier importé et une annotation par niveau dans l'arborescence (dont une contenant tout le path)
 
 2.3 Fonctionnalités principales
-===============================
+=============================
 
-.. image:: images/theatre_classique_basic_settings.png
+.. image:: images/arborescence_folder_input.png
 
-.. image:: images/theatre_classique_advanced_settings.png
+* permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence.
 
-* permettre le choix et l'importation de multiples titres en format XML-TEI à partir des données du site Théâtre-Classique.
+* détection automatique de l'encoding (utf-8, iso 8859-1, etc...) puis tests des plus fréquents en cas d'erreur.
 
-* créer et émettre une segmentation avec un segment (=Input) pour chaque pièce importée et des annotations *author*, *year* etc.
+* créer et émettre une segmentation avec un segment pour chaque fichier importé et une annotation par niveau dans l'arborescence (dont une contenant tout le path)
 
-* choix possible du mode Advanced settings
-
-* en mode Advanced settings, possibilité de sélectionner un critère de filtrage de la liste des titres (cf. image ci-dessus).
-
-* traitement correct des exceptions (HTTPError etc.)
+* traitement correct des exceptions (UnicodeEncodeError ou UnicodeDecodeError)
 
 2.4 Fonctionnalités optionnelles
 ================================
 
-* combinaison de plusieurs critères de filtrage
+* filtrage des extensions de fichier (ex : ne sélectionner que les .txt)
 
-* filtrages plus complexes (p.ex. regex sur auteurs, intervalles d'années, etc.)
+* conditions d'exclusion de fichiers ()
+
+* échantillonage (x % de fichiers)
 
 2.5 Tests
 =========
@@ -106,10 +104,9 @@ TODO
 ==========================
 * Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
-* Le logiciel possède des routines de test de ses fonctionnalités (principales ou optionnelles.
-
+* Le logiciel possède des routines de test de ses fonctionnalités (principales ou optionnelles)
 
 4. Infrastructure
 =================
-Le projet est disponible sur GitHub à l'adresse `https://github.com/axanthos/TextablePrototypes.git
-<https://github.com/axanthos/TextablePrototypes.git>`_
+Le projet est disponible sur GitHub à l'adresse `https://github.com/mmercapi/orange3-textable-prototypes.git
+<https://github.com/mmercapi/orange3-textable-prototypes.git>`_
