@@ -2,7 +2,7 @@ Orange3 Textable Prototypes
 ===========================
 
 Textable Prototypes is an open-source add-on for Orange Canvas 3. It
-collects text-analytic widgets that couldn't be included in the core  
+collects text analysis widgets that couldn't be included in the core  
 Textable distribution for various reasons (notably because they introduce
 dependencies to third-party packages, or simply because they're not yet
 production-ready), but that may still be found useful by Orange 
