@@ -1,14 +1,14 @@
-﻿######################################
-Specification widget Theatre-Classique
-######################################
+##########################################
+Specification widget EighteenCenturyPoetry
+##########################################
 
 1 Introduction
 **************
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v1.5.2) permettant l'importation de pièces de théâtre en format XML-TEI à partir du site `Théâtre-Classique
-<http://www.theatre-classique.fr>`_.
+Créer un widget pour Orange Textable (v1.5.2) permettant l'importation de poésies en format XML-TEI à partir du site `EighteenCenturyPoetry
+<http://http://www.eighteenthcenturypoetry.org>`_.
 
 1.2 Aperçu des etapes
 =====================
@@ -20,21 +20,26 @@ Créer un widget pour Orange Textable (v1.5.2) permettant l'importation de pièc
 1.3 Equipe et responsabilitées
 ==============================
 
-* Aris Xanthos (`aris.xanthos@unil.ch`_):
+* Frank Dat Tai Pham (`FrankDatTai.Pham@unil.ch`_):
 
-.. _aris.xanthos@unil.ch: mailto:aris.xanthos@unil.ch
+.. _FrankDatTai.Pham@unil.ch: mailto:FrankDatTai.Pham@unil.ch
 
     - specification
     - interface
     - code
+    - tests
     - documentation
+    - GitHub
 
-* Mattia Egloff (`mattia.Egloff@unil.ch`_):
+* Adriano Matos Barbosa (`adriano.MatosBarbosa@unil.ch`_):
 
-.. _mattia.Egloff@unil.ch: mailto:mattia.Egloff@unil.ch
+.. _adriano.MatosBarbosa@unil.ch: mailto:adriano.MatosBarbosa@unil.ch
 
     - specification
+    - interface
+    - code
     - tests
+    - documentation
     - GitHub
 
 2. Technique
@@ -47,29 +52,14 @@ Créer un widget pour Orange Textable (v1.5.2) permettant l'importation de pièc
 
 * Orange Textable 1.5.2
 
-2.2 Fonctionnalités minimales
-=============================
-
-.. image:: images/theatre_classique_minimal_version.png
-
-* permettre le choix et l'importation de multiples titres en format XML-TEI à partir des données du site Théâtre-Classique.
-
-* créer et émettre une segmentation avec un segment (=Input) pour chaque pièce importée.
-
 2.3 Fonctionnalités principales
 ===============================
 
-.. image:: images/theatre_classique_basic_settings.png
+.. image:: images/ECP_settings.png
 
-.. image:: images/theatre_classique_advanced_settings.png
+* permettre le choix et l'importation de multiples titres en format XML-TEI à partir des données du site EighteenCenturyPoetry.
 
-* permettre le choix et l'importation de multiples titres en format XML-TEI à partir des données du site Théâtre-Classique.
-
-* créer et émettre une segmentation avec un segment (=Input) pour chaque pièce importée et des annotations *author*, *year* etc.
-
-* choix possible du mode Advanced settings
-
-* en mode Advanced settings, possibilité de sélectionner un critère de filtrage de la liste des titres (cf. image ci-dessus).
+* créer et émettre une segmentation avec un segment (=Input) pour chaque poésie importée et des annotations *author*, *year* etc.
 
 * traitement correct des exceptions (HTTPError etc.)
 
