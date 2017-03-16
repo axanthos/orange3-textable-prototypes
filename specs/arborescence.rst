@@ -26,14 +26,11 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
     - specification
     - interface
     - code
-    - documentation
 
 * Augustin Maillefer (`augustin.maillefer@unil.ch`_):
 
 .. _augustin.maillefer@unil.ch: mailto:augustin.maillefer@unil.ch
 
-    - specification
-    - interface
     - code
     - documentation
 
@@ -42,7 +39,6 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 .. _mathieu.mercapide@unil.ch: mailto:mathieu.mercapide@unil.ch
 
     - specification
-    - interface
     - code
     - documentation
 
@@ -61,9 +57,9 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 
 .. image:: images/win_arborescence_folder_input.png
 
-* permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence.
+* permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence en encodage utf-8 (autres encodages ignorés en fonctionnalité minimale)
 
-* créer et émettre une segmentation avec un segment pour chaque fichier importé et une annotation par niveau dans l'arborescence (dont une contenant tout le path)
+* créer et émettre une segmentation avec un segment pour chaque fichier importé et une annotation par niveau (max. 5) dans l'arborescence (dont une contenant tout le path)
 
 2.3 Fonctionnalités principales
 =============================
@@ -81,11 +77,13 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 2.4 Fonctionnalités optionnelles
 ================================
 
-* filtrage des extensions de fichier (ex : ne sélectionner que les .txt)
+* importer ou exporter une liste de fichiers (avec leurs attributs)
 
-* conditions d'exclusion de fichiers ()
+* pouvoir spécifier un niveau de profondeur maximum de parcours de l'arborescence.
 
-* échantillonage (x % de fichiers)
+* conditions d'inclusions et exclusions de fichiers et dossiers par leur nom.
+
+* échantillonage (x % sur tous les fichiers correspondant aux éventuelles conditions)
 
 2.5 Tests
 =========
@@ -102,7 +100,7 @@ TODO
 
 3.2 Remise et présentation
 ==========================
-* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
+* Les fonctionnalités principales sont complètement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
 * Le logiciel possède des routines de test de ses fonctionnalités (principales ou optionnelles)
 
