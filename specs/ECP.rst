@@ -55,7 +55,7 @@ Créer un widget pour Orange Textable (v1.5.2) permettant l'importation de poés
 2.3 Fonctionnalités principales
 ===============================
 
-.. image:: images/ECP_settings.png
+.. image:: images/ECP.png
 
 * permettre le choix et l'importation de multiples titres issus de divers critères de filtrage en format XML-TEI à partir des données du site EighteenCenturyPoetry.
 
