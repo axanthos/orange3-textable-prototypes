@@ -11,10 +11,10 @@ Créer un widget pour Orange Textable (v3.0b0) permettant l'application de techn
 
 1.2 Aperçu des étapes
 =====================
-* Premiere version de la specification: 16 mars 2016
-* Remise de la specification: 23 mars 2016
-* Version alpha du projet: 27 avril 2016
-* Remise et presentation du projet:  25 mai 2016
+* Premiere version de la specification: 16 mars 2017
+* Remise de la specification: 23 mars 2017
+* Version alpha du projet: 27 avril 2017
+* Remise et presentation du projet:  25 mai 2017
 
 1.3 Equipe et responsabilitées
 ==============================
