@@ -55,11 +55,12 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 2.2 Fonctionnalités minimales
 =============================
 
-.. image:: images/win_arborescence_folder_input.png
+.. image:: images/arborescence_minimal_input.png
 
 * permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence en encodage utf-8 (autres encodages ignorés en fonctionnalité minimale)
 
 * créer et émettre une segmentation avec un segment pour chaque fichier importé et une annotation par niveau (max. 5) dans l'arborescence (dont une contenant tout le path)
+
 
 2.3 Fonctionnalités principales
 =============================
@@ -70,27 +71,29 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 
 * détection automatique de l'encoding (utf-8, iso 8859-1, etc...) puis tests des plus fréquents en cas d'erreur.
 
-* créer et émettre une segmentation avec un segment pour chaque fichier importé et une annotation par niveau dans l'arborescence (dont une contenant tout le path)
-
 * traitement correct des exceptions (UnicodeEncodeError ou UnicodeDecodeError)
+
+* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales (nom, path répertoire, profondeur maximum)
 
 2.4 Fonctionnalités optionnelles
 ================================
 
-* importer ou exporter une liste de fichiers (avec leurs attributs)
+* conditions d'inclusions [i] et exclusions [e] de fichiers et dossiers par leur nom.
 
 * pouvoir spécifier un niveau de profondeur maximum de parcours de l'arborescence.
 
-* conditions d'inclusions et exclusions de fichiers et dossiers par leur nom.
-
 * échantillonage (x % sur tous les fichiers correspondant aux éventuelles conditions)
+
+* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales et optionnelles (minimales : nom, path répertoire, profondeur maximum ; optionnelles : inclusions [i]:{conditions} / exclusions:{conditions} [e], échantillonage [s]:{pourcentage})
+
+* importer ou exporter une liste de fichiers (avec leurs attributs)
 
 2.5 Tests
 =========
 
 TODO
 
-3. Etapes
+3. Étapes
 *********
 
 3.1 Version alpha
@@ -102,7 +105,7 @@ TODO
 ==========================
 * Les fonctionnalités principales sont complètement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
-* Le logiciel possède des routines de test de ses fonctionnalités (principales ou optionnelles)
+* Le logiciel possède des routines et fichiers de test de ses fonctionnalités (principales ou optionnelles)
 
 4. Infrastructure
 =================
