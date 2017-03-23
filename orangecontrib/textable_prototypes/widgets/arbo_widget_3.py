@@ -42,20 +42,24 @@ CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
 
 
-class OWTextableTextFiles(OWTextableBaseWidget):
-    """Orange widget for loading text files"""
+#Widget's metadata
+class TreeStructure(widget.OWWidget):
 
-    name = "Text Tree"
-    description = "Import data from raw text trees"
-    icon = "icons/TextFiles.png"
-    priority = 2
+    name = "TextTreeStructure"
+    description = "Opens all text files under one folder and its subfolders"
+    icon = "icons/folder_tree.png"
+    priority = 20
 
-    # Input and output channels...
+    # ----------------------------------------------------------------------
+    # Channel definitions...
+
+    # No input because the folders will be specified in the widget
     inputs = [
-        ('Message', JSONMessage, "inputMessage", widget.Single)
     ]
+    # Segmentation output, like for the textfiles widget
     outputs = [('Text data', Segmentation)]
 
+    #Ca je touche pas, en tout cas pour l'instant
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
