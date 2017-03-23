@@ -127,7 +127,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             labelWidth=101,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"The path of the file."
+                u"The path of the folder."
             ),
         )
         gui.separator(widget=basicFileBoxLine1, width=5)
@@ -302,50 +302,50 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"added to the list when button 'Add' is clicked."
             ),
         )
-        gui.separator(widget=addFileBox, width=3)
-        gui.comboBox(
-            widget=addFileBox,
-            master=self,
-            value='encoding',
-            items=getPredefinedEncodings(),
-            sendSelectedValue=True,
-            orientation='horizontal',
-            label=u'Encoding:',
-            labelWidth=101,
-            callback=self.updateGUI,
-            tooltip=(
-                u"Select input file(s) encoding."
-            ),
-        )
-        gui.separator(widget=addFileBox, width=3)
-        gui.lineEdit(
-            widget=addFileBox,
-            master=self,
-            value='newAnnotationKey',
-            orientation='horizontal',
-            label=u'Annotation key:',
-            labelWidth=101,
-            callback=self.updateGUI,
-            tooltip=(
-                u"This field lets you specify a custom annotation\n"
-                u"key associated with each file that is about to be\n"
-                u"added to the list."
-            ),
-        )
-        gui.separator(widget=addFileBox, width=3)
-        gui.lineEdit(
-            widget=addFileBox,
-            master=self,
-            value='newAnnotationValue',
-            orientation='horizontal',
-            label=u'Annotation value:',
-            labelWidth=101,
-            callback=self.updateGUI,
-            tooltip=(
-                u"This field lets you specify the annotation value\n"
-                u"associated with the above annotation key."
-            ),
-        )
+        # gui.separator(widget=addFileBox, width=3)
+        # gui.comboBox(
+        #     widget=addFileBox,
+        #     master=self,
+        #     value='encoding',
+        #     items=getPredefinedEncodings(),
+        #     sendSelectedValue=True,
+        #     orientation='horizontal',
+        #     label=u'Encoding:',
+        #     labelWidth=101,
+        #     callback=self.updateGUI,
+        #     tooltip=(
+        #         u"Select input file(s) encoding."
+        #     ),
+        # )
+        # gui.separator(widget=addFileBox, width=3)
+        # gui.lineEdit(
+        #     widget=addFileBox,
+        #     master=self,
+        #     value='newAnnotationKey',
+        #     orientation='horizontal',
+        #     label=u'Annotation key:',
+        #     labelWidth=101,
+        #     callback=self.updateGUI,
+        #     tooltip=(
+        #         u"This field lets you specify a custom annotation\n"
+        #         u"key associated with each file that is about to be\n"
+        #         u"added to the list."
+        #     ),
+        # )
+        # gui.separator(widget=addFileBox, width=3)
+        # gui.lineEdit(
+        #     widget=addFileBox,
+        #     master=self,
+        #     value='newAnnotationValue',
+        #     orientation='horizontal',
+        #     label=u'Annotation value:',
+        #     labelWidth=101,
+        #     callback=self.updateGUI,
+        #     tooltip=(
+        #         u"This field lets you specify the annotation value\n"
+        #         u"associated with the above annotation key."
+        #     ),
+        # )
         gui.separator(widget=addFileBox, width=3)
         self.addButton = gui.button(
             widget=addFileBox,

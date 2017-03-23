@@ -78,7 +78,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 2.4 Fonctionnalités optionnelles
 ================================
 
-.. image:: images/arborescence_advanced_optionnal_input.png
+.. image:: images/arborescence_advanced_optional_input.png
 
 * conditions d'inclusions [i] et exclusions [e] de fichiers et dossiers par leur nom.
 
