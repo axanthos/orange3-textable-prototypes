@@ -73,7 +73,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 
 * traitement correct des exceptions (UnicodeEncodeError ou UnicodeDecodeError)
 
-* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales (nom, path répertoire, profondeur maximum)
+* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales (nom, path répertoire)
 
 2.4 Fonctionnalités optionnelles
 ================================
@@ -86,7 +86,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 
 * échantillonage (x % sur tous les fichiers correspondant aux éventuelles conditions)
 
-* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales et optionnelles (minimales : nom, path répertoire, profondeur maximum ; optionnelles : inclusions [i]:{conditions} / exclusions:{conditions} [e], échantillonage [s]:{pourcentage})
+* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales et optionnelles (minimales : nom, path répertoire ; optionnelles : inclusions [i]:{conditions} / exclusions:{conditions} [e], échantillonage [s]:{pourcentage})
 
 * importer ou exporter une liste de fichiers (avec leurs attributs)
 

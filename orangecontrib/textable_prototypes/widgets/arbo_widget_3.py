@@ -302,50 +302,50 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"added to the list when button 'Add' is clicked."
             ),
         )
-        # gui.separator(widget=addFileBox, width=3)
-        # gui.comboBox(
-        #     widget=addFileBox,
-        #     master=self,
-        #     value='encoding',
-        #     items=getPredefinedEncodings(),
-        #     sendSelectedValue=True,
-        #     orientation='horizontal',
-        #     label=u'Encoding:',
-        #     labelWidth=101,
-        #     callback=self.updateGUI,
-        #     tooltip=(
-        #         u"Select input file(s) encoding."
-        #     ),
-        # )
-        # gui.separator(widget=addFileBox, width=3)
-        # gui.lineEdit(
-        #     widget=addFileBox,
-        #     master=self,
-        #     value='newAnnotationKey',
-        #     orientation='horizontal',
-        #     label=u'Annotation key:',
-        #     labelWidth=101,
-        #     callback=self.updateGUI,
-        #     tooltip=(
-        #         u"This field lets you specify a custom annotation\n"
-        #         u"key associated with each file that is about to be\n"
-        #         u"added to the list."
-        #     ),
-        # )
-        # gui.separator(widget=addFileBox, width=3)
-        # gui.lineEdit(
-        #     widget=addFileBox,
-        #     master=self,
-        #     value='newAnnotationValue',
-        #     orientation='horizontal',
-        #     label=u'Annotation value:',
-        #     labelWidth=101,
-        #     callback=self.updateGUI,
-        #     tooltip=(
-        #         u"This field lets you specify the annotation value\n"
-        #         u"associated with the above annotation key."
-        #     ),
-        # )
+        gui.separator(widget=addFileBox, width=3)
+        gui.comboBox(
+            widget=addFileBox,
+            master=self,
+            value='encoding',
+            items=getPredefinedEncodings(),
+            sendSelectedValue=True,
+            orientation='horizontal',
+            label=u'Encoding:',
+            labelWidth=101,
+            callback=self.updateGUI,
+            tooltip=(
+                u"Select input file(s) encoding."
+            ),
+        )
+        gui.separator(widget=addFileBox, width=3)
+        gui.lineEdit(
+            widget=addFileBox,
+            master=self,
+            value='newAnnotationKey',
+            orientation='horizontal',
+            label=u'Annotation key:',
+            labelWidth=101,
+            callback=self.updateGUI,
+            tooltip=(
+                u"This field lets you specify a custom annotation\n"
+                u"key associated with each file that is about to be\n"
+                u"added to the list."
+            ),
+        )
+        gui.separator(widget=addFileBox, width=3)
+        gui.lineEdit(
+            widget=addFileBox,
+            master=self,
+            value='newAnnotationValue',
+            orientation='horizontal',
+            label=u'Annotation value:',
+            labelWidth=101,
+            callback=self.updateGUI,
+            tooltip=(
+                u"This field lets you specify the annotation value\n"
+                u"associated with the above annotation key."
+            ),
+        )
         gui.separator(widget=addFileBox, width=3)
         self.addButton = gui.button(
             widget=addFileBox,
@@ -741,19 +741,19 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             )
 
     def browse(self):
-        """Display a FileDialog and select files"""
+        """Display a FileDialog and select a folder"""
         if self.displayAdvancedSettings:
-            filePathList = QFileDialog.getOpenFileNames(
+            folderPathList = QFileDialog.getExistingDirectory(    #Use QFileDialog.getExistingDirectory
                 self,
-                u'Select Text File(s)',
+                u'Select Folder(s)',
                 self.lastLocation,
-                u'Text files (*)'
             )
-            if not filePathList:
+            if not folderPathList:
                 return
-            filePathList = [os.path.normpath(f) for f in filePathList]
-            self.newFiles = u' / '.join(filePathList)
-            self.lastLocation = os.path.dirname(filePathList[-1])
+            folderPathList = [os.path.normpath(f) for f in folderPathList]
+            self.newFiles = u''.join(folderPathList)
+            print(self.newFiles)
+            self.lastLocation = os.path.dirname(folderPathList[-1])
             self.updateGUI()
         else:
             filePath = QFileDialog.getOpenFileName(
@@ -807,8 +807,8 @@ class OWTextableTextFiles(OWTextableBaseWidget):
 
     def add(self):
         """Add files to files attr"""
-        filePathList = re.split(r' +/ +', self.newFiles)
-        for filePath in filePathList:
+        folderPathList = re.split(r' +/ +', self.newFiles)
+        for filePath in folderPathList:
             self.files.append((
                 filePath,
                 self.encoding,
