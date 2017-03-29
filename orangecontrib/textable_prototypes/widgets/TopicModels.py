@@ -32,7 +32,7 @@ from Orange.widgets import widget, gui, settings
 import LTTL
 from LTTL.Table import PivotCrosstab
 
-from Textable.widgets.TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, # pluralize,
     InfoBox, SendButton
 )
@@ -74,10 +74,9 @@ class TopicModels(OWTextableBaseWidget):
 
     want_main_area = False
     
-    def _Init__(self):
+    def __init__(self):
         """Widget creator."""
-
-        super()._Init__()
+        super().__init__()
 
         # Other attributes...
         self.inputTable = None
@@ -201,4 +200,5 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
+
 
