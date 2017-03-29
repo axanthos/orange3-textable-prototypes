@@ -28,14 +28,16 @@ __email__ = "aris.xanthos@unil.ch"
 import Orange.data
 from Orange.widgets import widget, gui, settings
 
-# import LTTL.Processor as Processor
 import LTTL
-from LTTL.Table import PivotCrosstab
+from LTTL.Table import Table, PivotCrosstab
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, # pluralize,
     InfoBox, SendButton
 )
+
+from gensim import corpora, models
+from gensim.matutils import corpus2dense
 
 
 class TopicModels(OWTextableBaseWidget):
@@ -53,10 +55,10 @@ class TopicModels(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Channel definitions...
 
-    inputs = [("Textable Crosstab", LTTL.Table.PivotCrosstab, "input_data")]
+    inputs = [("Textable Crosstab", Table, "input_data")]
     outputs = [
-        ("Term-topic Textable table", LTTL.Table.PivotCrosstab, widget.Default),
-        ("Document-topic Textable table", LTTL.Table.PivotCrosstab),
+        ("Term-topic Textable table", PivotCrosstab, widget.Default),
+        ("Document-topic Textable table", PivotCrosstab),
         ("Term-topic Orange table", Orange.data.Table, widget.Default),
         ("Document-topic Orange table", Orange.data.Table),        
     ]
@@ -105,7 +107,10 @@ class TopicModels(OWTextableBaseWidget):
             widget=optionsBox,
             master=self,
             value="method",
-            items=["Latent semantic indexing", "Latent Dirichlet allocation"],
+            items=[
+                "Latent semantic indexing", 
+            #    "Latent Dirichlet allocation", TODO
+            ],
             sendSelectedValue=True,
             orientation="horizontal",
             label="Method:",
@@ -146,7 +151,7 @@ class TopicModels(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
-#        self.setMinimumWidth(350)
+        self.setMinimumWidth(350)
         self.adjustSizeWithTimer()
 
     def input_data(self, newInput):
@@ -176,22 +181,130 @@ class TopicModels(OWTextableBaseWidget):
             iterations=1    # TODO
         )       
                 
+        # Convert input table to gensim dictionary.  
+        dictionary, corpus = pivot_crosstab_to_gensim(self.inputTable)
+        
+        # Apply topic modelling...
+        
+        # Case 1: LSI...
+        if self.method == "Latent semantic indexing":
+            
+            model = models.LsiModel(
+                corpus, 
+                id2word=dictionary, 
+                num_topics=self.numTopics,
+            )
+            
+            # Create segment-topic PivotCrosstab table.
+            segmentTopicTable = PivotCrosstab.from_numpy(
+                row_ids=self.inputTable.col_ids,
+                col_ids=list(range(self.numTopics)),
+                np_array=model.projection.u,
+                header_row_id='__topic__',
+                header_row_type='continuous',
+                header_col_id='__unit__',
+                header_col_type='string',
+                col_type=dict(
+                    (col_id, 'continuous') for col_id in range(self.numTopics)
+                ),
+            )
+
+            # Create context-topic PivotCrosstab table...
+            corpus_model = model[corpus]
+            values = dict()
+            for idx in range(len(self.inputTable.row_ids)):
+                row_id = self.inputTable.row_ids[idx]
+                doc = corpus_model[idx]
+                for topic, score in doc:
+                    values[(row_id, topic)] = score 
+            contextTopicTable = PivotCrosstab(
+                row_ids=self.inputTable.row_ids,
+                col_ids=list(range(self.numTopics)),
+                values=values,
+                header_row_id='__topic__',
+                header_row_type='continuous',
+                header_col_id='__context__',
+                header_col_type='string',
+                col_type=dict(
+                    (col_id, 'continuous') for col_id in range(self.numTopics)
+                ),
+                missing=0,
+            )            
+                
         # Set status to OK and report...
-        self.infoBox.setText("Tables correctly NOT sent to output ;)")
+        self.infoBox.setText("Tables correctly sent to output.")
         progressBar.finish()
 
         # Clear progress bar.
         progressBar.finish()
         
-        # Send token... TODO
-        # self.send("XML-TEI data", self.segmentation, self)
+        # Send tokens...
+        self.send("Term-topic Textable table", segmentTopicTable)
+        self.send("Document-topic Textable table", contextTopicTable)
+        self.send(
+            "Term-topic Orange table", 
+            segmentTopicTable.to_orange_table(),
+            )
+        self.send(
+            "Document-topic Orange table", 
+            contextTopicTable.to_orange_table(),
+        )
+        
         self.sendButton.resetSettingsChangedFlag()        
         
     def updateGUI(self):
         """Update GUI state"""
         pass
-            
-            
+  
+def pivot_crosstab_to_gensim(table, callback=None):
+    """Convert a Textable pivot crosstab to gensim dictionary and corpus"""
+
+    # Create token2id and id2token mappings...
+    token2id = dict(
+        (table.col_ids[idx], idx) for idx in xrange(len(table.col_ids))
+    )
+    id2token = dict(
+        (idx, table.col_ids[idx]) for idx in xrange(len(table.col_ids))
+    )
+
+    # Compute document frequency and store it in dict...
+    dfs = dict()
+    for token in token2id:
+        dfs[token2id[token]] = len(
+            [v for v in table.values if v[1] == token]
+        )
+    
+    # Compute number of documents.
+    num_docs = len(table.row_ids)
+    
+    # Compute total frequency.
+    num_pos = sum(table.values.values())
+
+    # Compute number of non-zero frequencies.
+    num_nnz = len(table.values)
+
+    # Create and populate gensim dictionary...
+    dictionary = corpora.Dictionary()
+    dictionary.token2id.update(token2id)
+    dictionary.id2token.update(id2token)
+    dictionary.dfs.update(dfs)
+    dictionary.num_docs = num_docs
+    dictionary.num_pos = num_pos
+    dictionary.num_nnz = num_nnz
+    
+    # Create and populate gensim corpus...
+    corpus_dict = dict()
+    for k in table.values:
+        try:
+            corpus_dict[k[0]].append((token2id[k[1]], table.values[k]))
+        except KeyError:
+            corpus_dict[k[0]] = [(token2id[k[1]], table.values[k])]
+    corpus = [corpus_dict[row_id] for row_id in table.row_ids]
+
+    # Return dictionary and corpus.
+    return dictionary, corpus
+
+    
 if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
