@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.1"
+__version__ = u"0.1.2"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -36,7 +36,6 @@ from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, AdvancedSettings
 )
-from Orange.widgets import widget, gui, settings
 
 import urllib
 import re
@@ -72,7 +71,6 @@ class TheatreClassique(OWTextableBaseWidget):
     )
     
     autoSend = settings.Setting(False)
-    label = settings.Setting("xml_tei_data")
     selectedTitles = settings.Setting([])
     titleLabels = settings.Setting([])
     filterCriterion = settings.Setting("author")
