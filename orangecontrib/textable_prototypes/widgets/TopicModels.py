@@ -261,10 +261,10 @@ def pivot_crosstab_to_gensim(table, callback=None):
 
     # Create token2id and id2token mappings...
     token2id = dict(
-        (table.col_ids[idx], idx) for idx in xrange(len(table.col_ids))
+        (table.col_ids[idx], idx) for idx in range(len(table.col_ids))
     )
     id2token = dict(
-        (idx, table.col_ids[idx]) for idx in xrange(len(table.col_ids))
+        (idx, table.col_ids[idx]) for idx in range(len(table.col_ids))
     )
 
     # Compute document frequency and store it in dict...
