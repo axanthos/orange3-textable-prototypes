@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.0"
+__version__ = u"0.1.1"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -38,6 +38,8 @@ from _textable.widgets.TextableUtils import (
 
 from gensim import corpora, models
 from gensim.matutils import corpus2dense
+
+import numpy as np
 
 
 class TopicModels(OWTextableBaseWidget):
@@ -210,13 +212,13 @@ class TopicModels(OWTextableBaseWidget):
             )
 
             # Create context-topic PivotCrosstab table...
-            corpus_model = model[corpus]
+            contextTopicMatrix = corpus2dense(
+                model[corpus], len(model.projection.s)
+            ).T / model.projection.s
             values = dict()
-            for idx in range(len(self.inputTable.row_ids)):
-                row_id = self.inputTable.row_ids[idx]
-                doc = corpus_model[idx]
-                for topic, score in doc:
-                    values[(row_id, topic)] = score 
+            for row_idx, row in enumerate(contextTopicMatrix):
+                for topic, val in enumerate(row):
+                    values[(self.inputTable.row_ids[row_idx], topic)] = val
             contextTopicTable = PivotCrosstab(
                 row_ids=self.inputTable.row_ids,
                 col_ids=list(range(self.numTopics)),
