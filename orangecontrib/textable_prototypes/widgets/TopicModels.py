@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.1"
+__version__ = u"0.1.2"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -27,6 +27,7 @@ __email__ = "aris.xanthos@unil.ch"
 
 import Orange.data
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.unsupervised.owcorrespondence import correspondence
 
 import LTTL
 from LTTL.Table import Table, PivotCrosstab
@@ -111,6 +112,7 @@ class TopicModels(OWTextableBaseWidget):
             value="method",
             items=[
                 "Latent semantic indexing", 
+                "Correspondence analysis", 
             #    "Latent Dirichlet allocation", TODO
             ],
             sendSelectedValue=True,
@@ -124,7 +126,7 @@ class TopicModels(OWTextableBaseWidget):
         )
         method_combo.setMinimumWidth(120)
         gui.separator(widget=optionsBox, height=3)
-        self.numTopics_spin = gui.spin(
+        self.numTopicsSpin = gui.spin(
             widget=optionsBox,
             master=self,
             value='numTopics',
@@ -199,7 +201,7 @@ class TopicModels(OWTextableBaseWidget):
             
             # Create segment-topic PivotCrosstab table.
             segmentTopicTable = PivotCrosstab.from_numpy(
-                row_ids=self.inputTable.col_ids,
+                row_ids=self.inputTable.col_ids[:],
                 col_ids=list(range(self.numTopics)),
                 np_array=model.projection.u,
                 header_row_id='__topic__',
@@ -220,7 +222,7 @@ class TopicModels(OWTextableBaseWidget):
                 for topic, val in enumerate(row):
                     values[(self.inputTable.row_ids[row_idx], topic)] = val
             contextTopicTable = PivotCrosstab(
-                row_ids=self.inputTable.row_ids,
+                row_ids=self.inputTable.row_ids[:],
                 col_ids=list(range(self.numTopics)),
                 values=values,
                 header_row_id='__topic__',
@@ -233,6 +235,39 @@ class TopicModels(OWTextableBaseWidget):
                 missing=0,
             )            
                 
+        # Case 1: Correspondence analysis...
+        elif self.method == "Correspondence analysis":
+        
+            ca = correspondence(self.inputTable.to_numpy())
+
+            # Create segment-topic PivotCrosstab table.
+            segmentTopicTable = PivotCrosstab.from_numpy(
+                row_ids=self.inputTable.col_ids[:],
+                col_ids=list(range(self.numTopics)),
+                np_array=ca.col_factors[:, range(self.numTopics)],
+                header_row_id='__topic__',
+                header_row_type='continuous',
+                header_col_id='__unit__',
+                header_col_type='string',
+                col_type=dict(
+                    (col_id, 'continuous') for col_id in range(self.numTopics)
+                ),
+            )
+
+            # Create context-topic PivotCrosstab table.
+            contextTopicTable = PivotCrosstab.from_numpy(
+                row_ids=self.inputTable.row_ids[:],
+                col_ids=list(range(self.numTopics)),
+                np_array=ca.row_factors[:, range(self.numTopics)],
+                header_row_id='__topic__',
+                header_row_type='continuous',
+                header_col_id='__unit__',
+                header_col_type='string',
+                col_type=dict(
+                    (col_id, 'continuous') for col_id in range(self.numTopics)
+                ),
+            )
+
         # Set status to OK and report...
         self.infoBox.setText("Tables correctly sent to output.")
         progressBar.finish()
@@ -256,7 +291,18 @@ class TopicModels(OWTextableBaseWidget):
         
     def updateGUI(self):
         """Update GUI state"""
-        pass
+        if (
+            self.inputTable is not None and
+            (
+                self.method == "Latent semantic indexing" or
+                self.method == "Correspondence analysis"
+            )
+        ):
+            maxNumTopics = min(
+                len(self.inputTable.row_ids),
+                len(self.inputTable.col_ids),              
+            )
+            self.numTopicsSpin.setRange(1, maxNumTopics-1)
   
 def pivot_crosstab_to_gensim(table, callback=None):
     """Convert a Textable pivot crosstab to gensim dictionary and corpus"""
