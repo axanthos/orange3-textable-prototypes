@@ -42,24 +42,20 @@ CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
 
 
-#Widget's metadata
-class TreeStructure(widget.OWWidget):
+class OWTextableTextTree(OWTextableBaseWidget):
+    """Orange widget for loading text files"""
 
-    name = "TextTreeStructure"
-    description = "Opens all text files under one folder and its subfolders"
-    icon = "icons/folder_tree.png"
-    priority = 20
+    name = "Text Tree"
+    description = "Import data from raw text trees"
+    icon = "icons/TextFiles.png"
+    priority = 2
 
-    # ----------------------------------------------------------------------
-    # Channel definitions...
-
-    # No input because the folders will be specified in the widget
+    # Input and output channels...
     inputs = [
+        ('Message', JSONMessage, "inputMessage", widget.Single)
     ]
-    # Segmentation output, like for the textfiles widget
     outputs = [('Text data', Segmentation)]
 
-    #Ca je touche pas, en tout cas pour l'instant
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
@@ -68,6 +64,8 @@ class TreeStructure(widget.OWWidget):
     autoSend = settings.Setting(True)
     files = settings.Setting([])
     encoding = settings.Setting('iso-8859-1')
+    operation = settings.Setting('nothing')
+    sampling =settings.Setting(100)
     autoNumber = settings.Setting(False)
     autoNumberKey = settings.Setting(u'num')
     importFilenames = settings.Setting(True)
@@ -83,6 +81,8 @@ class TreeStructure(widget.OWWidget):
 
         # Other attributes...
         self.segmentation = None
+        self.operation = "no"
+        self.sampling = 100
         self.createdInputs = list()
         self.fileLabels = list()
         self.selectedFileLabels = list()
@@ -131,7 +131,7 @@ class TreeStructure(widget.OWWidget):
             labelWidth=101,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"The path of the folder."
+                u"The path of the file."
             ),
         )
         gui.separator(widget=basicFileBoxLine1, width=5)
@@ -141,7 +141,7 @@ class TreeStructure(widget.OWWidget):
             label=u'Browse',
             callback=self.browse,
             tooltip=(
-                u"Open a dialog for selecting file."
+                u"Open a dialog for selecting a top folder."
             ),
         )
         #gui.separator(widget=basicFileBox, width=3)
@@ -274,6 +274,7 @@ class TreeStructure(widget.OWWidget):
             widget=addFileBox,
             orientation='horizontal',
         )
+        # Folder path input
         gui.lineEdit(
             widget=addFileBoxLine1,
             master=self,
@@ -291,63 +292,77 @@ class TreeStructure(widget.OWWidget):
             ),
         )
         gui.separator(widget=addFileBoxLine1, width=5)
+        # Button Browse
         gui.button(
             widget=addFileBoxLine1,
             master=self,
             label=u'Browse',
             callback=self.browse,
             tooltip=(
-                u"Open a dialog for selecting files.\n\n"
-                u"To select multiple files at once, either draw a\n"
-                u"selection box around them, or use shift and/or\n"
-                u"ctrl + click.\n\n"
-                u"Selected file paths will appear in the field to\n"
+                u"Open a dialog for selecting a top folder.\n\n"
+                u"Selected folder paths will appear in the field to\n"
                 u"the left of this button afterwards, ready to be\n"
                 u"added to the list when button 'Add' is clicked."
             ),
         )
-        gui.separator(widget=addFileBox, width=3)
+        gui.separator(widget=addFileBox, width=10)
+        # Combox Filter
         gui.comboBox(
             widget=addFileBox,
             master=self,
-            value='encoding',
-            items=getPredefinedEncodings(),
+            value='operation',
+            items=["No filter","Include","Exclude"],
             sendSelectedValue=True,
             orientation='horizontal',
-            label=u'Encoding:',
-            labelWidth=101,
             callback=self.updateGUI,
             tooltip=(
-                u"Select input file(s) encoding."
+                u"Filter"
             ),
         )
-        gui.separator(widget=addFileBox, width=3)
+        #gui.separator(widget=addFileBox, width=3)
+        # Filter choice
         gui.lineEdit(
             widget=addFileBox,
             master=self,
             value='newAnnotationKey',
             orientation='horizontal',
-            label=u'Annotation key:',
+            label=u'Filter (if selected)',
             labelWidth=101,
-            callback=self.updateGUI,
             tooltip=(
-                u"This field lets you specify a custom annotation\n"
-                u"key associated with each file that is about to be\n"
+                u"This field lets you specify a custom filter\n"
+                u"to select the files to be\n"
                 u"added to the list."
             ),
         )
+        # Sampling box
         gui.separator(widget=addFileBox, width=3)
-        gui.lineEdit(
+        samplingBoxLine1 = gui.widgetBox(
             widget=addFileBox,
-            master=self,
-            value='newAnnotationValue',
+            box=False,
             orientation='horizontal',
-            label=u'Annotation value:',
-            labelWidth=101,
-            callback=self.updateGUI,
+        )
+        # Check box for sampling
+        gui.checkBox(
+            widget=samplingBoxLine1,
+            master=self,
+            value='importFilenames',
+            label=u'Sampling',
+            labelWidth=100,
             tooltip=(
-                u"This field lets you specify the annotation value\n"
-                u"associated with the above annotation key."
+                u"Choose the sampling level"
+            ),
+        )
+        # Box spin minv = 0 and maxv = 100
+        self.importFilenamesKeyLineEdit = gui.spin(
+            widget=samplingBoxLine1,
+            master=self,
+            value='sampling',
+            minv = 1,
+            maxv = 100,
+            labelWidth=50,
+            orientation='horizontal',
+            tooltip=(
+                u"sampling level"
             ),
         )
         gui.separator(widget=addFileBox, width=3)
@@ -380,27 +395,27 @@ class TreeStructure(widget.OWWidget):
             box=False,
             orientation='horizontal',
         )
-        gui.checkBox(
-            widget=optionsBoxLine1,
-            master=self,
-            value='importFilenames',
-            label=u'Import file names with key:',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import file names as annotations."
-            ),
-        )
-        self.importFilenamesKeyLineEdit = gui.lineEdit(
-            widget=optionsBoxLine1,
-            master=self,
-            value='importFilenamesKey',
-            orientation='horizontal',
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Annotation key for importing file names."
-            ),
-        )
+#        gui.checkBox(
+#           widget=optionsBoxLine1,
+#            master=self,
+#           value='importFilenames',
+#            label=u'Import file names with key:',
+#           labelWidth=180,
+#            callback=self.sendButton.settingsChanged,
+#            tooltip=(
+#                u"Import file names as annotations."
+#           ),
+#        )
+#        self.importFilenamesKeyLineEdit = gui.lineEdit(
+#            widget=optionsBoxLine1,
+#            master=self,
+#            value='importFilenamesKey',
+#            orientation='horizontal',
+#            callback=self.sendButton.settingsChanged,
+#            tooltip=(
+#                u"Annotation key for importing file names."
+#            ),
+#        )
         gui.separator(widget=optionsBox, width=3)
         optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
@@ -762,14 +777,14 @@ class TreeStructure(widget.OWWidget):
         else:
             filePath = QFileDialog.getOpenFileName(
                 self,
-                u'Open Text File',
+                u'Open Folder',
                 self.lastLocation,
-                u'Text files (*)'
+                u'Folder (*)'
             )
-            if not filePath:
+            if not folderPath:
                 return
-            self.file = os.path.normpath(filePath)
-            self.lastLocation = os.path.dirname(filePath)
+            self.file = os.path.normpath(folderPath)
+            self.lastLocation = os.path.dirname(folderPath)
             self.updateGUI()
             self.sendButton.settingsChanged()
 
@@ -913,11 +928,12 @@ class TreeStructure(widget.OWWidget):
         self.clearCreatedInputs()
 
 
+
 if __name__ == '__main__':
     import sys
     from PyQt4.QtGui import QApplication
     appl = QApplication(sys.argv)
-    ow = OWTextableTextFiles()
+    ow = OWTextableTextTree()
     ow.show()
     appl.exec_()
     ow.saveSettings()
