@@ -43,6 +43,9 @@ from gensim.matutils import corpus2dense
 import numpy as np
 
 
+MAX_NUM_DISPLAYED_TERMS = 6
+
+
 class TopicModels(OWTextableBaseWidget):
     """Textable widget for building topic models based on a term-document matrix
     """
@@ -85,6 +88,7 @@ class TopicModels(OWTextableBaseWidget):
 
         # Other attributes...
         self.inputTable = None
+        self.listEntries = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -141,7 +145,17 @@ class TopicModels(OWTextableBaseWidget):
                 u"Please select the desired number of topics in output tables."
             ),
         )
-        gui.separator(widget=optionsBox, height=3)
+        self.fileListboxSeparator = gui.separator(widget=optionsBox, height=3)
+        self.fileListbox = gui.listBox(
+            widget=optionsBox,
+            master=self,
+            #value='selectedFileLabels',
+            labels='listEntries',
+            #callback=self.updateFileBoxButtons,
+            tooltip=(
+                u"TODO"
+            ),
+        )
 
         gui.separator(widget=self.controlArea, height=3)
 
@@ -177,6 +191,7 @@ class TopicModels(OWTextableBaseWidget):
             self.send("Document-topic Textable table", None)
             self.send("Term-topic Orange table", None)
             self.send("Document-topic Orange table", None)
+            self.listEntries = list()
             return
 
         # Initialize progress bar.
@@ -212,6 +227,31 @@ class TopicModels(OWTextableBaseWidget):
                     (col_id, 'continuous') for col_id in range(self.numTopics)
                 ),
             )
+
+            # Fill listbox...
+            colIds = np.array(self.inputTable.col_ids)
+            newListEntries = list()
+            for topicNum in range(self.numTopics):
+                propInertia = (
+                    model.projection.s[topicNum] 
+                    # / sum(model.projection.s) # TODO: find a way to get the total inertia...
+                )
+                scores = model.projection.u[:,topicNum]
+                sortedTerms = colIds[scores.argsort()[::-1]]
+                if len(colIds) > MAX_NUM_DISPLAYED_TERMS:
+                    displayedTerms = ", ".join(sortedTerms[:MAX_NUM_DISPLAYED_TERMS//2])
+                    displayedTerms += ", ..., "
+                    displayedTerms += ", ".join(sortedTerms[-MAX_NUM_DISPLAYED_TERMS//2:])
+                else:
+                    displayedTerms = ", ".join(sortedTerms)
+                #listEntry = "%i. (%.2f%%) %s" % (  # uncomment when computing PROP of inertia
+                listEntry = "%i. (%.2f) %s" % (
+                    topicNum+1,
+                    propInertia, #*100, # uncomment when computing PROP of inertia
+                    displayedTerms,
+                )
+                newListEntries.append(listEntry)
+            self.listEntries = newListEntries
 
             # Create context-topic PivotCrosstab table...
             contextTopicMatrix = corpus2dense(
@@ -254,6 +294,30 @@ class TopicModels(OWTextableBaseWidget):
                 ),
             )
 
+            # Fill listbox...
+            colIds = np.array(self.inputTable.col_ids)
+            newListEntries = list()
+            for topicNum in range(self.numTopics):
+                propInertia = (
+                    ca.inertia_of_axis()[topicNum] / 
+                    sum(ca.inertia_of_axis())
+                )
+                scores = np.array(ca.col_factors[:,topicNum])
+                sortedTerms = colIds[scores.argsort()[::-1]]
+                if len(colIds) > MAX_NUM_DISPLAYED_TERMS:
+                    displayedTerms = ", ".join(sortedTerms[:MAX_NUM_DISPLAYED_TERMS//2])
+                    displayedTerms += ", ..., "
+                    displayedTerms += ", ".join(sortedTerms[-MAX_NUM_DISPLAYED_TERMS//2:])
+                else:
+                    displayedTerms = ", ".join(sortedTerms)
+                listEntry = "%i. (%.2f%%) %s" % (
+                    topicNum+1,
+                    propInertia*100,
+                    displayedTerms,
+                )
+                newListEntries.append(listEntry)
+            self.listEntries = newListEntries
+
             # Create context-topic PivotCrosstab table.
             contextTopicTable = PivotCrosstab.from_numpy(
                 row_ids=self.inputTable.row_ids[:],
@@ -267,7 +331,7 @@ class TopicModels(OWTextableBaseWidget):
                     (col_id, 'continuous') for col_id in range(self.numTopics)
                 ),
             )
-
+            
         # Set status to OK and report...
         self.infoBox.setText("Tables correctly sent to output.")
         progressBar.finish()
@@ -291,18 +355,22 @@ class TopicModels(OWTextableBaseWidget):
         
     def updateGUI(self):
         """Update GUI state"""
-        if (
-            self.inputTable is not None and
-            (
+        if self.inputTable is not None:
+            if (
                 self.method == "Latent semantic indexing" or
                 self.method == "Correspondence analysis"
-            )
-        ):
-            maxNumTopics = min(
-                len(self.inputTable.row_ids),
-                len(self.inputTable.col_ids),              
-            )
-            self.numTopicsSpin.setRange(1, maxNumTopics-1)
+            ):
+                maxNumTopics = min(
+                    len(self.inputTable.row_ids),
+                    len(self.inputTable.col_ids),              
+                )
+                self.numTopicsSpin.setRange(1, maxNumTopics-1)
+            else:
+                self.numTopicsSpin.setRange(1, 999)
+        else:
+            self.numTopicsSpin.setRange(1, 999)
+
+                
   
 def pivot_crosstab_to_gensim(table, callback=None):
     """Convert a Textable pivot crosstab to gensim dictionary and corpus"""
