@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.2"
+__version__ = u"0.1.3"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -231,23 +231,35 @@ class TopicModels(OWTextableBaseWidget):
             # Fill listbox...
             colIds = np.array(self.inputTable.col_ids)
             newListEntries = list()
+            # Subtask: compute total inertia, i.e. sum of eigenvalues of
+            # doc-term matrix multiplied by its transposed...
+            rect_matrix = self.inputTable.to_numpy()
+            matrix_dims = self.inputTable.to_numpy().shape
+            if matrix_dims[0] > matrix_dims[1]:
+                square_matrix = np.dot(np.transpose(rect_matrix), rect_matrix)
+            else:
+                square_matrix = np.dot(rect_matrix, np.transpose(rect_matrix))
+            total_inertia = sum(np.linalg.eigvals(square_matrix))
             for topicNum in range(self.numTopics):
-                propInertia = (
-                    model.projection.s[topicNum] 
-                    # / sum(model.projection.s) # TODO: find a way to get the total inertia...
-                )
+                # Proportion of inertia is SQUARE of singular value divided by
+                # total inertia, because n-th singular value = square root of
+                # n-th eigenvalue (cf. compute total inertia above)...
+                propInertia = model.projection.s[topicNum] ** 2 / total_inertia 
                 scores = model.projection.u[:,topicNum]
                 sortedTerms = colIds[scores.argsort()[::-1]]
                 if len(colIds) > MAX_NUM_DISPLAYED_TERMS:
-                    displayedTerms = ", ".join(sortedTerms[:MAX_NUM_DISPLAYED_TERMS//2])
+                    displayedTerms = ", ".join(
+                        sortedTerms[:MAX_NUM_DISPLAYED_TERMS//2]
+                    )
                     displayedTerms += ", ..., "
-                    displayedTerms += ", ".join(sortedTerms[-MAX_NUM_DISPLAYED_TERMS//2:])
+                    displayedTerms += ", ".join(
+                        sortedTerms[-MAX_NUM_DISPLAYED_TERMS//2:]
+                    )
                 else:
                     displayedTerms = ", ".join(sortedTerms)
-                #listEntry = "%i. (%.2f%%) %s" % (  # uncomment when computing PROP of inertia
-                listEntry = "%i. (%.2f) %s" % (
+                listEntry = "%i. (%.2f%%) %s" % (
                     topicNum+1,
-                    propInertia, #*100, # uncomment when computing PROP of inertia
+                    propInertia*100, 
                     displayedTerms,
                 )
                 newListEntries.append(listEntry)
@@ -297,17 +309,19 @@ class TopicModels(OWTextableBaseWidget):
             # Fill listbox...
             colIds = np.array(self.inputTable.col_ids)
             newListEntries = list()
+            total_inertia = sum(ca.inertia_of_axis())
             for topicNum in range(self.numTopics):
-                propInertia = (
-                    ca.inertia_of_axis()[topicNum] / 
-                    sum(ca.inertia_of_axis())
-                )
+                propInertia = ca.inertia_of_axis()[topicNum] / total_inertia
                 scores = np.array(ca.col_factors[:,topicNum])
                 sortedTerms = colIds[scores.argsort()[::-1]]
                 if len(colIds) > MAX_NUM_DISPLAYED_TERMS:
-                    displayedTerms = ", ".join(sortedTerms[:MAX_NUM_DISPLAYED_TERMS//2])
+                    displayedTerms = ", ".join(
+                        sortedTerms[:MAX_NUM_DISPLAYED_TERMS//2]
+                    )
                     displayedTerms += ", ..., "
-                    displayedTerms += ", ".join(sortedTerms[-MAX_NUM_DISPLAYED_TERMS//2:])
+                    displayedTerms += ", ".join(
+                        sortedTerms[-MAX_NUM_DISPLAYED_TERMS//2:]
+                    )
                 else:
                     displayedTerms = ", ".join(sortedTerms)
                 listEntry = "%i. (%.2f%%) %s" % (
