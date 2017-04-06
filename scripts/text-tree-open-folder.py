@@ -8,8 +8,8 @@ import codecs
 import chardet
 import fnmatch
 
-# root_path = os.path.normpath("/Users/mathieu/orange3-textable-prototypes-testing/test") # Path for testing
-input_path = input("Add folder path : ")
+# input_path = raw_input("Add folder path : ")
+input_path = os.path.normpath("/Users/mathieu/orange3-textable-prototypes-testing/test") # Path for testing
 
 root_path = os.path.normpath(input_path)
 
@@ -32,19 +32,19 @@ def walkThroughDirectory(root_path):
 		curr_rel_path = curr_path[len(initial_parent_path)+1:] #defines current relative path by similar initial parent path part
 		curr_rel_path_list = os.path.normpath(curr_rel_path).split(os.sep) #splits current relative path by os separator
 
-		prev_non_excl_check = True
-
 		for filename in filenames:
+			prev_non_excl_check = True
 			curr_non_excl_check = prev_non_excl_check #importing previous state of the "non-exclusion check" (opposite of exclusion check)
 
 			annotations = curr_rel_path_list[:] # annotations are different subfolders browsed
-
 			complete_annotations = annotations[:]
 
-
 			for i in inclusion_list: #i = inclusionElement
-				for e in exclusion_list:
-					if i in filename:
+
+				if i in filename:
+					curr_non_excl_check = True
+
+					for e in exclusion_list:
 						if e in filename:
 							if (e == ""):
 								pass
@@ -52,18 +52,18 @@ def walkThroughDirectory(root_path):
 								curr_non_excl_check = False
 								curr_non_excl_check = (prev_non_excl_check and curr_non_excl_check) #any exclusion criteria will make it False (Truth Table)
 
-			if curr_non_excl_check: # can be True only if no exclusion criteria was found in filename
-				abs_file_path = os.path.join(curr_path,filename)
-				complete_annotations.insert(0,abs_file_path)
-				complete_annotations.append(filename)
-				complete_annotations.append(str(len(complete_annotations)-3))
-				files_list.append(complete_annotations)
+					if curr_non_excl_check: # can be True only if no exclusion criteria was found in filename
+						abs_file_path = os.path.join(curr_path,filename)
+						complete_annotations.insert(0,abs_file_path)
+						complete_annotations.append(filename)
+						complete_annotations.append(str(len(complete_annotations)-3))
+						files_list.append(complete_annotations)
 
-	openFile(files_list)
+	openFileList(files_list)
 
 	print("\n____________________\n",len(files_list),"files matching conditions were found")
 
-def openFile(files_list):
+def openFileList(files_list):
 
 	for file in files_list:
 		file_path = file[0]
@@ -73,7 +73,7 @@ def openFile(files_list):
 			text = file.read()
 			charset_dict = chardet.detect(text)
 			detected_encoding = charset_dict['encoding']
-			print(charset_dict)
+			print(file_path,charset_dict)
 			try:
 				encodings.remove(detected_encoding)
 				encodings.insert(0,detected_encoding)
@@ -87,7 +87,7 @@ def openFile(files_list):
 				except:
 					pass
 
-			print(ufile_text,encoding) #this will be the Segmentation for Output
+			# print(ufile_text) #this will be the Segmentation for Output
 
 def getPredefinedEncodings():
     """Return the list of predefined encodings"""
