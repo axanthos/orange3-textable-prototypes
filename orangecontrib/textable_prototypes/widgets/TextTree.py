@@ -47,8 +47,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
     name = "Text Tree"
     description = "Import data from raw text trees"
-    icon = "icons/folder_tree.png"
-    priority = 20
+    icon = "icons/FolderTree.png"
+    priority = 2
 
     # Input and output channels...
     inputs = [
