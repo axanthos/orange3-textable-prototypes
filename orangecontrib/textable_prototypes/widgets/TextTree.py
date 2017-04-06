@@ -47,11 +47,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
     name = "Text Tree"
     description = "Import data from raw text trees"
-<<<<<<< HEAD
+
     icon = "icons/Textfolders.png"
-=======
+
     icon = "icons/textTree.svg"
->>>>>>> origin/master
+
     priority = 2
 
     # Input and output channels...
@@ -334,7 +334,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # includeLineEdit = gui.lineEdit()
         # ------------
 
-        # Filter box to input include only 
+        # Filter box to input include only
         gui.separator(widget=addfolderBox, width=3)
         includeBoxLine1 = gui.widgetBox(
             widget=addfolderBox,
@@ -368,7 +368,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             ),
         )
 
-        # Filter box to exclude only 
+        # Filter box to exclude only
         gui.separator(widget=addfolderBox, width=3)
         excludeBoxLine1 = gui.widgetBox(
             widget=addfolderBox,
@@ -402,8 +402,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 u"added to the list."
             ),
         )
-        
-        # Sampling box to input the level of sampling 
+
+        # Sampling box to input the level of sampling
         gui.separator(widget=addfolderBox, width=3)
         samplingBoxLine1 = gui.widgetBox(
             widget=addfolderBox,
