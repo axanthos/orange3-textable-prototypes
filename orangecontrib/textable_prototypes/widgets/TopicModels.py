@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.3"
+__version__ = u"0.1.4"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -115,9 +115,9 @@ class TopicModels(OWTextableBaseWidget):
             master=self,
             value="method",
             items=[
+                "Latent Dirichlet allocation",
                 "Latent semantic indexing", 
                 "Correspondence analysis", 
-            #    "Latent Dirichlet allocation", TODO
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -145,13 +145,11 @@ class TopicModels(OWTextableBaseWidget):
                 u"Please select the desired number of topics in output tables."
             ),
         )
-        self.fileListboxSeparator = gui.separator(widget=optionsBox, height=3)
-        self.fileListbox = gui.listBox(
+        gui.separator(widget=optionsBox, height=3)
+        gui.listBox(
             widget=optionsBox,
             master=self,
-            #value='selectedFileLabels',
             labels='listEntries',
-            #callback=self.updateFileBoxButtons,
             tooltip=(
                 u"TODO"
             ),
@@ -205,7 +203,79 @@ class TopicModels(OWTextableBaseWidget):
         
         # Apply topic modelling...
         
-        # Case 1: LSI...
+        # Case 1: LDA...
+        if self.method == "Latent Dirichlet allocation":
+            
+            model = models.LdaModel(
+                corpus, 
+                id2word=dictionary, 
+                num_topics=self.numTopics,
+            )
+            
+            # Create segment-topic PivotCrosstab table.
+            values = dict()
+            terms = list()
+            for topic in xrange(self.numTopics):
+                topic_terms = model.get_topic_terms(
+                    topic, 
+                    len(self.inputTable.col_ids),
+                )
+                for term, score in topic_terms:
+                    values[(dictionary[term], topic)] = score
+                terms.append(
+                    list(
+                        dictionary[t] 
+                        for t, s in topic_terms[:MAX_NUM_DISPLAYED_TERMS]
+                    )
+                )
+            segmentTopicTable = PivotCrosstab(
+                row_ids=self.inputTable.col_ids[:],
+                col_ids=list(range(self.numTopics)),
+                values=values,
+                header_row_id='__topic__',
+                header_row_type='continuous',
+                header_col_id='__unit__',
+                header_col_type='string',
+                col_type=dict(
+                    (col_id, 'continuous') for col_id in range(self.numTopics)
+                ),
+            )
+
+            # Fill listbox...
+            newListEntries = list()
+            for topicNum in range(self.numTopics):
+                displayedTerms = ", ".join(terms[topicNum])
+                if len(self.inputTable.col_ids) > MAX_NUM_DISPLAYED_TERMS:
+                    displayedTerms += ", ..."
+                listEntry = "%i. %s" % (
+                    topicNum+1,
+                    displayedTerms,
+                )
+                newListEntries.append(listEntry)
+            self.listEntries = newListEntries
+
+            # Create context-topic PivotCrosstab table...
+            corpus_lda = model[corpus]
+            values = dict()
+            for row_idx, row in enumerate(self.inputTable.row_ids):
+                lda_doc = corpus_lda[row_idx]
+                for topic, score in lda_doc:
+                    values[(row, topic)] = score 
+            contextTopicTable = PivotCrosstab(
+                row_ids=self.inputTable.row_ids[:],
+                col_ids=list(range(self.numTopics)),
+                values=values,
+                header_row_id='__topic__',
+                header_row_type='continuous',
+                header_col_id='__context__',
+                header_col_type='string',
+                col_type=dict(
+                    (col_id, 'continuous') for col_id in range(self.numTopics)
+                ),
+                missing=0,
+            )  
+                
+        # Case 2: LSI...
         if self.method == "Latent semantic indexing":
             
             model = models.LsiModel(
@@ -287,7 +357,7 @@ class TopicModels(OWTextableBaseWidget):
                 missing=0,
             )            
                 
-        # Case 1: Correspondence analysis...
+        # Case 2: Correspondence analysis...
         elif self.method == "Correspondence analysis":
         
             ca = correspondence(self.inputTable.to_numpy())
