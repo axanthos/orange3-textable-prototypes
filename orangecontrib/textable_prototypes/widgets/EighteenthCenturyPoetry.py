@@ -1,5 +1,5 @@
 """
-Class TheatreClassique
+Class EighteenthCenturyPoetry
 Copyright 2017 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
@@ -41,7 +41,7 @@ import os
 import pickle
 
 
-class TheatreClassique(OWTextableBaseWidget):
+class EighteenthCenturyPoetry(OWTextableBaseWidget):
     """Textable widget for importing XML-TEI data from the Eighteenth Century
     Poetry website (eighteenthcenturypoetry.org)
     """
@@ -187,7 +187,7 @@ class TheatreClassique(OWTextableBaseWidget):
             master=self,
             label="Refresh",
             callback=self.refreshTitleSeg, # OK
-            tooltip="Connect to Theatre-classique website and refresh list.",
+            tooltip="Connect to EighteenthCenturyPoetry website and refresh list.",
         )
         gui.separator(widget=titleBox, height=3)
 
@@ -291,7 +291,7 @@ class TheatreClassique(OWTextableBaseWidget):
             iterations=len(self.selectedTitles)
         )
 
-        # Attempt to connect to Theatre-classique and retrieve plays...
+        # Attempt to connect to ECP and retrieve plays...
         xml_contents = list()
         annotations = list()
         try:
@@ -376,9 +376,9 @@ class TheatreClassique(OWTextableBaseWidget):
             file = open(os.path.join(path, "cached_title_list"),"rb")
             self.titleSeg = pickle.load(file)
             file.close()
-        # Else try to load list from Theatre-classique and build new seg...
+        # Else try to load list from ECP and build new seg...
         except IOError:
-            self.titleSeg = self.getTitleListFromTheatreClassique()
+            self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
 
         # Build author, year and genre lists...
         if self.titleSeg is not None:
@@ -413,25 +413,25 @@ class TheatreClassique(OWTextableBaseWidget):
 
     def refreshTitleSeg(self):
         """Refresh title segmentation from website"""
-        self.titleSeg = self.getTitleListFromTheatreClassique()
+        self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
         # Update title and filter value lists (only at init and on manual
         # refresh, therefore separate from self.updateGUI).
         self.updateFilterValueList()
 
     # à modifier à la sauce ECP
-    def getTitleListFromTheatreClassique(self):
-        """Fetch titles from the Theatre-classique website"""
+    def getTitleListFromEighteenthCenturyPoetry(self):
+        """Fetch titles from the ECP website"""
 
         self.infoBox.customMessage(
-            "Fetching data from Theatre-classique website, please wait"
+            "Fetching data from ECP website, please wait"
         )
 
-        # Attempt to connect to Theatre-classique...
+        # Attempt to connect to ECP...
         try:
             response = urllib.request.urlopen(self.base_url)
             base_html = response.read().decode('iso-8859-1')
             self.infoBox.customMessage(
-                "Done fetching data from Theatre-classique website."
+                "Done fetching data from EighteenthCenturyPoetry website."
             )
 
         # If unable to connect (somehow)...
@@ -439,7 +439,7 @@ class TheatreClassique(OWTextableBaseWidget):
 
             # Set Info box and widget to "warning" state.
             self.infoBox.noDataSent(
-                warning="Couldn't access theatre-classique website."
+                warning="Couldn't access EighteenthCenturyPoetry website."
             )
 
             # Empty title list box.
@@ -629,7 +629,7 @@ if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
     myApplication = QApplication(sys.argv)
-    myWidget = TheatreClassique()
+    myWidget = EighteenthCenturyPoetry()
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
