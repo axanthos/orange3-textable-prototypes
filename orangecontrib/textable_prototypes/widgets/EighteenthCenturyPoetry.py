@@ -471,7 +471,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
         # Extract work in genre.
         work_seg = Segmenter.import_xml(
-            segmentation=table_seg,
+            segmentation=genre_seg,
             element="li",
             conditions={"class": re.compile(r"^bibl$")},
         )
