@@ -89,9 +89,9 @@ class TheatreClassique(OWTextableBaseWidget):
         self.filteredTitleSeg = None
         self.filterValues = dict()
         self.base_url =     \
-          u"http://www.theatre-classique.fr/pages/programmes/PageEdition.php"
+          u"http://www.eighteenthcenturypoetry.org/"
         self.document_base_url =     \
-          u"http://www.theatre-classique.fr/pages/"
+          u"http://www.eighteenthcenturypoetry.org/works/#titles"
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
