@@ -1,5 +1,5 @@
 """
-Class EighteenthCenturyPoetry
+Class ECP
 Copyright 2017 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
@@ -41,17 +41,17 @@ import os
 import pickle
 
 
-class EighteenthCenturyPoetry(OWTextableBaseWidget):
-    """Textable widget for importing XML-TEI data from the Eighteenth Century
-    Poetry website (eighteenthcenturypoetry.org)
+class ECP(OWTextableBaseWidget):
+    """Textable widget for importing XML-TEI data from the ECP website
+    (eighteenthcenturypoetry.org)
     """
 
     #----------------------------------------------------------------------
     # Widget"s metadata...
 
-    name = "Eighteenth Century Poetry"
-    description = "Import XML-TEI data from EighteenthCenturyPoetry website"
-    icon = "icons/EighteenthCenturyPoetryIcon.svg"
+    name = "ECP"
+    description = "Import XML-TEI data from ECP website"
+    icon = "icons/ECPIcon.svg"
     priority = 10
 
     #----------------------------------------------------------------------
@@ -187,7 +187,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             master=self,
             label="Refresh",
             callback=self.refreshTitleSeg, # OK
-            tooltip="Connect to EighteenthCenturyPoetry website and refresh list.",
+            tooltip="Connect to ECP website and refresh list.",
         )
         gui.separator(widget=titleBox, height=3)
 
@@ -378,7 +378,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             file.close()
         # Else try to load list from ECP and build new seg...
         except IOError:
-            self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
+            self.titleSeg = self.getTitleListFromECP()
 
         # Build author, year and genre lists...
         if self.titleSeg is not None:
@@ -413,13 +413,13 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
     def refreshTitleSeg(self):
         """Refresh title segmentation from website"""
-        self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
+        self.titleSeg = self.getTitleListFromECP()
         # Update title and filter value lists (only at init and on manual
         # refresh, therefore separate from self.updateGUI).
         self.updateFilterValueList()
 
     # à modifier à la sauce ECP
-    def getTitleListFromEighteenthCenturyPoetry(self):
+    def getTitleListFromECP(self):
         """Fetch titles from the ECP website"""
 
         self.infoBox.customMessage(
@@ -431,7 +431,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             response = urllib.request.urlopen(self.base_url)
             base_html = response.read().decode('iso-8859-1')
             self.infoBox.customMessage(
-                "Done fetching data from EighteenthCenturyPoetry website."
+                "Done fetching data from ECP website."
             )
 
         # If unable to connect (somehow)...
@@ -439,7 +439,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
             # Set Info box and widget to "warning" state.
             self.infoBox.noDataSent(
-                warning="Couldn't access EighteenthCenturyPoetry website."
+                warning="Couldn't access ECP website."
             )
 
             # Empty title list box.
@@ -629,7 +629,7 @@ if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
     myApplication = QApplication(sys.argv)
-    myWidget = EighteenthCenturyPoetry()
+    myWidget = ECP()
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
