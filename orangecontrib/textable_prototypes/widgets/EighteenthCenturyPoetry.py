@@ -42,16 +42,16 @@ import pickle
 
 
 class TheatreClassique(OWTextableBaseWidget):
-    """Textable widget for importing XML-TEI data from the Theatre-classique
-    website (http://www.theatre-classique.fr)
+    """Textable widget for importing XML-TEI data from the Eighteenth Century
+    Poetry website (eighteenthcenturypoetry.org)
     """
 
     #----------------------------------------------------------------------
     # Widget"s metadata...
 
-    name = "Theatre Classique"
-    description = "Import XML-TEI data from theatre-classique website"
-    icon = "icons/theatre_classique.svg"
+    name = "Eighteenth Century Poetry"
+    description = "Import XML-TEI data from EighteenthCenturyPoetry website"
+    icon = "icons/EighteenthCenturyPoetryIcon.svg"
     priority = 10
 
     #----------------------------------------------------------------------
