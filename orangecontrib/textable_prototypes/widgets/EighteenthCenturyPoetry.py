@@ -1,5 +1,5 @@
 """
-Class ECP
+Class EighteenthCenturyPoetry
 Copyright 2017 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
@@ -41,17 +41,17 @@ import os
 import pickle
 
 
-class ECP(OWTextableBaseWidget):
-    """Textable widget for importing XML-TEI data from the ECP website
-    (eighteenthcenturypoetry.org)
+class EighteenthCenturyPoetry(OWTextableBaseWidget):
+    """Textable widget for importing XML-TEI data from the Eighteenth Century
+    Poetry website (eighteenthcenturypoetry.org)
     """
 
     #----------------------------------------------------------------------
     # Widget"s metadata...
 
-    name = "ECP"
-    description = "Import XML-TEI data from ECP website"
-    icon = "icons/ECPIcon.svg"
+    name = "Eighteenth Century Poetry"
+    description = "Import XML-TEI data from EighteenthCenturyPoetry website"
+    icon = "icons/EighteenthCenturyPoetryIcon.svg"
     priority = 10
 
     #----------------------------------------------------------------------
@@ -89,9 +89,9 @@ class ECP(OWTextableBaseWidget):
         self.filteredTitleSeg = None
         self.filterValues = dict()
         self.base_url =     \
-          u"http://www.eighteenthcenturypoetry.org/"
+          u"http://www.eighteenthcenturypoetry.org/works/#genres"
         self.document_base_url =     \
-          u"http://www.eighteenthcenturypoetry.org/works/#titles"
+          u"http://www.eighteenthcenturypoetry.org/works/#genres"
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -187,7 +187,7 @@ class ECP(OWTextableBaseWidget):
             master=self,
             label="Refresh",
             callback=self.refreshTitleSeg, # OK
-            tooltip="Connect to ECP website and refresh list.",
+            tooltip="Connect to EighteenthCenturyPoetry website and refresh list.",
         )
         gui.separator(widget=titleBox, height=3)
 
@@ -378,7 +378,7 @@ class ECP(OWTextableBaseWidget):
             file.close()
         # Else try to load list from ECP and build new seg...
         except IOError:
-            self.titleSeg = self.getTitleListFromECP()
+            self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
 
         # Build author, year and genre lists...
         if self.titleSeg is not None:
@@ -413,13 +413,13 @@ class ECP(OWTextableBaseWidget):
 
     def refreshTitleSeg(self):
         """Refresh title segmentation from website"""
-        self.titleSeg = self.getTitleListFromECP()
+        self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
         # Update title and filter value lists (only at init and on manual
         # refresh, therefore separate from self.updateGUI).
         self.updateFilterValueList()
 
     # à modifier à la sauce ECP
-    def getTitleListFromECP(self):
+    def getTitleListFromEighteenthCenturyPoetry(self):
         """Fetch titles from the ECP website"""
 
         self.infoBox.customMessage(
@@ -431,7 +431,7 @@ class ECP(OWTextableBaseWidget):
             response = urllib.request.urlopen(self.base_url)
             base_html = response.read().decode('iso-8859-1')
             self.infoBox.customMessage(
-                "Done fetching data from ECP website."
+                "Done fetching data from EighteenthCenturyPoetry website."
             )
 
         # If unable to connect (somehow)...
@@ -439,7 +439,7 @@ class ECP(OWTextableBaseWidget):
 
             # Set Info box and widget to "warning" state.
             self.infoBox.noDataSent(
-                warning="Couldn't access ECP website."
+                warning="Couldn't access EighteenthCenturyPoetry website."
             )
 
             # Empty title list box.
@@ -454,18 +454,26 @@ class ECP(OWTextableBaseWidget):
 
         # Remove accents from the data...
         recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
-
-        # Extract table containing titles from HTML.
+# how to go to work from
+        # Extract all genres.
         table_seg = Segmenter.import_xml(
             segmentation=recoded_seg,
-            element="table",
-            conditions={"id": re.compile(r"^table_AA$")},
+            element="div",
+            conditions={"id": re.compile(r"^genres-done$")},
         )
 
-        # Extract table lines.
-        line_seg = Segmenter.import_xml(
+        # Extract genre in genres.
+        genre_seg = Segmenter.import_xml(
             segmentation=table_seg,
-            element="tr",
+            element="a",
+            conditions={"class": re.compile(r"^browse$")},
+        )
+
+        # Extract work in genre.
+        work_seg = Segmenter.import_xml(
+            segmentation=table_seg,
+            element="li",
+            conditions={"class": re.compile(r"^bibl$")},
         )
 
         # Compile the regex that will be used to parse each line.
@@ -629,7 +637,7 @@ if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
     myApplication = QApplication(sys.argv)
-    myWidget = ECP()
+    myWidget = EighteenthCenturyPoetry()
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
