@@ -477,7 +477,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
         )
 
         # Compile the regex that will be used to parse each line.
-        field_regex = re.compile(
+        genre_regex = re.compile(
             r"^\s*<td>\s*<a.+?>(.+?)</a>\s*</td>\s*"
             r"<td>(.+?)</td>\s*"
             r"<td.+?>\s*<a.+?>\s*(\d+?)\s*</a>\s*</td>\s*"
@@ -485,6 +485,10 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             r"<td.+?>\s*<a\s+.+?t=\.{2}/(.+?)'>\s*HTML"
         )
 
+# pour chaque pièce par genre
+        work_regex = re.compile(
+
+        )
         # Parse each line and store the resulting segmentation in an attribute.
         titleSeg = Segmenter.tokenize(
             segmentation=line_seg,
@@ -497,6 +501,18 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             ],
             import_annotations=False,
             merge_duplicates=True,
+        )
+
+# notre segmentation url
+        titleSeg = Segmenter.tokenize(
+            segmentation=genre_seg,
+            regexes=[
+                (field_regex, "tokenize", {"genre": "&1"})
+            ]
+            segmentation=work_seg,
+            regexes=[
+                (field_regex, "tokenize", {"title": "&2"}),
+            ]
         )
 
         # Try to save list in this module"s directory for future reference...
