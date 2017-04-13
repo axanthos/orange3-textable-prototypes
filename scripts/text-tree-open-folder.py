@@ -10,9 +10,7 @@ import fnmatch
 
 # input_path = raw_input("Add folder path : ")
 input_path = os.path.normpath("/Users/mathieu/orange3-textable-prototypes-testing/test") # Path for testing
-
 root_path = os.path.normpath(input_path)
-
 initial_parent_path, _ = os.path.split(root_path)
 
 inclusion_list = [""] #by default empty list

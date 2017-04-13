@@ -853,14 +853,16 @@ class OWTextableTextTree(OWTextableBaseWidget):
             self.lastLocation = os.path.dirname(folderPathList[-1])
             self.updateGUI()
         else:
-            folderPath = QFileDialog.getOpenFileName(
+            folderPath = QFileDialog.getExistingDirectory(    #Use QFileDialog.getExistingDirectory
                 self,
-                u'Open Folder',
+                u'Select Folder(s)',
                 self.lastLocation,
-                u'Folder (*)'
             )
             if not folderPath:
                 return
+            self.newFolderPath = u''.join(folderPath)
+            print(self.newFolderName)
+
             self.folder = os.path.normpath(folderPath)
             self.lastLocation = os.path.dirname(folderPath)
             self.updateGUI()
