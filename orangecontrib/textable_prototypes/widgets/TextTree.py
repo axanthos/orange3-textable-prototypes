@@ -88,6 +88,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.operation = "no"
         self.applyInclusion = False
         self.applyExclusion = False
+        self.applySampling = True
         self.sampling = 100
         self.createdInputs = list()
         self.folderLabels = list()
@@ -416,15 +417,17 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.checkBox(
             widget=samplingBoxLine1,
             master=self,
-            value='importfoldernames',
+            value='applySampling',
             label=u'Sampling',
             labelWidth=100,
+            disabled = False,
+            callback = lambda: samplingSpin.setDisabled(not self.applySampling), 
             tooltip=(
                 u"Choose the sampling level"
             ),
         )
         # Box to input the level of samplig, spin minv = 10 and maxv = 100
-        self.importfoldernamesKeyLineEdit = gui.spin(
+        samplingSpin = gui.spin(
             widget=samplingBoxLine1,
             master=self,
             value='sampling',
@@ -968,10 +971,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.autoNumberKeyLineEdit.setDisabled(False)
             else:
                 self.autoNumberKeyLineEdit.setDisabled(True)
-            if self.importfoldernames:
-                self.importfoldernamesKeyLineEdit.setDisabled(False)
-            else:
-                self.importfoldernamesKeyLineEdit.setDisabled(True)
+#            if self.importfoldernames:
+#                self.importfoldernamesKeyLineEdit.setDisabled(False)
+#            else:
+#                self.importfoldernamesKeyLineEdit.setDisabled(True)
             self.updatefolderBoxButtons()
             self.advancedSettings.setVisible(True)
         else:
