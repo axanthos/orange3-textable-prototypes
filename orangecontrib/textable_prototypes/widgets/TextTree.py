@@ -93,6 +93,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.folderLabels = list()
         self.selectedfolderLabels = list()
         self.newFolderName = u''
+        self.inclusionCondition = u''
+        self.exclusionCondition = u''
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
         self.infoBox = InfoBox(widget=self.controlArea)
@@ -356,7 +358,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         includeLineEdit = gui.lineEdit(
             widget=includeBoxLine1,
             master=self,
-            value='newAnnotationKey',
+            value='inclusionCondition',
             orientation='horizontal',
             label=u'',
             disabled = True,
@@ -391,7 +393,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         includeLineEdit2=gui.lineEdit(
             widget=excludeBoxLine1,
             master=self,
-            value='newAnnotationKey',
+            value='exclusionCondition',
             orientation='horizontal',
             label=u'',
             disabled = True,
