@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 """
 Class OWTextableTextfolders
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
@@ -17,8 +19,7 @@ along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.0.2'
 
-
-import codecs, io, os, re, json
+import codecs, io, os, re, json, chardet
 from unicodedata import normalize
 
 from PyQt4.QtCore import QTimer
@@ -28,7 +29,6 @@ from PyQt4.QtGui import QFont
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
-
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
@@ -88,17 +88,18 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.operation = "no"
         self.applyInclusion = False
         self.applyExclusion = False
-        self.applySampling = True
         self.sampling = 100
         self.createdInputs = list()
         self.folderLabels = list()
         self.selectedfolderLabels = list()
-        self.newFolderName = u''
+        self.newFolderPath = u''
         self.inclusionCondition = u''
         self.exclusionCondition = u''
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
         self.infoBox = InfoBox(widget=self.controlArea)
+        # self.files_list = list() #output file list
+
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
@@ -287,7 +288,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.lineEdit(
             widget=addfolderBoxLine1,
             master=self,
-            value='newFolderName',
+            value='newFolderPath',
             orientation='horizontal',
             label=u'Folder path(s):',
             labelWidth=101,
@@ -417,17 +418,15 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.checkBox(
             widget=samplingBoxLine1,
             master=self,
-            value='applySampling',
+            value='importfoldernames',
             label=u'Sampling',
             labelWidth=100,
-            disabled = False,
-            callback = lambda: samplingSpin.setDisabled(not self.applySampling), 
             tooltip=(
                 u"Choose the sampling level"
             ),
         )
         # Box to input the level of samplig, spin minv = 10 and maxv = 100
-        samplingSpin = gui.spin(
+        self.importfoldernamesKeyLineEdit = gui.spin(
             widget=samplingBoxLine1,
             master=self,
             value='sampling',
@@ -605,134 +604,123 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # Clear created Inputs...
         self.clearCreatedInputs()
 
-        folderContents = list()
+        fileContents = list()
         annotations = list()
         counter = 1
 
         if self.displayAdvancedSettings:
-            myFolders = self.folders
+            myFolders = self.files_list
         else:
-            myFolders = [[self.folder, self.encoding, u'', u'']]
+            myFolders = [[self.folder]]
 
         progressBar = gui.ProgressBar(
             self,
             iterations=len(myFolders)
         )
 
-        # Open and process each folder successively...
+        # Walk through each folder and open each files successively...
+
         for myFolder in myFolders:
-            folderPath = myFolder[0]
-            encoding = myFolder[1]
-            annotation_key = myFolder[2]
-            annotation_value = myFolder[3]
-
-            # Try to open the folder...
-            self.error()
+            self.newFolderPath = myFolder[0]
+            self.walkThroughDirectory()
+            # OLD VERSION Try to open the file
             # try:
-            #     # simply open in Python 3?
-            #     fh = io.open(folderPath, mode='rU', encoding=encoding)
-            #     try:
-            #         folderContent = ""
-            #         i = 0
-            #         chunks = list()
-            #         for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
-            #             chunks.append('\n'.join(chunk.splitlines()))
-            #             i += CHUNK_LENGTH
-            #             if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
-            #                 folderContent += "".join(chunks)
-            #                 chunks = list()
-            #         if len(chunks):
-            #             folderContent += "".join(chunks)
-            #         del chunks
-            #     except UnicodeError:
-            #         progressBar.finish()
-            #         if len(myFolders) > 1:
-            #             message = u"Please select another encoding "    \
-            #                       + u"for folder %s." % folderPath
-            #         else:
-            #             message = u"Please select another encoding."
-            #         self.infoBox.setText(message, 'error')
-            #         self.send('Text data', None, self)
-            #         return
-            #     finally:
-            #         fh.close()
-            # except IOError:
-            #     progressBar.finish()
-            #     if len(myFolders) > 1:
-            #         message = u"Couldn't open folder '%s'." % folderPath
-            #     else:
-            #         message = u"Couldn't open folder."
-            #     self.infoBox.setText(message, 'error')
-            #     self.send('Text data', None, self)
-            #     return
-
-            # Remove utf-8 BOM if necessary...
-
-            # if encoding == u'utf-8':
-            #     folderContent = folderContent.lstrip(
-            #         codecs.BOM_UTF8.decode('utf-8')
-            #     )
-
-            # Normalize text (canonical decomposition then composition)...
-            # folderContent = normalize('NFC', folderContent)
+            #     file_path = myFile[0]
+            # except TypeError:
+            #     pass
             #
-            # folderContents.append(folderContent)
-
+            # encodings = getPredefinedEncodings()
+            # with open(file_path,'rb') as opened_file:
+            #     fileContent = ""
+            #     i = 0
+            #
+            #     text = opened_file.read()
+            #     charset_dict = chardet.detect(text)
+            #     detected_encoding = charset_dict['encoding']
+            #
+            #     #Chunking is necessary when opening large files
+            #     chunks = list()
+            #     for chunk in iter(lambda: opened_file.read(CHUNK_LENGTH), ""):
+            #         chunks.append('\n'.join(chunk.splitlines()))
+            #         i += CHUNK_LENGTH
+            #         if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+            #             fileContent += "".join(chunks)
+            #             chunks = list()
+            #
+            #     if len(chunks):
+            #         fileContent += "".join(chunks)
+            #     del chunks
+            #
+            #     try:
+            #         encodings.remove(detected_encoding)
+            #         encodings.insert(0,detected_encoding)
+            #
+            #     except ValueError:
+            #         pass
+            #
+            #     for encoding in encodings:
+            #         try:
+            #             self.segmentation_text = text.decode(encoding)
+            #         except:
+            #             pass
+            #
+            #     # print(self.segmentation_text) #this will be the Segmentation for Output
+            #     self.fileContent.append(self.segmentation_text)
+            #
+            # # Normalize text (canonical decomposition then composition)...
+            #     fileContent = normalize('NFC', fileContent)
+            #     fileContents.append(fileContent)
+            # print(self.fileContents)
+            fileContents = self.fileContents
             # Annotations...
-            annotation = dict()
-            if self.displayAdvancedSettings:
-                if annotation_key and annotation_value:
-                    annotation[annotation_key] = annotation_value
-                if self.importfoldernames and self.importfoldernamesKey:
-                    foldername = os.path.basename(folderPath)
-                    annotation[self.importfoldernamesKey] = foldername
-                if self.autoNumber and self.autoNumberKey:
-                    annotation[self.autoNumberKey] = counter
-                    counter += 1
-            annotations.append(annotation)
-            progressBar.advance()
+            # annotation = dict()
+            # annotations.append(annotation)
+            # progressBar.advance()
 
-        # Create an LTTL.Input for each folder...
-        if len(folderContents) == 1:
-            label = self.captionTitle
-        else:
-            label = None
-        for index in range(len(folderContents)):
-            myInput = Input(folderContents[index], label)
-            segment = myInput[0]
-            segment.annotations.update(annotations[index])
-            myInput[0] = segment
-            self.createdInputs.append(myInput)
+        # Create an LTTL.Input for each files...
+            # print(self.fileContents)
 
-        # If there's only one folder, the widget's output is the created Input.
-        if len(folderContents) == 1:
-            self.segmentation = self.createdInputs[0]
-        # Otherwise the widget's output is a concatenation...
-        else:
-            self.segmentation = Segmenter.concatenate(
-                segmentations=self.createdInputs,
-                label=self.captionTitle,
-                copy_annotations=True,
-                import_labels_as=None,
-                sort=False,
-                auto_number_as=None,
-                merge_duplicates=False,
-                progress_callback=None,
-            )
+            if len(fileContents) == 1:
+                label = self.captionTitle
+            else:
+                label = None
+            for index in range(len(fileContents)):
+                print(str(index))
+                myInput = Input(fileContents[index], label)
+                segment = myInput[0]
+                # segment.annotations.update(annotations[index])
+                myInput[0] = segment
+                self.createdInputs.append(myInput)
 
-        message = u'%i segment@p sent to output ' % len(self.segmentation)
-        message = pluralize(message, len(self.segmentation))
-        numChars = 0
-        for segment in self.segmentation:
-            segmentLength = len(Segmentation.get_data(segment.str_index))
-            numChars += segmentLength
-        message += u'(%i character@p).' % numChars
-        message = pluralize(message, numChars)
-        self.infoBox.setText(message)
-        progressBar.finish()
+            # If there's only one file, the widget's output is the created Input.
+            if len(fileContents) == 1:
+                self.segmentation = self.createdInputs[0]
+            # Otherwise the widget's output is a concatenation...
+            else:
+                self.segmentation = Segmenter.concatenate(
+                    segmentations=self.createdInputs,
+                    label=self.captionTitle,
+                    copy_annotations=True,
+                    import_labels_as=None,
+                    sort=False,
+                    auto_number_as=None,
+                    merge_duplicates=False,
+                    progress_callback=None,
+                )
+            print(self.segmentation.to_string())
+            message = u'%i segment@p sent to output ' % len(self.segmentation)
+            message = pluralize(message, len(self.segmentation))
+            numChars = 0
+            for segment in self.segmentation:
+                segmentLength = len(Segmentation.get_data(segment.str_index))
+                numChars += segmentLength
+            message += u'(%i character@p).' % numChars
+            message = pluralize(message, numChars)
+            self.infoBox.setText(message)
+            progressBar.finish()
 
-        self.send('Text data', self.segmentation, self)
-        self.sendButton.resetSettingsChangedFlag()
+            self.send('Text data', self.segmentation, self)
+            self.sendButton.resetSettingsChangedFlag()
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -837,6 +825,114 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 QMessageBox.Ok
             )
 
+    def walkThroughDirectory(self):
+        inclusion_list = [""] #by default empty list
+        exclusion_list = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".DS_Store"] # by default exclusions : img files, .DS_Store (macOS)
+
+        root_path = os.path.normpath(self.newFolderPath)
+        initial_parent_path, _ = os.path.split(root_path)
+        print(root_path+"\n____________________\n")
+
+        self.files_list = [] #output file list
+        depth_list = list()
+
+        for curr_path, dirnames, filenames in os.walk(root_path):
+    	#curr_path is a STRING, the path to the directory.
+    	#dirnames is a LIST of the names of subdirectories.
+    	#filenames is a LIST of the names of the non directory files in curr_path
+    	#symlink non traités
+
+            curr_rel_path = curr_path[len(initial_parent_path)+1:] #defines current relative path by similar initial parent path part
+            curr_rel_path_list = os.path.normpath(curr_rel_path).split(os.sep) #splits current relative path by os separator
+
+
+            for filename in filenames:
+                prev_non_excl_check = True
+                curr_non_excl_check = prev_non_excl_check #importing previous state of the "non-exclusion check" (opposite of exclusion check)
+
+                annotations = curr_rel_path_list[:] # annotations are different subfolders browsed
+                complete_annotations = annotations[:]
+                max_depth = 0
+
+                for i in inclusion_list: #i = inclusionElement
+
+                    if i in filename:
+                        curr_non_excl_check = True
+
+                        for e in exclusion_list:
+                            if e in filename:
+                                if (e == ""):
+                                    pass
+                                else:
+                                    curr_non_excl_check = False
+                                    curr_non_excl_check = (prev_non_excl_check and curr_non_excl_check) #any exclusion criteria will make it False (Truth Table)
+
+                        if curr_non_excl_check: # can be True only if no exclusion criteria was found in filename
+                            abs_file_path = os.path.join(curr_path,filename)
+                            complete_annotations.insert(0,abs_file_path)
+                            complete_annotations.append(filename)
+                            curr_depth = (len(complete_annotations)-3)
+                            depth_list.append(curr_depth)
+                            complete_annotations.append(curr_depth)
+                            self.files_list.append(complete_annotations)
+
+        if self.files_list:
+            max_depth = max(depth_list)
+            self.files_list.append(max_depth)
+            self.openFileList()
+        else:
+            print("No file matching condition was found")
+
+    def openFileList(self):
+        self.fileContents = list()
+        for file in self.files_list:
+            fileContent = ""
+            try:
+                file_path = file[0]
+            except TypeError:
+                pass
+
+            encodings = getPredefinedEncodings()
+            with open(file_path,'rb') as opened_file:
+                fileContent = opened_file.read()
+                charset_dict = chardet.detect(fileContent)
+                detected_encoding = charset_dict['encoding']
+
+                # for chunk in iter(lambda: opened_file.read(CHUNK_LENGTH), ""):
+                #     chunks.append('\n'.join(chunk.splitlines()))
+                #     i += CHUNK_LENGTH
+                #     if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+                #         fileContent += "".join(chunks)
+                #         chunks = list()
+                #
+                # if len(chunks):
+                #     fileContent += "".join(chunks)
+                # del chunks
+
+                try:
+                    encodings.remove(detected_encoding)
+                    encodings.insert(0,detected_encoding)
+
+                except ValueError:
+                    pass
+
+                for encoding in encodings:
+                    try:
+                        self.fileContent = fileContent.decode(encoding)
+                    except:
+                        pass
+
+                # print(self.segmentation_text) #this will be the Segmentation for Output
+
+                # fileContent = normalize('NFC', str(fileContent))
+                # fileContents.append(fileContent)
+
+                self.fileContents.append(self.fileContent)
+
+        del self.fileContents[-1]
+
+        # print(self.fileContents)
+
     def browse(self):
         """Display a folderDialog and select a folder"""
         if self.displayAdvancedSettings:
@@ -848,8 +944,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
             if not folderPathList:
                 return
             folderPathList = [os.path.normpath(f) for f in folderPathList]
-            self.newFolderName = u''.join(folderPathList)
-            print(self.newFolderName)
+            self.newFolderPath = u''.join(folderPathList)
+            # self.walkThroughDirectory()
             self.lastLocation = os.path.dirname(folderPathList[-1])
             self.updateGUI()
         else:
@@ -861,8 +957,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             if not folderPath:
                 return
             self.newFolderPath = u''.join(folderPath)
-            print(self.newFolderName)
-
+            self.walkThroughDirectory()
             self.folder = os.path.normpath(folderPath)
             self.lastLocation = os.path.dirname(folderPath)
             self.updateGUI()
@@ -906,15 +1001,17 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
     def add(self):
         """Add folders to folders attr"""
-        folderPathList = re.split(r' +/ +', self.newFolderName) #self.newFolderName = name
+        folderPathList = re.split(r' +/ +', self.newFolderPath) #self.newFolderPath = name
 
-        depth = "1"
-        options = "[e]:{marc}"
+        self.depth = str(self.max_depth)
+        self.inclusions = "tableau"
+        self.exclusions = "bleu"
+        self.samplingRate = "50%"
 
         for folderPath in folderPathList:
             # print(folderPath)
             self.folders.append((
-                self.newFolderName,
+                self.newFolderPath,
                 depth,
                 options,
                 folderPath,
@@ -959,7 +1056,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     cachedLabel
                 ).setSelected(1)
                 self.sendButton.sendIfPreCallback = self.updateGUI
-            if self.newFolderName:
+            if self.newFolderPath:
                 if (
                     (self.newAnnotationKey and self.newAnnotationValue) or
                     (not self.newAnnotationKey and not self.newAnnotationValue)
@@ -973,10 +1070,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.autoNumberKeyLineEdit.setDisabled(False)
             else:
                 self.autoNumberKeyLineEdit.setDisabled(True)
-#            if self.importfoldernames:
-#                self.importfoldernamesKeyLineEdit.setDisabled(False)
-#            else:
-#                self.importfoldernamesKeyLineEdit.setDisabled(True)
+            if self.importfoldernames:
+                self.importfoldernamesKeyLineEdit.setDisabled(False)
+            else:
+                self.importfoldernamesKeyLineEdit.setDisabled(True)
             self.updatefolderBoxButtons()
             self.advancedSettings.setVisible(True)
         else:
@@ -1016,8 +1113,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
     def onDeleteWidget(self):
         self.clearCreatedInputs()
-
-
 
 if __name__ == '__main__':
     import sys
