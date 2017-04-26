@@ -133,7 +133,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             widget=filterBox,
             master=self,
             value="filterCriterion",
-            items=["author", "year", "genre"],
+            items=["author"],
             sendSelectedValue=True,
             orientation="horizontal",
             label="Criterion:",
