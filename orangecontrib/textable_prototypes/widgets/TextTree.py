@@ -624,7 +624,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         for myFolder in myFolders:
             # self.folder = myFolder[0]
             self.walkThroughDirectory()
-            print(myFolder)
+            # print(myFolder)
 
             # OLD VERSION Try to open the file
 
@@ -671,19 +671,19 @@ class OWTextableTextTree(OWTextableBaseWidget):
             # print(self.fileContents)
             fileContents = self.fileContents
             # Annotations...
-            print(self.files_list)
+            # print(self.files_list)
             myFiles = self.files_list
 
             for myFile in myFiles:
 
-                print(myFile)
+                # print(myFile)
                 annotation = dict()
 
                 if self.importFileNameKey:
                     folderName = myFile[-2]
                     annotation[self.importFileNameKey] = folderName
 
-                if self.importFolderName and self.importFolderNameKey:
+                if self.importFolderNameKey:
                     folderName = myFile[1]
                     annotation[self.importFolderNameKey] = folderName
 
@@ -710,7 +710,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             else:
                 label = None
             for index in range(len(fileContents)):
-                print(str(index))
+                # print(str(index))
                 myInput = Input(fileContents[index], label)
                 segment = myInput[0]
                 segment.annotations.update(annotations[index])
@@ -733,7 +733,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     merge_duplicates=False,
                     progress_callback=None,
                 )
-            print(self.segmentation.to_string())
+            # print(self.segmentation.to_string())
             message = u'%i segment@p sent to output ' % len(self.segmentation)
             message = pluralize(message, len(self.segmentation))
             numChars = 0
@@ -988,7 +988,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             if not folderPath:
                 return
             self.folder = os.path.normpath(folderPath)
-            print("self.folder="+self.folder)
+            # print("self.folder="+self.folder)
             self.walkThroughDirectory()
             self.lastLocation = os.path.dirname(folderPath)
             self.updateGUI()
@@ -1053,7 +1053,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 # self.newAnnotationValue,
             ))
         self.sendButton.settingsChanged()
-        print(folderPathList)
+        # print(folderPathList)
 
     def updateGUI(self):
         """Update GUI state"""
