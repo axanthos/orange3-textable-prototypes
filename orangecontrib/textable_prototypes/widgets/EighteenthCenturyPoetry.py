@@ -454,66 +454,45 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
         # Remove accents from the data...
         recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
-# how to go to work from
-        # Extract all genres.
-        table_seg = Segmenter.import_xml(
+
+        # Extract works.
+        genre_corpus = Segmenter.import_xml(
             segmentation=recoded_seg,
-            element="div",
-            conditions={"id": re.compile(r"^genres-done$")},
+            element="ul",
+            conditions={"class": re.compile(r"^genres-list$")},
         )
-
-        # Extract genre in genres.
-        genre_seg = Segmenter.import_xml(
-            segmentation=table_seg,
-            element="a",
-            conditions={"class": re.compile(r"^browse$")},
+        genre_list = Segmenter.tokenize(
+            segmentation=genre_corpus,
+            regexes=re.compile(r"<a.+$"),
+            import_annotations=False,
+            merge_duplicates=True,
         )
-
-        # Extract work in genre.
-        work_seg = Segmenter.import_xml(
-            segmentation=genre_seg,
-            element="li",
-            conditions={"class": re.compile(r"^bibl$")},
+        work_list = Segmenter.tokenize(
+            segmentation=genres_list,
+            regexes=re.compile(r"<li class="bibl">(.+?)</li>"),
+            import_annotations=False,
+            merge_duplicates=True,
         )
 
         # Compile the regex that will be used to parse each line.
-        genre_regex = re.compile(
-            r"^\s*<td>\s*<a.+?>(.+?)</a>\s*</td>\s*"
-            r"<td>(.+?)</td>\s*"
-            r"<td.+?>\s*<a.+?>\s*(\d+?)\s*</a>\s*</td>\s*"
-            r"<td.+?>\s*(.+?)\s*</td>\s*"
-            r"<td.+?>\s*<a\s+.+?t=\.{2}/(.+?)'>\s*HTML"
+        field_regex = re.compile(
+            r"<a href="(.+?)">"
+            r"<a href=".+?">(.+?)</a>"
+            r"<span style="color:.+?666">(.+?)</span>"
         )
 
-# pour chaque pièce par genre
-        work_regex = re.compile(
-
-        )
         # Parse each line and store the resulting segmentation in an attribute.
         titleSeg = Segmenter.tokenize(
-            segmentation=line_seg,
+            segmentation=work_list,
             regexes=[
-                (field_regex, "tokenize", {"author": "&1"}),
+                (field_regex, "tokenize", {"url": "&1"}),
                 (field_regex, "tokenize", {"title": "&2"}),
-                (field_regex, "tokenize", {"year": "&3"}),
-                (field_regex, "tokenize", {"genre": "&4"}),
-                (field_regex, "tokenize", {"url": "&5"}),
+                (field_regex, "tokenize", {"author": "&3"}),
             ],
             import_annotations=False,
             merge_duplicates=True,
         )
 
-# notre segmentation url
-        titleSeg = Segmenter.tokenize(
-            segmentation=genre_seg,
-            regexes=[
-                (field_regex, "tokenize", {"genre": "&1"})
-            ]
-            segmentation=work_seg,
-            regexes=[
-                (field_regex, "tokenize", {"title": "&2"}),
-            ]
-        )
 
         # Try to save list in this module"s directory for future reference...
         path = os.path.dirname(
