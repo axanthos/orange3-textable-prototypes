@@ -88,7 +88,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.operation = "no"
         self.applyInclusion = False
         self.applyExclusion = False
-        self.sampling = 100
+        self.applySampling = True 
+        self.samplingRate = 100
         self.createdInputs = list()
         self.folderLabels = list()
         self.selectedfolderLabels = list()
@@ -316,20 +317,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             ),
         )
         gui.separator(widget=addfolderBox, width=10)
-        # Combox Filter
-        #gui.comboBox(
-        #    widget=addfolderBox,
-        #    master=self,
-        #    value='operation',
-        #    items=["No filter","Include only","Exclude"],
-        #    sendSelectedValue=True,
-        #    orientation='horizontal',
-        #    callback=self.updateGUI,
-        #    tooltip=(
-        #        u"Filter"
-        #    ),
-        #)
-        #gui.separator(widget=addfolderBox, width=3)
+        
         # Filter choice to include only certain files or to exclude files
         # ------------
         # self.applyInclusion = False  à mettre dans le init
@@ -418,18 +406,20 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.checkBox(
             widget=samplingBoxLine1,
             master=self,
-            value='importfoldernames',
+            value='applySampling',
             label=u'Sampling',
             labelWidth=100,
+            disabled = False,
+            callback = lambda: samplingSpin.setDisabled(not self.applySampling), 
             tooltip=(
                 u"Choose the sampling level"
             ),
         )
         # Box to input the level of samplig, spin minv = 10 and maxv = 100
-        self.importfoldernamesKeyLineEdit = gui.spin(
+        samplingSpin = gui.spin(
             widget=samplingBoxLine1,
             master=self,
-            value='sampling',
+            value='samplingRate',
             minv = 10,
             maxv = 100,
             labelWidth=50,
@@ -1004,16 +994,18 @@ class OWTextableTextTree(OWTextableBaseWidget):
         folderPathList = re.split(r' +/ +', self.newFolderPath) #self.newFolderPath = name
 
         self.depth = str(self.max_depth)
-        self.inclusions = "tableau"
-        self.exclusions = "bleu"
+        self.inclusionsUser = ["marc"]
+        self.exclusionsUser = ["image","table"]
         self.samplingRate = "50%"
 
         for folderPath in folderPathList:
             # print(folderPath)
             self.folders.append((
                 self.newFolderPath,
-                depth,
-                options,
+                self.depth,
+                self.inclusions,
+                self.exclusions,
+                self.samplingRate,
                 folderPath,
                 # self.newAnnotationKey,
                 # self.newAnnotationValue,
