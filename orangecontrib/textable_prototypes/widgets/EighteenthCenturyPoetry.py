@@ -389,20 +389,6 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
                 }
             ).col_ids
             self.filterValues["author"].sort()
-            self.filterValues["year"] = Processor.count_in_context(
-                units={
-                    "segmentation": self.titleSeg,
-                    "annotation_key": "year"
-                }
-            ).col_ids
-            self.filterValues["year"].sort(key=lambda v: int(v))
-            self.filterValues["genre"] = Processor.count_in_context(
-                units={
-                    "segmentation": self.titleSeg,
-                    "annotation_key": "genre"
-                }
-            ).col_ids
-            self.filterValues["genre"].sort()
 
         # Sort the segmentation alphabetically based on titles (nasty hack!)...
         self.titleSeg.buffer.sort(key=lambda s: s.annotations["title"])
@@ -566,22 +552,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
                 specs.append(
                     self.filteredTitleSeg[idx].annotations["author"]
                 )
-            if (
-                self.displayAdvancedSettings == False or
-                self.filterCriterion != "year" or
-                self.filterValue == "(all)"
-            ):
-                specs.append(
-                    self.filteredTitleSeg[idx].annotations["year"]
-                )
-            if (
-                self.displayAdvancedSettings == False or
-                self.filterCriterion != "genre" or
-                self.filterValue == "(all)"
-            ):
-                specs.append(
-                    self.filteredTitleSeg[idx].annotations["genre"]
-                )
+
             titleLabels[idx] = titleLabel + " (%s)" % "; ".join(specs)
         self.titleLabels = titleLabels
 
