@@ -993,24 +993,24 @@ class OWTextableTextTree(OWTextableBaseWidget):
         """Add folders to folders attr"""
         folderPathList = re.split(r' +/ +', self.newFolderPath) #self.newFolderPath = name
 
-        self.depth = str(self.max_depth)
+        self.depth = str(1)
         self.inclusionsUser = ["marc"]
         self.exclusionsUser = ["image","table"]
-        self.samplingRate = "50%"
+        self.samplingRate = 100
 
         for folderPath in folderPathList:
-            # print(folderPath)
             self.folders.append((
-                self.newFolderPath,
+                self.folder,
                 self.depth,
-                self.inclusions,
-                self.exclusions,
+                self.inclusionsUser,
+                self.exclusionsUser,
                 self.samplingRate,
                 folderPath,
                 # self.newAnnotationKey,
                 # self.newAnnotationValue,
             ))
         self.sendButton.settingsChanged()
+        print(folderPathList)
 
     def updateGUI(self):
         """Update GUI state"""
