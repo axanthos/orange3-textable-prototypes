@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 """
-Class OWTextableTextfolders
+Class OWTextableTextTree
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This folder is part of the Orange-Textable package v3.0.
@@ -72,8 +72,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
     sampling =settings.Setting(100)
     autoNumber = settings.Setting(False)
     autoNumberKey = settings.Setting(u'num')
-    importfoldernames = settings.Setting(True)
-    importfoldernamesKey = settings.Setting(u'foldername')
+    importFilenames = settings.Setting(True)
+    importFilenamesKey = settings.Setting(u'filename')
     lastLocation = settings.Setting('.')
     displayAdvancedSettings = settings.Setting(False)
     folder = settings.Setting(u'')
@@ -92,11 +92,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.createdInputs = list()
         self.folderLabels = list()
         self.selectedfolderLabels = list()
-        self.newFolderPath = u''
+        self.folder = u''
         self.inclusionCondition = u''
         self.exclusionCondition = u''
-        self.newAnnotationKey = u''
-        self.newAnnotationValue = u''
+        # self.newAnnotationKey = u''
+        # self.newAnnotationValue = u''
         self.infoBox = InfoBox(widget=self.controlArea)
         # self.files_list = list() #output file list
 
@@ -288,7 +288,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.lineEdit(
             widget=addfolderBoxLine1,
             master=self,
-            value='newFolderPath',
+            value='folder',
             orientation='horizontal',
             label=u'Folder path(s):',
             labelWidth=101,
@@ -418,7 +418,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.checkBox(
             widget=samplingBoxLine1,
             master=self,
-            value='importfoldernames',
+            value='importFilenames',
             label=u'Sampling',
             labelWidth=100,
             tooltip=(
@@ -426,7 +426,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             ),
         )
         # Box to input the level of samplig, spin minv = 10 and maxv = 100
-        self.importfoldernamesKeyLineEdit = gui.spin(
+        self.importFilenamesKeyLineEdit = gui.spin(
             widget=samplingBoxLine1,
             master=self,
             value='sampling',
@@ -471,7 +471,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 #        gui.checkBox(
 #           widget=optionsBoxLine1,
 #            master=self,
-#           value='importfoldernames',
+#           value='importFilenames',
 #            label=u'Import folder names with key:',
 #           labelWidth=180,
 #            callback=self.sendButton.settingsChanged,
@@ -479,10 +479,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
 #                u"Import folder names as annotations."
 #           ),
 #        )
-#        self.importfoldernamesKeyLineEdit = gui.lineEdit(
+#        self.importFilenamesKeyLineEdit = gui.lineEdit(
 #            widget=optionsBoxLine1,
 #            master=self,
-#            value='importfoldernamesKey',
+#            value='importFilenamesKey',
 #            orientation='horizontal',
 #            callback=self.sendButton.settingsChanged,
 #            tooltip=(
@@ -609,7 +609,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         counter = 1
 
         if self.displayAdvancedSettings:
-            myFolders = self.files_list
+            # print([self.files_list])
+            myFolders = [self.files_list]
         else:
             myFolders = [[self.folder]]
 
@@ -621,15 +622,12 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # Walk through each folder and open each files successively...
 
         for myFolder in myFolders:
-            self.newFolderPath = myFolder[0]
+            # self.folder = myFolder[0]
             self.walkThroughDirectory()
+            print(myFolder)
+
             # OLD VERSION Try to open the file
-            # try:
-            #     file_path = myFile[0]
-            # except TypeError:
-            #     pass
-            #
-            # encodings = getPredefinedEncodings()
+
             # with open(file_path,'rb') as opened_file:
             #     fileContent = ""
             #     i = 0
@@ -673,9 +671,21 @@ class OWTextableTextTree(OWTextableBaseWidget):
             # print(self.fileContents)
             fileContents = self.fileContents
             # Annotations...
-            # annotation = dict()
-            # annotations.append(annotation)
-            # progressBar.advance()
+            annotation = dict()
+            annotation_key = "test_key"
+            annotation_value = "test_value"
+
+            if annotation_key and annotation_value:
+                annotation[annotation_key] = annotation_value
+
+            if self.importFilenames and self.importFilenamesKey:
+                filename = os.path.basename(self.folder)
+                annotation[self.importFilenamesKey] = filename
+                print(annotation)
+
+            annotations.append(annotation)
+            print(annotations)
+            progressBar.advance()
 
         # Create an LTTL.Input for each files...
             # print(self.fileContents)
@@ -688,9 +698,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 print(str(index))
                 myInput = Input(fileContents[index], label)
                 segment = myInput[0]
-                # segment.annotations.update(annotations[index])
+                segment.annotations.update(annotations[0])
                 myInput[0] = segment
                 self.createdInputs.append(myInput)
+                # print(self.createdInputs)
 
             # If there's only one file, the widget's output is the created Input.
             if len(fileContents) == 1:
@@ -790,7 +801,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
     def exportList(self):
         """Display a folderDialog and export folder list"""
         toDump = list()
-        for myFolder in self.folders:
+        myFolders = self.folders
+        for myFolder in myFolders:
             toDump.append({
                 'path': myFolder[0],
                 'encoding': myFolder[1],
@@ -829,11 +841,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
         inclusion_list = [""] #by default empty list
         exclusion_list = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".DS_Store"] # by default exclusions : img files, .DS_Store (macOS)
 
-        root_path = os.path.normpath(self.newFolderPath)
+        root_path = os.path.normpath(self.folder)
         initial_parent_path, _ = os.path.split(root_path)
-        print(root_path+"\n____________________\n")
+        # print(root_path+"\n____________________\n")
 
-        self.files_list = [] #output file list
+        self.files_list = list() #output file list
         depth_list = list()
 
         for curr_path, dirnames, filenames in os.walk(root_path):
@@ -852,7 +864,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
                 annotations = curr_rel_path_list[:] # annotations are different subfolders browsed
                 complete_annotations = annotations[:]
-                max_depth = 0
+                self.max_depth = 0
 
                 for i in inclusion_list: #i = inclusionElement
 
@@ -877,11 +889,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
                             self.files_list.append(complete_annotations)
 
         if self.files_list:
-            max_depth = max(depth_list)
-            self.files_list.append(max_depth)
+            # print(depth_list)
+            self.max_depth = max(depth_list)
+            # print(self.max_depth)
+            self.files_list.append(self.max_depth)
             self.openFileList()
         else:
-            print("No file matching condition was found")
+            # print("No file matching condition was found")
+            pass
 
     def openFileList(self):
         self.fileContents = list()
@@ -898,15 +913,17 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 charset_dict = chardet.detect(fileContent)
                 detected_encoding = charset_dict['encoding']
 
+                # i = 0
+                # chunks = list()
                 # for chunk in iter(lambda: opened_file.read(CHUNK_LENGTH), ""):
                 #     chunks.append('\n'.join(chunk.splitlines()))
                 #     i += CHUNK_LENGTH
                 #     if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
-                #         fileContent += "".join(chunks)
+                #         fileContent += "".join(str(chunks)
                 #         chunks = list()
                 #
                 # if len(chunks):
-                #     fileContent += "".join(chunks)
+                #     fileContent += "".join(str(chunks))
                 # del chunks
 
                 try:
@@ -922,7 +939,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     except:
                         pass
 
-                # print(self.segmentation_text) #this will be the Segmentation for Output
 
                 # fileContent = normalize('NFC', str(fileContent))
                 # fileContents.append(fileContent)
@@ -934,7 +950,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # print(self.fileContents)
 
     def browse(self):
-        """Display a folderDialog and select a folder"""
+        """Display a QFileDialog and select a folder"""
         if self.displayAdvancedSettings:
             folderPathList = QFileDialog.getExistingDirectory(    #Use QFileDialog.getExistingDirectory
                 self,
@@ -944,7 +960,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             if not folderPathList:
                 return
             folderPathList = [os.path.normpath(f) for f in folderPathList]
-            self.newFolderPath = u''.join(folderPathList)
+            self.folder = u''.join(folderPathList)
             # self.walkThroughDirectory()
             self.lastLocation = os.path.dirname(folderPathList[-1])
             self.updateGUI()
@@ -956,9 +972,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
             )
             if not folderPath:
                 return
-            self.newFolderPath = u''.join(folderPath)
-            self.walkThroughDirectory()
             self.folder = os.path.normpath(folderPath)
+            print("self.folder="+self.folder)
+            self.walkThroughDirectory()
             self.lastLocation = os.path.dirname(folderPath)
             self.updateGUI()
             self.sendButton.settingsChanged()
@@ -1001,9 +1017,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
     def add(self):
         """Add folders to folders attr"""
-        folderPathList = re.split(r' +/ +', self.newFolderPath) #self.newFolderPath = name
-
-        self.depth = str(self.max_depth)
+        folderPathList = re.split(r' +/ +', self.folder) #self.folder = name
+        self.walkThroughDirectory()
+        # print(self.files_list)
+        self.depth = self.max_depth
         self.inclusions = "tableau"
         self.exclusions = "bleu"
         self.samplingRate = "50%"
@@ -1011,12 +1028,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
         for folderPath in folderPathList:
             # print(folderPath)
             self.folders.append((
-                self.newFolderPath,
-                depth,
-                options,
-                folderPath,
-                # self.newAnnotationKey,
-                # self.newAnnotationValue,
+                self.folder,
+                self.depth,
+                self.inclusions,
+                self.exclusions,
+                self.samplingRate,
             ))
         self.sendButton.settingsChanged()
 
@@ -1028,13 +1044,15 @@ class OWTextableTextTree(OWTextableBaseWidget):
             else:
                 cachedLabel = None
             del self.folderLabels[:]
-            print(self.folders)
+            # print(self.folders)
             if self.folders:
                 folderPaths = [f[0] for f in self.folders]
                 foldernames = [os.path.basename(p) for p in folderPaths]
                 encodings = [f[1] for f in self.folders]
                 depth = ['%s' % f[2] for f in self.folders]
                 annotations = ['%s' % f[3] for f in self.folders]
+                print("annotationS :")
+                print(annotations)
                 maxfoldernameLen = max([len(n) for n in foldernames])
                 maxAnnoLen = max([len(a) for a in annotations])
 
@@ -1047,7 +1065,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                             folderLabel += format % annotations[index]
                         else:
                             folderLabel += u' ' * (maxAnnoLen + 2)
-                    folderLabel += encodings[index]
+                    folderLabel += str(encodings[index])
                     self.folderLabels.append(folderLabel)
             self.folderLabels = self.folderLabels
             if cachedLabel is not None:
@@ -1056,7 +1074,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     cachedLabel
                 ).setSelected(1)
                 self.sendButton.sendIfPreCallback = self.updateGUI
-            if self.newFolderPath:
+            if self.folder:
                 if (
                     (self.newAnnotationKey and self.newAnnotationValue) or
                     (not self.newAnnotationKey and not self.newAnnotationValue)
@@ -1070,10 +1088,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.autoNumberKeyLineEdit.setDisabled(False)
             else:
                 self.autoNumberKeyLineEdit.setDisabled(True)
-            if self.importfoldernames:
-                self.importfoldernamesKeyLineEdit.setDisabled(False)
+            if self.importFilenames:
+                self.importFilenamesKeyLineEdit.setDisabled(False)
             else:
-                self.importfoldernamesKeyLineEdit.setDisabled(True)
+                self.importFilenamesKeyLineEdit.setDisabled(True)
             self.updatefolderBoxButtons()
             self.advancedSettings.setVisible(True)
         else:
