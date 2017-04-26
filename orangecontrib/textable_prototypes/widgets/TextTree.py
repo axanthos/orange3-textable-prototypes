@@ -72,8 +72,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
     sampling =settings.Setting(100)
     autoNumber = settings.Setting(False)
     autoNumberKey = settings.Setting(u'num')
-    importFilenames = settings.Setting(True)
-    importFilenamesKey = settings.Setting(u'filename')
+
+    importFolderName = settings.Setting(True)
+    importFolderNameKey = settings.Setting(u'foldername')
+    importFileNameKey = settings.Setting(u'filename')
+    FolderDepth1Key = settings.Setting(u'depth1')
+    FolderDepth2Key = settings.Setting(u'depth2')
+    FolderMaxDepthLvl = settings.Setting(u'maxdepth')
+
     lastLocation = settings.Setting('.')
     displayAdvancedSettings = settings.Setting(False)
     folder = settings.Setting(u'')
@@ -665,20 +671,35 @@ class OWTextableTextTree(OWTextableBaseWidget):
             # print(self.fileContents)
             fileContents = self.fileContents
             # Annotations...
-            annotation = dict()
-            annotation_key = "test_key"
-            annotation_value = "test_value"
+            print(self.files_list)
+            myFiles = self.files_list
 
-            if annotation_key and annotation_value:
-                annotation[annotation_key] = annotation_value
+            for myFile in myFiles:
 
-            if self.importFilenames and self.importFilenamesKey:
-                filename = os.path.basename(self.folder)
-                annotation[self.importFilenamesKey] = filename
-                print(annotation)
+                print(myFile)
+                annotation = dict()
 
-            annotations.append(annotation)
-            print(annotations)
+                if self.importFileNameKey:
+                    folderName = myFile[-2]
+                    annotation[self.importFileNameKey] = folderName
+
+                if self.importFolderName and self.importFolderNameKey:
+                    folderName = myFile[1]
+                    annotation[self.importFolderNameKey] = folderName
+
+                if self.FolderDepth1Key:
+                    folderDepth1 = myFile[2]
+                    annotation[self.FolderDepth1Key] = folderDepth1
+
+                if self.FolderDepth2Key:
+                    folderDepth2 = myFile[3]
+                    annotation[self.FolderDepth2Key] = folderDepth2
+
+                if self.FolderMaxDepthLvl:
+                    FolderMaxDepthLvl = myFile[-1]
+                    annotation[self.FolderMaxDepthLvl] = FolderMaxDepthLvl
+
+                annotations.append(annotation)
             progressBar.advance()
 
         # Create an LTTL.Input for each files...
@@ -692,7 +713,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 print(str(index))
                 myInput = Input(fileContents[index], label)
                 segment = myInput[0]
-                segment.annotations.update(annotations[0])
+                segment.annotations.update(annotations[index])
                 myInput[0] = segment
                 self.createdInputs.append(myInput)
                 # print(self.createdInputs)
@@ -886,7 +907,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             # print(depth_list)
             self.max_depth = max(depth_list)
             # print(self.max_depth)
-            self.files_list.append(self.max_depth)
+            # self.files_list.append(self.max_depth)
             self.openFileList()
         else:
             # print("No file matching condition was found")
@@ -1049,8 +1070,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 encodings = [f[1] for f in self.folders]
                 depth = ['%s' % f[2] for f in self.folders]
                 annotations = ['%s' % f[3] for f in self.folders]
-                print("annotationS :")
-                print(annotations)
                 maxfoldernameLen = max([len(n) for n in foldernames])
                 maxAnnoLen = max([len(a) for a in annotations])
 
