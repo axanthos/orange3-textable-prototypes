@@ -73,6 +73,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
     autoNumber = settings.Setting(False)
     autoNumberKey = settings.Setting(u'num')
 
+    importFilenames = settings.Setting(True)
     importFolderName = settings.Setting(True)
     importFolderNameKey = settings.Setting(u'foldername')
     importFileNameKey = settings.Setting(u'filename')
@@ -102,8 +103,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.folder = u''
         self.inclusionCondition = u''
         self.exclusionCondition = u''
-        # self.newAnnotationKey = u''
-        # self.newAnnotationValue = u''
+        self.newAnnotationKey = u''
+        self.newAnnotationValue = u''
         self.infoBox = InfoBox(widget=self.controlArea)
         # self.files_list = list() #output file list
 
@@ -609,8 +610,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         counter = 1
 
         if self.displayAdvancedSettings:
-            # print([self.files_list])
-            myFolders = [self.files_list]
+            myFolders = self.folders
+            # print(myFolders)
         else:
             myFolders = [[self.folder]]
 
@@ -700,7 +701,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     annotation[self.FolderMaxDepthLvl] = FolderMaxDepthLvl
 
                 annotations.append(annotation)
-            progressBar.advance()
+            # progressBar.advance()
 
         # Create an LTTL.Input for each files...
             # print(self.fileContents)
@@ -856,6 +857,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         inclusion_list = [""] #by default empty list
         exclusion_list = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".DS_Store"] # by default exclusions : img files, .DS_Store (macOS)
 
+        # print(self.folder)
         root_path = os.path.normpath(self.folder)
         initial_parent_path, _ = os.path.split(root_path)
         # print(root_path+"\n____________________\n")
@@ -870,6 +872,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
     	#symlink non traités
 
             curr_rel_path = curr_path[len(initial_parent_path)+1:] #defines current relative path by similar initial parent path part
+            # print(curr_rel_path)
             curr_rel_path_list = os.path.normpath(curr_rel_path).split(os.sep) #splits current relative path by os separator
 
 
@@ -976,7 +979,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 return
             folderPathList = [os.path.normpath(f) for f in folderPathList]
             self.folder = u''.join(folderPathList)
-            # self.walkThroughDirectory()
+            self.walkThroughDirectory()
             self.lastLocation = os.path.dirname(folderPathList[-1])
             self.updateGUI()
         else:
@@ -1033,14 +1036,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
     def add(self):
         """Add folders to folders attr"""
 
-        folderPathList = re.split(r' +/ +', self.newFolderPath) #self.newFolderPath = name
+        folderPathList = re.split(r' +/ +', self.folder) #self.folder = name
         self.walkThroughDirectory()
         self.depth = str(1)
         self.inclusionsUser = ["marc"]
         self.exclusionsUser = ["image","table"]
         self.samplingRate = 100
 
-
+        self.folders = list()
         for folderPath in folderPathList:
             self.folders.append((
                 self.folder,
@@ -1048,9 +1051,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.inclusionsUser,
                 self.exclusionsUser,
                 self.samplingRate,
-                folderPath,
-                # self.newAnnotationKey,
-                # self.newAnnotationValue,
+                # folderPath,
+                self.newAnnotationKey,
+                self.newAnnotationValue,
             ))
         self.sendButton.settingsChanged()
         # print(folderPathList)
@@ -1105,10 +1108,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.autoNumberKeyLineEdit.setDisabled(False)
             else:
                 self.autoNumberKeyLineEdit.setDisabled(True)
-            if self.importFilenames:
-                self.importFilenamesKeyLineEdit.setDisabled(False)
-            else:
-                self.importFilenamesKeyLineEdit.setDisabled(True)
+            # if self.importFilenames:
+            #     self.importFilenamesKeyLineEdit.setDisabled(False)
+            # else:
+            #     self.importFilenamesKeyLineEdit.setDisabled(True)
             self.updatefolderBoxButtons()
             self.advancedSettings.setVisible(True)
         else:
