@@ -16,7 +16,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.2"
+__version__ = u"0.1.1"
 __author__ = "Dat & Adriano"
 __maintainer__ = "Aris Xanthos"
 __email__ = "frankdattai.pham@unil.ch"
