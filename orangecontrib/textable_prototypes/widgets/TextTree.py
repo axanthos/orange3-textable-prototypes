@@ -78,7 +78,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
     importFileNameKey = settings.Setting(u'filename')
     FolderDepth1Key = settings.Setting(u'depth1')
     FolderDepth2Key = settings.Setting(u'depth2')
-    FolderMaxDepthLvl = settings.Setting(u'maxdepth')
+    FolderDepthLvl = settings.Setting(u'depth level')
 
     lastLocation = settings.Setting('.')
     displayAdvancedSettings = settings.Setting(False)
@@ -104,8 +104,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.exclusionsUser = u''
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
-        self.inclusionList = [""] #by default empty list
-        # self.inclusionList = [".txt",".html",".xml"] #by default empty list
+        self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a a folder
+        # self.inclusionList = [""] #by default empty list
+        self.inclusionList = [".txt",".html",".xml"] #by default empty list
 
         self.newInclusionList = list()
         self.newExclusionList = list()
@@ -149,7 +150,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.lineEdit(
             widget=basicfolderBoxLine1,
             master=self,
-            value='folder',
+            value='rootFolderPath',
             orientation='horizontal',
             label=u'Folder path:',
             labelWidth=101,
@@ -302,7 +303,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.lineEdit(
             widget=addfolderBoxLine1,
             master=self,
-            value='folder',
+            value='rootFolderPath',
             orientation='horizontal',
             label=u'Folder path:',
             labelWidth=101,
@@ -595,18 +596,18 @@ class OWTextableTextTree(OWTextableBaseWidget):
             return
 
         # Check that autoNumberKey is not empty (if necessary)...
-        # if self.displayAdvancedSettings and self.autoNumber:
-        #     if self.autoNumberKey:
-        #         autoNumberKey = self.autoNumberKey
-        #     else:
-        #         self.infoBox.setText(
-        #             u'Please enter an annotation key for auto-numbering.',
-        #             'warning'
-        #         )
-        #         self.send('Text data', None, self)
-        #         return
-        # else:
-        #     autoNumberKey = None
+        if self.displayAdvancedSettings and self.autoNumber:
+            if self.autoNumberKey:
+                autoNumberKey = self.autoNumberKey
+            else:
+                self.infoBox.setText(
+                    u'Please enter an annotation key for auto-numbering.',
+                    'warning'
+                )
+                self.send('Text data', None, self)
+                return
+        else:
+            autoNumberKey = None
 
         # Clear created Inputs...
         self.clearCreatedInputs()
@@ -628,81 +629,125 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # Walk through each folder and open each files successively...
 
         for myFolder in myFolders:
-            print(myFolder)
+            # self.rootFolderPath = myFolder[0]
+
+            # OLD VERSION Try to open the file
+
+            # with open(file_path,'rb') as opened_file:
+            #     fileContent = ""
+            #     i = 0
+            #
+            #     text = opened_file.read()
+            #     charset_dict = chardet.detect(text)
+            #     detected_encoding = charset_dict['encoding']
+            #
+            #     #Chunking is necessary when opening large files
+            #     chunks = list()
+            #     for chunk in iter(lambda: opened_file.read(CHUNK_LENGTH), ""):
+            #         chunks.append('\n'.join(chunk.splitlines()))
+            #         i += CHUNK_LENGTH
+            #         if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+            #             fileContent += "".join(chunks)
+            #             chunks = list()
+            #
+            #     if len(chunks):
+            #         fileContent += "".join(chunks)
+            #     del chunks
+            #
+            #     try:
+            #         encodings.remove(detected_encoding)
+            #         encodings.insert(0,detected_encoding)
+            #
+            #     except ValueError:
+            #         pass
+            #
+            #     for encoding in encodings:
+            #         try:
+            #             self.segmentation_text = text.decode(encoding)
+            #         except:
+            #             pass
+            #
+            #     self.fileContent.append(self.segmentation_text)
+            #
+            # # Normalize text (canonical decomposition then composition)...
+            #     fileContent = normalize('NFC', fileContent)
+            #     fileContents.append(fileContent)
+            fileContents = self.fileContents
+
             # Annotations...
-            myFiles = self.fileList
+            myFolders = self.folders
+            for myFolder in myFolders:
+                myFiles = myFolder['fileList']
 
-            for myFile in myFiles:
-                print(myFile)
+                for myFile in myFiles:
+                    print(myFile)
+                    annotation = dict()
 
-                annotation = dict()
+                    if self.importFileNameKey:
+                        folderName = myFile[-2]
+                        annotation[self.importFileNameKey] = folderName
 
-                if self.importFileNameKey:
-                    folderName = myFile[-2]
-                    annotation[self.importFileNameKey] = folderName
+                    if self.importFolderNameKey:
+                        folderName = myFile[1]
+                        annotation[self.importFolderNameKey] = folderName
 
-                if self.importFolderNameKey:
-                    folderName = myFile[1]
-                    annotation[self.importFolderNameKey] = folderName
+                    if self.FolderDepth1Key:
+                        folderDepth1 = myFile[2]
+                        annotation[self.FolderDepth1Key] = folderDepth1
 
-                if self.FolderDepth1Key:
-                    folderDepth1 = myFile[2]
-                    annotation[self.FolderDepth1Key] = folderDepth1
+                    if self.FolderDepth2Key:
+                        folderDepth2 = myFile[3]
+                        annotation[self.FolderDepth2Key] = folderDepth2
 
-                if self.FolderDepth2Key:
-                    folderDepth2 = myFile[3]
-                    annotation[self.FolderDepth2Key] = folderDepth2
+                    if self.FolderDepthLvl:
+                        FolderDepthLvl = myFile[-1]
+                        annotation[self.FolderDepthLvl] = FolderDepthLvl
 
-                if self.FolderMaxDepthLvl:
-                    FolderMaxDepthLvl = myFile[-1]
-                    annotation[self.FolderMaxDepthLvl] = FolderMaxDepthLvl
+                    annotations.append(annotation)
+                # progressBar.advance()
 
-                annotations.append(annotation)
-            # progressBar.advance()
+            # Create an LTTL.Input for each files...
 
-        # Create an LTTL.Input for each files...
+                if len(fileContents) == 1:
+                    label = self.captionTitle
+                else:
+                    label = None
+                for index in range(len(fileContents)):
+                    myInput = Input(fileContents[index], label)
+                    segment = myInput[0]
+                    segment.annotations.update(annotations[index])
+                    myInput[0] = segment
+                    self.createdInputs.append(myInput)
 
-            if len(fileContents) == 1:
-                label = self.captionTitle
-            else:
-                label = None
-            for index in range(len(fileContents)):
-                myInput = Input(fileContents[index], label)
-                segment = myInput[0]
-                segment.annotations.update(annotations[index])
-                myInput[0] = segment
-                self.createdInputs.append(myInput)
+                # If there's only one file, the widget's output is the created Input.
+                if len(fileContents) == 1:
+                    self.segmentation = self.createdInputs[0]
 
-            # If there's only one file, the widget's output is the created Input.
-            if len(fileContents) == 1:
-                self.segmentation = self.createdInputs[0]
+                # Otherwise the widget's output is a concatenation...
+                else:
+                    self.segmentation = Segmenter.concatenate(
+                        segmentations=self.createdInputs,
+                        label=self.captionTitle,
+                        copy_annotations=True,
+                        import_labels_as=None,
+                        sort=False,
+                        auto_number_as=None,
+                        merge_duplicates=False,
+                        progress_callback=None,
+                    )
+                message = u'%i segment@p sent to output ' % len(self.segmentation)
+                message = pluralize(message, len(self.segmentation))
+                numChars = 0
+                for segment in self.segmentation:
+                    segmentLength = len(Segmentation.get_data(segment.str_index))
+                    numChars += segmentLength
+                message += u'(%i character@p).' % numChars
+                message = pluralize(message, numChars)
+                self.infoBox.setText(message)
+                progressBar.finish()
 
-            # Otherwise the widget's output is a concatenation...
-            else:
-                self.segmentation = Segmenter.concatenate(
-                    segmentations=self.createdInputs,
-                    label=self.captionTitle,
-                    copy_annotations=True,
-                    import_labels_as=None,
-                    sort=False,
-                    auto_number_as=None,
-                    merge_duplicates=False,
-                    progress_callback=None,
-                )
-            message = u'%i segment@p sent to output ' % len(self.segmentation)
-            message = pluralize(message, len(self.segmentation))
-            numChars = 0
-            for segment in self.segmentation:
-                segmentLength = len(Segmentation.get_data(segment.str_index))
-                numChars += segmentLength
-            message += u'(%i character@p).' % numChars
-            message = pluralize(message, numChars)
-            self.infoBox.setText(message)
-            progressBar.finish()
-
-            self.send('Text data', self.segmentation, self)
-            print(self.segmentation.to_string())
-            self.sendButton.resetSettingsChangedFlag()
+                self.send('Text data', self.segmentation, self)
+                self.sendButton.resetSettingsChangedFlag()
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -814,8 +859,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.fileList = list() #output file list
         newInclusionList = self.newInclusionList
         newExclusionList = self.newExclusionList
-        depthList = list()
 
+        depthList = list()
         for curr_path, dirnames, filenames in os.walk(self.rootFolderPath):
     	#curr_path is a STRING, the path to the directory.
     	#dirnames is a LIST of the names of subdirectories.
@@ -831,7 +876,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
                 annotations = curr_rel_path_list[:] # annotations are different subfolders browsed
                 complete_annotations = annotations[:]
-                self.maxDepth = 0
 
                 for i in newInclusionList: #i = inclusionElement
 
@@ -860,18 +904,17 @@ class OWTextableTextTree(OWTextableBaseWidget):
                             complete_annotations.append(curr_depth)
                             self.fileList.append(complete_annotations)
 
-        self.fileContents = list()
         if self.fileList:
             self.maxDepth = max(depthList)
             self.openFileList()
         else:
-            self.maxDepth = 0
             pass
+        # print(self.fileList)
 
     def openFileList(self):
-        # self.fileContents = list()
+        self.fileContents = list()
         for file in self.fileList:
-            self.fileContent = ""
+            fileContent = ""
             try:
                 file_path = file[0]
             except TypeError:
@@ -909,6 +952,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                         self.fileContent = fileContent.decode(encoding)
                     except:
                         pass
+
 
                 # fileContent = normalize('NFC', str(fileContent))
                 # fileContents.append(fileContent)
@@ -983,11 +1027,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.newInclusionList = list()
         self.newExclusionList = list()
 
-        self.inclusionsUserList = self.inclusionsUser.split(",")
-        self.exclusionsUserList = self.exclusionsUser.split(",")
+        inclusionsUser = self.inclusionsUser
+        exclusionsUser = self.exclusionsUser
 
-        self.newInclusionList = self.inclusionList + self.inclusionsUserList
-        self.newExclusionList = self.exclusionList + self.exclusionsUserList
+        self.inclusionsUserAsList = inclusionsUser.split(",")
+        self.exclusionsUserAsList = exclusionsUser.split(",")
+
+        self.newInclusionList = self.inclusionList + self.inclusionsUserAsList
+        self.newExclusionList = self.exclusionList + self.exclusionsUserAsList
 
         # print(self.newInclusionList)
         # print(self.newExclusionList)
@@ -995,30 +1042,18 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.getFileList()
 
         # self.doSampling()
-        self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a a folder
-        if self.displayAdvancedSettings:
-            self.folders.append(
-                {
-                'rootPath' : self.rootFolderPath,
-                'maxDepth' : self.maxDepth,
-                'inclusionsUser' : self.inclusionsUser,
-                'exclusionsUser' : self.exclusionsUser,
-                'samplingRate' : self.samplingRate,
-                'fileList' : self.fileList,
-                }
-            )
-        else:
-            self.folders.append(
-                {
-                'rootPath' : self.rootFolderPath,
-                'maxDepth' : 0,
-                'inclusionsUser' : [],
-                'exclusionsUser' : [],
-                'samplingRate' : 100,
-                'fileList' : self.fileList,
-                }
-            )
 
+        self.folders.append(
+            {
+            'rootPath' : self.rootFolderPath,
+            'maxDepth' : self.maxDepth,
+            'inclusionsUser' : self.inclusionsUser,
+            'exclusionsUser' : self.exclusionsUser,
+            'samplingRate' : self.samplingRate,
+            'fileList' : self.fileList,
+            }
+        )
+        # print(self.folders)
         self.sendButton.settingsChanged()
 
         # for folderDict in self.folders:
@@ -1037,7 +1072,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 folderRootPathsList = [f['rootPath'] for f in self.folders]
                 maxDepthList = ['%s' % f['maxDepth'] for f in self.folders]
                 inclusionsUserList = [f['inclusionsUser'] for f in self.folders]
-                print(inclusionsUserList)
+                # print(inclusionsUserList)
                 exclusionsUserList = [f['exclusionsUser'] for f in self.folders]
                 samplingRatesList = ['%s' % f['samplingRate'] for f in self.folders]
                 folderNamesList = [os.path.basename(p) for p in folderRootPathsList]
@@ -1047,7 +1082,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     format = u'%-' + str(maxFolderNameLen + 2) + u's'
                     # folderLabel = format % folderNamesList[index],
                     folderLabel = format % folderNamesList[index]
-                    self.folderLabels.append(folderLabel)
+                    # print(inclusionsUserList[index])
                     folderLabel += "[d]:{"+maxDepthList[index]+"} "
                     folderLabel += "[i]:{"+inclusionsUserList[index]+"} "
                     folderLabel += "[e]:{"+exclusionsUserList[index]+"} "
