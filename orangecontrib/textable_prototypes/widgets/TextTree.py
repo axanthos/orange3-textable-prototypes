@@ -680,7 +680,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 myFiles = myFolder['fileList']
 
                 for myFile in myFiles:
-                    print(myFile)
+                    # print(myFile)
                     annotation = dict()
 
                     if self.importFileNameKey:
