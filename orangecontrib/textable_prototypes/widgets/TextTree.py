@@ -298,15 +298,12 @@ class OWTextableTextTree(OWTextableBaseWidget):
             master=self,
             value='folder',
             orientation='horizontal',
-            label=u'Folder path(s):',
+            label=u'Folder path:',
             labelWidth=101,
             callback=self.updateGUI,
             tooltip=(
-                u"The paths of the folders that will be added to the\n"
-                u"list when button 'Add' is clicked.\n\n"
-                u"Successive paths must be separated with ' / ' \n"
-                u"(whitespace + slash + whitespace). Their order in\n"
-                u"the list will be the same as in this field."
+                u"The paths of the folder that will be added to the\n"
+                u"list when button 'Add' is clicked."
             ),
         )
         gui.separator(widget=addfolderBoxLine1, width=5)
@@ -327,7 +324,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # Filter choice to include only certain files or to exclude files
         # ------------
-        # self.applyInclusion = False  à mettre dans le init
+        # self.applyInclusion = False à mettre dans le init
         # gui.checkbox()
         # callback = lambda t=self.applyInclusion : includeLineEdit.setDisabled(not t)
         # includeLineEdit = gui.lineEdit()
@@ -624,7 +621,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         for myFolder in myFolders:
             # self.folder = myFolder[0]
-            self.walkThroughDirectory()
+            self.getFileList()
             # print(myFolder)
 
             # OLD VERSION Try to open the file
@@ -701,7 +698,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     annotation[self.FolderMaxDepthLvl] = FolderMaxDepthLvl
 
                 annotations.append(annotation)
-            # progressBar.advance()
+            progressBar.advance()
 
         # Create an LTTL.Input for each files...
             # print(self.fileContents)
@@ -853,10 +850,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 QMessageBox.Ok
             )
 
-    def walkThroughDirectory(self):
-        inclusion_list = [""] #by default empty list
-        exclusion_list = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".DS_Store"] # by default exclusions : img files, .DS_Store (macOS)
-
+    def getFileList(self):
+        inclusion_list = [".txt",".xml",".csv",".html"] #by default empty list
+        exclusion_list = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".xls",".xlsx",".doc",".docx",".DS_Store"] # by default exclusions : img files,Excel .DS_Store (macOS)
         # print(self.folder)
         root_path = os.path.normpath(self.folder)
         initial_parent_path, _ = os.path.split(root_path)
@@ -874,7 +870,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
             curr_rel_path = curr_path[len(initial_parent_path)+1:] #defines current relative path by similar initial parent path part
             # print(curr_rel_path)
             curr_rel_path_list = os.path.normpath(curr_rel_path).split(os.sep) #splits current relative path by os separator
-
 
             for filename in filenames:
                 prev_non_excl_check = True
@@ -970,7 +965,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
     def browse(self):
         """Display a QFileDialog and select a folder"""
         if self.displayAdvancedSettings:
-            folderPathList = QFileDialog.getExistingDirectory(    #Use QFileDialog.getExistingDirectory
+            folderPathList = QFileDialog.getExistingDirectory(
                 self,
                 u'Select Folder(s)',
                 self.lastLocation,
@@ -978,8 +973,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
             if not folderPathList:
                 return
             folderPathList = [os.path.normpath(f) for f in folderPathList]
+
             self.folder = u''.join(folderPathList)
-            self.walkThroughDirectory()
+            self.getFileList()
             self.lastLocation = os.path.dirname(folderPathList[-1])
             self.updateGUI()
         else:
@@ -992,7 +988,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 return
             self.folder = os.path.normpath(folderPath)
             # print("self.folder="+self.folder)
-            self.walkThroughDirectory()
+            self.getFileList()
             self.lastLocation = os.path.dirname(folderPath)
             self.updateGUI()
             self.sendButton.settingsChanged()
@@ -1036,14 +1032,12 @@ class OWTextableTextTree(OWTextableBaseWidget):
     def add(self):
         """Add folders to folders attr"""
 
-        folderPathList = re.split(r' +/ +', self.folder) #self.folder = name
-        self.walkThroughDirectory()
-        self.depth = str(1)
-        self.inclusionsUser = ["marc"]
-        self.exclusionsUser = ["image","table"]
-        self.samplingRate = 100
+        self.getFileList()
+        # self.depth = str(1)
+        # self.inclusionsUser = [".html",".txt"]
+        # self.exclusionsUser = ["image","table"]
+        # self.samplingRate = 100
 
-        self.folders = list()
         for folderPath in folderPathList:
             self.folders.append((
                 self.folder,
@@ -1051,12 +1045,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.inclusionsUser,
                 self.exclusionsUser,
                 self.samplingRate,
-                # folderPath,
                 self.newAnnotationKey,
                 self.newAnnotationValue,
             ))
+
         self.sendButton.settingsChanged()
-        # print(folderPathList)
 
     def updateGUI(self):
         """Update GUI state"""
