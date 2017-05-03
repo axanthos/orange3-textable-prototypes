@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from __future__ import unicode_literals
 
 """
@@ -29,6 +31,10 @@ from PyQt4.QtGui import QFont
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
+
+import random
+import math
+
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
@@ -334,7 +340,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # Filter choice to include only certain files or to exclude files
         # ------------
-        # self.applyInclusion = False  à mettre dans le init
+        # self.applyInclusion = False  a mettre dans le init
         # gui.checkbox()
         # callback = lambda t=self.applyInclusion : includeLineEdit.setDisabled(not t)
         # includeLineEdit = gui.lineEdit()
@@ -865,7 +871,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
     	#curr_path is a STRING, the path to the directory.
     	#dirnames is a LIST of the names of subdirectories.
     	#filenames is a LIST of the names of the non directory files in curr_path
-    	#symlink non traités
+    	#symlink non traites
 
             curr_rel_path = curr_path[len(initialRootParentPath)+1:] #defines current relative path by similar initial parent path part
             curr_rel_path_list = os.path.normpath(curr_rel_path).split(os.sep) #splits current relative path by os separator
@@ -904,7 +910,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
                             complete_annotations.append(curr_depth)
                             self.fileList.append(complete_annotations)
 
-        if self.fileList:
+        # first negation converts list to boolean and is false if the list is empty => double negation
+        if not not self.fileList:
             self.maxDepth = max(depthList)
             self.openFileList()
         else:
@@ -1041,7 +1048,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         self.getFileList()
 
-        # self.doSampling()
+        sampleFileList = self.sampleFileList()
 
         self.folders.append(
             {
@@ -1050,7 +1057,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             'inclusionsUser' : self.inclusionsUser,
             'exclusionsUser' : self.exclusionsUser,
             'samplingRate' : self.samplingRate,
-            'fileList' : self.fileList,
+            'fileList' : sampleFileList,
             }
         )
         # print(self.folders)
@@ -1058,6 +1065,24 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # for folderDict in self.folders:
         #     fileList = folderDict['fileList']
+
+    def sampleFileList(self):
+
+        # Utilisation de la variable fileList
+        # On fait une copie pour eviter de modifier self.fileList avec shuffle plus bas
+        myList = list(self.fileList)
+
+        # Initialisation d'un parametre qui decidera de l'echantillonage
+        samplePercentage = self.samplingRate / 100.0
+        print(samplePercentage)
+
+        # On melange la liste pour prendre ensuite les "samplePercentage" premiers
+        random.shuffle(myList)
+
+        # On definit le nombre de fichiers voulus selon le parametre d'echantillonage "samplePercentage", arrondi au superieur
+        nOfFiles = int(math.ceil(len(myList) * samplePercentage))
+        # On prend les "nOfFiles" premiers fichiers de la liste melangee
+        return myList[:nOfFiles]
 
     def updateGUI(self):
         """Update GUI state"""
