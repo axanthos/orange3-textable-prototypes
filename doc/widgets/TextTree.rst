@@ -11,12 +11,12 @@ Text Tree
 
 .. image:: figures/textTree.png
 
-Allow to import a complete tree of files (.txt, .xml, .csv)
+Allow to import a complete tree of text files (.txt, .xml, .csv, .html for example)
 
 Author
 ------
 
-Matthieu Mercapide,
+Mathieu Mercapide,
 Augustin Maillefer
 & Olivier Cavaleri
 
@@ -36,8 +36,7 @@ Description
 
 This widget is designed to import one, some or all the files contained in a selected folder.
 The output is a segmentation containing a segment for each imported file. 
-Each segment has 5 annotations with keys *folder*, 
-*filename*, *depth*, *depth*, and *path*.
+Each segment has 8 annotations with keys : *folderName*, *fileName*, *depthlvl* and *absoluteFilePath* plus 4 annotations for the each first 4 depth level with format *depthX* (*depth1* to *depth4*).
   
 The interface of **Text Tree** is available in two versions, according 
 to whether or not the **Advanced Settings** checkbox is selected.
@@ -62,7 +61,7 @@ desired folder (**Output segmentation label**).
 
 The **Info** section indicates the number of segments (files) in the 
 output segmentation, or the reasons why no segmentation is emitted (no title 
-selected, connection issues, etc.).
+selected).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -74,8 +73,8 @@ Advanced interface
 
 The advanced version of **Text Tree**  (see :ref:`figure 2 
 <text_tree_fig2>` below) offers the same functionality as
-the basic one, and it adds the possibility of filtering (include or exclude files) 
-and execute a sampling (0 - 100 %).
+the basic one, and it adds the possibility of filtering (include or exclude files by filenames) 
+and execute a sampling (0 - 100 %). The sampling operation selects the input proportion (rounded-up number) of files randomly. Ex : 50% of 9 files will select 5 random files from the file list.
 
 .. _text_tree_fig2:
 
@@ -107,15 +106,13 @@ Warnings
     button (or equivalently check the box) in order for computation and data
     emission to proceed.
 
-*Please select one or more folders.*
-    The widget instance is not able to emit data to output because no folders
+*Please select one (or more) folders.*
+    The widget instance is not able to emit data to output because no folder
     has been selected.
 
     
 Errors
 ~~~~~~
 
-*Couldn't download files.*
-    An error has prevented the widget to download files 
-    (most likely related to a bug).
+*No added errors*
 
