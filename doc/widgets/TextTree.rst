@@ -53,7 +53,7 @@ in the selected folder.
 
 .. figure:: figures/TextTree_Basic.png
     :align: center
-    :alt: Basic interface of the Theatre Classique widget
+    :alt: Basic interface of the Text Tree widget
 
     Figure 1: **Text Tree** widget (basic interface).
 
@@ -72,18 +72,18 @@ segmentation at every modification of its interface.
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of **Theatre Classique**  (see :ref:`figure 2 
-<theatre_classique_fig2>` below)offers the same functionality as
-the basic one, and it adds the possibility of selecting only the plays of a
-given author/genre/title.
+The advanced version of **Text Tree**  (see :ref:`figure 2 
+<text_tree_fig2>` below) offers the same functionality as
+the basic one, and it adds the possibility of filtering (include or exclude files) 
+and execute a sampling (0 - 100 %).
 
-.. _theatre_classique_fig2:
+.. _text_tree_fig2:
 
-.. figure:: figures/theatre_classique_advanced_interface.png
+.. figure:: figures/text_tree_advanced_interface.png
     :align: center
-    :alt: Advanced interface of the Theatre Classique widget
+    :alt: Advanced interface of the Text Tree widget
     
-    Figure 2: **Theatre Classique** widget (advanced interface).
+    Figure 2: **Text Tree** widget (advanced interface).
 
 The **Options** and **Info** sections, as well as the **Send** button and 
 **Send automatically**, operate in the same way as in the basic interface.
@@ -107,15 +107,15 @@ Warnings
     button (or equivalently check the box) in order for computation and data
     emission to proceed.
 
-*Please select one or more titles.*
-    The widget instance is not able to emit data to output because no theatre
-    play has been selected.
+*Please select one or more folders.*
+    The widget instance is not able to emit data to output because no folders
+    has been selected.
 
     
 Errors
 ~~~~~~
 
-*Couldn't download data from theatre-classique website.*
-    An error has prevented the widget to download the data from the 
-    theatre-classique (most likely related to a connection problem).
+*Couldn't download files.*
+    An error has prevented the widget to download files 
+    (most likely related to a bug).
 
