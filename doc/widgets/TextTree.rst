@@ -1,12 +1,12 @@
 .. meta::
-   :description: Orange3 Textable Prototypes documentation, Theatre Classique 
+   :description: Orange3 Textable Prototypes documentation, TextTree 
                  widget
-   :keywords: Orange3, Textable, Prototypes, documentation, Theatre Classique,
+   :keywords: Orange3, Textable, Prototypes, documentation, TextTree,
               widget
 
 .. _Theatre Classique:
 
-Theatre Classique
+Text Tree
 =================
 
 .. image:: figures/textTree.png
@@ -17,7 +17,9 @@ Import theater plays from the `theatre-classique
 Author
 ------
 
-Mat Xanthos
+Matthieu Mercapide
+Augustin Maillefer
+Olivier Cavaleri
 
 Signals
 -------
