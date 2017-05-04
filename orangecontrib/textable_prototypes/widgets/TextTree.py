@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from __future__ import unicode_literals
 
 """
@@ -31,10 +29,6 @@ from PyQt4.QtGui import QFont
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
-
-import random
-import math
-
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
@@ -82,8 +76,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
     importFolderName = settings.Setting(True)
     importFolderNameKey = settings.Setting(u'folderName')
     importFileNameKey = settings.Setting(u'filename')
-    FolderDepth1Key = settings.Setting(u'depth1')
-    FolderDepth2Key = settings.Setting(u'depth2')
+    FolderDepth1Key = settings.Setting(u'depth 1')
+    FolderDepth2Key = settings.Setting(u'depth 2')
+    FolderDepth2Key = settings.Setting(u'depth 3')
+    FolderDepth2Key = settings.Setting(u'depth 4')
     FolderDepthLvl = settings.Setting(u'depth level')
 
     lastLocation = settings.Setting('.')
@@ -112,7 +108,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.newAnnotationValue = u''
         self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a a folder
         # self.inclusionList = [""] #by default empty list
-        self.inclusionList = [".txt",".html",".xml"] #by default empty list
+        self.inclusionList = [".txt",".html",".xml","csv"] #by default empty list
 
         self.newInclusionList = list()
         self.newExclusionList = list()
@@ -175,7 +171,21 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 u"Open a dialog for selecting a top folder."
             ),
         )
-        
+        #gui.separator(widget=basicfolderBox, width=3)
+        #gui.comboBox(
+#            widget=basicfolderBox,
+#            master=self,
+#            value='encoding',
+#            items=getPredefinedEncodings(),
+#            sendSelectedValue=True,
+#            orientation='horizontal',
+#            label=u'Encoding:',
+#            labelWidth=101,
+#            callback=self.sendButton.settingsChanged,
+#            tooltip=(
+#                u"Select input folder(s) encoding."
+#            ),
+#        )
         gui.separator(widget=basicfolderBox, width=3)
         self.advancedSettings.basicWidgets.append(basicfolderBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
@@ -324,6 +334,13 @@ class OWTextableTextTree(OWTextableBaseWidget):
         )
         gui.separator(widget=addfolderBox, width=10)
 
+        # Filter choice to include only certain files or to exclude files
+        # ------------
+        # self.applyInclusion = False  à mettre dans le init
+        # gui.checkbox()
+        # callback = lambda t=self.applyInclusion : includeLineEdit.setDisabled(not t)
+        # includeLineEdit = gui.lineEdit()
+        # ------------
 
         # Filter box to input include only
         gui.separator(widget=addfolderBox, width=3)
@@ -846,63 +863,84 @@ class OWTextableTextTree(OWTextableBaseWidget):
         newExclusionList = self.newExclusionList
 
         depthList = list()
+        inclusionList = self.inclusionList
+        self.includedFileListByDefault = list()
+
         for curr_path, dirnames, filenames in os.walk(self.rootFolderPath):
     	#curr_path is a STRING, the path to the directory.
     	#dirnames is a LIST of the names of subdirectories.
-    	#filenames is a LIST of the names of the non directory files in curr_path
-    	#symlink non traites
+    	#filenames is a LIST of the names of the files in curr_path
+    	#symlink non traités
 
             curr_rel_path = curr_path[len(initialRootParentPath)+1:] #defines current relative path by similar initial parent path part
             curr_rel_path_list = os.path.normpath(curr_rel_path).split(os.sep) #splits current relative path by os separator
 
             for filename in filenames:
-                prev_non_excl_check = False
-                curr_non_excl_check = prev_non_excl_check #importing previous state of the "non-exclusion check" (opposite of exclusion check)
+                file = dict()
+                # file = {"absoluteFilePath","foldername","filename","depth1","depth2","depth3","depth4","depth5","depth lvl"}
+                # prev_non_excl_check = False
+                # curr_non_excl_check = prev_non_excl_check #importing previous state of the "non-exclusion check" (opposite of exclusion check)
 
                 annotations = curr_rel_path_list[:] # annotations are different subfolders browsed
-                complete_annotations = annotations[:]
+                annotationsByLvl = annotations[:]
+                # print(annotationsByLvl)
 
-                for i in newInclusionList: #i = inclusionElement
+                curr_depth = (len(annotationsByLvl))
+                depthList.append(curr_depth)
+
+                file['absoluteFilePath'] = os.path.join(curr_path,filename)
+                file['fileName'] = filename
+                file['depthLvl'] = curr_depth
+
+                file['folderName'] = annotationsByLvl[0]
+
+                try:
+                    file['depth1'] = annotationsByLvl[1]
+                except IndexError:
+                    file['depth1'] = "0"
+
+                try:
+                    file['depth2'] = annotationsByLvl[2]
+                except IndexError:
+                    file['depth2'] = "0"
+
+                try:
+                    file['depth3'] = annotationsByLvl[3]
+                except IndexError:
+                    file['depth3'] = "0"
+
+                try:
+                    file['depth4'] = annotationsByLvl[4]
+                except IndexError:
+                    file['depth4'] = "0"
+
+                for i in inclusionList: #i = inclusionElement
 
                     if i == "":
                         pass
+
                     else:
                         if i in filename:
-                            curr_non_excl_check = True
+                            self.includedFileListByDefault.append(file)
 
-                            for e in newExclusionList:
-                                if e in filename:
-                                    if (e == ""):
-                                        pass
-                                    else:
-                                        curr_non_excl_check = False
-                                        curr_non_excl_check = (prev_non_excl_check and curr_non_excl_check) #any exclusion criteria will make it False (Truth Table)
-                        else:
-                            curr_non_excl_check = False
+        # for i in self.includedFileListByDefault:
+            # print(i['fileName'])
 
-                        if curr_non_excl_check: # can be True only if no exclusion criteria was found in filename
-                            abs_file_path = os.path.join(curr_path,filename)
-                            complete_annotations.insert(0,abs_file_path)
-                            complete_annotations.append(filename)
-                            curr_depth = (len(complete_annotations)-3)
-                            depthList.append(curr_depth)
-                            complete_annotations.append(curr_depth)
-                            self.fileList.append(complete_annotations)
+        self.fileList = self.includedFileListByDefault
 
-        # first negation converts list to boolean and is false if the list is empty => double negation
-        if not not self.fileList:
+        if self.fileList:
             self.maxDepth = max(depthList)
             self.openFileList()
-        else:
-            pass
-        # print(self.fileList)
+        # else:
+        #     pass
+        # # print(self.fileList)
 
     def openFileList(self):
         self.fileContents = list()
         for file in self.fileList:
             fileContent = ""
             try:
-                file_path = file[0]
+                file_path = file['absoluteFilePath']
             except TypeError:
                 pass
 
@@ -946,6 +984,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.fileContents.append(self.fileContent)
 
         del self.fileContents[-1]
+        # print(self.fileContents)
 
     def browse(self):
         """Display a QFileDialog and select a folder"""
@@ -1027,7 +1066,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         self.getFileList()
 
-        sampleFileList = self.sampleFileList()
+        # self.doSampling()
 
         self.folders.append(
             {
@@ -1036,7 +1075,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             'inclusionsUser' : self.inclusionsUser,
             'exclusionsUser' : self.exclusionsUser,
             'samplingRate' : self.samplingRate,
-            'fileList' : sampleFileList,
+            'fileList' : self.fileList,
             }
         )
         # print(self.folders)
@@ -1044,24 +1083,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # for folderDict in self.folders:
         #     fileList = folderDict['fileList']
-
-    def sampleFileList(self):
-
-        # Utilisation de la variable fileList
-        # On fait une copie pour eviter de modifier self.fileList avec shuffle plus bas
-        myList = list(self.fileList)
-
-        # Initialisation d'un parametre qui decidera de l'echantillonage
-        samplePercentage = self.samplingRate / 100.0
-        print(samplePercentage)
-
-        # On melange la liste pour prendre ensuite les "samplePercentage" premiers
-        random.shuffle(myList)
-
-        # On definit le nombre de fichiers voulus selon le parametre d'echantillonage "samplePercentage", arrondi au superieur
-        nOfFiles = int(math.ceil(len(myList) * samplePercentage))
-        # On prend les "nOfFiles" premiers fichiers de la liste melangee
-        return myList[:nOfFiles]
 
     def updateGUI(self):
         """Update GUI state"""
@@ -1071,7 +1092,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             else:
                 cachedLabel = None
             del self.folderLabels[:]
-            # first by rows then by column
+
             if self.folders:
                 folderRootPathsList = [f['rootPath'] for f in self.folders]
                 maxDepthList = ['%s' % f['maxDepth'] for f in self.folders]
