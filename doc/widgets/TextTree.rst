@@ -36,8 +36,8 @@ Description
 
 This widget is designed to import one, some or all the files contained in a selected folder.
 The output is a segmentation containing a segment for each imported file. 
-Each segment has 5 annotations with keys *author*, 
-*title*, *year*, *genre*, and *url*.
+Each segment has 5 annotations with keys *folder*, 
+*filename*, *depth*, *depth*, and *path*.
   
 The interface of **Text Tree** is available in two versions, according 
 to whether or not the **Advanced Settings** checkbox is selected.
