@@ -51,16 +51,16 @@ in the selected folder.
 
 .. _text_tree_fig1:
 
-.. figure:: figures/theatre_classique_basic_interface.png
+.. figure:: figures/TextTree_Basic.png
     :align: center
     :alt: Basic interface of the Theatre Classique widget
 
     Figure 1: **Text Tree** widget (basic interface).
 
-The **Options** section allows the user to define the label of the output
-segmentation (**Output segmentation label**).
+The **Options** section allows the user to browse on his computer to find
+desired folder (**Output segmentation label**).
 
-The **Info** section indicates the number of segments and characters in the 
+The **Info** section indicates the number of segments (files) in the 
 output segmentation, or the reasons why no segmentation is emitted (no title 
 selected, connection issues, etc.).
 
