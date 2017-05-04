@@ -9,7 +9,7 @@
 Theatre Classique
 =================
 
-.. image:: figures/theatre_classique.png
+.. image:: figures/textTree.png
 
 Import theater plays from the `theatre-classique 
 <http://www.theatre-classique.fr>`_ website (in TEI-XML).
@@ -17,7 +17,7 @@ Import theater plays from the `theatre-classique
 Author
 ------
 
-Aris Xanthos
+Mat Xanthos
 
 Signals
 -------
