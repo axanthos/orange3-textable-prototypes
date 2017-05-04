@@ -175,21 +175,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 u"Open a dialog for selecting a top folder."
             ),
         )
-        #gui.separator(widget=basicfolderBox, width=3)
-        #gui.comboBox(
-#            widget=basicfolderBox,
-#            master=self,
-#            value='encoding',
-#            items=getPredefinedEncodings(),
-#            sendSelectedValue=True,
-#            orientation='horizontal',
-#            label=u'Encoding:',
-#            labelWidth=101,
-#            callback=self.sendButton.settingsChanged,
-#            tooltip=(
-#                u"Select input folder(s) encoding."
-#            ),
-#        )
+        
         gui.separator(widget=basicfolderBox, width=3)
         self.advancedSettings.basicWidgets.append(basicfolderBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
@@ -338,13 +324,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         )
         gui.separator(widget=addfolderBox, width=10)
 
-        # Filter choice to include only certain files or to exclude files
-        # ------------
-        # self.applyInclusion = False  a mettre dans le init
-        # gui.checkbox()
-        # callback = lambda t=self.applyInclusion : includeLineEdit.setDisabled(not t)
-        # includeLineEdit = gui.lineEdit()
-        # ------------
 
         # Filter box to input include only
         gui.separator(widget=addfolderBox, width=3)
@@ -1092,7 +1071,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             else:
                 cachedLabel = None
             del self.folderLabels[:]
-
+            # first by rows then by column
             if self.folders:
                 folderRootPathsList = [f['rootPath'] for f in self.folders]
                 maxDepthList = ['%s' % f['maxDepth'] for f in self.folders]
