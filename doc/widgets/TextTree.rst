@@ -11,15 +11,14 @@ Text Tree
 
 .. image:: figures/textTree.png
 
-Import theater plays from the `theatre-classique 
-<http://www.theatre-classique.fr>`_ website (in TEI-XML).
+Allow to import a complete tree of files (.txt, .xml, .csv)
 
 Author
 ------
 
-Matthieu Mercapide
+Matthieu Mercapide,
 Augustin Maillefer
-Olivier Cavaleri
+& Olivier Cavaleri
 
 Signals
 -------
@@ -30,36 +29,33 @@ Outputs:
 
 * ``Text data``
 
-  Segmentation covering the content of imported TEI-XML-encoded theatre plays
+  Segmentation covering the content of files filtered in a tree of files
 
 Description
 -----------
 
-This widget is designed to import one or more theatre plays in Orange Canvas.
-The plays are retrieved from `<http://www.theatre-classique.fr>`_ and richly
-encoded in TEI-XML format. The output is a segmentation containing a segment 
-for each imported play. Each segment has 5 annotations with keys *author*, 
+This widget is designed to import one, some or all the files contained in a selected folder.
+The output is a segmentation containing a segment for each imported file. 
+Each segment has 5 annotations with keys *author*, 
 *title*, *year*, *genre*, and *url*.
   
-The interface of **Theatre Classique** is available in two versions, according 
+The interface of **Text Tree** is available in two versions, according 
 to whether or not the **Advanced Settings** checkbox is selected.
 
 Basic interface
 ~~~~~~~~~~~~~~~
 
-In its basic version (see :ref:`figure 1 <theatre_classique_fig1>` below), the 
-**Theatre Classique** widget simply lets the user select one or more plays
-in the catalogue of more than 800 entries downloadable from the 
-`theatre-classique <http://www.theatre-classique.fr>`_ website. To select 
-multiple files use either control/command-click or shift-click.
+In its basic version (see :ref:`figure 1 <text_tree_fig1>` below), the 
+**Text Tree** widget lets the user browse at once all the files contained
+in the selected folder.
 
-.. _theatre_classique_fig1:
+.. _text_tree_fig1:
 
 .. figure:: figures/theatre_classique_basic_interface.png
     :align: center
     :alt: Basic interface of the Theatre Classique widget
 
-    Figure 1: **Theatre Classique** widget (basic interface).
+    Figure 1: **Text Tree** widget (basic interface).
 
 The **Options** section allows the user to define the label of the output
 segmentation (**Output segmentation label**).
