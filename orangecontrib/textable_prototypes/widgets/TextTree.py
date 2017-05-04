@@ -107,7 +107,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
         self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a a folder
-        # self.inclusionList = [""] #by default empty list
         self.inclusionList = [".txt",".html",".xml","csv"] #by default empty list
 
         self.newInclusionList = list()
@@ -886,6 +885,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 # print(annotationsByLvl)
 
                 curr_depth = (len(annotationsByLvl))
+
                 depthList.append(curr_depth)
 
                 file['absoluteFilePath'] = os.path.join(curr_path,filename)
@@ -915,16 +915,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     file['depth4'] = "0"
 
                 for i in inclusionList: #i = inclusionElement
+                    if i in filename:
+                        self.includedFileListByDefault.append(file)
 
-                    if i == "":
-                        pass
-
-                    else:
-                        if i in filename:
-                            self.includedFileListByDefault.append(file)
-
-        # for i in self.includedFileListByDefault:
-            # print(i['fileName'])
+        for file in self.includedFileListByDefault:
+            # print(file['fileName'])
 
         self.fileList = self.includedFileListByDefault
 
@@ -1058,8 +1053,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.inclusionsUserAsList = inclusionsUser.split(",")
         self.exclusionsUserAsList = exclusionsUser.split(",")
 
-        self.newInclusionList = self.inclusionList + self.inclusionsUserAsList
-        self.newExclusionList = self.exclusionList + self.exclusionsUserAsList
+        # self.newInclusionList = self.inclusionList + self.inclusionsUserAsList
+        # self.newExclusionList = self.exclusionList + self.exclusionsUserAsList
 
         # print(self.newInclusionList)
         # print(self.newExclusionList)
