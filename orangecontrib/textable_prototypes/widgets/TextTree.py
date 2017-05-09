@@ -21,6 +21,8 @@ __version__ = '0.0.2'
 
 import codecs, io, os, re, json, chardet
 from unicodedata import normalize
+import random
+import math
 
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QFileDialog, QMessageBox
@@ -107,10 +109,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
         self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a a folder
-        self.inclusionList = [".txt",".html",".xml","csv"] #by default empty list
+        self.inclusionList = [".txt",".html",".xml",".csv"] #by default empty list
 
-        self.newInclusionList = list()
-        self.newExclusionList = list()
         # self.exclusionList = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".DS_Store"] # by default exclusions : img files, .DS_Store (macOS)
         self.exclusionList = [] # by default null
         self.infoBox = InfoBox(widget=self.controlArea)
@@ -855,15 +855,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
             )
 
     def getFileList(self):
-
+        print("getFileList")
         initialRootParentPath, _ = os.path.split(self.rootFolderPath) #initial parent path is selected's folder parent folder
-        self.fileList = list() #output file list
-        newInclusionList = self.newInclusionList
-        newExclusionList = self.newExclusionList
-
+        fileListExt = list() # list of files matching default extension
         depthList = list()
-        inclusionList = self.inclusionList
-        self.includedFileListByDefault = list()
 
         for curr_path, dirnames, filenames in os.walk(self.rootFolderPath):
     	#curr_path is a STRING, the path to the directory.
@@ -914,21 +909,41 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 except IndexError:
                     file['depth4'] = "0"
 
-                for i in inclusionList: #i = inclusionElement
-                    if i in filename:
-                        self.includedFileListByDefault.append(file)
+                for extension in self.inclusionList: #i = inclusionElement
+                    if filename.endswith(extension):
+                        fileListExt.append(file)
 
-        for file in self.includedFileListByDefault:
-            # print(file['fileName'])
+        # apply inclusion filter
+        if self.applyInclusion:
+            fileListIncl = [file for file in fileListExt
+                            # match in inclusion list
+                            if self.match(file['fileName'], self.inclusionsUserAsList)]
+        else:
+            fileListIncl = fileListExt
 
-        self.fileList = self.includedFileListByDefault
+        # apply exclusion filter
+        if self.applyExclusion:
+            fileListExcl = [file for file in fileListIncl
+                            # no match in exclusion list
+                            if not self.match(file['fileName'], self.exclusionsUserAsList)]
+        else:
+            fileListExcl = fileListIncl
+
+        # output file list
+        self.fileList = fileListExcl
 
         if self.fileList:
             self.maxDepth = max(depthList)
             self.openFileList()
-        # else:
-        #     pass
-        # # print(self.fileList)
+        else:
+            self.maxDepth = 0
+
+    # TODO document
+    def match(self, file, patternList):
+        for pattern in patternList:
+            if pattern in file:
+                return True
+        return False
 
     def openFileList(self):
         self.fileContents = list()
@@ -1044,24 +1059,18 @@ class OWTextableTextTree(OWTextableBaseWidget):
         """Add folders to folders attr"""
 
         rootFolderPathList = re.split(r' +/ +', self.rootFolderPath) #self.rootFolderPath = name
-        self.newInclusionList = list()
-        self.newExclusionList = list()
 
-        inclusionsUser = self.inclusionsUser
-        exclusionsUser = self.exclusionsUser
-
-        self.inclusionsUserAsList = inclusionsUser.split(",")
-        self.exclusionsUserAsList = exclusionsUser.split(",")
-
-        # self.newInclusionList = self.inclusionList + self.inclusionsUserAsList
-        # self.newExclusionList = self.exclusionList + self.exclusionsUserAsList
-
-        # print(self.newInclusionList)
-        # print(self.newExclusionList)
+        # identify sequences separated by a "," and suppress the white spaces
+        self.inclusionsUserAsList = [x.strip() for x in self.inclusionsUser.split(",") if x.strip()]
+        self.exclusionsUserAsList = [x.strip() for x in self.exclusionsUser.split(",") if x.strip()]
 
         self.getFileList()
+        # display the list of files
+        print("Files: ", list(map(lambda f: f['fileName'], self.fileList)))
 
-        # self.doSampling()
+        sampleFileList = self.sampleFileList()
+        # display the list of sampled files
+        print("Files after sampling: ", list(map(lambda f: f['fileName'], sampleFileList)))
 
         self.folders.append(
             {
@@ -1070,7 +1079,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             'inclusionsUser' : self.inclusionsUser,
             'exclusionsUser' : self.exclusionsUser,
             'samplingRate' : self.samplingRate,
-            'fileList' : self.fileList,
+            'fileList' : sampleFileList,
             }
         )
         # print(self.folders)
@@ -1078,6 +1087,24 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # for folderDict in self.folders:
         #     fileList = folderDict['fileList']
+
+    def sampleFileList(self):
+
+        # Utilisation de la variable fileList
+        # On fait une copie pour eviter de modifier self.fileList avec shuffle plus bas
+        myList = list(self.fileList)
+
+        # Initialisation d'un parametre qui decidera de l'echantillonage
+        samplePercentage = self.samplingRate / 100.0
+        print(samplePercentage)
+
+        # On melange la liste pour prendre ensuite les "samplePercentage" premiers
+        random.shuffle(myList)
+
+        # On definit le nombre de fichiers voulus selon le parametre d'echantillonage "samplePercentage", arrondi au superieur
+        nOfFiles = int(math.ceil(len(myList) * samplePercentage))
+        # On prend les "nOfFiles" premiers fichiers de la liste melangee
+        return myList[:nOfFiles]
 
     def updateGUI(self):
         """Update GUI state"""
