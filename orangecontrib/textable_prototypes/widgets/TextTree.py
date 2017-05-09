@@ -1096,7 +1096,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # Initialisation d'un parametre qui decidera de l'echantillonage
         samplePercentage = self.samplingRate / 100.0
-        print(samplePercentage)
+        # print(samplePercentage)
 
         # On melange la liste pour prendre ensuite les "samplePercentage" premiers
         random.shuffle(myList)
