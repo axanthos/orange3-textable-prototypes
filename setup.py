@@ -4,21 +4,21 @@
 
 Copyright 2017 University of Lausanne (aris.xanthos@unil.ch)
 
-This file is part of the Orange3 Textable Prototypes extension to 
+This file is part of the Orange3 Textable Prototypes extension to
 Orange Canvas.
 
-Orange3 Textable Prototypes is free software: you can redistribute it 
-and/or modify it under the terms of the GNU General Public License as published 
+Orange3 Textable Prototypes is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public License as published
 by the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Orange3 Textable Prototypes is distributed in the hope that it will be 
+Orange3 Textable Prototypes is distributed in the hope that it will be
 useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Orange3 Textable Prototypes. If not, see 
+along with Orange3 Textable Prototypes. If not, see
 http://www.gnu.org/licenses
 """
 
@@ -32,12 +32,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "0.4"   # file version
+__version__ = "0.5"   # file version
 
 NAME = 'Orange3-Textable-Prototypes'
 DOCUMENTATION_NAME = 'Textable Prototypes'
 
-VERSION = '0.4'  # package version
+VERSION = '0.5'  # package version
 
 DESCRIPTION = 'Additional widgets for the Textable add-on to Orange 3.'
 LONG_DESCRIPTION = open(
@@ -77,7 +77,7 @@ PACKAGES = find_packages()
 PACKAGE_DATA = {
     'orangecontrib.textable_prototypes': ['tutorials/*.ows'],
     'orangecontrib.textable_prototypes.widgets': [
-        'icons/*', 
+        'icons/*',
         'cached_title_list',
     ],
 }
