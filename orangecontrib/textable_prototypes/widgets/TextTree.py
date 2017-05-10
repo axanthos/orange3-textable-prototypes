@@ -685,24 +685,19 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     annotation = dict()
 
                     if self.importFileNameKey:
-                        folderName = myFile[-2]
-                        annotation[self.importFileNameKey] = folderName
+                        annotation[self.importFileNameKey] = myFile['fileName']
 
                     if self.importFolderNameKey:
-                        folderName = myFile[1]
-                        annotation[self.importFolderNameKey] = folderName
+                        annotation[self.importFolderNameKey] = myFile['folderName']
 
                     if self.FolderDepth1Key:
-                        folderDepth1 = myFile[2]
-                        annotation[self.FolderDepth1Key] = folderDepth1
+                        annotation[self.FolderDepth1Key] = myFile['depth1']
 
                     if self.FolderDepth2Key:
-                        folderDepth2 = myFile[3]
-                        annotation[self.FolderDepth2Key] = folderDepth2
+                        annotation[self.FolderDepth2Key] = myFile['depth2']
 
                     if self.FolderDepthLvl:
-                        FolderDepthLvl = myFile[-1]
-                        annotation[self.FolderDepthLvl] = FolderDepthLvl
+                        annotation[self.FolderDepthLvl] = myFile['depthLvl']
 
                     annotations.append(annotation)
                 # progressBar.advance()
@@ -855,7 +850,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
             )
 
     def getFileList(self):
-        print("getFileList")
+        #print("getFileList")
+
         initialRootParentPath, _ = os.path.split(self.rootFolderPath) #initial parent path is selected's folder parent folder
         fileListExt = list() # list of files matching default extension
         depthList = list()
@@ -1136,7 +1132,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     folderLabel += "[s]:{"+samplingRatesList[index]+"%}"
                     self.folderLabels.append(folderLabel)
 
-            self.folderLabels = self.folderLabels
             if cachedLabel is not None:
                 self.sendButton.sendIfPreCallback = None
                 self.selectedfolderLabels.listBox.item(
