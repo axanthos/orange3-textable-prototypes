@@ -885,9 +885,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 file['folderName'] = annotations[0]
 
                 for i in range(1, curr_depth):
-                    file['depth'+i] = annotations[i]
+                    file['depth' + str(i)] = annotations[i]
                 for i in range(curr_depth, 5):
-                    file['depth'+i] = "0"
+                    file['depth' + str(i)] = "0"
 
                 # apply default file extension filter
                 for extension in self.inclusionList:
@@ -1094,7 +1094,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 cachedLabel = self.selectedfolderLabels[0]
             else:
                 cachedLabel = None
+
             del self.folderLabels[:]
+            folderLabels = []
 
             if self.folders:
                 folderRootPathsList = [f['rootPath'] for f in self.folders]
@@ -1115,7 +1117,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     folderLabel += "[i]:{"+inclusionsUserList[index]+"} "
                     folderLabel += "[e]:{"+exclusionsUserList[index]+"} "
                     folderLabel += "[s]:{"+samplingRatesList[index]+"%}"
-                    self.folderLabels.append(folderLabel)
+                    folderLabels.append(folderLabel)
+
+            self.folderLabels = folderLabels
 
             if cachedLabel is not None:
                 self.sendButton.sendIfPreCallback = None
