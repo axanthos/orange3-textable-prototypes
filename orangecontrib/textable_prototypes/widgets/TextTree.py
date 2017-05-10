@@ -872,10 +872,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 # curr_non_excl_check = prev_non_excl_check #importing previous state of the "non-exclusion check" (opposite of exclusion check)
 
                 annotations = curr_rel_path_list[:] # annotations are different subfolders browsed
-                annotationsByLvl = annotations[:]
-                # print(annotationsByLvl)
+                # print(annotations)
 
-                curr_depth = (len(annotationsByLvl))
+                curr_depth = len(annotations)
 
                 depthList.append(curr_depth)
 
@@ -883,29 +882,15 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 file['fileName'] = filename
                 file['depthLvl'] = curr_depth
 
-                file['folderName'] = annotationsByLvl[0]
+                file['folderName'] = annotations[0]
 
-                try:
-                    file['depth1'] = annotationsByLvl[1]
-                except IndexError:
-                    file['depth1'] = "0"
+                for i in range(1, curr_depth):
+                    file['depth'+i] = annotations[i]
+                for i in range(curr_depth, 5):
+                    file['depth'+i] = "0"
 
-                try:
-                    file['depth2'] = annotationsByLvl[2]
-                except IndexError:
-                    file['depth2'] = "0"
-
-                try:
-                    file['depth3'] = annotationsByLvl[3]
-                except IndexError:
-                    file['depth3'] = "0"
-
-                try:
-                    file['depth4'] = annotationsByLvl[4]
-                except IndexError:
-                    file['depth4'] = "0"
-
-                for extension in self.inclusionList: #i = inclusionElement
+                # apply default file extension filter
+                for extension in self.inclusionList:
                     if filename.endswith(extension):
                         fileListExt.append(file)
 
@@ -934,7 +919,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         else:
             self.maxDepth = 0
 
-    # TODO document
+    # test if file contains one of the patterns in patternList
     def match(self, file, patternList):
         for pattern in patternList:
             if pattern in file:
