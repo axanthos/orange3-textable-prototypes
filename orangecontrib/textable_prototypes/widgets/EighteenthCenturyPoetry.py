@@ -174,9 +174,6 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
-            #
-            callback=self.sendButton.settingsChanged, # renvoyer vers bouton "add to basket"
-            #
             tooltip="The list of titles whose content will be imported.",
         )
         self.titleListbox.setMinimumHeight(150)
@@ -197,7 +194,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             master=self,
             label="Add to basket",
             #
-            callback=self.refreshTitleSeg, # changer fonction pour ajouter au panier
+            callback=self.addToBasket, # changer fonction pour ajouter au panier
             #
             tooltip="Add selected items of this box to basket.",
         )
@@ -214,7 +211,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             widget=basketBox,
             master=self,
             # changer pour panier
-            value="selectedTitles",    # setting (list)
+            value="addedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
             #
             # selectionner pour bouton delete
@@ -230,7 +227,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             master=self,
             label="Delete",
             # changer fonction pour supprimer elements selectionnes
-            callback=self.refreshTitleSeg,
+            callback=self.deleteItem,
             #
             tooltip="Delete selected item(s)",
         )
@@ -243,7 +240,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             master=self,
             label="Clear all",
             # changer fonction pour tout supprimer
-            callback=self.refreshTitleSeg,
+            callback=self.clearAllItems,
             #
             tooltip="Delete all item(s)",
         )
@@ -597,6 +594,18 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
+
+    def addToBasket (self):
+        addedTitles = list()
+        for title in selectedTitles:
+            addedTitles.append(title)
+        return
+
+    def deleteItem (self):
+        return
+
+    def clearAllItems (self):
+        return
 
 
 if __name__ == "__main__":
