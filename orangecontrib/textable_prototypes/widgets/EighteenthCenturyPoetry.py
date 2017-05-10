@@ -595,9 +595,11 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
+
+# functions added
     def addToBasket (self):
         addedTitles = list()
-        for title in selectedTitles:
+        for title in self.selectedTitles:
             addedTitles.append(title)
         return
 
@@ -605,6 +607,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
         return
 
     def clearAllItems (self):
+        del addedTitles[:]
         return
 
 
