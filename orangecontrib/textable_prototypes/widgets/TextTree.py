@@ -76,16 +76,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
     autoNumberKey = settings.Setting(u'num')
     importFilenames = settings.Setting(True)
     importFolderName = settings.Setting(True)
-
     importFolderNameKey = settings.Setting(u'depth_0')
     FolderDepth1Key = settings.Setting(u'depth_1')
     FolderDepth2Key = settings.Setting(u'depth_2')
     FolderDepth2Key = settings.Setting(u'depth_3')
     FolderDepth2Key = settings.Setting(u'depth_4')
-
-    FolderDepthLvl = settings.Setting(u'depth level')
-    FileAbsolutePath = settings.Setting(u'file path')
-    importFileNameKey = settings.Setting(u'filename')
+    FolderDepthLvl = settings.Setting(u'depth_level')
+    FileAbsolutePath = settings.Setting(u'file_path')
+    importFileNameKey = settings.Setting(u'file_name')
 
     lastLocation = settings.Setting('.')
     displayAdvancedSettings = settings.Setting(False)
@@ -623,7 +621,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         if self.displayAdvancedSettings:
             myFolders = self.folders
-            print(myFolders.keys())
         else:
             myFolders = [self.folder]
 
@@ -707,7 +704,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
-        # print(self.segmentation.to_string())
+        print(self.segmentation.to_string())
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -840,7 +837,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 annotations = curr_rel_path_list[:] # annotations are different subfolders browsed
                 # print(annotations)
 
-                curr_depth = len(annotations)
+                curr_depth = len(annotations)-1
 
                 depthList.append(curr_depth)
 
@@ -943,7 +940,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 self.fileContents.append(self.fileContent)
 
         # del self.fileContents[-1]
-        # print(self.fileContents)
+        print(self.fileContents)
 
     def browse(self):
         """Display a QFileDialog and select a folder"""
