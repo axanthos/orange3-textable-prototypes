@@ -68,12 +68,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
     )
 
     autoSend = settings.Setting(False)
-    selectedTitles = settings.Setting([])
-    titleLabels = settings.Setting([])
-    filterCriterion = settings.Setting("author")
-    filterValue = settings.Setting("(all)")
-    importedURLs = settings.Setting([])
-    displayAdvancedSettings = settings.Setting(False)
+    addedTitles = settings.Setting([])
 
     want_main_area = False
 
@@ -82,6 +77,12 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
         super().__init__()
 
+        # Before in settings
+        self.selectedTitles = list()
+        self.titleLabels = list()
+        self.filterCriterion = "author"
+        self.filterValue = "(all)"
+        self.importedURLs = list()
         # Other attributes...
         self.segmentation = None
         self.createdInputs = list()
@@ -193,9 +194,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             widget=titleBox,
             master=self,
             label="Add to basket",
-            #
             callback=self.addToBasket, # changer fonction pour ajouter au panier
-            #
             tooltip="Add selected items of this box to basket.",
         )
 
@@ -213,10 +212,8 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             # changer pour panier
             value="addedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
-            #
             # selectionner pour bouton delete
             callback=self.sendButton.settingsChanged,
-            #
             tooltip="The list of titles whose content will be imported.",
         )
         gui.separator(widget=basketBox, height=3)
@@ -598,16 +595,18 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
 # functions added
     def addToBasket (self):
-        addedTitles = list()
+        self.addedTitles = list()
         for title in self.selectedTitles:
             addedTitles.append(title)
         return
 
     def deleteItem (self):
+        for title in self.addedTitles:
+            del title
         return
 
     def clearAllItems (self):
-        del addedTitles[:]
+        del self.addedTitles[:]
         return
 
 
