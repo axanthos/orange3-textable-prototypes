@@ -76,13 +76,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
     autoNumberKey = settings.Setting(u'num')
     importFilenames = settings.Setting(True)
     importFolderName = settings.Setting(True)
-    importFolderNameKey = settings.Setting(u'folderName')
-    importFileNameKey = settings.Setting(u'filename')
-    FolderDepth1Key = settings.Setting(u'depth 1')
-    FolderDepth2Key = settings.Setting(u'depth 2')
-    FolderDepth2Key = settings.Setting(u'depth 3')
-    FolderDepth2Key = settings.Setting(u'depth 4')
+    importFolderNameKey = settings.Setting(u'depth_0')
+    FolderDepth1Key = settings.Setting(u'depth_1')
+    FolderDepth2Key = settings.Setting(u'depth_2')
+    FolderDepth2Key = settings.Setting(u'depth_3')
+    FolderDepth2Key = settings.Setting(u'depth_4')
     FolderDepthLvl = settings.Setting(u'depth level')
+    FileAbsolutePath = settings.Setting(u'file path')
+    importFileNameKey = settings.Setting(u'filename')
 
     lastLocation = settings.Setting('.')
     displayAdvancedSettings = settings.Setting(False)
@@ -108,6 +109,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.exclusionsUser = u''
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
+        self.folder = dict()
         self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a a folder
         self.inclusionList = [".txt",".html",".xml",".csv"] #by default empty list
 
@@ -621,8 +623,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         if self.displayAdvancedSettings:
             myFolders = self.folders
+            print(myFolders.keys())
         else:
-            myFolders = [[self.rootFolderPath]]
+            myFolders = [self.folder]
 
         progressBar = gui.ProgressBar(
             self,
@@ -634,7 +637,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         fileContents = self.fileContents
 
         # Annotations...
-        myFolders = self.folders
         for myFolder in myFolders:
             myFiles = myFolder['fileList']
 
@@ -646,16 +648,19 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     annotation[self.importFileNameKey] = myFile['fileName']
 
                 if self.importFolderNameKey:
-                    annotation[self.importFolderNameKey] = myFile['folderName']
+                    annotation[self.importFolderNameKey] = myFile['depth_0']
 
                 if self.FolderDepth1Key:
-                    annotation[self.FolderDepth1Key] = myFile['depth1']
+                    annotation[self.FolderDepth1Key] = myFile['depth_1']
 
                 if self.FolderDepth2Key:
-                    annotation[self.FolderDepth2Key] = myFile['depth2']
+                    annotation[self.FolderDepth2Key] = myFile['depth_2']
 
                 if self.FolderDepthLvl:
                     annotation[self.FolderDepthLvl] = myFile['depthLvl']
+
+                if self.FileAbsolutePath:
+                    annotation[self.FileAbsolutePath] = myFile['absoluteFilePath']
 
                 annotations.append(annotation)
             # progressBar.advance()
@@ -842,12 +847,12 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 file['fileName'] = filename
                 file['depthLvl'] = curr_depth
 
-                file['folderName'] = annotations[0]
+                file['depth_0'] = annotations[0]
 
                 for i in range(1, curr_depth):
-                    file['depth' + str(i)] = annotations[i]
+                    file['depth_' + str(i)] = annotations[i]
                 for i in range(curr_depth, 5):
-                    file['depth' + str(i)] = "0"
+                    file['depth_' + str(i)] = "0"
 
                 # apply default file extension filter
                 for extension in self.inclusionList:
@@ -958,7 +963,13 @@ class OWTextableTextTree(OWTextableBaseWidget):
         if self.displayAdvancedSettings:
             pass
         else:
-            self.add()
+            self.getFileList()
+            self.folder = {
+                'rootPath' : self.rootFolderPath,
+                'maxDepth' : self.maxDepth,
+                'fileList' : self.fileList,
+            }
+            self.sendButton.settingsChanged()
 
         self.updateGUI()
 
