@@ -78,7 +78,7 @@ and execute a sampling (0 - 100 %). The sampling operation selects the input pro
 
 .. _text_tree_fig2:
 
-.. figure:: figures/text_tree_advanced_interface.png
+.. figure:: figures/text_tree_advanced_interface.PNG
     :align: center
     :alt: Advanced interface of the Text Tree widget
     
