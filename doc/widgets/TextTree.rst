@@ -84,7 +84,7 @@ and execute a sampling (0 - 100 %). The sampling operation selects the input pro
     
     Figure 2: **Text Tree** widget (advanced interface).
 
-The **Options** allows the user to browse on his computer to find the desired folders, to include or excludes types or names of files and to input a level of sampling in %. With the **Add button** the selection will be added to the list.  
+The **Options** section allows the user to browse on his computer to find the desired folders (the samme way as in the basic interface), but with the options to include or excludes types or names of files and to input a level of sampling in %. With the **Add button** the selection will be added to the list.  
 
 The **Info** section, as well as the **Send** button and 
 **Send automatically**, operate in the same way as in the basic interface.
