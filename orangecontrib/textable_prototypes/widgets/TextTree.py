@@ -155,7 +155,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             orientation='horizontal',
             label=u'Folder path:',
             labelWidth=101,
-            callback=self.sendButton.settingsChanged,
+            callback=self.add,
             tooltip=(
                 u"The path of the folder."
             ),
@@ -629,121 +629,77 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # Walk through each folder and open each files successively...
 
+        fileContents = self.fileContents
+
+        # Annotations...
+        myFolders = self.folders
         for myFolder in myFolders:
-            # self.rootFolderPath = myFolder[0]
+            myFiles = myFolder['fileList']
 
-            # OLD VERSION Try to open the file
+            for myFile in myFiles:
+                # print(myFile)
+                annotation = dict()
 
-            # with open(file_path,'rb') as opened_file:
-            #     fileContent = ""
-            #     i = 0
-            #
-            #     text = opened_file.read()
-            #     charset_dict = chardet.detect(text)
-            #     detected_encoding = charset_dict['encoding']
-            #
-            #     #Chunking is necessary when opening large files
-            #     chunks = list()
-            #     for chunk in iter(lambda: opened_file.read(CHUNK_LENGTH), ""):
-            #         chunks.append('\n'.join(chunk.splitlines()))
-            #         i += CHUNK_LENGTH
-            #         if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
-            #             fileContent += "".join(chunks)
-            #             chunks = list()
-            #
-            #     if len(chunks):
-            #         fileContent += "".join(chunks)
-            #     del chunks
-            #
-            #     try:
-            #         encodings.remove(detected_encoding)
-            #         encodings.insert(0,detected_encoding)
-            #
-            #     except ValueError:
-            #         pass
-            #
-            #     for encoding in encodings:
-            #         try:
-            #             self.segmentation_text = text.decode(encoding)
-            #         except:
-            #             pass
-            #
-            #     self.fileContent.append(self.segmentation_text)
-            #
-            # # Normalize text (canonical decomposition then composition)...
-            #     fileContent = normalize('NFC', fileContent)
-            #     fileContents.append(fileContent)
-            fileContents = self.fileContents
+                if self.importFileNameKey:
+                    annotation[self.importFileNameKey] = myFile['fileName']
 
-            # Annotations...
-            myFolders = self.folders
-            for myFolder in myFolders:
-                myFiles = myFolder['fileList']
+                if self.importFolderNameKey:
+                    annotation[self.importFolderNameKey] = myFile['folderName']
 
-                for myFile in myFiles:
-                    # print(myFile)
-                    annotation = dict()
+                if self.FolderDepth1Key:
+                    annotation[self.FolderDepth1Key] = myFile['depth1']
 
-                    if self.importFileNameKey:
-                        annotation[self.importFileNameKey] = myFile['fileName']
+                if self.FolderDepth2Key:
+                    annotation[self.FolderDepth2Key] = myFile['depth2']
 
-                    if self.importFolderNameKey:
-                        annotation[self.importFolderNameKey] = myFile['folderName']
+                if self.FolderDepthLvl:
+                    annotation[self.FolderDepthLvl] = myFile['depthLvl']
 
-                    if self.FolderDepth1Key:
-                        annotation[self.FolderDepth1Key] = myFile['depth1']
+                annotations.append(annotation)
+            # progressBar.advance()
 
-                    if self.FolderDepth2Key:
-                        annotation[self.FolderDepth2Key] = myFile['depth2']
+        # Create an LTTL.Input for each files...
 
-                    if self.FolderDepthLvl:
-                        annotation[self.FolderDepthLvl] = myFile['depthLvl']
+        if len(fileContents) == 1:
+            label = self.captionTitle
+        else:
+            label = None
+        for index in range(len(fileContents)):
+            myInput = Input(fileContents[index], label)
+            segment = myInput[0]
+            segment.annotations.update(annotations[index])
+            myInput[0] = segment
+            self.createdInputs.append(myInput)
 
-                    annotations.append(annotation)
-                # progressBar.advance()
+        # If there's only one file, the widget's output is the created Input.
+        if len(fileContents) == 1:
+            self.segmentation = self.createdInputs[0]
 
-            # Create an LTTL.Input for each files...
+        # Otherwise the widget's output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                segmentations=self.createdInputs,
+                label=self.captionTitle,
+                copy_annotations=True,
+                import_labels_as=None,
+                sort=False,
+                auto_number_as=None,
+                merge_duplicates=False,
+                progress_callback=None,
+            )
+        message = u'%i segment@p sent to output ' % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
+        numChars = 0
+        for segment in self.segmentation:
+            segmentLength = len(Segmentation.get_data(segment.str_index))
+            numChars += segmentLength
+        message += u'(%i character@p).' % numChars
+        message = pluralize(message, numChars)
+        self.infoBox.setText(message)
+        progressBar.finish()
 
-                if len(fileContents) == 1:
-                    label = self.captionTitle
-                else:
-                    label = None
-                for index in range(len(fileContents)):
-                    myInput = Input(fileContents[index], label)
-                    segment = myInput[0]
-                    segment.annotations.update(annotations[index])
-                    myInput[0] = segment
-                    self.createdInputs.append(myInput)
-
-                # If there's only one file, the widget's output is the created Input.
-                if len(fileContents) == 1:
-                    self.segmentation = self.createdInputs[0]
-
-                # Otherwise the widget's output is a concatenation...
-                else:
-                    self.segmentation = Segmenter.concatenate(
-                        segmentations=self.createdInputs,
-                        label=self.captionTitle,
-                        copy_annotations=True,
-                        import_labels_as=None,
-                        sort=False,
-                        auto_number_as=None,
-                        merge_duplicates=False,
-                        progress_callback=None,
-                    )
-                message = u'%i segment@p sent to output ' % len(self.segmentation)
-                message = pluralize(message, len(self.segmentation))
-                numChars = 0
-                for segment in self.segmentation:
-                    segmentLength = len(Segmentation.get_data(segment.str_index))
-                    numChars += segmentLength
-                message += u'(%i character@p).' % numChars
-                message = pluralize(message, numChars)
-                self.infoBox.setText(message)
-                progressBar.finish()
-
-                self.send('Text data', self.segmentation, self)
-                self.sendButton.resetSettingsChangedFlag()
+        self.send('Text data', self.segmentation, self)
+        self.sendButton.resetSettingsChangedFlag()
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -856,6 +812,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         fileListExt = list() # list of files matching default extension
         depthList = list()
 
+        progressBar = gui.ProgressBar(self, iterations=1)
+
         for curr_path, dirnames, filenames in os.walk(self.rootFolderPath):
     	#curr_path is a STRING, the path to the directory.
     	#dirnames is a LIST of the names of subdirectories.
@@ -918,6 +876,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
             self.openFileList()
         else:
             self.maxDepth = 0
+        progressBar.advance()
+        progressBar.finish()
 
     # test if file contains one of the patterns in patternList
     def match(self, file, patternList):
@@ -1039,7 +999,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
     def add(self):
         """Add folders to folders attr"""
 
-        rootFolderPathList = re.split(r' +/ +', self.rootFolderPath) #self.rootFolderPath = name
+        #rootFolderPathList = re.split(r' +/ +', self.rootFolderPath) #self.rootFolderPath = name
 
         # identify sequences separated by a "," and suppress the white spaces
         self.inclusionsUserAsList = [x.strip() for x in self.inclusionsUser.split(",") if x.strip()]
