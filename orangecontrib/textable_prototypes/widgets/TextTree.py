@@ -269,6 +269,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             master=self,
             label=u'Export List',
             callback=self.exportList,
+            disabled = True,
             tooltip=(
                 u"Open a dialog for selecting a folder where the folder\n"
                 u"list can be exported in JSON format."
@@ -279,6 +280,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             master=self,
             label=u'Import List',
             callback=self.importList,
+            disabled = True,
             tooltip=(
                 u"Open a dialog for selecting a folder list to\n"
                 u"import (in JSON format). folders from this list\n"
@@ -1128,7 +1130,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             self.removeButton.setDisabled(True)
         if len(self.folders):
             self.clearAllButton.setDisabled(False)
-            self.exportButton.setDisabled(False)
+            self.exportButton.setDisabled(True)
         else:
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
