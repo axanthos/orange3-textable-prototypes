@@ -11,7 +11,7 @@ Text Tree
 
 .. image:: figures/textTree.png
 
-Allow to import a complete tree of text files (.txt, .xml, .csv, .html for example)
+Allow to import a complete tree of text files (.txt, .xml, .csv, .html by default)
 
 Author
 ------
@@ -36,7 +36,7 @@ Description
 
 This widget is designed to import one, some or all the files contained in a selected folder.
 The output is a segmentation containing a segment for each imported file. 
-Each segment has 8 annotations with keys : *folderName*, *fileName*, *depthlvl* and *absoluteFilePath* plus 4 annotations for the each first 4 depth level with format *depthX* (*depth1* to *depth4*).
+Each segment has annotations with keys : *folderName*, *fileName*, *depthlvl* and *absoluteFilePath* plus annotations for the each  depth level with format *depthX* (*depth1* to *depth4*).
   
 The interface of **Text Tree** is available in two versions, according 
 to whether or not the **Advanced Settings** checkbox is selected.
