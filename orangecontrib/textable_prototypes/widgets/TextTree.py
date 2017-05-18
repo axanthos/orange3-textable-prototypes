@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.0.2'
+__version__ = '0.1.0'
 
 import codecs, io, os, re, json, chardet
 from unicodedata import normalize
@@ -76,14 +76,15 @@ class OWTextableTextTree(OWTextableBaseWidget):
     autoNumberKey = settings.Setting(u'num')
     importFilenames = settings.Setting(True)
     importFolderName = settings.Setting(True)
-    importFolderNameKey = settings.Setting(u'depth_0')
-    FolderDepth1Key = settings.Setting(u'depth_1')
-    FolderDepth2Key = settings.Setting(u'depth_2')
-    FolderDepth2Key = settings.Setting(u'depth_3')
-    FolderDepth2Key = settings.Setting(u'depth_4')
-    FolderDepthLvl = settings.Setting(u'depth_level')
-    FileAbsolutePath = settings.Setting(u'file_path')
-    importFileNameKey = settings.Setting(u'file_name')
+    # importFolderNameKey = settings.Setting(u'depth_0')
+    # FolderDepth1Key = settings.Setting(u'depth_1')
+    # FolderDepth2Key = settings.Setting(u'depth_2')
+    # FolderDepth2Key = settings.Setting(u'depth_3')
+    # FolderDepth2Key = settings.Setting(u'depth_4')
+    # FolderDepthLvl = settings.Setting(u'depth_level')
+    # FileEncodingWithConfidence = settings.Setting(u'file encoding with confidence')
+    # FileAbsolutePath = settings.Setting(u'file_path')
+    # importFileNameKey = settings.Setting(u'file_name')
 
     lastLocation = settings.Setting('.')
     displayAdvancedSettings = settings.Setting(False)
@@ -271,6 +272,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             master=self,
             label=u'Export List',
             callback=self.exportList,
+            disabled = True,
             tooltip=(
                 u"Open a dialog for selecting a folder where the folder\n"
                 u"list can be exported in JSON format."
@@ -281,6 +283,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             master=self,
             label=u'Import List',
             callback=self.importList,
+            disabled = True,
             tooltip=(
                 u"Open a dialog for selecting a folder list to\n"
                 u"import (in JSON format). folders from this list\n"
@@ -641,25 +644,17 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 # print(myFile)
                 annotation = dict()
 
-                if self.importFileNameKey:
-                    annotation[self.importFileNameKey] = myFile['fileName']
+                annotation['file name'] = myFile['fileName']
+                annotation['file depth level'] = myFile['depthLvl']
+                annotation['file path'] = myFile['absoluteFilePath']
+                annotation['file encoding, confidence'] = myFile['encoding']+", "+str(myFile['encoding_confidence'])
 
-                if self.importFolderNameKey:
-                    annotation[self.importFolderNameKey] = myFile['depth_0']
-
-                if self.FolderDepth1Key:
-                    annotation[self.FolderDepth1Key] = myFile['depth_1']
-
-                if self.FolderDepth2Key:
-                    annotation[self.FolderDepth2Key] = myFile['depth_2']
-
-                if self.FolderDepthLvl:
-                    annotation[self.FolderDepthLvl] = myFile['depthLvl']
-
-                if self.FileAbsolutePath:
-                    annotation[self.FileAbsolutePath] = myFile['absoluteFilePath']
+                depths = [k for k in myFile.keys() if k.startswith('depth_')]
+                for depth in depths:
+                    annotation[depth] = myFile[depth]
 
                 annotations.append(annotation)
+                # print(annotations)
             # progressBar.advance()
 
         # Create an LTTL.Input for each files...
@@ -704,7 +699,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
-        print(self.segmentation.to_string())
+        # print(self.segmentation.to_string())
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -847,10 +842,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
                 file['depth_0'] = annotations[0]
 
-                for i in range(1, curr_depth):
+                for i in range(1, curr_depth+1):
                     file['depth_' + str(i)] = annotations[i]
-                for i in range(curr_depth, 5):
-                    file['depth_' + str(i)] = "0"
+
+                # for i in range(curr_depth, 5):
+                #     file['depth_' + str(i)] = "0"
 
                 # apply default file extension filter
                 for extension in self.inclusionList:
@@ -893,6 +889,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
     def openFileList(self):
         self.fileContents = list()
+        tempFileList = list()
         for file in self.fileList:
             fileContent = ""
             try:
@@ -904,7 +901,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
             with open(file_path,'rb') as opened_file:
                 fileContent = opened_file.read()
                 charset_dict = chardet.detect(fileContent)
+                # print(charset_dict)
                 detected_encoding = charset_dict['encoding']
+                detected_confidence = charset_dict['confidence']
 
                 # i = 0
                 # chunks = list()
@@ -933,14 +932,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     except:
                         pass
 
-
-                # fileContent = normalize('NFC', str(fileContent))
-                # fileContents.append(fileContent)
-
                 self.fileContents.append(self.fileContent)
 
-        # del self.fileContents[-1]
-        print(self.fileContents)
+            file['encoding'] = detected_encoding
+            file['encoding_confidence'] = detected_confidence
+            tempFileList.append(file)
+
+        self.fileList = tempFileList
+        # print(self.fileList)
 
     def browse(self):
         """Display a QFileDialog and select a folder"""
@@ -1018,11 +1017,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         self.getFileList()
         # display the list of files
-        print("Files: ", list(map(lambda f: f['fileName'], self.fileList)))
+        # print("Files: ", list(map(lambda f: f['fileName'], self.fileList)))
 
         sampleFileList = self.sampleFileList()
         # display the list of sampled files
-        print("Files after sampling: ", list(map(lambda f: f['fileName'], sampleFileList)))
+        # print("Files after sampling: ", list(map(lambda f: f['fileName'], sampleFileList)))
 
         self.folders.append(
             {
@@ -1139,7 +1138,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             self.removeButton.setDisabled(True)
         if len(self.folders):
             self.clearAllButton.setDisabled(False)
-            self.exportButton.setDisabled(False)
+            self.exportButton.setDisabled(True)
         else:
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
