@@ -576,8 +576,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # Clear created Inputs...
         self.clearCreatedInputs()
-
-        fileContents = list()
         annotations = list()
         counter = 1
 
@@ -585,11 +583,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
             myFolders = self.folders
         else:
             myFolders = [self.folder]
-
-        # progressBar = gui.ProgressBar(
-        #     self,
-        #     iterations=len(myFolders)
-        # )
 
         fileContents = self.fileContents
 
@@ -612,8 +605,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
                 annotations.append(annotation)
                 # print(annotations)
-        #     progressBar.advance()
-        # progressBar.finish()
 
         # Create an LTTL.Input for each files...
 
@@ -653,7 +644,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
-        # progressBar.finish()
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
@@ -767,6 +757,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         #print("getFileList")
 
         initialRootParentPath, _ = os.path.split(self.rootFolderPath) #initial parent path is selected's folder parent folder
+        fileList = list()
         fileListExt = list() # list of files matching default extension
         depthList = list()
 
@@ -809,11 +800,13 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 # apply default file extension filter
                 for extension in self.inclusionList:
                     if filename.endswith(extension):
-                        fileListExt.append(file)
+                        fileListExt.append(file) #FileListExt = file list created with default inclusion criteria (text extensions from inclusionList)
+
+                fileList.append(file)
 
         # apply inclusion filter
         if self.applyInclusion:
-            fileListIncl = [file for file in fileListExt
+            fileListIncl = [file for file in fileList
                             # match in inclusion list
                             if self.match(file['fileName'], self.inclusionsUserAsList)]
         else:
@@ -829,6 +822,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         # output file list
         self.fileList = fileListExcl
+
+        self.fileContents = list()
 
         if self.fileList:
             self.maxDepth = max(depthList)
@@ -847,7 +842,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         return False
 
     def openFileList(self):
-        self.fileContents = list()
         tempFileList = list()
 
         progressBarOpen = gui.ProgressBar(
@@ -871,6 +865,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 detected_confidence = charset_dict['confidence']
 
                 # i = 0
+                #
                 # chunks = list()
                 #
                 # for chunk in iter(lambda: opened_file.read(CHUNK_LENGTH), ""):
