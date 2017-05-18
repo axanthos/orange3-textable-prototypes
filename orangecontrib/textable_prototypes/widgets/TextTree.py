@@ -586,12 +586,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
         else:
             myFolders = [self.folder]
 
-        progressBar = gui.ProgressBar(
-            self,
-            iterations=len(myFolders)
-        )
-
-        # Walk through each folder and open each files successively...
+        # progressBar = gui.ProgressBar(
+        #     self,
+        #     iterations=len(myFolders)
+        # )
 
         fileContents = self.fileContents
 
@@ -614,7 +612,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
                 annotations.append(annotation)
                 # print(annotations)
-            # progressBar.advance()
+        #     progressBar.advance()
+        # progressBar.finish()
 
         # Create an LTTL.Input for each files...
 
@@ -654,7 +653,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
-        progressBar.finish()
+        # progressBar.finish()
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
@@ -771,7 +770,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         fileListExt = list() # list of files matching default extension
         depthList = list()
 
-        progressBar = gui.ProgressBar(self, iterations=1)
+        progressBarZero = gui.ProgressBar(self, iterations=1)
 
         for curr_path, dirnames, filenames in os.walk(self.rootFolderPath):
     	#curr_path is a STRING, the path to the directory.
@@ -836,8 +835,9 @@ class OWTextableTextTree(OWTextableBaseWidget):
             self.openFileList()
         else:
             self.maxDepth = 0
-        progressBar.advance()
-        progressBar.finish()
+
+        progressBarZero.advance()
+        progressBarZero.finish()
 
     # test if file contains one of the patterns in patternList
     def match(self, file, patternList):
@@ -849,6 +849,12 @@ class OWTextableTextTree(OWTextableBaseWidget):
     def openFileList(self):
         self.fileContents = list()
         tempFileList = list()
+
+        progressBarOpen = gui.ProgressBar(
+            self,
+            iterations=len(self.fileList)
+        )
+
         for file in self.fileList:
             fileContent = ""
             try:
@@ -895,10 +901,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
             file['encoding'] = detected_encoding
             file['encoding_confidence'] = detected_confidence
+            progressBarOpen.advance()
             tempFileList.append(file)
 
         self.fileList = tempFileList
-        # print(self.fileList)
+        progressBarOpen.finish()
 
     def browse(self):
         """Display a QFileDialog and select a folder"""
