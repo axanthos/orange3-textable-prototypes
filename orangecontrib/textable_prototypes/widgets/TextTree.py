@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 """
 Class OWTextableTextTree
-Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2017 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This folder is part of the Orange-Textable package v3.0.
 Orange-Textable v3.0 is free software: you can redistribute it and/or modify
@@ -111,8 +111,8 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
         self.folder = dict()
-        self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a a folder
-        self.inclusionList = [".txt",".html",".xml",".csv"] #by default empty list
+        self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a folder
+        self.inclusionList = [".txt",".html",".xml",".csv"] #list by default
 
         # self.exclusionList = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".DS_Store"] # by default exclusions : img files, .DS_Store (macOS)
         self.exclusionList = [] # by default null
@@ -173,21 +173,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 u"Open a dialog for selecting a top folder."
             ),
         )
-        #gui.separator(widget=basicfolderBox, width=3)
-        #gui.comboBox(
-#            widget=basicfolderBox,
-#            master=self,
-#            value='encoding',
-#            items=getPredefinedEncodings(),
-#            sendSelectedValue=True,
-#            orientation='horizontal',
-#            label=u'Encoding:',
-#            labelWidth=101,
-#            callback=self.sendButton.settingsChanged,
-#            tooltip=(
-#                u"Select input folder(s) encoding."
-#            ),
-#        )
+
         gui.separator(widget=basicfolderBox, width=3)
         self.advancedSettings.basicWidgets.append(basicfolderBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
@@ -338,13 +324,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         )
         gui.separator(widget=addfolderBox, width=10)
 
-        # Filter choice to include only certain files or to exclude files
-        # ------------
-        # self.applyInclusion = False  à mettre dans le init
-        # gui.checkbox()
-        # callback = lambda t=self.applyInclusion : includeLineEdit.setDisabled(not t)
-        # includeLineEdit = gui.lineEdit()
-        # ------------
 
         # Filter box to input include only
         gui.separator(widget=addfolderBox, width=3)
@@ -482,27 +461,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-#        gui.checkBox(
-#           widget=optionsBoxLine1,
-#            master=self,
-#           value='importFilenames',
-#            label=u'Import folder names with key:',
-#           labelWidth=180,
-#            callback=self.sendButton.settingsChanged,
-#            tooltip=(
-#                u"Import folder names as annotations."
-#           ),
-#        )
-#        self.importFilenamesKeyLineEdit = gui.lineEdit(
-#            widget=optionsBoxLine1,
-#            master=self,
-#            value='importFilenamesKey',
-#            orientation='horizontal',
-#            callback=self.sendButton.settingsChanged,
-#            tooltip=(
-#                u"Annotation key for importing folder names."
-#            ),
-#        )
+
         gui.separator(widget=optionsBox, width=3)
         optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
