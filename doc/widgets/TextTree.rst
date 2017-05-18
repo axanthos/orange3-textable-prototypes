@@ -4,7 +4,7 @@
    :keywords: Orange3, Textable, Prototypes, documentation, TextTree,
               widget
 
-.. _Theatre Classique:
+.. _Text Tree:
 
 Text Tree
 =================
