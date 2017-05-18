@@ -338,11 +338,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
             widget=includeBoxLine1,
             master=self,
             value='applyInclusion',
-            label=u'Include only',
+            label=u'Include',
             labelWidth=100,
             callback = lambda: includeLineEdit.setDisabled(not self.applyInclusion),
             tooltip=(
-                u"Choose the inclusion"
+                u"Choose the inclusion(s)"
             ),
         )
         includeLineEdit = gui.lineEdit(
@@ -377,7 +377,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             disabled = False,
             callback = lambda: includeLineEdit2.setDisabled(not self.applyExclusion),
             tooltip=(
-                u"Exclude the inclusion"
+                u"Exclude the inclusion(s)"
             ),
         )
         includeLineEdit2=gui.lineEdit(
