@@ -827,6 +827,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
 
         if self.fileList:
             self.maxDepth = max(depthList)
+            self.fileList = self.sampleFileList()
             self.openFileList()
         else:
             self.maxDepth = 0
@@ -980,7 +981,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # display the list of files
         # print("Files: ", list(map(lambda f: f['fileName'], self.fileList)))
 
-        sampleFileList = self.sampleFileList()
         # display the list of sampled files
         # print("Files after sampling: ", list(map(lambda f: f['fileName'], sampleFileList)))
 
@@ -991,7 +991,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             'inclusionsUser' : self.inclusionsUser,
             'exclusionsUser' : self.exclusionsUser,
             'samplingRate' : self.samplingRate,
-            'fileList' : sampleFileList,
+            'fileList' : self.fileList,
             }
         )
         # print(self.folders)
