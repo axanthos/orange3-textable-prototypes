@@ -54,7 +54,7 @@ class ECP(OWTextableBaseWidget):
 
     name = "ECP"
     description = "Import XML-TEI data from ECP website"
-    icon = "icons/theatre_classique.svg"
+    icon = "icons/ECPIcon.svg"
     priority = 10
 
     #----------------------------------------------------------------------
