@@ -46,7 +46,7 @@ import pickle
 
 class ECP(OWTextableBaseWidget):
     """Textable widget for importing XML-TEI data from the Eighteenth Century
-    Poetry website (http://www.theatre-classique.fr)
+    Poetry website (http://www.eighteenthcenturypoetry.org/)
     """
 
     #----------------------------------------------------------------------
@@ -234,7 +234,7 @@ class ECP(OWTextableBaseWidget):
             iterations=len(self.selectedTitles)
         )
 
-        # Attempt to connect to Theatre-classique and retrieve plays...
+        # Attempt to connect to ECP and retrieve plays...
         xml_contents = list()
         annotations = list()
         try:
@@ -320,7 +320,7 @@ class ECP(OWTextableBaseWidget):
             file = open(os.path.join(path, "cached_title_list_ecp"),"rb")
             self.titleSeg = pickle.load(file)
             file.close()
-        # Else try to load list from Theatre-classique and build new seg...
+        # Else try to load list from ECP and build new seg...
         except IOError:
             self.titleSeg = self.getTitleListFromECP()
 
@@ -362,7 +362,7 @@ class ECP(OWTextableBaseWidget):
             "Fetching data from ECP website, please wait"
         )
 
-        # Attempt to connect to Theatre-classique...
+        # Attempt to connect to ECP...
         try:
             response = urllib.request.urlopen(self.base_url)
             base_html = response.read().decode('iso-8859-1')
