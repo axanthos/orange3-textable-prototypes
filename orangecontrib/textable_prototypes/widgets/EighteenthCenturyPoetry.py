@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.2"
+__version__ = u"0.0.1"
 __author__ = "Frank Dattai Pham & Adriano Matos Barbosa"
 __maintainer__ = "Frank Dattai Pham & Adriano Matos Barbosa"
 __email__ = "frankdattai.pham@unil.ch"
