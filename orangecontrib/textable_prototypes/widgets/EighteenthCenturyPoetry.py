@@ -1,24 +1,27 @@
 """
-Class EighteenthCenturyPoetry
+Class ECP
 Copyright 2017 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
+
 Orange3-Textable-Prototypes is free software: you can redistribute it
 and/or modify it under the terms of the GNU General Public License as published
 by the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
+
 Orange3-Textable-Prototypes is distributed in the hope that it will be
 useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
+
 You should have received a copy of the GNU General Public License
 along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.1"
-__author__ = "Dat & Adriano"
-__maintainer__ = "Aris Xanthos"
+__version__ = u"0.1.2"
+__author__ = "Frank Dattai Pham & Adriano Matos Barbosa"
+__maintainer__ = "Frank Dattai Pham & Adriano Matos Barbosa"
 __email__ = "frankdattai.pham@unil.ch"
 
 
@@ -41,17 +44,17 @@ import os
 import pickle
 
 
-class EighteenthCenturyPoetry(OWTextableBaseWidget):
+class ECP(OWTextableBaseWidget):
     """Textable widget for importing XML-TEI data from the Eighteenth Century
-    Poetry website (eighteenthcenturypoetry.org)
+    Poetry website (http://www.theatre-classique.fr)
     """
 
     #----------------------------------------------------------------------
     # Widget"s metadata...
 
-    name = "Eighteenth Century Poetry"
-    description = "Import XML-TEI data from EighteenthCenturyPoetry website"
-    icon = "icons/EighteenthCenturyPoetryIcon.svg"
+    name = "ECP"
+    description = "Import XML-TEI data from ECP website"
+    icon = "icons/theatre_classique.svg"
     priority = 10
 
     #----------------------------------------------------------------------
@@ -68,7 +71,12 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
     )
 
     autoSend = settings.Setting(False)
-    addedTitles = settings.Setting([])
+    selectedTitles = settings.Setting([])
+    titleLabels = settings.Setting([])
+    filterCriterion = settings.Setting("author")
+    filterValue = settings.Setting("(all)")
+    importedURLs = settings.Setting([])
+    displayAdvancedSettings = settings.Setting(False)
 
     want_main_area = False
 
@@ -77,12 +85,6 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
         super().__init__()
 
-        # Before in settings
-        self.selectedTitles = list()
-        self.titleLabels = list()
-        self.filterCriterion = "author"
-        self.filterValue = "(all)"
-        self.importedURLs = list()
         # Other attributes...
         self.segmentation = None
         self.createdInputs = list()
@@ -92,7 +94,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
         self.base_url =     \
           u"http://www.eighteenthcenturypoetry.org/works/#genres"
         self.document_base_url =     \
-          u"http://www.eighteenthcenturypoetry.org/works/#genres"
+          u"http://www.eighteenthcenturypoetry.org/"
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -121,7 +123,6 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
         # Advanced settings checkbox (basic/advanced interface will appear
         # immediately after it...
-
         self.advancedSettings.draw()
 
         # Filter box (advanced settings only)
@@ -134,14 +135,14 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             widget=filterBox,
             master=self,
             value="filterCriterion",
-            items=["author"],
+            items=["author", "genre"],
             sendSelectedValue=True,
             orientation="horizontal",
             label="Criterion:",
             labelWidth=120,
-            callback=self.updateFilterValueList, # OK
+            callback=self.updateFilterValueList,
             tooltip=(
-                "Please select a criterion for searching the title list."
+                "Please select a criterion for searching the title list\n"
             ),
         )
         filterCriterionCombo.setMinimumWidth(120)
@@ -154,7 +155,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             orientation="horizontal",
             label="Value:",
             labelWidth=120,
-            callback=self.updateTitleList, # OK
+            callback=self.updateTitleList,
             tooltip=("Please select a value for the chosen criterion."),
         )
         gui.separator(widget=filterBox, height=3)
@@ -167,7 +168,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
         # Title box
         titleBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Works",
+            box="Titles",
             orientation="vertical",
         )
         self.titleListbox = gui.listBox(
@@ -175,7 +176,8 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
-            tooltip="The list of titles whose content will be imported.",
+            callback=self.sendButton.settingsChanged,
+            tooltip="The list of titles whose content will be imported",
         )
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
@@ -184,63 +186,10 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             widget=titleBox,
             master=self,
             label="Refresh",
-            callback=self.refreshTitleSeg, # OK
-            tooltip="Connect to EighteenthCenturyPoetry website and refresh list.",
+            callback=self.refreshTitleSeg,
+            tooltip="Connect to ECP website and refresh list.",
         )
         gui.separator(widget=titleBox, height=3)
-
-        # bouton ajouter au panier
-        gui.button(
-            widget=titleBox,
-            master=self,
-            label="Add to basket",
-            callback=self.addToBasket, # changer fonction pour ajouter au panier
-            tooltip="Add selected items of this box to basket.",
-        )
-
-        gui.separator(widget=self.controlArea, height=3)
-
-        # Basket box
-        basketBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="Basket",
-            orientation="vertical",
-        )
-        self.titleListbox = gui.listBox(
-            widget=basketBox,
-            master=self,
-            # changer pour panier
-            value="addedTitles",    # setting (list)
-            labels="titleLabels",      # setting (list)
-            # selectionner pour bouton delete
-            callback=self.sendButton.settingsChanged,
-            tooltip="The list of titles whose content will be imported.",
-        )
-        gui.separator(widget=basketBox, height=3)
-
-        #bouton pour supprimer elements selectionnes
-        gui.button(
-            widget=basketBox,
-            master=self,
-            label="Delete",
-            # changer fonction pour supprimer elements selectionnes
-            callback=self.deleteItem,
-            #
-            tooltip="Delete selected item(s)",
-        )
-
-        gui.separator(widget=basketBox, height=3)
-
-        #bouton pour supprimer tous les elements
-        gui.button(
-            widget=basketBox,
-            master=self,
-            label="Clear all",
-            # changer fonction pour tout supprimer
-            callback=self.clearAllItems,
-            #
-            tooltip="Delete all item(s)",
-        )
 
         gui.separator(widget=self.controlArea, height=3)
 
@@ -285,19 +234,20 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             iterations=len(self.selectedTitles)
         )
 
-        # Attempt to connect to ECP and retrieve plays...
+        # Attempt to connect to Theatre-classique and retrieve plays...
         xml_contents = list()
         annotations = list()
         try:
             for title in self.selectedTitles:
-                response = urllib.request.urlopen(
-                    self.document_base_url +
-                    self.filteredTitleSeg[title].annotations["url"]
-                )
+                doc_url = self.document_base_url +  \
+                    self.filteredTitleSeg[title].annotations["href"]
+                url = re.sub(r"/(.+?)\.shtml", "/\1/\1.xml", doc_url)
+                response = urllib.request.urlopen(url)
                 xml_contents.append(response.read().decode('utf-8'))
-                annotations.append(
-                    self.filteredTitleSeg[title].annotations.copy()
-                )
+                source_annotations = self.filteredTitleSeg[title].annotations.copy()
+                source_annotations["url"] = source_annotations["href"]
+                del source_annotations["href"]
+                annotations.append(source_annotations)
                 progressBar.advance()   # 1 tick on the progress bar...
 
         # If an error occurs (e.g. http error, or memory error)...
@@ -305,7 +255,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
-                "Couldn't download data from Eighteen Century Poetry website.",
+                "Couldn't download data from ECP website.",
                 "error"
             )
 
@@ -367,14 +317,14 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
         try:
-            file = open(os.path.join(path, "cached_title_list"),"rb")
+            file = open(os.path.join(path, "cached_title_list_ecp"),"rb")
             self.titleSeg = pickle.load(file)
             file.close()
-        # Else try to load list from ECP and build new seg...
+        # Else try to load list from Theatre-classique and build new seg...
         except IOError:
-            self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
+            self.titleSeg = self.getTitleListFromECP()
 
-        # Build author, year and genre lists...
+        # Build author and genre lists...
         if self.titleSeg is not None:
             self.filterValues["author"] = Processor.count_in_context(
                 units={
@@ -383,6 +333,13 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
                 }
             ).col_ids
             self.filterValues["author"].sort()
+            self.filterValues["genre"] = Processor.count_in_context(
+                units={
+                    "segmentation": self.titleSeg,
+                    "annotation_key": "genre"
+                }
+            ).col_ids
+            self.filterValues["genre"].sort()
 
         # Sort the segmentation alphabetically based on titles (nasty hack!)...
         self.titleSeg.buffer.sort(key=lambda s: s.annotations["title"])
@@ -393,25 +350,24 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
     def refreshTitleSeg(self):
         """Refresh title segmentation from website"""
-        self.titleSeg = self.getTitleListFromEighteenthCenturyPoetry()
+        self.titleSeg = self.getTitleListFromECP()
         # Update title and filter value lists (only at init and on manual
         # refresh, therefore separate from self.updateGUI).
         self.updateFilterValueList()
 
-    # à modifier à la sauce ECP
-    def getTitleListFromEighteenthCenturyPoetry(self):
+    def getTitleListFromECP(self):
         """Fetch titles from the ECP website"""
 
         self.infoBox.customMessage(
             "Fetching data from ECP website, please wait"
         )
 
-        # Attempt to connect to ECP...
+        # Attempt to connect to Theatre-classique...
         try:
             response = urllib.request.urlopen(self.base_url)
             base_html = response.read().decode('iso-8859-1')
             self.infoBox.customMessage(
-                "Done fetching data from EighteenthCenturyPoetry website."
+                "Done fetching data from ECP website."
             )
 
         # If unable to connect (somehow)...
@@ -419,7 +375,7 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
 
             # Set Info box and widget to "warning" state.
             self.infoBox.noDataSent(
-                warning="Couldn't access EighteenthCenturyPoetry website."
+                warning="Couldn't access ECP website."
             )
 
             # Empty title list box.
@@ -433,53 +389,56 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
         base_html_seg = Input(base_html)
 
         # Remove accents from the data...
-        recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
+        #recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
 
-        # Extract works.
-        genre_corpus = Segmenter.import_xml(
-            segmentation=recoded_seg,
+        # Extract table containing titles from HTML.
+        genresListSeg = Segmenter.import_xml(
+            segmentation=base_html_seg,
             element="ul",
-            conditions={"class": re.compile(r"^genres-list$")},
-        )
-        genre_list = Segmenter.tokenize(
-            segmentation=genre_corpus,
-            regexes=re.compile(r"<a.+$"),
-            import_annotations=False,
-            merge_duplicates=True,
-        )
-        work_list = Segmenter.tokenize(
-            segmentation=genres_list,
-            regexes=re.compile(r"<li class="bibl">(.+?)</li>"),
-            import_annotations=False,
-            merge_duplicates=True,
+            conditions={"id": re.compile(r"^genres-list")},
         )
 
-        # Compile the regex that will be used to parse each line.
-        field_regex = re.compile(
-            r"<a href="(.+?)">"
-            r"<a href=".+?">(.+?)</a>"
-            r"<span style="color:.+?666">(.+?)</span>"
+        # Extract genre annotation.
+        genreSeg = Segmenter.tokenize(
+            segmentation=genresListSeg,
+            regexes=[(re.compile(r'^.*class="browse">(.+?)<.*$(?s)'), "tokenize", {"genre": "&1"})],
         )
-
-        # Parse each line and store the resulting segmentation in an attribute.
+        print(genreSeg.to_string())
+        # Extract works html
         titleSeg = Segmenter.tokenize(
-            segmentation=work_list,
-            regexes=[
-                (field_regex, "tokenize", {"url": "&1"}),
-                (field_regex, "tokenize", {"title": "&2"}),
-                (field_regex, "tokenize", {"author": "&3"}),
-            ],
-            import_annotations=False,
-            merge_duplicates=True,
+            segmentation=genreSeg,
+            regexes=[(re.compile(r'<li class="bibl".+?</span>(?s)'), "tokenize")],
         )
 
+        # Extract author annotation
+        titleSeg = Segmenter.tokenize(
+            segmentation=titleSeg,
+            regexes=[
+                (
+                    re.compile(r"^.*>\n(.+?)</span>.*$(?s)"),
+                    "tokenize",
+                    {"author": "&1"}
+                ),
+                (
+                    re.compile(r'^.*href="(/works/.+?\.shtml)">.*$(?s)'),
+                    "tokenize",
+                    {"url": "&1"}
+                ),
+                (
+                    re.compile(r'^.*shtml">(.*)</a>.*$(?s)'),
+                    "tokenize",
+                    {"title": "&1"}
+                ),
+            ],
+            merge_duplicates=True,
+        )
 
         # Try to save list in this module"s directory for future reference...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
         try:
-            file = open(os.path.join(path, "cached_title_list"), "wb")
+            file = open(os.path.join(path, "cached_title_list_ecp"), "wb")
             pickle.dump(titleSeg, file, -1)
             file.close()
         except IOError:
@@ -546,7 +505,14 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
                 specs.append(
                     self.filteredTitleSeg[idx].annotations["author"]
                 )
-
+            if (
+                self.displayAdvancedSettings == False or
+                self.filterCriterion != "genre" or
+                self.filterValue == "(all)"
+            ):
+                specs.append(
+                    self.filteredTitleSeg[idx].annotations["genre"]
+                )
             titleLabels[idx] = titleLabel + " (%s)" % "; ".join(specs)
         self.titleLabels = titleLabels
 
@@ -593,28 +559,11 @@ class EighteenthCenturyPoetry(OWTextableBaseWidget):
             super().setCaption(title)
 
 
-# functions added
-    def addToBasket (self):
-        self.addedTitles = list()
-        for title in self.selectedTitles:
-            addedTitles.append(title)
-        return
-
-    def deleteItem (self):
-        for title in self.addedTitles:
-            del title
-        return
-
-    def clearAllItems (self):
-        del self.addedTitles[:]
-        return
-
-
 if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
     myApplication = QApplication(sys.argv)
-    myWidget = EighteenthCenturyPoetry()
+    myWidget = ECP()
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
