@@ -32,5 +32,6 @@ Widgets
     :maxdepth: 1
 
     Theatre Classique <widgets/theatre_classique>
+    Topic Models <widgets/topic_models>
 
 
