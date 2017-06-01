@@ -57,7 +57,8 @@ in the selected folder.
     Figure 1: **Text Tree** widget (basic interface).
 
 The **Options** section allows the user to browse on his computer to find
-desired folder (**Output segmentation label**).
+desired folder (**Output segmentation label**). 
+Default filter : the files with extensions .txt, .html, .xml, .csv, .rtf will be opened.
 
 The **Info** section indicates the number of segments (files) in the 
 output segmentation, or the reasons why no segmentation is emitted (no title 
@@ -84,7 +85,10 @@ and execute a sampling (0 - 100 %). The sampling operation selects the input pro
     
     Figure 2: **Text Tree** widget (advanced interface).
 
-The **Options** section allows the user to browse on his computer to find the desired folders (the samme way as in the basic interface), but with the options to include or excludes types or names of files and to input a level of sampling in %. With the **Add button** the selection will be added to the list. File with encoding's error will simply be omitted. 
+The **Options** section allows the user to browse on his computer to find the desired folders (the samme way as in the basic interface), but with the options to include or excludes types or names of files and to input a level of sampling in %. With the **Add button** the selection will be added to the list.
+Exclusion : exclusion in the files list from the basic browse (default filter)
+Inclusion : inclusion of a new files filter (default filter replaced)
+The encoding's annotation of a file with encoding's error will simply be omitted. 
 
 The **Info** section, as well as the **Send** button and 
 **Send automatically**, operate in the same way as in the basic interface.
