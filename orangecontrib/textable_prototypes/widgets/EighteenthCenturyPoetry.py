@@ -368,7 +368,7 @@ class ECP(OWTextableBaseWidget):
         # Attempt to connect to ECP...
         try:
             response = urllib.request.urlopen(self.base_url)
-            base_html = response.read().decode('iso-8859-1')
+            base_html = response.read().decode('utf-8')
             self.infoBox.customMessage(
                 "Done fetching data from ECP website."
             )
@@ -392,19 +392,21 @@ class ECP(OWTextableBaseWidget):
         base_html_seg = Input(base_html)
 
         # Remove accents from the data...
-        #recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
+        recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
 
         # Extract table containing titles from HTML.
         genresListSeg = Segmenter.import_xml(
-            segmentation=base_html_seg,
+            segmentation=recoded_seg,
             element="ul",
             conditions={"id": re.compile(r"^genres-list")},
+            
         )
 
         # Extract genre annotation.
         genreSeg = Segmenter.tokenize(
             segmentation=genresListSeg,
             regexes=[(re.compile(r'<a id[^>]+>(.+?)</a.+?(?=<a id|$)(?s)'), "tokenize", {"genre": "&1"})],
+            import_annotations=False,
         )
 
         # Extract works html
@@ -495,38 +497,32 @@ class ECP(OWTextableBaseWidget):
         # groups titles with different genres...
 
         # Creates a dictionary with "author" and "title" as key...
-        if (
-            not (
-                self.filterCriterion == "genre" and
-                self.filterValue != "(all)"
+
+        unique_titles = dict()
+        for title in self.filteredTitleSeg:
+            title_id = (
+                title.annotations["author"],
+                title.annotations["title"],
             )
-            or not self.displayAdvancedSettings
-        ):
-            unique_titles = dict()
-            for title in self.filteredTitleSeg:
-                title_id = (
-                    title.annotations["author"],
-                    title.annotations["title"],
-                )
-                try:
-                    unique_titles[title_id].append(title)
-                except KeyError:
-                    unique_titles[title_id] = [title]
+            try:
+                unique_titles[title_id].append(title)
+            except KeyError:
+                unique_titles[title_id] = [title]
 
-            # Creates a list with new annotation comporting all genres...
-            new_title_segments = list()
-            for unique_title in unique_titles.values():
-                title_genres = list()
-                new_title_segments.append(unique_title[0])
-                title_genres.append(unique_title[0].annotations["genre"])
-                for equivalent_title in unique_title[1:]:
-                    title_genres.append(equivalent_title.annotations["genre"])
-                new_title_segments[-1].annotations["genre"] = ", ".join(
-                    sorted(list(set(title_genres)))
-                )
+        # Creates a list with new annotation comporting all genres...
+        new_title_segments = list()
+        for unique_title in unique_titles.values():
+            title_genres = list()
+            new_title_segments.append(unique_title[0])
+            title_genres.append(unique_title[0].annotations["genre"])
+            for equivalent_title in unique_title[1:]:
+                title_genres.append(equivalent_title.annotations["genre"])
+            new_title_segments[-1].annotations["genre"] = ", ".join(
+                sorted(list(set(title_genres)))
+            )
 
-            self.filteredTitleSeg = Segmentation(None)
-            self.filteredTitleSeg.extend(new_title_segments)
+        self.filteredTitleSeg = Segmentation(None)
+        self.filteredTitleSeg.extend(new_title_segments)
 
         # Populate titleLabels list with the titles...
         self.titleLabels = sorted(
