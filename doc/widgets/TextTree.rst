@@ -11,7 +11,7 @@ Text Tree
 
 .. image:: figures/textTree.png
 
-Allow to import a complete tree of text files (.txt, .xml, .csv, .html by default)
+Allow to import a complete tree of text files (.txt, .xml, .csv, .html, .rtf by default)
 
 Author
 ------
@@ -36,7 +36,8 @@ Description
 
 This widget is designed to import one, some or all the files contained in a selected folder.
 The output is a segmentation containing a segment for each imported file. 
-Each segment has annotations with keys : *folderName*, *fileName*, *depthlvl* and *absoluteFilePath* plus annotations for the each  depth level with format *depth_X* (*depth_1*, *depth_2*, ...).
+Each segment has annotations with keys : *folderName*, *fileName*, *depthlvl*, *absoluteFilePath* and *file encoding* 
+plus annotations for the each  depth level with format *depth_X* (*depth_1*, *depth_2*, ...).
   
 The interface of **Text Tree** is available in two versions, according 
 to whether or not the **Advanced Settings** checkbox is selected.
@@ -75,7 +76,7 @@ Advanced interface
 The advanced version of **Text Tree**  (see :ref:`figure 2 
 <text_tree_fig2>` below) offers the same functionality as
 the basic one, and it adds the possibility of filtering (include or exclude files by filenames) 
-and execute a sampling (0 - 100 %). The sampling operation selects the input proportion (rounded-up number) of files randomly. Ex : 50% of 9 files will select 5 random files from the file list.
+and execute a sampling (0 - 100 %).
 
 .. _text_tree_fig2:
 
@@ -88,7 +89,8 @@ and execute a sampling (0 - 100 %). The sampling operation selects the input pro
 The **Options** section allows the user to browse on his computer to find the desired folders (the samme way as in the basic interface), but with the options to include or excludes types or names of files and to input a level of sampling in %. With the **Add button** the selection will be added to the list.
 Exclusion : exclusion in the files list from the basic browse (default filter)
 Inclusion : inclusion of a new files filter (default filter replaced)
-The encoding's annotation of a file with encoding's error will simply be omitted. 
+The encoding's annotation of a file with encoding's error will simply be omitted.
+Sampling : the sampling operation selects the input proportion (rounded-up number) of files randomly. Ex : 50% of 9 files will select 5 random files from the file list.
 
 The **Info** section, as well as the **Send** button and 
 **Send automatically**, operate in the same way as in the basic interface.
