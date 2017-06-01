@@ -112,7 +112,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.newAnnotationValue = u''
         self.folder = dict()
         self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a folder
-        self.inclusionList = [".txt",".html",".xml",".csv"] #list by default
+        self.inclusionList = [".txt",".html",".xml",".csv",".rtf"] #list by default
 
         # self.exclusionList = [".png,",".PNG",".jpg",".JPG",".gif",".GIF",".tiff",".TIFF",".jpeg",".JPEG",".DS_Store"] # by default exclusions : img files, .DS_Store (macOS)
         self.exclusionList = [] # by default null
