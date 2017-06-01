@@ -205,8 +205,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 u"\nIn the output segmentation, the content of each\n"
                 u"folder appears in the same position as in the list.\n"
                 u"\nColumn 1 shows the folder's name.\n"
-                u"Column 2 shows the folder's annotation (if any).\n"
-                u"Column 3 shows the folder's encoding."
+                u"Column 2 shows the folder's depth.\n"
+                u"Column 3 shows the inclusions filter.\n"
+                u"Column 4 shows the exclusions filter.\n"
+                u"Column 5 shows the folder's level of sampling."
             ),
         )
         font = QFont()
@@ -257,7 +259,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.exportButton = gui.button(
             widget=folderBoxCol2,
             master=self,
-            label=u'Export List',
+            label=u'',
             callback=self.exportList,
             disabled = True,
             tooltip=(
@@ -268,7 +270,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.importButton = gui.button(
             widget=folderBoxCol2,
             master=self,
-            label=u'Import List',
+            label=u'',
             callback=self.importList,
             disabled = True,
             tooltip=(
@@ -326,7 +328,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         gui.separator(widget=addfolderBox, width=10)
 
 
-        # Filter box to input include only
+        # Filter box to input include
         gui.separator(widget=addfolderBox, width=3)
         includeBoxLine1 = gui.widgetBox(
             widget=addfolderBox,
@@ -334,7 +336,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
             orientation='horizontal',
         )
 
-        # Include only box
+        # Include box
         gui.checkBox(
             widget=includeBoxLine1,
             master=self,
@@ -361,14 +363,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
             ),
         )
 
-        # Filter box to exclude only
+        # Filter box to exclude
         gui.separator(widget=addfolderBox, width=3)
         excludeBoxLine1 = gui.widgetBox(
             widget=addfolderBox,
             box=False,
             orientation='horizontal',
         )
-        # Exclude only box
+        # Exclude box
         gui.checkBox(
             widget=excludeBoxLine1,
             master=self,
