@@ -495,7 +495,13 @@ class ECP(OWTextableBaseWidget):
         # groups titles with different genres...
 
         # Creates a dictionary with "author" and "title" as key...
-        if not (self.filterCriterion == "genre" and self.filterValue != "(all)"):
+        if (
+            not (
+                self.filterCriterion == "genre" and
+                self.filterValue != "(all)"
+            )
+            or not self.displayAdvancedSettings
+        ):
             unique_titles = dict()
             for title in self.filteredTitleSeg:
                 title_id = (
@@ -516,9 +522,11 @@ class ECP(OWTextableBaseWidget):
                 for equivalent_title in unique_title[1:]:
                     title_genres.append(equivalent_title.annotations["genre"])
                 new_title_segments[-1].annotations["genre"] = ", ".join(
-                    sorted(title_genres)
+                    sorted(list(set(title_genres)))
                 )
 
+            self.filteredTitleSeg = Segmentation(None)
+            self.filteredTitleSeg.extend(new_title_segments)
 
         # Populate titleLabels list with the titles...
         self.titleLabels = sorted(
