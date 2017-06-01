@@ -94,7 +94,7 @@ class ECP(OWTextableBaseWidget):
         self.base_url =     \
           u"http://www.eighteenthcenturypoetry.org/works/#genres"
         self.document_base_url =     \
-          u"http://www.eighteenthcenturypoetry.org/"
+          u"http://www.eighteenthcenturypoetry.org"
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -237,31 +237,34 @@ class ECP(OWTextableBaseWidget):
         # Attempt to connect to ECP and retrieve plays...
         xml_contents = list()
         annotations = list()
-        try:
-            for title in self.selectedTitles:
-                doc_url = self.document_base_url +  \
-                    self.filteredTitleSeg[title].annotations["href"]
-                url = re.sub(r"/(.+?)\.shtml", "/\1/\1.xml", doc_url)
-                response = urllib.request.urlopen(url)
-                xml_contents.append(response.read().decode('utf-8'))
-                source_annotations = self.filteredTitleSeg[title].annotations.copy()
-                source_annotations["url"] = source_annotations["href"]
-                del source_annotations["href"]
-                annotations.append(source_annotations)
-                progressBar.advance()   # 1 tick on the progress bar...
+        #try:
+        for title in self.selectedTitles:
+            doc_url = self.document_base_url +  \
+                self.filteredTitleSeg[title].annotations["url"]
+            print(doc_url)
+            url = re.sub(r"/([^/]+)\.shtml", r"/\1/\1.xml", doc_url) #maybe?
+            print(url)
+            response = urllib.request.urlopen(url)
+            xml_contents.append(response.read().decode('utf-8'))
+            source_annotations = self.filteredTitleSeg[title].annotations.copy()
+            #source_annotations["url"] = source_annotations["href"]
+            #del source_annotations["href"]
+            annotations.append(source_annotations)
+            progressBar.advance()   # 1 tick on the progress bar...
 
         # If an error occurs (e.g. http error, or memory error)...
-        except:
+
+        #except:
 
             # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't download data from ECP website.",
-                "error"
-            )
+        #    self.infoBox.setText(
+        #        "Couldn't download data from ECP website.",
+        #        "error"
+        #    )
 
             # Reset output channel.
-            self.send("XML-TEI data", None, self)
-            return
+        #    self.send("XML-TEI data", None, self)
+        #    return
 
         # Store downloaded XML in input objects...
         for xml_content_idx in range(len(xml_contents)):
@@ -401,9 +404,9 @@ class ECP(OWTextableBaseWidget):
         # Extract genre annotation.
         genreSeg = Segmenter.tokenize(
             segmentation=genresListSeg,
-            regexes=[(re.compile(r'^.*class="browse">(.+?)<.*$(?s)'), "tokenize", {"genre": "&1"})],
+            regexes=[(re.compile(r'<a id[^>]+>(.+?)</a.+?(?=<a id|$)(?s)'), "tokenize", {"genre": "&1"})],
         )
-        print(genreSeg.to_string())
+
         # Extract works html
         titleSeg = Segmenter.tokenize(
             segmentation=genreSeg,
@@ -487,6 +490,35 @@ class ECP(OWTextableBaseWidget):
             )
         else:
             self.filteredTitleSeg = self.titleSeg
+
+        # If criterion is not "genre" and his filter value not "all",
+        # groups titles with different genres...
+
+        # Creates a dictionary with "author" and "title" as key...
+        if not (self.filterCriterion == "genre" and self.filterValue != "(all)"):
+            unique_titles = dict()
+            for title in self.filteredTitleSeg:
+                title_id = (
+                    title.annotations["author"],
+                    title.annotations["title"],
+                )
+                try:
+                    unique_titles[title_id].append(title)
+                except KeyError:
+                    unique_titles[title_id] = [title]
+
+            # Creates a list with new annotation comporting all genres...
+            new_title_segments = list()
+            for unique_title in unique_titles.values():
+                title_genres = list()
+                new_title_segments.append(unique_title[0])
+                title_genres.append(unique_title[0].annotations["genre"])
+                for equivalent_title in unique_title[1:]:
+                    title_genres.append(equivalent_title.annotations["genre"])
+                new_title_segments[-1].annotations["genre"] = ", ".join(
+                    sorted(title_genres)
+                )
+
 
         # Populate titleLabels list with the titles...
         self.titleLabels = sorted(
