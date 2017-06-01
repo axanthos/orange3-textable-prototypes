@@ -597,7 +597,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 annotation['file name'] = myFile['fileName']
                 annotation['file depth level'] = myFile['depthLvl']
                 annotation['file path'] = myFile['absoluteFilePath']
-                annotation['file encoding, confidence'] = myFile['encoding']+", "+str(myFile['encoding_confidence'])
+                try:
+                    annotation['file encoding, confidence'] = myFile['encoding']+", "+str(myFile['encoding_confidence'])
+                except TypeError:
+                    annotation['file encoding, confidence'] = "unknown"
 
                 depths = [k for k in myFile.keys() if k.startswith('depth_')]
                 for depth in depths:
@@ -832,7 +835,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         else:
             self.maxDepth = 0
 
-        progressBarZero.advance()
         progressBarZero.finish()
 
     # test if file contains one of the patterns in patternList
@@ -858,12 +860,14 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 pass
 
             encodings = getPredefinedEncodings()
-            with open(file_path,'rb') as opened_file:
-                fileContent = opened_file.read()
-                charset_dict = chardet.detect(fileContent)
-                # print(charset_dict)
-                detected_encoding = charset_dict['encoding']
-                detected_confidence = charset_dict['confidence']
+            try:
+                with open(file_path,'rb') as opened_file:
+                    fileContent = opened_file.read()
+                    charset_dict = chardet.detect(fileContent)
+                    # print(charset_dict)
+                    detected_encoding = charset_dict['encoding']
+                    detected_confidence = charset_dict['confidence']
+
 
                 # i = 0
                 #
@@ -880,25 +884,34 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 #     fileContent += "".join(str(chunks))
                 # del chunks
 
-                try:
-                    encodings.remove(detected_encoding)
-                    encodings.insert(0,detected_encoding)
-
-                except ValueError:
-                    pass
-
-                for encoding in encodings:
                     try:
-                        self.fileContent = fileContent.decode(encoding)
-                    except:
+                        encodings.remove(detected_encoding)
+                        encodings.insert(0,detected_encoding)
+
+                    except ValueError:
                         pass
 
-                self.fileContents.append(self.fileContent)
+                    for encoding in encodings:
+                        try:
+                            self.fileContent = fileContent.decode(encoding)
+                        except:
+                            pass
 
-            file['encoding'] = detected_encoding
-            file['encoding_confidence'] = detected_confidence
-            progressBarOpen.advance()
-            tempFileList.append(file)
+                    self.fileContents.append(self.fileContent)
+
+                file['encoding'] = detected_encoding
+                file['encoding_confidence'] = detected_confidence
+                progressBarOpen.advance()
+                tempFileList.append(file)
+
+            except IOError:
+                if len(myFiles) > 1:
+                    message = u"Couldn't open file '%s'." % filePath
+                else:
+                    message = u"Couldn't open file."
+                self.infoBox.setText(message, 'error')
+                self.send('Text data', None, self)
+                return
 
         self.fileList = tempFileList
         progressBarOpen.finish()
