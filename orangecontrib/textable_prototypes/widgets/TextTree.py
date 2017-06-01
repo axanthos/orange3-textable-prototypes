@@ -110,6 +110,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         self.exclusionsUser = u''
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
+        # self.fileContents = list()
         self.folder = dict()
         self.folders = list() # self.folders is a list of dictionaries with each dictionaries being a folder
         self.inclusionList = [".txt",".html",".xml",".csv",".rtf"] #list by default
@@ -584,10 +585,11 @@ class OWTextableTextTree(OWTextableBaseWidget):
         else:
             myFolders = [self.folder]
 
-        fileContents = self.fileContents
-
+        # print(len(myFolders))
         # Annotations...
+        allFileListContent = list()
         for myFolder in myFolders:
+
             myFiles = myFolder['fileList']
 
             for myFile in myFiles:
@@ -607,23 +609,24 @@ class OWTextableTextTree(OWTextableBaseWidget):
                     annotation[depth] = myFile[depth]
 
                 annotations.append(annotation)
+                allFileListContent.append(myFile['fileContent'])
                 # print(annotations)
 
         # Create an LTTL.Input for each files...
 
-        if len(fileContents) == 1:
+        if len(allFileListContent) == 1:
             label = self.captionTitle
         else:
             label = None
-        for index in range(len(fileContents)):
-            myInput = Input(fileContents[index], label)
+        for index in range(len(allFileListContent)):
+            myInput = Input(allFileListContent[index], label)
             segment = myInput[0]
             segment.annotations.update(annotations[index])
             myInput[0] = segment
             self.createdInputs.append(myInput)
 
         # If there's only one file, the widget's output is the created Input.
-        if len(fileContents) == 1:
+        if len(allFileListContent) == 1:
             self.segmentation = self.createdInputs[0]
 
         # Otherwise the widget's output is a concatenation...
@@ -826,8 +829,6 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # output file list
         self.fileList = fileListExcl
 
-        self.fileContents = list()
-
         if self.fileList:
             self.maxDepth = max(depthList)
             self.fileList = self.sampleFileList()
@@ -845,6 +846,7 @@ class OWTextableTextTree(OWTextableBaseWidget):
         return False
 
     def openFileList(self):
+
         tempFileList = list()
 
         progressBarOpen = gui.ProgressBar(
@@ -897,9 +899,10 @@ class OWTextableTextTree(OWTextableBaseWidget):
                         except:
                             pass
 
-                    self.fileContents.append(self.fileContent)
+                    # self.fileContents.append(self.fileContent)
 
                 file['encoding'] = detected_encoding
+                file['fileContent'] = self.fileContent
                 file['encoding_confidence'] = detected_confidence
                 progressBarOpen.advance()
                 tempFileList.append(file)
@@ -914,6 +917,15 @@ class OWTextableTextTree(OWTextableBaseWidget):
                 return
 
         self.fileList = tempFileList
+
+        self.folder = {
+            'rootPath' : self.rootFolderPath,
+            'maxDepth' : self.maxDepth,
+            'inclusionsUser' : self.inclusionsUser,
+            'exclusionsUser' : self.exclusionsUser,
+            'samplingRate' : self.samplingRate,
+            'fileList' : self.fileList
+            }
         progressBarOpen.finish()
 
     def browse(self):
@@ -997,17 +1009,22 @@ class OWTextableTextTree(OWTextableBaseWidget):
         # display the list of sampled files
         # print("Files after sampling: ", list(map(lambda f: f['fileName'], sampleFileList)))
 
-        self.folders.append(
-            {
-            'rootPath' : self.rootFolderPath,
-            'maxDepth' : self.maxDepth,
-            'inclusionsUser' : self.inclusionsUser,
-            'exclusionsUser' : self.exclusionsUser,
-            'samplingRate' : self.samplingRate,
-            'fileList' : self.fileList,
-            }
-        )
+        # self.folders.append(
+        #     {
+        #     'rootPath' : self.rootFolderPath,
+        #     'maxDepth' : self.maxDepth,
+        #     'inclusionsUser' : self.inclusionsUser,
+        #     'exclusionsUser' : self.exclusionsUser,
+        #     'samplingRate' : self.samplingRate,
+        #     'fileList' : self.fileList,
+        #     }
+        # )
+
+        self.folders.append(self.folder)
         # print(self.folders)
+        # print(len(self.folders))
+        # for folder in self.folders:
+        #     print(folder)
         self.sendButton.settingsChanged()
 
         # for folderDict in self.folders:
