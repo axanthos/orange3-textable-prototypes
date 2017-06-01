@@ -36,8 +36,7 @@ Description
 
 This widget is designed to import one, some or all the files contained in a selected folder.
 The output is a segmentation containing a segment for each imported file. 
-Each segment has annotations with keys : *folderName*, *fileName*, *depthlvl*, *absoluteFilePath* and *file encoding* 
-plus annotations for the each  depth level with format *depth_X* (*depth_1*, *depth_2*, ...).
+Each segment has annotations with keys : folder name (depth_0), depth level (depth_1, depth_2, ...), file depth level, file encoding and confidence, file name and file path 
   
 The interface of **Text Tree** is available in two versions, according 
 to whether or not the **Advanced Settings** checkbox is selected.
@@ -87,8 +86,8 @@ and execute a sampling (0 - 100 %).
     Figure 2: **Text Tree** widget (advanced interface).
 
 The **Options** section allows the user to browse on his computer to find the desired folders (the samme way as in the basic interface), but with the options to include or excludes types or names of files and to input a level of sampling in %. With the **Add button** the selection will be added to the list.
-Exclusion : exclusion in the files list from the basic browse (default filter)
-Inclusion : inclusion of a new files filter (default filter replaced)
+Exclusion : exclusion in the files list from the basic browse (default filter). Each exclusion should be separated by a comma.
+Inclusion : inclusion of a new files filter (default filter replaced). Each inclusion should be separeted by a comma.
 The encoding's annotation of a file with encoding's error will simply be omitted.
 Sampling : the sampling operation selects the input proportion (rounded-up number) of files randomly. Ex : 50% of 9 files will select 5 random files from the file list.
 
