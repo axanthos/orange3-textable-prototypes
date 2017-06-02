@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="This widget is designed to import one, some or all the files contained in a selected folder. The output is a segmentation containing a segment for each imported file. Each segment has annotations with keys : folderName, fileName, depthlvl, absoluteFilePath and file encoding plus annotations for the each depth level with format depth_X (depth_1, depth_2, ...).&#10;The interface of Text Tree is available in two versions, according to whether or not the Advanced Settings checkbox is selected." title="Import files from a root folder with a tree stucture" version="2.0">
+	<nodes>
+		<node id="0" name="Text Tree" position="(256.0, 340.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.TextTree.OWTextableTextTree" title="Text Tree" version="" />
+		<node id="1" name="Display" position="(569.0, 340.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Text data" source_node_id="0" />
+	</links>
+	<annotations>
+		<arrow end="(294.0, 303.0)" fill="#C1272D" id="0" start="(401.0, 224.0)" />
+		<text font-family="Helvetica" font-size="16" id="1" rect="(409.0, 202.0, 461.0, 29.0)">1. Chose one or many folder(s) from your computer in order to load files in their tree structure</text>
+		<arrow end="(602.0, 392.0)" fill="#C1272D" id="2" start="(696.0, 497.0)" />
+		<text font-family="Helvetica" font-size="16" id="3" rect="(716.0, 514.0, 393.0, 32.0)">2. Corresponding segmentation(s) are displayed here </text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties format="literal" node_id="0">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': False, '__version__': 1, 'folders': [], 'importFilenames': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x01\x00\x00\x00\x00\x02\x19\x00\x00\x00R\x00\x00\x03\x96\x00\x00\x02\xf7\x00\x00\x02\x19\x00\x00\x00h\x00\x00\x03\x96\x00\x00\x02\xf7\x00\x00\x00\x00\x00\x00', 'lastLocation': '/Users/mathieu/orange3-textable-prototypes/orangecontrib/textable_prototypes/tests/choose me !', 'folder': {}, 'encoding': 'iso-8859-1', 'displayAdvancedSettings': True, '_TextableUtils_settings_version__': (0, 1), 'operation': 'no', 'uuid': '8cdcac18-1c44-47b3-9cfa-0503c218fca0', 'sampling': 100, 'importFolderName': True}</properties>
+		<properties format="literal" node_id="1">{'customFormatting': True, 'segmentDelimiter': ',\\n', 'header': '[\\n', '__version__': 1, 'footer': '\\n]', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x01\x00\x00\x00\x00\x00T\x00\x00\x01\x13\x00\x00\x03b\x00\x00\x03Y\x00\x00\x00\\\x00\x00\x012\x00\x00\x03Z\x00\x00\x03Q\x00\x00\x00\x00\x00\x00', 'lastLocation': '.', 'autoSend': True, 'customFormat': '{"regex":"\\\\b%(regex)s\\\\b", "replacement_string": "%(replacement_string)s"}', 'encoding': 'utf-8', '_TextableUtils_settings_version__': (0, 16), 'displayAdvancedSettings': False, 'uuid': '5b60c158-2200-4b60-8d3a-22a3990cda85'}</properties>
+	</node_properties>
+</scheme>
