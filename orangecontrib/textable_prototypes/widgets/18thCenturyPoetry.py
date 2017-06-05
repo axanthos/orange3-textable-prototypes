@@ -54,7 +54,7 @@ class ECP(OWTextableBaseWidget):
 
     name = "18th Century Poetry"
     description = "Import XML-TEI data from ECP website"
-    icon = "icons/ECP_icon.svg"
+    icon = "icons/18th_century_poetry.svg"
     priority = 10
 
     #----------------------------------------------------------------------
