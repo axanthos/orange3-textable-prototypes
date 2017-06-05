@@ -52,9 +52,9 @@ class ECP(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Widget"s metadata...
 
-    name = "ECP"
+    name = "18th Century Poetry"
     description = "Import XML-TEI data from ECP website"
-    icon = "icons/ECPIcon.svg"
+    icon = "icons/ECP_icon.svg"
     priority = 10
 
     #----------------------------------------------------------------------
@@ -237,34 +237,32 @@ class ECP(OWTextableBaseWidget):
         # Attempt to connect to ECP and retrieve plays...
         xml_contents = list()
         annotations = list()
-        #try:
-        for title in self.selectedTitles:
-            doc_url = self.document_base_url +  \
-                self.filteredTitleSeg[title].annotations["url"]
-            print(doc_url)
-            url = re.sub(r"/([^/]+)\.shtml", r"/\1/\1.xml", doc_url) #maybe?
-            print(url)
-            response = urllib.request.urlopen(url)
-            xml_contents.append(response.read().decode('utf-8'))
-            source_annotations = self.filteredTitleSeg[title].annotations.copy()
-            #source_annotations["url"] = source_annotations["href"]
-            #del source_annotations["href"]
-            annotations.append(source_annotations)
-            progressBar.advance()   # 1 tick on the progress bar...
+        try:
+            for title in self.selectedTitles:
+                doc_url = self.document_base_url +  \
+                    self.filteredTitleSeg[title].annotations["url"]
+                print(doc_url)
+                url = re.sub(r"/([^/]+)\.shtml", r"/\1/\1.xml", doc_url)
+                print(url)
+                response = urllib.request.urlopen(url)
+                xml_contents.append(response.read().decode('utf-8'))
+                source_annotations = \
+                self.filteredTitleSeg[title].annotations.copy()
+                #source_annotations["url"] = source_annotations["href"]
+                #del source_annotations["href"]
+                annotations.append(source_annotations)
+                progressBar.advance()   # 1 tick on the progress bar...
 
         # If an error occurs (e.g. http error, or memory error)...
-
-        #except:
-
-            # Set Info box and widget to "error" state.
-        #    self.infoBox.setText(
-        #        "Couldn't download data from ECP website.",
-        #        "error"
-        #    )
-
+        except:
+            #Set Info box and widget to "error" state.
+            self.infoBox.setText(
+                "Couldn't download data from ECP website.",
+                "error"
+            )
             # Reset output channel.
-        #    self.send("XML-TEI data", None, self)
-        #    return
+            self.send("XML-TEI data", None, self)
+            return
 
         # Store downloaded XML in input objects...
         for xml_content_idx in range(len(xml_contents)):
@@ -394,28 +392,30 @@ class ECP(OWTextableBaseWidget):
         # Remove accents from the data...
         recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
 
-        # Extract table containing titles from HTML.
+        # Extract table containing titles...
         genresListSeg = Segmenter.import_xml(
             segmentation=recoded_seg,
             element="ul",
             conditions={"id": re.compile(r"^genres-list")},
-            
+
         )
 
-        # Extract genre annotation.
+        # Extract genre annotation...
         genreSeg = Segmenter.tokenize(
             segmentation=genresListSeg,
-            regexes=[(re.compile(r'<a id[^>]+>(.+?)</a.+?(?=<a id|$)(?s)'), "tokenize", {"genre": "&1"})],
+            regexes=[(re.compile(r'<a id[^>]+>(.+?)</a.+?(?=<a id|$)(?s)'), \
+            "tokenize", {"genre": "&1"})],
             import_annotations=False,
         )
 
-        # Extract works html
+        # Extract works...
         titleSeg = Segmenter.tokenize(
             segmentation=genreSeg,
-            regexes=[(re.compile(r'<li class="bibl".+?</span>(?s)'), "tokenize")],
+            regexes=[(re.compile(r'<li class="bibl".+?</span>(?s)'), \
+            "tokenize")],
         )
 
-        # Extract author annotation
+        # Extract annotations...
         titleSeg = Segmenter.tokenize(
             segmentation=titleSeg,
             regexes=[
@@ -494,9 +494,9 @@ class ECP(OWTextableBaseWidget):
             self.filteredTitleSeg = self.titleSeg
 
         # If criterion is not "genre" and his filter value not "all",
-        # groups titles with different genres...
+        # group titles with different genres...
 
-        # Creates a dictionary with "author" and "title" as key...
+        # Create a dictionary with "author" and "title" as key...
 
         unique_titles = dict()
         for title in self.filteredTitleSeg:
@@ -509,7 +509,7 @@ class ECP(OWTextableBaseWidget):
             except KeyError:
                 unique_titles[title_id] = [title]
 
-        # Creates a list with new annotation comporting all genres...
+        # Create a list with new annotation comporting all genres...
         new_title_segments = list()
         for unique_title in unique_titles.values():
             title_genres = list()

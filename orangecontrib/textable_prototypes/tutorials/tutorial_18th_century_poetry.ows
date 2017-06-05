@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="" title="tutorial_18th_century_poetry" version="2.0">
+	<nodes>
+		<node id="0" name="18th Century Poetry" position="(227.0, 273.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.EighteenthCenturyPoetry.ECP" title="18th Century Poetry" version="" />
+		<node id="1" name="Display" position="(378.0, 273.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="XML-TEI data" source_node_id="0" />
+	</links>
+	<annotations>
+		<arrow end="(244.0, 237.0)" fill="#C1272D" id="0" start="(292.0, 165.0)" />
+		<text font-family="Helvetica" font-size="16" id="1" rect="(222.0, 106.0, 150.0, 60.0)">1. Choose a(some) play(s) and click Send</text>
+		<arrow end="(412.0, 300.0)" fill="#C1272D" id="2" start="(480.0, 361.0)" />
+		<text font-family="Helvetica" font-size="16" id="3" rect="(416.0, 378.0, 150.0, 44.0)">2. View the play(s) in TEI-XML format</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties format="pickle" node_id="0">gAN9cQAoWA8AAABmaWx0ZXJDcml0ZXJpb25xAVgFAAAAZ2VucmVxAlgLAAAAdGl0bGVMYWJlbHNx
+A11xBChYLwAAAEJBVUNJUyBBTkQgUEhJTEVNT04gKE1hcnkgUm9iaW5zb24gKG5lZSBEYXJieSkp
+cQVYGgAAAENIQVJBQ1RFUiwgQSAoTWFyeSBMZWFwb3IpcQZYMQAAAERPVUJMRSBUUkFOU0ZPUk1B
+VElPTjogQSBUQUxFLCBUSEUgKFNvYW1lIEplbnlucylxB1g4AAAARVNUSU1BVEUgb2YgTElGRSwg
+SU4gVEhSRUUgUEFSVFMsIFRIRSAoT2xpdmVyIEdvbGRzbWl0aClxCFgkAAAATUVUQU1PUlBIT1NF
+LCBUSEUgKE9saXZlciBHb2xkc21pdGgpcQlYGwAAAE1JTUlDSywgVGhlIChKYW1lcyBCYXJjbGF5
+KXEKWC0AAABNT0RFUk4gRklORSBHRU5UTEVNQU4sIFRIRSAoQ2hyaXN0b3BoZXIgUGl0dClxC1gc
+AAAAUkVUQUxJQVRJT04gKEpvbmF0aGFuIFN3aWZ0KXEMWCcAAABTT1RPLiBBIENIQVJBQ1RFUiAo
+Sm9obiBHaWxiZXJ0IENvb3BlcilxDWVYDAAAAGltcG9ydGVkVVJMc3EOXXEPWBgAAAAvd29ya3Mv
+bzQ5ODYtdzA0NjAuc2h0bWxxEGFYFwAAAGRpc3BsYXlBZHZhbmNlZFNldHRpbmdzcRGIWCEAAABf
+VGV4dGFibGVVdGlsc19zZXR0aW5nc192ZXJzaW9uX19xEksASwCGcRNYDgAAAHNlbGVjdGVkVGl0
+bGVzcRRjY29weXJlZwpfcmVjb25zdHJ1Y3RvcgpxFWNidWlsdGlucwpsaXN0CnEWaBYph3EXUnEY
+SwVhWAsAAABmaWx0ZXJWYWx1ZXEZWAkAAABjaGFyYWN0ZXJxGlgTAAAAc2F2ZWRXaWRnZXRHZW9t
+ZXRyeXEbQy4B2dDLAAEAAAAAAx8AAACdAAAEmAAAApQAAAMfAAAAswAABJgAAAKUAAAAAAAAcRxY
+CAAAAGF1dG9TZW5kcR2JWAQAAAB1dWlkcR5YJAAAADNhZTFhZmRmLWM3NjEtNGVlNC05MjhlLWNh
+NmE2YTJhMDg3YnEfWAsAAABfX3ZlcnNpb25fX3EgSwF1Lg==
+</properties>
+		<properties format="literal" node_id="1">{'footer': '\\n]', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x01\x00\x00\x00\x00\x00T\x00\x00\x01\x13\x00\x00\x03b\x00\x00\x03Y\x00\x00\x00\\\x00\x00\x012\x00\x00\x03Z\x00\x00\x03Q\x00\x00\x00\x00\x00\x00', 'customFormat': '{"regex":"\\\\b%(regex)s\\\\b", "replacement_string": "%(replacement_string)s"}', 'header': '[\\n', 'lastLocation': '.', '__version__': 1, '_TextableUtils_settings_version__': (0, 16), 'customFormatting': True, 'uuid': '28d9c871-3ac9-4c90-9c29-a62c075e7c65', 'encoding': 'utf-8', 'segmentDelimiter': ',\\n', 'autoSend': True, 'displayAdvancedSettings': False}</properties>
+	</node_properties>
+</scheme>
