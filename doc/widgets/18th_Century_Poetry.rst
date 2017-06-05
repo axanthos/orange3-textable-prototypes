@@ -9,7 +9,7 @@
 18th Century Poetry
 ===================
 
-.. image:: logo.png
+.. image:: figures/18thCenturyPoetry.png
 
 Import poems from the `Eighteenth Century Poetry
 <http://eighteenthcenturypoetry.org/>`_ website (in TEI-XML).
