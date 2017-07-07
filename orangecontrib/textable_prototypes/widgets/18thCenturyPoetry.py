@@ -19,10 +19,10 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Frank Dattai Pham & Adriano Matos Barbosa"
-__maintainer__ = "Frank Dattai Pham & Adriano Matos Barbosa"
-__email__ = "frankdattai.pham@unil.ch"
+__maintainer__ = "Aris Xanthos"
+__email__ = "aris.xanthos@unil.ch"
 
 
 from Orange.widgets import widget, gui, settings
@@ -390,7 +390,7 @@ class ECP(OWTextableBaseWidget):
         base_html_seg = Input(base_html)
 
         # Remove accents from the data...
-        recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
+        recoded_seg. _ = Segmenter.recode(base_html_seg, remove_accents=True)
 
         # Extract table containing titles...
         genresListSeg = Segmenter.import_xml(

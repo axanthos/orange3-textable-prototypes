@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.2"
+__version__ = u"0.1.3"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -395,7 +395,7 @@ class TheatreClassique(OWTextableBaseWidget):
         base_html_seg = Input(base_html)
 
         # Remove accents from the data...
-        recoded_seg = Segmenter.recode(base_html_seg, remove_accents=True)
+        recoded_seg, _ = Segmenter.recode(base_html_seg, remove_accents=True)
 
         # Extract table containing titles from HTML.
         table_seg = Segmenter.import_xml(
