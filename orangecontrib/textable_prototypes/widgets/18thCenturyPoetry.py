@@ -390,7 +390,7 @@ class ECP(OWTextableBaseWidget):
         base_html_seg = Input(base_html)
 
         # Remove accents from the data...
-        recoded_seg. _ = Segmenter.recode(base_html_seg, remove_accents=True)
+        recoded_seg, _ = Segmenter.recode(base_html_seg, remove_accents=True)
 
         # Extract table containing titles...
         genresListSeg = Segmenter.import_xml(
