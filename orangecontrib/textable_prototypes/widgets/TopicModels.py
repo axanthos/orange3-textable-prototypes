@@ -61,7 +61,7 @@ class TopicModels(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Channel definitions...
 
-    inputs = [("Textable Crosstab", Table, "input_data")]
+    inputs = [("Textable Crosstab", PivotCrosstab, "input_data")]
     outputs = [
         ("Term-topic Textable table", PivotCrosstab, widget.Default),
         ("Document-topic Textable table", PivotCrosstab),
