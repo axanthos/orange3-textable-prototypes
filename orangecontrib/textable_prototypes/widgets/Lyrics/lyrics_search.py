@@ -1,3 +1,9 @@
+#------- REPARE ERROR MAC -------
+#   $ sudo pip3 install requests
+#   $ pip3 install Beautifulsoup4
+#   $ python3 MacOS_if_SSLError.px
+#--------- HOPE IT WORKS ---------
+
 import urllib
 import urllib.request
 import urllib.parse
@@ -19,7 +25,7 @@ def lyrics_search():
         data = urllib.parse.urlencode(values)
         query_url = 'http://api.genius.com/search?' + data
         request = urllib.request.Request(query_url,headers={
-            "Authorization" : "Bearer " + ACCESS_TOKEN, 
+            "Authorization" : "Bearer " + ACCESS_TOKEN,
             "User-Agent" : USER_AGENT
             })
         response = urllib.request.urlopen(request)
