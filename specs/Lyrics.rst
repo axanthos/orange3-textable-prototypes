@@ -7,12 +7,12 @@ Specification widget Lyrics
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v3.7) permettant l'importation de paroles de chanson en format .txt à partir de l'API `Genius
+Créer un widget pour Orange Textable (v3.7) permettant l'importation de paroles de chansons à partir de l'API `Genius
 <https://genius.com>`_.
 
 1.2 Aperçu des étapes
 =====================
-* Premiere version de la specification: 15 mars 2018
+* Premiere version de la spécification: 15 mars 2018
 * Remise de la specification: 22 mars 2018
 * Version alpha du projet:  26 avril 2018
 * Version finale du projet:  31 mai 2018
