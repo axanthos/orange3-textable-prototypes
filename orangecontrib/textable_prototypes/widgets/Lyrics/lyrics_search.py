@@ -17,6 +17,7 @@ ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey9pReIjzNiVKbHBrn3o59d5Zx7Yej8g
 USER_AGENT = "CompuServe Classic/1.22"
 
 def lyrics_search():
+    """Search a list of songs with keywords"""
     query_string = input("What do you want to search? ")
     page = 1
     result_number = 0
@@ -45,6 +46,7 @@ def lyrics_search():
     return result_list
 
 def html_to_text(page_url):
+    """Extract the lyrics (as a string) of the html page"""
     page = requests.get(page_url)
     html = BeautifulSoup(page.text, "html.parser")
     [h.extract() for h in html('script')]
@@ -53,6 +55,7 @@ def html_to_text(page_url):
     return lyrics
 
 def lyrics_display(result_list):
+    """Display the lyrics of the song chosen by the user in the search results"""
     song_choice = input("Enter the number of the song: ")
     page_url = "http://genius.com" + result_list[int(song_choice)]
     lyrics = html_to_text(page_url)
