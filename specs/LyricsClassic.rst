@@ -20,19 +20,19 @@ Créer un widget pour Orange Textable (v3.7) permettant l'importation de paroles
 1.3 Equipe et responsabilitées
 ==============================
 
-* Cyrille Gay Crosier
+* Cyrille Gay Crosier:
   - spécification
   - code: Backend, module "recherche"
   - tests
   - github
 
-* Basile Maillard
+* Basile Maillard:
   - code: Backend, module "gestion corpus"
   - tests
   - documentation
   - github
 
-* Rafael Bruni Baschino
+* Rafael Bruni Baschino:
   - spécification
   - interface
   - tests
