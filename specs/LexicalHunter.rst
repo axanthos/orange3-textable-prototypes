@@ -66,12 +66,16 @@ Créer un widget pour Orange Textable permettant de détecter des champs lexicau
 
 * Output : les segments d'entrée annotés avec une valeur de clé d'annotation choisie par l'utilisateur.
 
+.. image:: images/lexical_hunter_basic.png
+
 2.3 Fonctionnalités principales
 ===============================
 
 * Fonctionnalités minimales
 
 * Permettre d'importer, modifier et supprimer des listes de champs lexicaux.
+
+.. image:: images/lexical_hunter_advanced.png
 
 2.4 Fonctionnalités optionnelles
 ================================
