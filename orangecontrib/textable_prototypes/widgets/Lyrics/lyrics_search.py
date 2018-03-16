@@ -17,14 +17,16 @@ ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey9pReIjzNiVKbHBrn3o59d5Zx7Yej8g
 USER_AGENT = "CompuServe Classic/1.22"
 
 def main():
-    result_list = lyrics_search()
-    artist_display(result_list)
+    lyrics_search()
 
 def lyrics_search():
     """Searches a list of songs with keywords"""
+    search_type = input("Songs (1) or artists search (2)? ")
     query_string = input("What do you want to search? ")
     page = 1
     result_number = 0
+    result_artist = []
+
     while page<2:
         values = {'q':query_string, 'page':page}
         data = urllib.parse.urlencode(values)
@@ -32,42 +34,52 @@ def lyrics_search():
         json_obj = url_request(query_url)
         body = json_obj["response"]["hits"]
 
-        for result in body:
-            result_number += 1
-            title = result["result"]["title"]
-            artist = result["result"]["primary_artist"]["name"]
-            artist_id = result["result"]["primary_artist"]["id"]
-            path = result["result"]["path"]
-            result_list[result_number] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
-            print (str(result_number) + " " + title + " - " + artist)
+        if int(search_type) == 1:
+            for result in body:
+                result_number += 1
+                title = result["result"]["title"]
+                artist = result["result"]["primary_artist"]["name"]
+                artist_id = result["result"]["primary_artist"]["id"]
+                path = result["result"]["path"]
+                result_list[result_number] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+                print (str(result_number) + " " + title + " - " + artist)
+        elif int(search_type) == 2:
+            for result in body:
+                artist = result["result"]["primary_artist"]["name"]
+                artist_id = result["result"]["primary_artist"]["id"]
+                if artist not in result_artist:
+                    result_artist.append(artist)
+                    result_number = len(result_artist)
+                    result_list[result_number] = {'artist': artist, 'artist_id':artist_id}
+                    print(str(result_number) + " " + artist)
+
         page+=1
-    return result_list
+
+    if int(search_type) == 1:
+        lyrics_display(result_list)
+    elif int(search_type) == 2:
+        artist_display(result_list) 
 
 def artist_display(result_list):
     """Displays the most popular songs of an artist"""
-    search_option = input("See lyrics (1) or artist's songs (2): ")
-    search_option = int(search_option)
-    if search_option == 1:
-        lyrics_display(result_list)
-    else:
-        artist_nbr = input("Enter the number of the artist: ")
-        results_per_page = input("Enter the number of results to display: ")
-        artist_nbr = int(artist_nbr)
-        artist_id = result_list[artist_nbr]['artist_id']
-        artist_url = "http://api.genius.com/artists/" + str(artist_id) + "/songs?sort=popularity&per_page=" + results_per_page
-        json_obj = url_request(artist_url)
-        body = json_obj["response"]["songs"]
-        result_number = 0
+    artist_nbr = input("Enter the number of the artist: ")
+    results_per_page = input("Enter the number of songs to display: ")
+    artist_nbr = int(artist_nbr)
+    artist_id = result_list[artist_nbr]['artist_id']
+    artist_url = "http://api.genius.com/artists/" + str(artist_id) + "/songs?sort=popularity&per_page=" + results_per_page
+    json_obj = url_request(artist_url)
+    body = json_obj["response"]["songs"]
+    result_number = 0
 
-        for result in body:
-            result_number += 1
-            title = result["title"]
-            artist = result["primary_artist"]["name"]
-            path = result["path"]
-            result_list[result_number] = {'artist': artist, 'path':path, 'title':title}
-            print (str(result_number) + " " + title + " - " + artist)
+    for result in body:
+        result_number += 1
+        title = result["title"]
+        artist = result["primary_artist"]["name"]
+        path = result["path"]
+        result_list[result_number] = {'artist': artist, 'path':path, 'title':title}
+        print (str(result_number) + " " + title + " - " + artist)
 
-        lyrics_display(result_list)
+    lyrics_display(result_list)
 
 def lyrics_display(result_list):
     """Displays the lyrics of the song chosen by the user in the search results"""
