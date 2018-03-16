@@ -21,13 +21,18 @@ def main():
 
 def lyrics_search():
     """Searches a list of songs with keywords"""
-    search_type = input("Songs (1) or artists search (2)? ")
+    search_type = int(input("Songs (1) or artists search (2)? "))
     query_string = input("What do you want to search? ")
     page = 1
     result_number = 0
     result_artist = []
 
-    while page<2:
+    if search_type == 1:
+        page_max = 2
+    elif search_type == 2:
+        page_max = 5
+
+    while page<page_max:
         values = {'q':query_string, 'page':page}
         data = urllib.parse.urlencode(values)
         query_url = 'http://api.genius.com/search?' + data
@@ -42,7 +47,6 @@ def lyrics_search():
                 artist_id = result["result"]["primary_artist"]["id"]
                 path = result["result"]["path"]
                 result_list[result_number] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
-                print (str(result_number) + " " + title + " - " + artist)
         elif int(search_type) == 2:
             for result in body:
                 artist = result["result"]["primary_artist"]["name"]
@@ -51,20 +55,22 @@ def lyrics_search():
                     result_artist.append(artist)
                     result_number = len(result_artist)
                     result_list[result_number] = {'artist': artist, 'artist_id':artist_id}
-                    print(str(result_number) + " " + artist)
 
         page+=1
 
-    if int(search_type) == 1:
+    if search_type == 1:
+        for result, data in result_list.items():
+            print (str(result) + " " + data['title'] + " - " + data['artist'])
         lyrics_display(result_list)
-    elif int(search_type) == 2:
+    elif search_type == 2:
+        for result, data in result_list.items():
+            print (str(result) + " " + data['artist'])
         artist_display(result_list) 
 
 def artist_display(result_list):
     """Displays the most popular songs of an artist"""
-    artist_nbr = input("Enter the number of the artist: ")
+    artist_nbr = int(input("Enter the number of the artist: "))
     results_per_page = input("Enter the number of songs to display: ")
-    artist_nbr = int(artist_nbr)
     artist_id = result_list[artist_nbr]['artist_id']
     artist_url = "http://api.genius.com/artists/" + str(artist_id) + "/songs?sort=popularity&per_page=" + results_per_page
     json_obj = url_request(artist_url)
@@ -83,8 +89,7 @@ def artist_display(result_list):
 
 def lyrics_display(result_list):
     """Displays the lyrics of the song chosen by the user in the search results"""
-    song_choice = input("Enter the number of the song: ")
-    song_choice = int(song_choice)
+    song_choice = int(input("Enter the number of the song: "))
     result_choice = result_list[song_choice]
     page_url = "http://genius.com" + result_choice['path']
     lyrics = html_to_text(page_url)
