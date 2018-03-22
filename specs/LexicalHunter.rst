@@ -87,7 +87,7 @@ Créer un widget pour Orange Textable permettant de détecter des "champs lexica
 2.5 Tests
 =========
 
-Interaction du texte de sortie avec le widget segment de Textable.
+Vérifier l'annotation avec le widget Display.
 
 3. Etapes
 *********
