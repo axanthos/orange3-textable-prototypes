@@ -1,6 +1,6 @@
 """
 Class LexicalHunter
-Copyright 2017 University of Lausanne
+Copyright 2018 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
