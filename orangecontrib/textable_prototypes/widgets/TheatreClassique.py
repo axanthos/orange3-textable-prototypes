@@ -4,18 +4,18 @@ Copyright 2017 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
-Orange3-Textable-Prototypes is free software: you can redistribute it 
-and/or modify it under the terms of the GNU General Public License as published 
+Orange3-Textable-Prototypes is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public License as published
 by the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Orange3-Textable-Prototypes is distributed in the hope that it will be 
+Orange3-Textable-Prototypes is distributed in the hope that it will be
 useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Orange-Textable-Prototypes. If not, see 
+along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
@@ -69,17 +69,17 @@ class TheatreClassique(OWTextableBaseWidget):
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
-    
+
     autoSend = settings.Setting(False)
     selectedTitles = settings.Setting([])
     titleLabels = settings.Setting([])
     filterCriterion = settings.Setting("author")
     filterValue = settings.Setting("(all)")
     importedURLs = settings.Setting([])
-    displayAdvancedSettings = settings.Setting(False) 
+    displayAdvancedSettings = settings.Setting(False)
 
     want_main_area = False
-    
+
     def __init__(self):
         """Widget creator."""
 
@@ -109,8 +109,8 @@ class TheatreClassique(OWTextableBaseWidget):
         )
 
         # The AdvancedSettings class, also from TextableUtils, facilitates
-        # the management of basic vs. advanced interface. An object from this 
-        # class (here assigned to self.advancedSettings) contains two lists 
+        # the management of basic vs. advanced interface. An object from this
+        # class (here assigned to self.advancedSettings) contains two lists
         # (basicWidgets and advancedWidgets), to which the corresponding
         # widgetBoxes must be added.
         self.advancedSettings = AdvancedSettings(
@@ -121,7 +121,7 @@ class TheatreClassique(OWTextableBaseWidget):
 
         # User interface...
 
-        # Advanced settings checkbox (basic/advanced interface will appear 
+        # Advanced settings checkbox (basic/advanced interface will appear
         # immediately after it...
         self.advancedSettings.draw()
 
@@ -159,7 +159,7 @@ class TheatreClassique(OWTextableBaseWidget):
             tooltip=("Please select a value for the chosen criterion."),
         )
         gui.separator(widget=filterBox, height=3)
-        
+
         # The following lines add filterBox (and a vertical separator) to the
         # advanced interface...
         self.advancedSettings.advancedWidgets.append(filterBox)
@@ -198,8 +198,8 @@ class TheatreClassique(OWTextableBaseWidget):
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
-        
-        # This initialization step needs to be done after infoBox has been 
+
+        # This initialization step needs to be done after infoBox has been
         # drawn (because getTitleSeg may need to display an error message).
         self.getTitleSeg()
 
@@ -215,11 +215,11 @@ class TheatreClassique(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.titleLabels == list():
             return
-        
+
         # Check that something has been selected...
         if len(self.selectedTitles) == 0:
             self.infoBox.setText(
-                "Please select one or more titles.", 
+                "Please select one or more titles.",
                 "warning"
             )
             self.send("XML-TEI data", None, self)
@@ -227,20 +227,20 @@ class TheatreClassique(OWTextableBaseWidget):
 
         # Clear created Inputs.
         self.clearCreatedInputs()
-        
+
         # Initialize progress bar.
         progressBar = gui.ProgressBar(
-            self, 
+            self,
             iterations=len(self.selectedTitles)
-        )       
-        
+        )
+
         # Attempt to connect to Theatre-classique and retrieve plays...
         xml_contents = list()
         annotations = list()
         try:
             for title in self.selectedTitles:
                 response = urllib.request.urlopen(
-                    self.document_base_url + 
+                    self.document_base_url +
                     self.filteredTitleSeg[title].annotations["url"]
                 )
                 xml_contents.append(response.read().decode('utf-8'))
@@ -254,23 +254,23 @@ class TheatreClassique(OWTextableBaseWidget):
 
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
-                "Couldn't download data from theatre-classique website.", 
+                "Couldn't download data from theatre-classique website.",
                 "error"
             )
 
             # Reset output channel.
             self.send("XML-TEI data", None, self)
             return
-            
+
         # Store downloaded XML in input objects...
         for xml_content_idx in range(len(xml_contents)):
             newInput = Input(xml_contents[xml_content_idx], self.captionTitle)
             self.createdInputs.append(newInput)
-            
+
         # If there"s only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
-            
+
         # Otherwise the widget"s output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
@@ -283,12 +283,12 @@ class TheatreClassique(OWTextableBaseWidget):
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
-            
+
         # Store imported URLs as setting.
         self.importedURLs = [
             self.filteredTitleSeg[self.selectedTitles[0]].annotations["url"]
         ]
-        
+
         # Set status to OK and report data size...
         message = "%i segment@p sent to output " % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
@@ -303,14 +303,14 @@ class TheatreClassique(OWTextableBaseWidget):
 
         # Clear progress bar.
         progressBar.finish()
-        
+
         # Send token...
         self.send("XML-TEI data", self.segmentation, self)
-        self.sendButton.resetSettingsChangedFlag()        
-        
+        self.sendButton.resetSettingsChangedFlag()
+
     def getTitleSeg(self):
         """Get title segmentation, either saved locally or online"""
-        
+
         # Try to open saved file in this module"s directory...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
@@ -327,21 +327,21 @@ class TheatreClassique(OWTextableBaseWidget):
         if self.titleSeg is not None:
             self.filterValues["author"] = Processor.count_in_context(
                 units={
-                    "segmentation": self.titleSeg, 
+                    "segmentation": self.titleSeg,
                     "annotation_key": "author"
                 }
             ).col_ids
             self.filterValues["author"].sort()
             self.filterValues["year"] = Processor.count_in_context(
                 units={
-                    "segmentation": self.titleSeg, 
+                    "segmentation": self.titleSeg,
                     "annotation_key": "year"
                 }
             ).col_ids
             self.filterValues["year"].sort(key=lambda v: int(v))
             self.filterValues["genre"] = Processor.count_in_context(
                 units={
-                    "segmentation": self.titleSeg, 
+                    "segmentation": self.titleSeg,
                     "annotation_key": "genre"
                 }
             ).col_ids
@@ -349,25 +349,25 @@ class TheatreClassique(OWTextableBaseWidget):
 
         # Sort the segmentation alphabetically based on titles (nasty hack!)...
         self.titleSeg.buffer.sort(key=lambda s: s.annotations["title"])
-        
+
         # Update title and filter value lists (only at init and on manual
         # refresh, therefore separate from self.updateGUI).
         self.updateFilterValueList()
-                    
+
     def refreshTitleSeg(self):
         """Refresh title segmentation from website"""
         self.titleSeg = self.getTitleListFromTheatreClassique()
         # Update title and filter value lists (only at init and on manual
         # refresh, therefore separate from self.updateGUI).
         self.updateFilterValueList()
-        
+
     def getTitleListFromTheatreClassique(self):
         """Fetch titles from the Theatre-classique website"""
 
         self.infoBox.customMessage(
             "Fetching data from Theatre-classique website, please wait"
         )
-        
+
         # Attempt to connect to Theatre-classique...
         try:
             response = urllib.request.urlopen(self.base_url)
@@ -390,7 +390,7 @@ class TheatreClassique(OWTextableBaseWidget):
             # Reset output channel.
             self.send("XML-TEI data", None, self)
             return None
-            
+
         # Otherwise store HTML content in LTTL Input object.
         base_html_seg = Input(base_html)
 
@@ -439,20 +439,20 @@ class TheatreClassique(OWTextableBaseWidget):
         )
         try:
             file = open(os.path.join(path, "cached_title_list"), "wb")
-            pickle.dump(titleSeg, file, -1) 
-            file.close()         
+            pickle.dump(titleSeg, file, -1)
+            file.close()
         except IOError:
             pass
 
         # Remove warning (if any)...
         self.error(0)
         self.warning(0)
-        
+
         return titleSeg
 
     def updateFilterValueList(self):
         """Update the list of filter values"""
-        
+
         # In Advanced settings mode, populate filter value list...
         if self.titleSeg is not None and self.displayAdvancedSettings:
             self.filterValueCombo.clear()
@@ -462,22 +462,22 @@ class TheatreClassique(OWTextableBaseWidget):
 
         # Reset filterValue if needed...
         if self.filterValue not in [
-            self.filterValueCombo.itemText(i) 
+            self.filterValueCombo.itemText(i)
             for i in range(self.filterValueCombo.count())
         ]:
             self.filterValue = "(all)"
         else:
             self.filterValue = self.filterValue
-        
+
         self.updateTitleList()
 
     def updateTitleList(self):
         """Update the list of titles"""
-        
+
         # If titleSeg has not been loaded for some reason, skip.
         if self.titleSeg is None:
             return
-        
+
         # In Advanced settings mode, get list of selected titles...
         if self.displayAdvancedSettings and self.filterValue != "(all)":
             self.filteredTitleSeg, _ = Segmenter.select(
@@ -487,19 +487,19 @@ class TheatreClassique(OWTextableBaseWidget):
             )
         else:
             self.filteredTitleSeg = self.titleSeg
-        
+
         # Populate titleLabels list with the titles...
         self.titleLabels = sorted(
             [s.annotations["title"] for s in self.filteredTitleSeg]
         )
-        
+
         # Add specification (author, year and genre, depending on criterion)...
         titleLabels = self.titleLabels[:]
         for idx, titleLabel in enumerate(titleLabels):
             specs = list()
             if (
                 self.displayAdvancedSettings == False or
-                self.filterCriterion != "author" or 
+                self.filterCriterion != "author" or
                 self.filterValue == "(all)"
             ):
                 specs.append(
@@ -507,7 +507,7 @@ class TheatreClassique(OWTextableBaseWidget):
                 )
             if (
                 self.displayAdvancedSettings == False or
-                self.filterCriterion != "year" or 
+                self.filterCriterion != "year" or
                 self.filterValue == "(all)"
             ):
                 specs.append(
@@ -515,7 +515,7 @@ class TheatreClassique(OWTextableBaseWidget):
                 )
             if (
                 self.displayAdvancedSettings == False or
-                self.filterCriterion != "genre" or 
+                self.filterCriterion != "genre" or
                 self.filterValue == "(all)"
             ):
                 specs.append(
@@ -523,7 +523,7 @@ class TheatreClassique(OWTextableBaseWidget):
                 )
             titleLabels[idx] = titleLabel + " (%s)" % "; ".join(specs)
         self.titleLabels = titleLabels
-        
+
         # Reset selectedTitles if needed...
         if not set(self.importedURLs).issubset(
             set(u.annotations["url"] for u in self.filteredTitleSeg)
@@ -540,10 +540,10 @@ class TheatreClassique(OWTextableBaseWidget):
             self.advancedSettings.setVisible(True)
         else:
             self.advancedSettings.setVisible(False)
-            
+
         if len(self.titleLabels) > 0:
             self.selectedTitles = self.selectedTitles
-            
+
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
         for i in self.createdInputs:
@@ -566,7 +566,7 @@ class TheatreClassique(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
-            
+
 if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
@@ -575,4 +575,3 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
-
