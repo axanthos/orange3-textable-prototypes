@@ -1,5 +1,5 @@
 ######################################
-Specification widget Lyrics
+Specification widget LyricsGenius
 ######################################
 
 1 Introduction
@@ -52,23 +52,23 @@ Créer un widget pour Orange Textable (v3.7) permettant l'importation de paroles
 
 2.2 Fonctionnalités minimales
 =============================
-.. image:: images/lyrics_minimal_version.png
+.. image:: images/LyricsGenius_minimal_version.png
 
 * permettre le choix et l'importation de multiples chanson à partir des données du site Genius.
 
 * créer et émettre une segmentation avec un segment (=Input) pour chaque chanson de la requête.
 
+* traitement correct des exceptions (HTTPError etc.)
+
 2.3 Fonctionnalités principales
 ===============================
-.. image:: images/lyrics_basic_version.png
+.. image:: images/LyricsGenius_basic_version.png
 
 * permettre le choix et l'importation de multiples chanson à partir des données du site Genius.
 
 * créer et émettre une segmentation avec un segment (=Input) pour chaque chanson importée.
 
 * ajouter, retirer et vider un corpus.
-
-* traitement correct des exceptions (HTTPError etc.)
 
 2.4 Fonctionnalités optionnelles
 ================================
