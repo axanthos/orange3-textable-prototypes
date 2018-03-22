@@ -22,9 +22,8 @@ along with Orange-Textable-Prototypes. If not, see
 __version__ = u"0.0.1"
 __author__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
 __maintainer__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
-__email__ = "aris.xanthos@unil.ch"
+__email__ = "maxime.bony@unil.ch, simon.cappelle@unil.ch, robin.pitteloud@unil.ch"
 
-# Standard imports...
 from Orange.widgets import widget, gui, settings
 
 from LTTL.Segmentation import Segmentation
@@ -35,13 +34,18 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton
 )
 
+# Constants...
+MIN_STEM_LEN = 3
+MAX_SUFFIX_LEN = 4
+MAX_MORPH_LEN = 50
+
 
 class LexicalHunter(OWTextableBaseWidget):
     """Textable widget for identifying lexical fields in segments
     """
 
     #----------------------------------------------------------------------
-    # Widget"s metadata...
+    # Widget's metadata...
 
     name = "Lexical Hunter"
     description = "Identify words contained in lists (lexical fields)"
@@ -51,30 +55,149 @@ class LexicalHunter(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Channel definitions...
 
-    inputs = []
-    outputs = []
-    
-    #----------------------------------------------------------------------
-    # GUI layout parameters...
+    inputs = [("Word segmentation", Segmentation, "inputData")]
+    outputs = [("Segmentation with annotations", Segmentation)]
 
+    #----------------------------------------------------------------------
+    # Layout parameters...
+    
     want_main_area = False
-    resizing_enabled = False
 
     #----------------------------------------------------------------------
     # Settings...
+
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.rsplit(".", 1)[0]
+    )
     
     autoSend = settings.Setting(False)
+    minStemLen = settings.Setting(3)
+    maxSuffixLen = settings.Setting(4)
     
     def __init__(self):
         """Widget creator."""
-        pass
+
+        super().__init__()
+
+        # Other attributes...
+        self.inputSeg = None
+
+        # Next two instructions are helpers from TextableUtils. Corresponding
+        # interface elements are declared here and actually drawn below (at
+        # their position in the UI)...
+        self.infoBox = InfoBox(widget=self.controlArea)
+        self.sendButton = SendButton(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute="infoBox",
+            sendIfPreCallback=self.updateGUI,
+        )
+
+        # User interface...
+
+        # Options box...
+        optionsBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Options",
+            orientation="vertical",
+        )
+        gui.spin(
+            widget=optionsBox,
+            master=self,
+            value='minStemLen',
+            label='Minimum length of stems: ',
+            callback=self.sendButton.sendIf,
+            labelWidth=180,
+            tooltip=(
+                'Select the minimum number of required characters in stems'
+            ),
+            minv=MIN_STEM_LEN,
+            maxv=MAX_MORPH_LEN,
+            step=1,
+        )
+        gui.separator(widget=optionsBox, height=3)
+        gui.spin(
+            widget=optionsBox,
+            master=self,
+            value='maxSuffixLen',
+            label='Maximum length of suffixes: ',
+            callback=self.sendButton.sendIf,
+            labelWidth=180,
+            tooltip=(
+                'Select the maximum possible number of characters in suffixes'
+            ),
+            minv=1,
+            maxv=MAX_SUFFIX_LEN,
+            step=1,
+        )
+        gui.separator(widget=optionsBox, height=2)
+
+        gui.rubber(self.controlArea)
+
+        # Now Info box and Send button must be drawn...
+        self.sendButton.draw()
+        self.infoBox.draw()
+        
+        # Send data if autoSend.
+        self.sendButton.sendIf()
+
+    def inputData(self, newInput):
+        """Process incoming data."""
+        self.inputSeg = newInput
+        self.infoBox.inputChanged()
+        self.sendButton.sendIf()
+
+    def sendData(self):
+        """Compute result of widget processing and send to output"""
+
+        # Check that there's an input...
+        if self.inputSeg is None:
+            self.send("Morphologically analyzed data", None, self)
+            return
+
+        # For now, just send a copy of input to output (will be replaced with
+        # actual processing)...
+        self.send(
+            "Morphologically analyzed data", 
+            Segmenter.bypass(self.inputSeg, self.captionTitle),
+            self,
+        )
+        self.infoBox.setText(
+            "Actual morphological analysis not yet implemented...",
+            "error",
+        )
+        
+        # Set status to OK and report data size...
+        # message = "%i segment@p sent to output." % len(self.segmentation)
+        # message = pluralize(message, len(self.segmentation))
+        # self.infoBox.setText(message)
+        
+        self.sendButton.resetSettingsChangedFlag()             
+
+    def updateGUI(self):
+        """Update GUI state"""
+        pass          
+
+    # The following method needs to be copied verbatim in
+    # every Textable widget that sends a segmentation...
+
+    def setCaption(self, title):
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
             
 if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
     myApplication = QApplication(sys.argv)
-    myWidget = TheatreClassique()
+    myWidget = Linguistica()
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
+
