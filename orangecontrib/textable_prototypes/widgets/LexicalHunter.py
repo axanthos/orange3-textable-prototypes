@@ -63,6 +63,8 @@ class LexicalHunter(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Settings...
     
+    autoSend = settings.Setting(False)
+    
     def __init__(self):
         """Widget creator."""
         pass
