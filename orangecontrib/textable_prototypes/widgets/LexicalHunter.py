@@ -21,12 +21,19 @@ along with Orange-Textable-Prototypes. If not, see
 
 __version__ = u"0.0.1"
 __author__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
-__maintainer__ = "Aris Xanthos"
+__maintainer__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
 __email__ = "aris.xanthos@unil.ch"
 
 # Standard imports...
-from Orange.widgets import widget, gui
-from Orange.widgets.settings import Setting
+from Orange.widgets import widget, gui, settings
+
+from LTTL.Segmentation import Segmentation
+import LTTL.Segmenter as Segmenter
+
+from _textable.widgets.TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
+    InfoBox, SendButton
+)
 
 
 class LexicalHunter(OWTextableBaseWidget):
