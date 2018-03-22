@@ -64,7 +64,7 @@ Créer un widget pour Orange Textable permettant de détecter des "champs lexica
 
 * Permettre le choix d'un ou plusieurs "champs lexicaux" parmi ceux proposés par défaut.
 
-* Output : les segments d'entrée annotés avec une valeur de clé d'annotation choisie par l'utilisateur.
+* Output : les segments d'entrée annotés avec le nom de la liste comme valeur d'annotation.
 
 .. image:: images/lexical_hunter_basic.png
 
@@ -74,6 +74,8 @@ Créer un widget pour Orange Textable permettant de détecter des "champs lexica
 * Fonctionnalités minimales
 
 * Permettre d'importer, exporter, créer, modifier et supprimer des listes de champs lexicaux.
+
+* Permettre à l'utilisateur de modifier le nom de la clé d'annotation.
 
 .. image:: images/lexical_hunter_advanced.png
 
