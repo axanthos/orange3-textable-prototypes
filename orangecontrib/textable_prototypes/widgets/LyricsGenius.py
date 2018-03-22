@@ -34,14 +34,9 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton
 )
 
-
-# Constants...
-MIN_STEM_LEN = 3
-MAX_SUFFIX_LEN = 4
-MAX_MORPH_LEN = 50
-
 class LyricsGenius(OWTextableBaseWidget):
-    """Textable widget
+    """Textable widget for importing JSON data from the website Genius
+    (https://genius.com/)
     """
 
     #----------------------------------------------------------------------
@@ -55,7 +50,7 @@ class LyricsGenius(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Channel definitions...
 
-    outputs = [("Morphologically analyzed data", Segmentation)]
+    outputs = [("Lyrics imporation", Segmentation)]
 
     #----------------------------------------------------------------------
     # Layout parameters...
@@ -70,8 +65,6 @@ class LyricsGenius(OWTextableBaseWidget):
     )
 
     autoSend = settings.Setting(False)
-    minStemLen = settings.Setting(3)
-    maxSuffixLen = settings.Setting(4)
 
     def __init__(self):
         """Widget creator."""
@@ -80,6 +73,9 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Other attributes...
         self.inputSeg = None
+        self.newQuerry = ''
+        self.selected_choice_artists_or_songs = None
+        self.results = False
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -96,41 +92,51 @@ class LyricsGenius(OWTextableBaseWidget):
         # User interface...
 
         # Options box...
-        optionsBox = gui.widgetBox(
+        querryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Options",
+            box="",
             orientation="vertical",
         )
-        gui.spin(
-            widget=optionsBox,
+        gui.lineEdit(
+            widget=querryBox,
             master=self,
-            value='minStemLen',
-            label='Minimum length of stems: ',
-            callback=self.sendButton.sendIf,
-            labelWidth=180,
-            tooltip=(
-                'Select the minimum number of required characters in stems'
-            ),
-            minv=MIN_STEM_LEN,
-            maxv=MAX_MORPH_LEN,
-            step=1,
+            value='newQuerry',
+            label="Querry:",
+            labelWidth=131,
+            callback=self.updateGUI,
+            tooltip=("Enter a string"),
         )
-        gui.separator(widget=optionsBox, height=3)
-        gui.spin(
-            widget=optionsBox,
+
+        choiceBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="",
+            orientation="vertical",
+        )
+        gui.radioButtonsInBox(
+            widget=choiceBox,
             master=self,
-            value='maxSuffixLen',
-            label='Maximum length of suffixes: ',
-            callback=self.sendButton.sendIf,
-            labelWidth=180,
-            tooltip=(
-                'Select the maximum possible number of characters in suffixes'
-            ),
-            minv=1,
-            maxv=MAX_SUFFIX_LEN,
-            step=1,
+            value='selected_choice_artists_or_songs',
+            btnLabels=('Artits', 'Songs'),
+            tooltips=None,
+            box=None,
+            label=None,
+            orientation=2,
+            callback=self.handleNewSignals,
         )
-        gui.separator(widget=optionsBox, height=2)
+
+        resultsBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Results",
+            orientation="vertical",
+        )
+        gui.checkBox(
+            widget=resultsBox,
+            master=self,
+            value='results',
+            label='blabla',
+            labelWidth=131,
+            callback=self.updateGUI,
+        )
 
         gui.rubber(self.controlArea)
 
@@ -152,18 +158,18 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Check that there's an input...
         if self.inputSeg is None:
-            self.send("Morphologically analyzed data", None, self)
+            self.send("Improted lyrics", None, self)
             return
 
         # For now, just send a copy of input to output (will be replaced with
         # actual processing)...
         self.send(
-            "Morphologically analyzed data",
+            "Improted lyrics",
             Segmenter.bypass(self.inputSeg, self.captionTitle),
             self,
         )
         self.infoBox.setText(
-            "Actual morphological analysis not yet implemented...",
+            "Lyrics importation not yet implemented...",
             "error",
         )
 
