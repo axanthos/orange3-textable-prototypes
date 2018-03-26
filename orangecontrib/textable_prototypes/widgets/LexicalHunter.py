@@ -35,6 +35,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton
 )
 
+from PyQt4.QtGui import QPlainTextEdit
+
 # Constants...
 # Champs lexicaux #fichier texte ?
 List1={"Amour":["aimer","coeur","j'aime","embrasser"]}
@@ -165,8 +167,11 @@ class LexicalHunter(OWTextableBaseWidget):
 
         self.titleLabels = self.defaultDict.keys()
 
-    def editList():
+    def editList(self):
         """ Edit the list of lexical word. Nothing to do now"""
+        #self.labelControl.setText("hello")
+        widgetEdit = WidgetEditList()
+        widgetEdit.show()
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -240,6 +245,230 @@ class LexicalHunter(OWTextableBaseWidget):
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
+
+class WidgetEditList(OWTextableBaseWidget):
+    """Textable widget for modifing the lexical content of the list
+    """
+
+    #----------------------------------------------------------------------
+    # Widget's metadata...
+
+    name = "Edit Lexical List"
+    description = "Edit words contained in lists (lexical fields)"
+    icon = "icons/lexical_hunter.svg"
+
+    #----------------------------------------------------------------------
+    # Channel definitions...
+
+    inputs = [("Word segmentation", Segmentation, "inputData")]
+    outputs = [("Segmentation with annotations", Segmentation)]
+
+    #----------------------------------------------------------------------
+    # Layout parameters...
+
+    want_main_area = True
+
+    #----------------------------------------------------------------------
+    # Settings...
+
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.rsplit(".", 1)[0]
+    )
+
+    textFieldContent = settings.Setting(u''.encode('utf-8'))
+    encoding = settings.Setting(u'utf-8')
+    selectedTitles = []
+    titleList = ["amour","colere","et autres!"]
+    listTitle = ""
+    listWord = ""
+
+    def __init__(self):
+        """Widget creator."""
+
+        super().__init__()
+
+        # Other attributes...
+        self.inputSeg = None
+        self.outputSeg = None
+
+        # Next two instructions are helpers from TextableUtils. Corresponding
+        # interface elements are declared here and actually drawn below (at
+        # their position in the UI)...
+        self.infoBox = InfoBox(widget=self.controlArea)
+
+        # User interface...
+
+    ##### CONTROL AREA #####
+        # Options box for the structure
+        titleListBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Lists",
+            orientation="horizontal",
+        )
+        ### SAVE AREA (After the control one but need to be first for the savechange button) ###
+        SaveBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=None,
+            orientation="horizontal",
+        )
+        self.SaveChanges = gui.button(
+            widget=SaveBox,
+            master=self,
+            label="Save changes",
+            callback=self.saveChange,
+            width=130,
+        )
+        self.CancelChanges = gui.button(
+            widget=SaveBox,
+            master=self,
+            label="Cancel",
+            callback=self.saveChange,
+            width=130,
+        )
+        ### END OF SAVE AREA
+
+        # List of Lexical list that the user can select
+        self.titleLabelsList = gui.listBox(
+            widget=titleListBox,
+            master=self,
+            ########## selectedTitles retourne un tabeau de int suivant la position dans selectedTitles des listes selectionnees ########
+            value="selectedTitles",    # setting (list)
+            labels="titleList",   # setting (list)
+            callback=self.makeChange,
+            tooltip="The list of lexical list that you want to use for annotation",
+        )
+        self.titleLabelsList.setMinimumHeight(300)
+        self.titleLabelsList.setMinimumWidth(150)
+        self.titleLabelsList.setSelectionMode(1)
+
+        # a box for vertical align of the button
+        controlBox = gui.widgetBox(
+            widget=titleListBox,
+            box=None,
+            orientation="vertical",
+        )
+        # Actions on list
+        self.ImportList = gui.button(
+            widget=controlBox,
+            master=self,
+            label="Import",
+            callback=self.makeChange,
+            width=130,
+            autoDefault=False,
+        )
+        self.ExportList = gui.button(
+            widget=controlBox,
+            master=self,
+            label="Export",
+            callback=self.makeChange,
+            width=130,
+        )
+        self.ImportSelectedList = gui.button(
+            widget=controlBox,
+            master=self,
+            label="Export Selected",
+            callback=self.makeChange,
+            width=130,
+        )
+        self.NewList = gui.button(
+            widget=controlBox,
+            master=self,
+            label="New",
+            callback=self.makeChange,
+            width=130,
+        )
+        self.ClearList = gui.button(
+            widget=controlBox,
+            master=self,
+            label="Clear",
+            callback=self.makeChange,
+            width=130,
+        )
+        self.RemoveSelectedList = gui.button(
+            widget=controlBox,
+            master=self,
+            label="Remove Selected",
+            callback=self.makeChange,
+            width=130,
+        )
+
+    ##### MAIN AREA (edit list) #####
+        # structure ...
+        listEditBox = gui.widgetBox(
+            widget=self.mainArea,
+            box="Edit",
+            orientation="vertical",
+        )
+        listEditBox.setMinimumWidth(300)
+        # Edit the titile of the list
+        self.titleEdit = gui.lineEdit(
+            widget=listEditBox,
+            master=self,
+            value="listTitle",
+            label="List name",
+            orientation="vertical",
+            callback=self.makeChange,
+        )
+        # structure ...
+        editBox = gui.widgetBox(
+            widget=listEditBox,
+            box="List content",
+            orientation="vertical",
+            margin=0,
+            spacing=0,
+        )
+
+        #Editable text Field. Each line gonna be a enter of the lexical list selected
+        self.editor = QPlainTextEdit()
+        self.editor.setPlainText(self.textFieldContent.decode('utf-8'))
+        editBox.layout().addWidget(self.editor)
+        self.editor.textChanged.connect(self.dontforgettosaveChange)
+        self.editor.setMinimumHeight(300)
+
+        # For saving the chang on the list edit
+        self.CommitList = gui.button(
+            widget=listEditBox,
+            master=self,
+            label="Commit",
+            callback=self.saveChange,
+            width=100,
+        )
+
+        #A definire plus tard
+        #gui.separator(widget=optionsBox, height=3)
+
+        gui.rubber(self.controlArea)
+
+        # Now Info box and Send button must be drawn...
+        self.infoBox.draw()
+
+    def makeChange(self):
+        """Do the chane on the list"""
+        self.infoBox.setText("je change les listes")
+
+    def saveChange(self):
+        """Save the list in txt file on the cumputer of the user"""
+        self.infoBox.setText("je sauvegarde les listes !")
+
+    def dontforgettosaveChange(self):
+        """Diplay a warning message when the user edit the textfield of the list"""
+        self.infoBox.setText("Don't forget to save your changes after commiting your list", "warning")
+
+    def inputData(self, newInput):
+        """Process incoming data."""
+        ######### traiter inputSeg comme le segement d entree ##########
+        pass
+
+    def sendData(self):
+        """Compute result of widget processing and send to output"""
+        #self.labelControl.setText("selectedTitles = " + str(self.selectedTitles))
+        pass
+
+    def updateGUI(self):
+        """Update GUI state"""
+
+        if len(self.titleLabels) > 0:
+            self.selectedTitles = self.selectedTitles
 
 
 if __name__ == "__main__":
