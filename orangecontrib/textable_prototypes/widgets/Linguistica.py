@@ -19,25 +19,27 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
+import collections
+
 from Orange.widgets import widget, gui, settings
 
 from LTTL.Segmentation import Segmentation
-import LTTL.Segmenter as Segmenter
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton
 )
 
+from lxa5crab import find_signatures, build_parser
 
 # Constants...
 MIN_STEM_LEN = 3
-MAX_SUFFIX_LEN = 4
+#MAX_SUFFIX_LEN = 4
 MAX_MORPH_LEN = 50
 
 
@@ -118,21 +120,21 @@ class Linguistica(OWTextableBaseWidget):
             maxv=MAX_MORPH_LEN,
             step=1,
         )
-        gui.separator(widget=optionsBox, height=3)
-        gui.spin(
-            widget=optionsBox,
-            master=self,
-            value='maxSuffixLen',
-            label='Maximum length of suffixes: ',
-            callback=self.sendButton.sendIf,
-            labelWidth=180,
-            tooltip=(
-                'Select the maximum possible number of characters in suffixes'
-            ),
-            minv=1,
-            maxv=MAX_SUFFIX_LEN,
-            step=1,
-        )
+        #gui.separator(widget=optionsBox, height=3)
+        #gui.spin(
+        #    widget=optionsBox,
+        #    master=self,
+        #    value='maxSuffixLen',
+        #    label='Maximum length of suffixes: ',
+        #    callback=self.sendButton.sendIf,
+        #    labelWidth=180,
+        #    tooltip=(
+        #        'Select the maximum possible number of characters in suffixes'
+        #    ),
+        #    minv=1,
+        #    maxv=MAX_SUFFIX_LEN,
+        #    step=1,
+        #)
         gui.separator(widget=optionsBox, height=2)
 
         gui.rubber(self.controlArea)
@@ -158,22 +160,35 @@ class Linguistica(OWTextableBaseWidget):
             self.send("Morphologically analyzed data", None, self)
             return
 
-        # For now, just send a copy of input to output (will be replaced with
-        # actual processing)...
+        # Perform morphological analysis...
+        word_counts = collections.Counter(
+            [segment.get_content() for segment in self.inputSeg]
+        )
+        signatures, stems, suffixes = find_signatures(word_counts)
+        parser = build_parser(word_counts, signatures, stems, suffixes)
+        new_segments = list()
+        for segment in self.inputSeg:
+            parse_dict = parser[segment.get_content()]
+            new_segment = segment.deepcopy()
+            stem, suffix = next(iter(parse_dict))
+            new_segment.annotations.update(
+                {
+                    "stem": stem, 
+                    "suffix": suffix if len(suffix) else "NULL", 
+                    "signature": parse_dict[stem, suffix]
+                }
+            )
+            new_segments.append(new_segment)
         self.send(
             "Morphologically analyzed data", 
-            Segmenter.bypass(self.inputSeg, self.captionTitle),
+            Segmentation(new_segments, self.captionTitle),
             self,
-        )
-        self.infoBox.setText(
-            "Actual morphological analysis not yet implemented...",
-            "error",
         )
         
         # Set status to OK and report data size...
-        # message = "%i segment@p sent to output." % len(self.segmentation)
-        # message = pluralize(message, len(self.segmentation))
-        # self.infoBox.setText(message)
+        message = "%i segment@p sent to output." % len(self.inputSeg)
+        message = pluralize(message, len(self.inputSeg))
+        self.infoBox.setText(message)
         
         self.sendButton.resetSettingsChangedFlag()             
 

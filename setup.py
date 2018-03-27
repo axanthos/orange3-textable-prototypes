@@ -2,7 +2,7 @@
 
 """ File setup.py
 
-Copyright 2017 University of Lausanne (aris.xanthos@unil.ch)
+Copyright 2017-2018 University of Lausanne (aris.xanthos@unil.ch)
 
 This file is part of the Orange3 Textable Prototypes extension to
 Orange Canvas.
@@ -32,12 +32,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "0.10"   # file version
+__version__ = "0.11"   # file version
 
 NAME = 'Orange3-Textable-Prototypes'
 DOCUMENTATION_NAME = 'Textable Prototypes'
 
-VERSION = '0.10'  # package version
+VERSION = '0.11'  # package version
 
 DESCRIPTION = 'Additional widgets for the Textable add-on to Orange 3.'
 LONG_DESCRIPTION = open(
@@ -93,6 +93,7 @@ INSTALL_REQUIRES = (
     'LTTL >= 2.0.5',
     'Orange3-Textable >= 3.0.4',
     'gensim',
+    'lxa5crab',
 ),
 
 EXTRAS_REQUIRE = {
