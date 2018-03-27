@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -32,14 +32,13 @@ from LTTL.Segmentation import Segmentation
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton
+    InfoBox, SendButton, ProgressBar
 )
 
 from lxa5crab import find_signatures, build_parser
 
 # Constants...
-MIN_STEM_LEN = 3
-#MAX_SUFFIX_LEN = 4
+LOWER_MIN_STEM_LEN = 3
 MAX_MORPH_LEN = 50
 
 
@@ -116,25 +115,10 @@ class Linguistica(OWTextableBaseWidget):
             tooltip=(
                 'Select the minimum number of required characters in stems'
             ),
-            minv=MIN_STEM_LEN,
+            minv=LOWER_MIN_STEM_LEN,
             maxv=MAX_MORPH_LEN,
             step=1,
         )
-        #gui.separator(widget=optionsBox, height=3)
-        #gui.spin(
-        #    widget=optionsBox,
-        #    master=self,
-        #    value='maxSuffixLen',
-        #    label='Maximum length of suffixes: ',
-        #    callback=self.sendButton.sendIf,
-        #    labelWidth=180,
-        #    tooltip=(
-        #        'Select the maximum possible number of characters in suffixes'
-        #    ),
-        #    minv=1,
-        #    maxv=MAX_SUFFIX_LEN,
-        #    step=1,
-        #)
         gui.separator(widget=optionsBox, height=2)
 
         gui.rubber(self.controlArea)
@@ -142,6 +126,7 @@ class Linguistica(OWTextableBaseWidget):
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
+        self.infoBox.setText("Widget needs input", "warning")
         
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -157,38 +142,82 @@ class Linguistica(OWTextableBaseWidget):
 
         # Check that there's an input...
         if self.inputSeg is None:
+            self.infoBox.setText("Widget needs input", "warning")
             self.send("Morphologically analyzed data", None, self)
             return
 
         # Perform morphological analysis...
+        
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Processing, please wait (word count)...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=100)       
+        
+        # Word count...
         word_counts = collections.Counter(
             [segment.get_content() for segment in self.inputSeg]
         )
-        signatures, stems, suffixes = find_signatures(word_counts)
+        self.infoBox.setText(
+            u"Processing, please wait (signature extraction)...", 
+            "warning",
+        )      
+        progressBar.advance(5)   # 5 ticks on the progress bar...
+        
+        # Learn signatures...
+        try:
+            signatures, stems, suffixes = find_signatures(word_counts)
+        except ValueError as e:
+            self.infoBox.setText(e.__str__(), "warning")
+            self.send("Morphologically analyzed data", None, self)
+            self.controlArea.setDisabled(False)
+            progressBar.finish()   # Clear progress bar.
+            return
+        self.infoBox.setText(
+            u"Processing, please wait (word parsing)...", 
+            "warning",
+        )
+        progressBar.advance(80)        
+        
+        # Parse words...
         parser = build_parser(word_counts, signatures, stems, suffixes)
-        new_segments = list()
+        newSegments = list()
+        num_analyzed_words = 0
         for segment in self.inputSeg:
-            parse_dict = parser[segment.get_content()]
-            new_segment = segment.deepcopy()
-            stem, suffix = next(iter(parse_dict))
-            new_segment.annotations.update(
+            parseDict = parser[segment.get_content()]
+            newSegment = segment.deepcopy()
+            stem, suffix = next(iter(parseDict))
+            signature = parseDict[stem, suffix]
+            if signature:
+                num_analyzed_words += 1
+            newSegment.annotations.update(
                 {
                     "stem": stem, 
                     "suffix": suffix if len(suffix) else "NULL", 
-                    "signature": parse_dict[stem, suffix]
+                    "signature": signature
                 }
             )
-            new_segments.append(new_segment)
+            newSegments.append(newSegment)
         self.send(
             "Morphologically analyzed data", 
-            Segmentation(new_segments, self.captionTitle),
+            Segmentation(newSegments, self.captionTitle),
             self,
         )
+        progressBar.advance(15)
         
         # Set status to OK and report data size...
-        message = "%i segment@p sent to output." % len(self.inputSeg)
+        message = "%i segment@p sent to output (%.2f%% analyzed)." % (
+            len(self.inputSeg),
+            (num_analyzed_words / len(self.inputSeg) * 100)
+        )
         message = pluralize(message, len(self.inputSeg))
         self.infoBox.setText(message)
+        
+        # Clear progress bar.
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
         
         self.sendButton.resetSettingsChangedFlag()             
 
