@@ -43,6 +43,9 @@ import re
 from os import listdir
 from os.path import isfile, join
 
+# Global variables
+defaultDict = {}
+
 
 class LexicalHunter(OWTextableBaseWidget):
     """Textable widget for identifying lexical fields in segments
@@ -195,13 +198,13 @@ class LexicalHunter(OWTextableBaseWidget):
         the value is the content of the default lexical liste"""
 
         for lexiclist in self.defaultLists :
-            self.defaultDict.update(lexiclist)
+            defaultDict.update(lexiclist)
 
     def setTitleList(self):
         """Creates a list with each key of the default dictionnaries to display them on the list box
         Be carfull, the order really metter for the selectedTitles variable !"""
 
-        self.titleLabels = self.defaultDict.keys()
+        self.titleLabels = defaultDict.keys()
 
     def editList(self):
         """ Edit the list of lexical word. Nothing to do now"""
@@ -317,6 +320,8 @@ class WidgetEditList(OWTextableBaseWidget):
     titleList = ["amour","colere","et autres!"]
     listTitle = ""
     listWord = ""
+    
+    titleList = settings.Setting([])
 
     def __init__(self):
         """Widget creator."""
@@ -474,9 +479,17 @@ class WidgetEditList(OWTextableBaseWidget):
         #gui.separator(widget=optionsBox, height=3)
 
         gui.rubber(self.controlArea)
+        
+        self.setTitleList()
 
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
+
+    def setTitleList(self):
+        """Creates a list with each key of the default dictionnaries to display them on the list box
+        Be carfull, the order really metter for the selectedTitles variable !"""
+
+        self.titleList = defaultDict.keys()
 
     def makeChange(self):
         """Do the chane on the list"""
