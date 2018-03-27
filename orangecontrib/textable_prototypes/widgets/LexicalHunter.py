@@ -35,13 +35,20 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton
 )
 
-from PyQt4.QtGui import QPlainTextEdit
+from PyQt4.QtGui import QPlainTextEdit, QFileDialog, QMessageBox 
+
+import os
+import codecs
+import re
+from os import listdir
+from os.path import isfile, join
 
 # Constants...
 # Champs lexicaux #fichier texte ?
 List1={"Amour":["aimer","coeur","j'aime","embrasser"]}
 List2={"Colere":["rage","colere","sourciles froncés"]}
 List3={"Joie":["vin","biere","wisky","TICT"]}
+
 
 DEFAULTLIST=[List1,List2,List3]
 
@@ -148,21 +155,58 @@ class LexicalHunter(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
 
-        self.creatDefaultDict() # Constants...
+        self.getDefaultLists()
+        self.createDefaultDict() # Constants...
         self.setTitleList()
         # Send data if autoSend.
         self.sendButton.sendIf()
+        
+    def getDefaultLists(self):
+        """Gets default lexical lists stored in txt files"""
+        # Seting the path of the files...
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        __location__ += r"\lexicalfields"
+        
+        # Initiations
+        self.myContent = {}
+        self.defaultLists = []
+        
+        # For each txt file in the directory...
+        for file in os.listdir(__location__):
+            if file.endswith(".txt"):
+                # Gets txt file name and substracts .txt extension
+                fileName = os.path.join(__location__, file);
+                listLexicName = fileName.split('\\')
+                lexicName = listLexicName[-1]
+                lexicName = re.sub('\.txt$', '', lexicName)
+                
+                # Trying to open the files and store their content in a dictionnary
+                # then store all of theses in a list
+                try:
+                    fileHandle = codecs.open(fileName)
+                    fileContent = fileHandle.read()
+                    fileHandle.close()
+                    self.myContent[lexicName] = fileContent.split('\n')
+                    self.defaultLists.append(self.myContent)
+                except IOError:
+                    QMessageBox.warning(
+                        None,
+                        'Textable',
+                        "Couldn't open file.",
+                        QMessageBox.Ok
+                    )
+                    return
 
-    def creatDefaultDict(self):
-        """ Creat the default dictionnaries from a list of default lexical list
+    def createDefaultDict(self):
+        """ Creates the default dictionnaries from a list of default lexical list
         the key must be the title of default lexical liste
         the value is the content of the default lexical liste"""
 
-        for lexiclist in DEFAULTLIST :
+        for lexiclist in self.defaultLists :
             self.defaultDict.update(lexiclist)
 
     def setTitleList(self):
-        """Creat a list with each key of the default dictionnaries to display them on the list box
+        """Creates a list with each key of the default dictionnaries to display them on the list box
         Be carfull, the order really metter for the selectedTitles variable !"""
 
         self.titleLabels = self.defaultDict.keys()
