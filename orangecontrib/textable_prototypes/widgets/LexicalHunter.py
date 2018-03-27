@@ -43,14 +43,6 @@ import re
 from os import listdir
 from os.path import isfile, join
 
-# Constants...
-# Champs lexicaux #fichier texte ?
-List1={"Amour":["aimer","coeur","j'aime","embrasser"]}
-List2={"Colere":["rage","colere","sourciles froncés"]}
-List3={"Joie":["vin","biere","wisky","TICT"]}
-
-
-DEFAULTLIST=[List1,List2,List3]
 
 class LexicalHunter(OWTextableBaseWidget):
     """Textable widget for identifying lexical fields in segments
