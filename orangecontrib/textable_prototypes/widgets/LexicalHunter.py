@@ -182,7 +182,7 @@ class LexicalHunter(OWTextableBaseWidget):
                 # Trying to open the files and store their content in a dictionnary
                 # then store all of theses in a list
                 try:
-                    fileHandle = codecs.open(fileName)
+                    fileHandle = codecs.open(fileName, encoding='utf-8')
                     fileContent = fileHandle.read()
                     fileHandle.close()
                     self.myContent[lexicName] = fileContent.split('\n')
