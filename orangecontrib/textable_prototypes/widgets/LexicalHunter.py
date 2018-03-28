@@ -35,13 +35,14 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton
 )
 
-from PyQt4.QtGui import QPlainTextEdit, QFileDialog, QMessageBox 
+from PyQt4.QtGui import QPlainTextEdit, QFileDialog, QMessageBox
 
 import os
 import codecs
 import re
 from os import listdir
 from os.path import isfile, join
+import platform
 
 # Global variables
 defaultDict = {}
@@ -155,17 +156,20 @@ class LexicalHunter(OWTextableBaseWidget):
         self.setTitleList()
         # Send data if autoSend.
         self.sendButton.sendIf()
-        
+
     def getDefaultLists(self):
         """Gets default lexical lists stored in txt files"""
         # Seting the path of the files...
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-        __location__ += r"\lexicalfields"
-        
+        if platform.system() == "Windows":
+            __location__ += r"\lexicalfields"
+        else:
+            __location__ += r"/lexicalfields"
+
         # Initiations
         self.myContent = {}
         self.defaultLists = []
-        
+
         # For each txt file in the directory...
         for file in os.listdir(__location__):
             if file.endswith(".txt"):
@@ -174,7 +178,7 @@ class LexicalHunter(OWTextableBaseWidget):
                 listLexicName = fileName.split('\\')
                 lexicName = listLexicName[-1]
                 lexicName = re.sub('\.txt$', '', lexicName)
-                
+
                 # Trying to open the files and store their content in a dictionnary
                 # then store all of theses in a list
                 try:
@@ -194,15 +198,15 @@ class LexicalHunter(OWTextableBaseWidget):
 
     def createDefaultDict(self):
         """ Creates the default dictionnaries from a list of default lexical list
-        the key must be the title of default lexical liste
-        the value is the content of the default lexical liste"""
+        the key must be the title of default lexical list
+        the value is the content of the default lexical list"""
 
         for lexiclist in self.defaultLists :
             defaultDict.update(lexiclist)
 
     def setTitleList(self):
         """Creates a list with each key of the default dictionnaries to display them on the list box
-        Be carfull, the order really metter for the selectedTitles variable !"""
+        Be careful, the order really metter for the selectedTitles variable !"""
 
         self.titleLabels = defaultDict.keys()
 
@@ -320,7 +324,7 @@ class WidgetEditList(OWTextableBaseWidget):
     titleList = ["amour","colere","et autres!"]
     listTitle = ""
     listWord = ""
-    
+
     titleList = settings.Setting([])
 
     def __init__(self):
@@ -479,7 +483,7 @@ class WidgetEditList(OWTextableBaseWidget):
         #gui.separator(widget=optionsBox, height=3)
 
         gui.rubber(self.controlArea)
-        
+
         self.setTitleList()
 
         # Now Info box and Send button must be drawn...
