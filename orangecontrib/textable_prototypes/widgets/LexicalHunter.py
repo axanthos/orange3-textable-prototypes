@@ -178,7 +178,7 @@ class LexicalHunter(OWTextableBaseWidget):
                     listLexicName = fileName.split('\\')
 
                 else:
-                    listLexicName = fileName.split('\/')
+                    listLexicName = fileName.split('/')
 
                 lexicName = listLexicName[-1]
                 lexicName = re.sub('\.txt$', '', lexicName)
