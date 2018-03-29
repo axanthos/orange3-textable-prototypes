@@ -13,6 +13,7 @@ import sys
 from bs4 import BeautifulSoup
 
 result_list = {}
+song_list = {}
 ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
 USER_AGENT = "CompuServe Classic/1.22"
 
@@ -24,7 +25,7 @@ def lyrics_search():
     search_type = int(input("Songs (1) or artists search (2)? "))
     query_string = input("What do you want to search? ")
     page = 1
-    result_number = 0
+    result_id = 0
     result_artist = []
 
     if search_type == 1:
@@ -41,20 +42,20 @@ def lyrics_search():
 
         if int(search_type) == 1:
             for result in body:
-                result_number += 1
+                result_id += 1
                 title = result["result"]["title"]
                 artist = result["result"]["primary_artist"]["name"]
                 artist_id = result["result"]["primary_artist"]["id"]
                 path = result["result"]["path"]
-                result_list[result_number] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+                result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
         elif int(search_type) == 2:
             for result in body:
                 artist = result["result"]["primary_artist"]["name"]
                 artist_id = result["result"]["primary_artist"]["id"]
                 if artist not in result_artist:
                     result_artist.append(artist)
-                    result_number = len(result_artist)
-                    result_list[result_number] = {'artist': artist, 'artist_id':artist_id}
+                    result_id = len(result_artist)
+                    result_list[result_id] = {'artist': artist, 'artist_id':artist_id}
 
         page+=1
 
@@ -75,27 +76,34 @@ def artist_display(result_list):
     artist_url = "http://api.genius.com/artists/" + str(artist_id) + "/songs?sort=popularity&per_page=" + results_per_page
     json_obj = url_request(artist_url)
     body = json_obj["response"]["songs"]
-    result_number = 0
+    result_id = 0
 
     for result in body:
-        result_number += 1
+        result_id += 1
         title = result["title"]
         artist = result["primary_artist"]["name"]
         path = result["path"]
-        result_list[result_number] = {'artist': artist, 'path':path, 'title':title}
-        print (str(result_number) + " " + title + " - " + artist)
+        result_list[result_id] = {'artist': artist, 'path':path, 'title':title}
+        print (str(result_id) + " " + title + " - " + artist)
 
     lyrics_display(result_list)
 
 def lyrics_display(result_list):
-    """Displays the lyrics of the song chosen by the user in the search results"""
-    song_choice = int(input("Enter the number of the song: "))
-    result_choice = result_list[song_choice]
-    page_url = "http://genius.com" + result_choice['path']
-    lyrics = html_to_text(page_url)
-    song_info = result_choice['artist'] + " - " + result_choice['title']
-    print(song_info)
-    print(lyrics)
+    """Displays the lyrics of the song(s) chosen by the user in the search results"""
+    song_selection = 1
+    song_id = 0
+    while song_selection == 1:
+        song_id += 1
+        song_choice = int(input("Enter the number of the song: "))
+        song_list[song_id] = result_list[song_choice]
+        song_selection = int(input("Add more songs? Yes (1) or No (2): "))
+    
+    for song, data in song_list.items():
+        page_url = "http://genius.com" + data['path']
+        lyrics = html_to_text(page_url)
+        song_info = data['artist'] + " - " + data['title']
+        print(song_info)
+        print(lyrics)
 
 def url_request(url):
     """Opens a URL and returns it as a JSON object"""
