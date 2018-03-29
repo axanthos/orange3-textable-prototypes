@@ -73,9 +73,12 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Other attributes...
         self.inputSeg = None
-        self.newQuerry = ''
+        self.newQuery = ''
         self.selected_choice_artists_or_songs = None
         self.results = False
+        self.types = ''
+        # stock tous les inputs (chansons) dans une liste
+        self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -88,55 +91,67 @@ class LyricsGenius(OWTextableBaseWidget):
             infoBoxAttribute="infoBox",
             sendIfPreCallback=self.updateGUI,
         )
-
+        #----------------------------------------------------------------------
         # User interface...
-
-        # Options box...
-        querryBox = gui.widgetBox(
+        # Creation de la zone de recherche
+        queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="",
+            box="Query",
             orientation="vertical",
         )
-        gui.lineEdit(
-            widget=querryBox,
+        # permet de choisir une recherche entre artistes ou chansons
+        query = gui.comboBox(
+            widget=queryBox,
             master=self,
-            value='newQuerry',
-            label="Querry:",
+            value="types",
+            items=[
+                "artists",
+                "songs",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="search:",
+            labelWidth=120,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
+        )
+        # permet de rentrer du text pour rechercher
+        gui.lineEdit(
+            widget=queryBox,
+            master=self,
+            value='newQuery',
+            label="",
             labelWidth=131,
             callback=self.updateGUI,
             tooltip=("Enter a string"),
         )
-
-        choiceBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="",
-            orientation="vertical",
-        )
-        gui.radioButtonsInBox(
-            widget=choiceBox,
+        # bouton qui lance la recherche
+        gui.button(
+            widget=queryBox,
             master=self,
-            value='selected_choice_artists_or_songs',
-            btnLabels=('Artits', 'Songs'),
-            tooltips=None,
-            box=None,
-            label=None,
-            orientation=2,
-            callback=self.handleNewSignals,
+            label="Search",
+            callback=self.searchFunction,
+            tooltip="Connect Genius and make a research",
         )
 
+        # Creation de la zone de resultats
         resultsBox = gui.widgetBox(
             widget=self.controlArea,
             box="Results",
             orientation="vertical",
         )
+        # Creation d une liste a puces permettant le choix du resultat
         gui.checkBox(
             widget=resultsBox,
             master=self,
             value='results',
-            label='blabla',
+            label='',
             labelWidth=131,
             callback=self.updateGUI,
         )
+        #----------------------------------------------------------------------
 
         gui.rubber(self.controlArea)
 
@@ -152,6 +167,11 @@ class LyricsGenius(OWTextableBaseWidget):
         self.inputSeg = newInput
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
+
+    # Fonction qui recherche sur Genius les chanson par rapport
+    # au choix de l utilisasteur
+    def searchFunction(self):
+        """Search from website Genius"""
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
