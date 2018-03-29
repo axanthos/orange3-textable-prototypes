@@ -75,8 +75,12 @@ class LyricsGenius(OWTextableBaseWidget):
         self.inputSeg = None
         self.newQuery = ''
         self.selected_choice_artists_or_songs = None
-        self.results = False
+        # attribut box choix entre artistes et chansons
         self.types = ''
+        # attribut de la box de resultats
+        self.titleLabels = ''
+        self.selectedTitles = ''
+
         # stock tous les inputs (chansons) dans une liste
         self.createdInputs = list()
 
@@ -136,21 +140,28 @@ class LyricsGenius(OWTextableBaseWidget):
             tooltip="Connect Genius and make a research",
         )
 
-        # Creation de la zone de resultats
-        resultsBox = gui.widgetBox(
+        # Creation d une liste permettant le choix du resultat
+        # Title box
+        titleBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Results",
+            box="Titles",
             orientation="vertical",
         )
-        # Creation d une liste a puces permettant le choix du resultat
-        gui.checkBox(
-            widget=resultsBox,
+        self.titleListbox = gui.listBox(
+            widget=titleBox,
             master=self,
-            value='results',
-            label='',
-            labelWidth=131,
-            callback=self.updateGUI,
+            value="selectedTitles",    # setting (list)
+            labels="titleLabels",      # setting (list)
+            callback=self.sendButton.settingsChanged,
+            tooltip="The list of titles whose content will be imported",
         )
+        self.titleListbox.setMinimumHeight(150)
+        self.titleListbox.setSelectionMode(3)    
+        gui.separator(widget=titleBox, height=3)
+
+        gui.separator(widget=self.controlArea, height=3)
+
+        gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
 
         gui.rubber(self.controlArea)
