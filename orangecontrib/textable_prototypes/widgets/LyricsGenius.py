@@ -71,6 +71,9 @@ class LyricsGenius(OWTextableBaseWidget):
 
         super().__init__()
 
+        # test de l'interface creer une recherche definie dans la fonction
+        # searchFunction
+        self.searchResults = None
         # Other attributes...
         self.inputSeg = None
         self.newQuery = ''
@@ -78,8 +81,8 @@ class LyricsGenius(OWTextableBaseWidget):
         # attribut box choix entre artistes et chansons
         self.types = ''
         # attribut de la box de resultats
-        self.titleLabels = ''
-        self.selectedTitles = ''
+        self.titleLabels = list()
+        self.selectedTitles = list()
 
         # stock tous les inputs (chansons) dans une liste
         self.createdInputs = list()
@@ -156,12 +159,21 @@ class LyricsGenius(OWTextableBaseWidget):
             tooltip="The list of titles whose content will be imported",
         )
         self.titleListbox.setMinimumHeight(150)
-        self.titleListbox.setSelectionMode(3)    
+        self.titleListbox.setSelectionMode(3)
         gui.separator(widget=titleBox, height=3)
 
         gui.separator(widget=self.controlArea, height=3)
 
         gui.rubber(self.controlArea)
+
+        # bouton qui nettoye les resultats
+        gui.button(
+            widget=queryBox,
+            master=self,
+            label="Clear",
+            callback=self.clearResults,
+            tooltip="Clear results",
+        )
         #----------------------------------------------------------------------
 
         gui.rubber(self.controlArea)
@@ -183,6 +195,17 @@ class LyricsGenius(OWTextableBaseWidget):
     # au choix de l utilisasteur
     def searchFunction(self):
         """Search from website Genius"""
+        self.searchResults = {"id1":{"title":'Les lacs', "artist":'Sardou'},"id2":{"title":'Les2 lacs2', "artist":'Sardou2'}}
+        del self.titleLabels[:]
+        for id in self.searchResults:
+            self.titleLabels.append(self.searchResults[id]["title"])
+        self.titleLabels = self.titleLabels
+
+    # Fonction qui vide la liste des resultats
+    def clearResults(self):
+        """Clear the results list"""
+        del self.titleLabels[:]
+        self.titleLabels = self.titleLabels
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
