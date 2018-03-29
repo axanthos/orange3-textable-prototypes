@@ -91,7 +91,7 @@ class LexicalHunter(OWTextableBaseWidget):
         # Other attributes...
         self.inputSeg = None
         self.outputSeg = None
-        self.defaultDict = {}
+        #self.defaultDict = {}
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -166,7 +166,7 @@ class LexicalHunter(OWTextableBaseWidget):
             __location__ += r"/lexicalfields"
 
         # Initiations
-        self.myContent = {}
+        #self.myContent = {}
 
         # For each txt file in the directory...
         for file in os.listdir(__location__):
@@ -178,7 +178,7 @@ class LexicalHunter(OWTextableBaseWidget):
                     listLexicName = fileName.split('\\')
 
                 else:
-                    listLexicName = fileName.split('\/')
+                    listLexicName = fileName.split('/')
 
                 lexicName = listLexicName[-1]
                 lexicName = re.sub('\.txt$', '', lexicName)
@@ -190,7 +190,7 @@ class LexicalHunter(OWTextableBaseWidget):
                     fileHandle = codecs.open(fileName, encoding='utf-8')
                     fileContent = fileHandle.read()
                     fileHandle.close()
-                    self.myContent[lexicName] = fileContent.split('\n')
+                    defaultDict[lexicName] = fileContent.split('\n')
                 except IOError:
                     QMessageBox.warning(
                         None,
@@ -204,7 +204,7 @@ class LexicalHunter(OWTextableBaseWidget):
         """Creates a list with each key of the default dictionnaries to display them on the list box
         Be careful, the order really metter for the selectedTitles variable !"""
 
-        self.titleLabels = self.myContent.keys()
+        self.titleLabels = defaultDict.keys()
 
     def editList(self):
         """ Edit the list of lexical word. Nothing to do now"""
@@ -375,7 +375,7 @@ class WidgetEditList(OWTextableBaseWidget):
             ########## selectedTitles retourne un tabeau de int suivant la position dans selectedTitles des listes selectionnees ########
             value="selectedTitles",    # setting (list)
             labels="titleList",   # setting (list)
-            callback=self.makeChange,
+            callback=self.setEditContent,
             tooltip="The list of lexical list that you want to use for annotation",
         )
         self.titleLabelsList.setMinimumHeight(300)
@@ -450,6 +450,17 @@ class WidgetEditList(OWTextableBaseWidget):
             orientation="vertical",
             callback=self.makeChange,
         )
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         # structure ...
         editBox = gui.widgetBox(
             widget=listEditBox,
@@ -458,10 +469,23 @@ class WidgetEditList(OWTextableBaseWidget):
             margin=0,
             spacing=0,
         )
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         #Editable text Field. Each line gonna be a enter of the lexical list selected
         self.editor = QPlainTextEdit()
-        self.editor.setPlainText(self.textFieldContent.decode('utf-8'))
+        #self.editor.setPlainText(self.textFieldContent.decode('utf-8'))
         editBox.layout().addWidget(self.editor)
         self.editor.textChanged.connect(self.dontforgettosaveChange)
         self.editor.setMinimumHeight(300)
@@ -484,7 +508,15 @@ class WidgetEditList(OWTextableBaseWidget):
 
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
-
+        
+    def setEditContent(self):
+        # Getting selected list title
+        self.listTitle = list(self.titleList)[self.selectedTitles[0]]
+        # Converting words list to string
+        self.editContent = ''.join(defaultDict[self.listTitle])
+        # Setting editor content with words list (converted to string)
+        self.editor.setPlainText(self.editContent)
+        
     def setTitleList(self):
         """Creates a list with each key of the default dictionnaries to display them on the list box
         Be carfull, the order really metter for the selectedTitles variable !"""
