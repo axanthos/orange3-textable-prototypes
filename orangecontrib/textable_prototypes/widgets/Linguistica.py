@@ -28,6 +28,8 @@ import collections
 
 from Orange.widgets import widget, gui, settings
 
+from PyQt4.QtGui import QTabWidget, QWidget
+
 from LTTL.Segmentation import Segmentation
 
 from _textable.widgets.TextableUtils import (
@@ -64,7 +66,7 @@ class Linguistica(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Layout parameters...
     
-    want_main_area = False
+    want_main_area = True
 
     #----------------------------------------------------------------------
     # Settings...
@@ -122,6 +124,21 @@ class Linguistica(OWTextableBaseWidget):
         gui.separator(widget=optionsBox, height=2)
 
         gui.rubber(self.controlArea)
+        
+        self.tabs = QTabWidget()
+        self.wordTab = QWidget()
+        self.signatureTab = QWidget()
+		
+        self.tabs.addTab(self.wordTab, "Words")
+        self.tabs.addTab(self.signatureTab, "Signatures")
+        
+        wordBox = gui.widgetBox(
+            widget=self.wordTab,
+            box="test",
+            orientation="vertical",
+        )
+        
+        self.mainArea.layout().addWidget(self.tabs)
 
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
