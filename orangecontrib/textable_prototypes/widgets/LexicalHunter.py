@@ -528,8 +528,14 @@ class WidgetEditList(OWTextableBaseWidget):
         self.infoBox.setText("je change les listes")
 
     def saveChange(self):
-        """Save the list in txt file on the cumputer of the user"""
+        """Saves the modified list"""
         self.infoBox.setText("je sauvegarde les listes !")
+        # Getting textfield value
+        self.val = self.editor.toPlainText()
+        # Converting the string into a list (separates each word with \n)
+        self.val.split('\n')
+        # Setting new dictionnary value
+        defaultDict[self.listTitle] = self.val
 
     def dontforgettosaveChange(self):
         """Diplay a warning message when the user edit the textfield of the list"""
