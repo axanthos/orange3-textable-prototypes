@@ -29,6 +29,14 @@ from Orange.widgets import widget, gui, settings
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 
+import urllib
+import urllib.request
+import urllib.parse
+import json
+import requests
+from urllib import request
+from urllib import parse
+
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton
@@ -195,11 +203,55 @@ class LyricsGenius(OWTextableBaseWidget):
     # au choix de l utilisasteur
     def searchFunction(self):
         """Search from website Genius"""
-        self.searchResults = {"id1":{"title":'Les lacs', "artist":'Sardou'},"id2":{"title":'Les2 lacs2', "artist":'Sardou2'}}
+        result_list = {}
+        query_string = self.newQuery
+        page = 1
+        result_id = 0
+        result_artist = []
+
+        values = {'q':query_string, 'page':page}
+        data = urllib.parse.urlencode(values)
+        query_url = 'http://api.genius.com/search?' + data
+        json_obj = self.url_request(query_url)
+        body = json_obj["response"]["hits"]
+
+        for result in body:
+            # Chaque resultat est stocke dans un dict avec titre, nom d'artiste, id d'artiste et path pour l'url des paroles
+            result_id += 1
+            title = result["result"]["title"]
+            artist = result["result"]["primary_artist"]["name"]
+            artist_id = result["result"]["primary_artist"]["id"]
+            path = result["result"]["path"]
+            result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+
+        self.searchResults = result_list
+        """
+        # Liste de résultats factice pour test hors-ligne
+        self.searchResults = {
+            "id1":{"title":'Les lacs', "artist":'Sardou', "artist_id":10, "path":'path/sardou/lacs'},
+            "id2":{"title":'Je vole', "artist":'Sardou', "artist_id":10, "path":'path/sardou/vole'}
+            }
+        """
         del self.titleLabels[:]
         for id in self.searchResults:
-            self.titleLabels.append(self.searchResults[id]["title"])
+            result_string = self.searchResults[id]["title"] + " - " + self.searchResults[id]["artist"]
+            self.titleLabels.append(result_string)
+
         self.titleLabels = self.titleLabels
+
+    def url_request(self, url):
+        """Opens a URL and returns it as a JSON object"""
+        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
+        USER_AGENT = "CompuServe Classic/1.22"
+
+        request = urllib.request.Request(url,headers={
+            "Authorization" : "Bearer " + ACCESS_TOKEN,
+            "User-Agent" : USER_AGENT
+            })
+        response = urllib.request.urlopen(request)
+        raw = response.read().decode('utf-8')
+        json_obj = json.loads(raw)
+        return json_obj
 
     # Fonction qui vide la liste des resultats
     def clearResults(self):
