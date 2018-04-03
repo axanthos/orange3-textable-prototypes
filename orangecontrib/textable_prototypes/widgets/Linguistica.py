@@ -28,7 +28,7 @@ import collections
 
 from Orange.widgets import widget, gui, settings
 
-from PyQt4.QtGui import QTabWidget, QWidget
+from PyQt4.QtGui import QTabWidget, QWidget, QFont
 
 from LTTL.Segmentation import Segmentation
 
@@ -86,12 +86,15 @@ class Linguistica(OWTextableBaseWidget):
 
         # Other attributes...
         self.inputSeg = None
+        self.morphology = dict()
         self.selectedMainWord = None
         self.mainWords = list()
         self.selectedParse = None
         self.parses = list()
         self.selectedStemForParse = None
         self.stemsForParse = list()
+        self.selectedSuffixForParse = None
+        self.suffixesForParse = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -102,7 +105,7 @@ class Linguistica(OWTextableBaseWidget):
             master=self,
             callback=self.sendData,
             infoBoxAttribute="infoBox",
-            sendIfPreCallback=self.updateGUI,
+            sendIfPreCallback=None,
         )
 
         # User interface...
@@ -135,6 +138,11 @@ class Linguistica(OWTextableBaseWidget):
         
         # B) Main area...
         
+        font = QFont()
+        font.setFamily('Courier')
+        font.setStyleHint(QFont.Courier)
+        font.setPixelSize(12)
+
         # Tabs...
         self.tabs = QTabWidget()
         self.wordTab = QWidget()
@@ -157,8 +165,10 @@ class Linguistica(OWTextableBaseWidget):
             callback=self.mainWordSelected,
             tooltip="Select a word to display its possible parses.",
         )
-        self.mainWordListbox.setMinimumHeight(200)
-        #self.titleListbox.setSelectionMode(3)
+        self.mainWordListbox.setMinimumHeight(260)
+        self.mainWordListbox.setMaximumHeight(260)
+        self.mainWordListbox.setFont(font)
+
         gui.separator(widget=wordBox, height=3)
 
         parsesBox = gui.widgetBox(widget=wordBox)
@@ -177,8 +187,7 @@ class Linguistica(OWTextableBaseWidget):
             callback=self.parseSelected,
             tooltip="Select a parse to display the corresponding signature.",
         )
-        self.parsesListbox.setMaximumHeight(50)
-        #self.titleListbox.setSelectionMode(3)
+        self.parsesListbox.setMaximumHeight(55)
         
         sigForParseBox = gui.widgetBox(
             widget=parsesBox,
@@ -200,8 +209,22 @@ class Linguistica(OWTextableBaseWidget):
             tooltip="TODO.",
         )
         self.stemsForParseListbox.setMaximumHeight(50)
-        #self.titleListbox.setSelectionMode(3)
-        gui.separator(widget=sigForParseBox, height=3)
+        
+        gui.label(
+            widget=sigForParseBox, 
+            master=self,
+            label="Suffixes(s):",
+        )
+        
+        self.suffixesForParseListbox = gui.listBox(
+            widget=sigForParseBox,
+            master=self,
+            value="selectedSuffixForParse", 
+            labels="suffixesForParse",
+            callback=None,
+            tooltip="TODO.",
+        )
+        self.suffixesForParseListbox.setMaximumHeight(50)
         
         gui.rubber(parsesBox)
 
@@ -213,7 +236,7 @@ class Linguistica(OWTextableBaseWidget):
         self.infoBox.setText("Widget needs input", "warning")
 
         self.setMinimumWidth(602)
-        self.setMinimumHeight(248)
+        self.setMinimumHeight(317)
         self.adjustSizeWithTimer()
         
         # Send data if autoSend.
@@ -227,6 +250,18 @@ class Linguistica(OWTextableBaseWidget):
         
     def mainWordSelected(self):
         """Handle main word selection event..."""
+        # words = list(self.morphology["word_counts"].keys())
+        # words.sort(key=self.morphology["word_counts"].get, reverse=True)
+        # max_count = self.morphology["word_counts"][words[0]]
+        # padding = len(str(max_count))+1
+        # self.mainWords = [
+            # '{num: {width}} {word}'.format(
+                # num=self.morphology["word_counts"][word],
+                # width=padding,
+                # word=word,
+            # )
+            # for word in words
+        # ]
         pass
 
     def parseSelected(self):
@@ -236,10 +271,14 @@ class Linguistica(OWTextableBaseWidget):
     def sendData(self):
         """Compute result of widget processing and send to output"""
 
+        # Clear morphology...
+        self.morphology = dict()
+        
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
             self.send("Morphologically analyzed data", None, self)
+            self.updateGUI()
             return
 
         # Perform morphological analysis...
@@ -256,6 +295,7 @@ class Linguistica(OWTextableBaseWidget):
         word_counts = collections.Counter(
             [segment.get_content() for segment in self.inputSeg]
         )
+        self.morphology["word_counts"] = word_counts
         self.infoBox.setText(
             u"Processing, please wait (signature extraction)...", 
             "warning",
@@ -265,11 +305,16 @@ class Linguistica(OWTextableBaseWidget):
         # Learn signatures...
         try:
             signatures, stems, suffixes = find_signatures(word_counts)
+            self.morphology["signatures"] = signatures
+            self.morphology["stems"] = stems
+            self.morphology["suffixes"] = suffixes
         except ValueError as e:
             self.infoBox.setText(e.__str__(), "warning")
             self.send("Morphologically analyzed data", None, self)
             self.controlArea.setDisabled(False)
             progressBar.finish()   # Clear progress bar.
+            self.morphology = dict()
+            self.updateGUI()
             return
         self.infoBox.setText(
             u"Processing, please wait (word parsing)...", 
@@ -279,20 +324,20 @@ class Linguistica(OWTextableBaseWidget):
         
         # Parse words...
         parser = build_parser(word_counts, signatures, stems, suffixes)
+        self.morphology["parser"] = parser
         newSegments = list()
         num_analyzed_words = 0
         for segment in self.inputSeg:
-            parseDict = parser[segment.get_content()]
+            parses = parser[segment.get_content()]
             newSegment = segment.deepcopy()
-            stem, suffix = next(iter(parseDict))
-            signature = parseDict[stem, suffix]
-            if signature:
+            if parses[0].signature:
                 num_analyzed_words += 1
             newSegment.annotations.update(
                 {
-                    "stem": stem, 
-                    "suffix": suffix if len(suffix) else "NULL", 
-                    "signature": signature
+                    "stem": parses[0].stem, 
+                    "suffix": parses[0].suffix  \
+                                if len(parses[0].suffix) else "NULL", 
+                    "signature": parses[0].signature
                 }
             )
             newSegments.append(newSegment)
@@ -301,6 +346,7 @@ class Linguistica(OWTextableBaseWidget):
             Segmentation(newSegments, self.captionTitle),
             self,
         )
+        self.updateGUI()
         progressBar.advance(15)
         
         # Set status to OK and report data size...
@@ -319,7 +365,37 @@ class Linguistica(OWTextableBaseWidget):
 
     def updateGUI(self):
         """Update GUI state"""
-        pass          
+        
+        # Empty lists...
+        self.mainWords = list()
+        self.parses = list()
+        self.stemsForParse = list()
+        self.suffixesForParse = list()
+        
+        # Fill main lists if necessary...
+        if len(self.morphology):
+        
+            # Main word list...
+            words = list(self.morphology["word_counts"].keys())
+            words.sort(key=self.morphology["word_counts"].get, reverse=True)
+            max_count = self.morphology["word_counts"][words[0]]
+            padding = len(str(max_count))+1
+            self.mainWords = [
+                '{num: {width}} {word}'.format(
+                    num=self.morphology["word_counts"][word],
+                    width=padding,
+                    word=word,
+                )
+                for word in words
+            ]
+            
+            # self.mainWords = list()
+            # self.selectedParse = None
+            # self.parses = list()
+            # self.selectedStemForParse = None
+            # self.stemsForParse = list()
+            # self.selectedSuffixForParse = None
+            # self.suffixesForParse = list()
 
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
