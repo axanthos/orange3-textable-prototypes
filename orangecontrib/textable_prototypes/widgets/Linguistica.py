@@ -86,6 +86,12 @@ class Linguistica(OWTextableBaseWidget):
 
         # Other attributes...
         self.inputSeg = None
+        self.selectedMainWord = None
+        self.mainWords = list()
+        self.selectedParse = None
+        self.parses = list()
+        self.selectedStemForParse = None
+        self.stemsForParse = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -101,6 +107,8 @@ class Linguistica(OWTextableBaseWidget):
 
         # User interface...
 
+        # A) Control area...
+        
         # Options box...
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
@@ -125,25 +133,88 @@ class Linguistica(OWTextableBaseWidget):
 
         gui.rubber(self.controlArea)
         
+        # B) Main area...
+        
+        # Tabs...
         self.tabs = QTabWidget()
         self.wordTab = QWidget()
-        self.signatureTab = QWidget()
-		
+        self.signatureTab = QWidget()		
         self.tabs.addTab(self.wordTab, "Words")
         self.tabs.addTab(self.signatureTab, "Signatures")
         
+        # Words tab...
         wordBox = gui.widgetBox(
             widget=self.wordTab,
-            box="test",
-            orientation="vertical",
+            orientation="horizontal",
+            margin=5,
         )
         
+        self.mainWordListbox = gui.listBox(
+            widget=wordBox,
+            master=self,
+            value="selectedMainWord", 
+            labels="mainWords",
+            callback=self.mainWordSelected,
+            tooltip="Select a word to display its possible parses.",
+        )
+        self.mainWordListbox.setMinimumHeight(200)
+        #self.titleListbox.setSelectionMode(3)
+        gui.separator(widget=wordBox, height=3)
+
+        parsesBox = gui.widgetBox(widget=wordBox)
+        
+        gui.label(
+            widget=parsesBox, 
+            master=self,
+            label="Parse(s):",
+        )
+        
+        self.parsesListbox = gui.listBox(
+            widget=parsesBox,
+            master=self,
+            value="selectedParse", 
+            labels="parses",
+            callback=self.parseSelected,
+            tooltip="Select a parse to display the corresponding signature.",
+        )
+        self.parsesListbox.setMaximumHeight(50)
+        #self.titleListbox.setSelectionMode(3)
+        
+        sigForParseBox = gui.widgetBox(
+            widget=parsesBox,
+            box="Signature",
+        )
+        
+        gui.label(
+            widget=sigForParseBox, 
+            master=self,
+            label="Stem(s):",
+        )
+        
+        self.stemsForParseListbox = gui.listBox(
+            widget=sigForParseBox,
+            master=self,
+            value="selectedStemForParse", 
+            labels="stemsForParse",
+            callback=None,
+            tooltip="TODO.",
+        )
+        self.stemsForParseListbox.setMaximumHeight(50)
+        #self.titleListbox.setSelectionMode(3)
+        gui.separator(widget=sigForParseBox, height=3)
+        
+        gui.rubber(parsesBox)
+
         self.mainArea.layout().addWidget(self.tabs)
 
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
         self.infoBox.setText("Widget needs input", "warning")
+
+        self.setMinimumWidth(602)
+        self.setMinimumHeight(248)
+        self.adjustSizeWithTimer()
         
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -153,6 +224,14 @@ class Linguistica(OWTextableBaseWidget):
         self.inputSeg = newInput
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
+        
+    def mainWordSelected(self):
+        """Handle main word selection event..."""
+        pass
+
+    def parseSelected(self):
+        """Handle parse selection event..."""
+        pass
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
