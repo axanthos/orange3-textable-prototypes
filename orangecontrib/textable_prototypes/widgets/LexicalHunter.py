@@ -279,6 +279,7 @@ class LexicalHunter(OWTextableBaseWidget):
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
+            
             super().setCaption(title)
             if changed:
                 self.sendButton.settingsChanged()
@@ -322,6 +323,7 @@ class WidgetEditList(OWTextableBaseWidget):
     listWord = ""
 
     titleList = settings.Setting([])
+    baseLocation = settings.Setting('.')
 
     def __init__(self):
         """Widget creator."""
@@ -336,6 +338,8 @@ class WidgetEditList(OWTextableBaseWidget):
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
         self.infoBox = InfoBox(widget=self.controlArea)
+        # Temporary dictionary so that the user can cancel changes
+        self.tempDict = defaultDict.copy()
 
         # User interface...
 
@@ -356,14 +360,14 @@ class WidgetEditList(OWTextableBaseWidget):
             widget=SaveBox,
             master=self,
             label="Save changes",
-            callback=self.saveChange,
+            callback=self.saveChanges,
             width=130,
         )
         self.CancelChanges = gui.button(
             widget=SaveBox,
             master=self,
             label="Cancel",
-            callback=self.saveChange,
+            callback=self.cancelChanges,
             width=130,
         )
         ### END OF SAVE AREA
@@ -375,7 +379,6 @@ class WidgetEditList(OWTextableBaseWidget):
             ########## selectedTitles retourne un tabeau de int suivant la position dans selectedTitles des listes selectionnees ########
             value="selectedTitles",    # setting (list)
             labels="titleList",   # setting (list)
-            callback=self.setEditContent,
             tooltip="The list of lexical list that you want to use for annotation",
         )
         self.titleLabelsList.setMinimumHeight(300)
@@ -389,11 +392,19 @@ class WidgetEditList(OWTextableBaseWidget):
             orientation="vertical",
         )
         # Actions on list
+        self.EditList = gui.button(
+            widget=controlBox,
+            master=self,
+            label="Edit",
+            callback=self.setEditContent,
+            width=130,
+            autoDefault=False,
+        )
         self.ImportList = gui.button(
             widget=controlBox,
             master=self,
             label="Import",
-            callback=self.makeChange,
+            callback=self.importLexic,
             width=130,
             autoDefault=False,
         )
@@ -408,28 +419,28 @@ class WidgetEditList(OWTextableBaseWidget):
             widget=controlBox,
             master=self,
             label="Export Selected",
-            callback=self.makeChange,
+            callback=self.setEditContent,
             width=130,
         )
         self.NewList = gui.button(
             widget=controlBox,
             master=self,
             label="New",
-            callback=self.makeChange,
+            callback=self.newLexicalField,
             width=130,
         )
         self.ClearList = gui.button(
             widget=controlBox,
             master=self,
             label="Clear",
-            callback=self.makeChange,
+            callback=self.clearList,
             width=130,
         )
         self.RemoveSelectedList = gui.button(
             widget=controlBox,
             master=self,
             label="Remove Selected",
-            callback=self.makeChange,
+            callback=self.deleteSelectedList,
             width=130,
         )
 
@@ -495,7 +506,7 @@ class WidgetEditList(OWTextableBaseWidget):
             widget=listEditBox,
             master=self,
             label="Commit",
-            callback=self.saveChange,
+            callback=self.saveEdit,
             width=100,
         )
 
@@ -509,33 +520,145 @@ class WidgetEditList(OWTextableBaseWidget):
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
         
+    ## OK ##
     def setEditContent(self):
+        """Sets the lexical field informations when the user wants to edit it"""
         # Getting selected list title
         self.listTitle = list(self.titleList)[self.selectedTitles[0]]
         # Converting words list to string
-        self.editContent = ''.join(defaultDict[self.listTitle])
+        self.editContent = ''.join(self.tempDict[self.listTitle])
         # Setting editor content with words list (converted to string)
         self.editor.setPlainText(self.editContent)
-        
+        # Getting old title (to delete it later if the users wants to)
+        self.oldTitle = self.listTitle
+    
+    ## OK ##
     def setTitleList(self):
-        """Creates a list with each key of the default dictionnaries to display them on the list box
-        Be carfull, the order really metter for the selectedTitles variable !"""
-
-        self.titleList = defaultDict.keys()
+        """Displays the lexical fields titles in the edit widget view"""
+        self.titleList = self.tempDict.keys()
+        
+    ## OK ##
+    def clearList(self):
+        """Clears the list of lexical fields"""
+        # Reset textfields values
+        self.titleEdit.setText("")
+        self.editor.setPlainText("")
+        # Deleting all lexical fields
+        self.tempDict.clear()
+        self.setTitleList()
+        
+    ## OK ##
+    def deleteSelectedList(self):
+        """Deletes selected lexical field"""
+        # Getting selected list title
+        self.listToDelete = list(self.titleList)[self.selectedTitles[0]]
+        # Reset textfields values
+        self.titleEdit.setText("")
+        self.editor.setPlainText("")
+        # Deleting selected list
+        self.tempDict.pop(self.listToDelete, None)
+        self.titleList = self.tempDict.keys()
+        
+    ## OK ##
+    def newLexicalField(self):
+        """Sets a new entry in the lexical fields dictionnary"""
+        newDict = "New lexical field"
+        i = 1
+        while newDict in self.tempDict.keys():
+            newDict = "New lexical field %i" %i
+            i += 1
+            
+        self.tempDict[newDict] = ""
+        self.setTitleList()
 
     def makeChange(self):
-        """Do the chane on the list"""
-        self.infoBox.setText("je change les listes")
+        pass
+        #"""Do the chane on the list"""
+        #self.infoBox.setText("je change les listes")
 
-    def saveChange(self):
+    ## OK ##
+    def saveEdit(self):
         """Saves the modified list"""
-        self.infoBox.setText("je sauvegarde les listes !")
-        # Getting textfield value
+        # Getting textfields values
         self.val = self.editor.toPlainText()
+        self.newTitle = self.titleEdit.text()
+        
+        # Reset textfields values
+        self.titleEdit.setText("")
+        self.editor.setPlainText("")
+        
         # Converting the string into a list (separates each word with \n)
         self.val.split('\n')
         # Setting new dictionnary value
-        defaultDict[self.listTitle] = self.val
+        self.tempDict[self.newTitle] = self.val
+        # Deleting old key and value
+        del self.tempDict[self.oldTitle]
+        
+        self.titleList = self.tempDict.keys()
+        
+    ## OK ##
+    def saveChanges(self):
+        """Saves changes made by the user"""
+        defaultDict = self.tempDict.copy()
+        
+    def cancelChanges(self):
+        """Cancels changes made by the user"""
+        pass
+    
+    ## OK ##
+    def importLexic(self):
+        """Lets the user import a lexical field from a text file"""
+        
+        # Opening a file browser
+        filePath = QFileDialog.getOpenFileName(
+            self,
+            u'Import lexical field file',
+            self.baseLocation,
+            u'Text files (*)'
+        )
+        if not filePath:
+            return
+        self.file = os.path.normpath(filePath)
+        self.baseLocation = os.path.dirname(filePath)
+        # Gets txt file name and substracts .txt extension
+        fileName = os.path.join(self.baseLocation, self.file);
+
+        # Cutting the path to get the name
+        if platform.system() == "Windows":
+            listLexicName = fileName.split('\\')
+
+        else:
+            listLexicName = fileName.split('/')
+
+        # Getting file name
+        lexicName = listLexicName[-1]
+        lexicName = re.sub('\.txt$', '', lexicName)
+                
+
+        # Trying to open the files and store their content in a dictionnary
+        # then store all of theses in a list
+        try:
+            fileHandle = codecs.open(fileName, encoding='utf-8')
+            fileContent = fileHandle.read()
+            fileHandle.close()
+            self.tempDict[lexicName] = fileContent.split('\n')
+            self.setTitleList()
+        except IOError:
+            QMessageBox.warning(
+                None,
+                'Textable',
+                "Couldn't open file.",
+                QMessageBox.Ok
+            )
+            return
+        
+    def exportOneLexic(self):
+        """Lets the user export the selected lexic to a text file"""
+        pass
+
+    def exportAllLexics(self):
+        """Lets the user export all the lexics"""
+        pass
 
     def dontforgettosaveChange(self):
         """Diplay a warning message when the user edit the textfield of the list"""
