@@ -188,20 +188,21 @@ class Linguistica(OWTextableBaseWidget):
             tooltip="Select a parse to display the corresponding signature.",
         )
         self.parsesListbox.setMaximumHeight(55)
+        self.parsesListbox.setFont(font)
         
-        sigForParseBox = gui.widgetBox(
+        self.sigForParseBox = gui.widgetBox(
             widget=parsesBox,
             box="Signature",
         )
         
         gui.label(
-            widget=sigForParseBox, 
+            widget=self.sigForParseBox, 
             master=self,
             label="Stem(s):",
         )
         
         self.stemsForParseListbox = gui.listBox(
-            widget=sigForParseBox,
+            widget=self.sigForParseBox,
             master=self,
             value="selectedStemForParse", 
             labels="stemsForParse",
@@ -211,13 +212,13 @@ class Linguistica(OWTextableBaseWidget):
         self.stemsForParseListbox.setMaximumHeight(50)
         
         gui.label(
-            widget=sigForParseBox, 
+            widget=self.sigForParseBox, 
             master=self,
             label="Suffixes(s):",
         )
         
         self.suffixesForParseListbox = gui.listBox(
-            widget=sigForParseBox,
+            widget=self.sigForParseBox,
             master=self,
             value="selectedSuffixForParse", 
             labels="suffixesForParse",
@@ -249,24 +250,62 @@ class Linguistica(OWTextableBaseWidget):
         self.sendButton.sendIf()
         
     def mainWordSelected(self):
-        """Handle main word selection event..."""
-        # words = list(self.morphology["word_counts"].keys())
-        # words.sort(key=self.morphology["word_counts"].get, reverse=True)
-        # max_count = self.morphology["word_counts"][words[0]]
-        # padding = len(str(max_count))+1
-        # self.mainWords = [
-            # '{num: {width}} {word}'.format(
-                # num=self.morphology["word_counts"][word],
-                # width=padding,
-                # word=word,
-            # )
-            # for word in words
-        # ]
-        pass
+        """Display possible parses for selected word."""
+
+        self.sigForParseBox.setTitle(" Signature ")
+
+        # Return if no selected word...
+        if len(self.selectedMainWord) == 0:
+            self.parses = list()
+            return
+        
+        # Get selected word's parses...
+        words = list(self.morphology["wordCounts"].keys())
+        words.sort(key=self.morphology["wordCounts"].get, reverse=True)
+        parses = self.morphology["parser"][
+            words[self.selectedMainWord[0]]
+        ]
+        
+        # Display parses...
+        self.parses = [
+            '{score:.2f} {stem} + {suffix}'.format(
+                score=parse.score,
+                stem=parse.stem,
+                suffix=parse.suffix if parse.suffix else "NULL",
+            )
+            for parse in parses
+        ]
 
     def parseSelected(self):
-        """Handle parse selection event..."""
-        pass
+        """Display selected parse's signature."""
+        # Return if no selected parse...
+        if len(self.selectedParse) == 0:
+            self.stemsForParse = list()
+            self.suffixesForParse = list()
+            return
+        
+        # Get selected parse's signature...
+        words = list(self.morphology["wordCounts"].keys())
+        words.sort(key=self.morphology["wordCounts"].get, reverse=True)
+        parses = self.morphology["parser"][
+            words[self.selectedMainWord[0]]
+        ]
+        parse = parses[self.selectedParse[0]]
+        sigNum = parse.signature
+        
+        # Display stems and suffixes in parse's signature...
+        if sigNum > 0:
+            self.sigForParseBox.setTitle(" Signature {} ".format(sigNum))
+            signatures = list(self.morphology["signatures"].keys())
+            self.suffixesForParse = [
+                suffix or "NULL" for suffix in signatures[sigNum-1]
+            ]
+            self.stemsForParse =    \
+                self.morphology["signatures"][signatures[sigNum-1]]
+        else:
+            self.sigForParseBox.setTitle(" Signature ")
+            self.suffixesForParse = list()
+            self.stemsForParse = list()
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
@@ -292,10 +331,10 @@ class Linguistica(OWTextableBaseWidget):
         progressBar = ProgressBar(self, iterations=100)       
         
         # Word count...
-        word_counts = collections.Counter(
+        wordCounts = collections.Counter(
             [segment.get_content() for segment in self.inputSeg]
         )
-        self.morphology["word_counts"] = word_counts
+        self.morphology["wordCounts"] = wordCounts
         self.infoBox.setText(
             u"Processing, please wait (signature extraction)...", 
             "warning",
@@ -304,7 +343,7 @@ class Linguistica(OWTextableBaseWidget):
         
         # Learn signatures...
         try:
-            signatures, stems, suffixes = find_signatures(word_counts)
+            signatures, stems, suffixes = find_signatures(wordCounts)
             self.morphology["signatures"] = signatures
             self.morphology["stems"] = stems
             self.morphology["suffixes"] = suffixes
@@ -323,7 +362,7 @@ class Linguistica(OWTextableBaseWidget):
         progressBar.advance(80)        
         
         # Parse words...
-        parser = build_parser(word_counts, signatures, stems, suffixes)
+        parser = build_parser(wordCounts, signatures, stems, suffixes)
         self.morphology["parser"] = parser
         newSegments = list()
         num_analyzed_words = 0
@@ -371,18 +410,19 @@ class Linguistica(OWTextableBaseWidget):
         self.parses = list()
         self.stemsForParse = list()
         self.suffixesForParse = list()
+        self.sigForParseBox.setTitle(" Signature ")
         
         # Fill main lists if necessary...
         if len(self.morphology):
         
             # Main word list...
-            words = list(self.morphology["word_counts"].keys())
-            words.sort(key=self.morphology["word_counts"].get, reverse=True)
-            max_count = self.morphology["word_counts"][words[0]]
+            words = list(self.morphology["wordCounts"].keys())
+            words.sort(key=self.morphology["wordCounts"].get, reverse=True)
+            max_count = self.morphology["wordCounts"][words[0]]
             padding = len(str(max_count))+1
             self.mainWords = [
                 '{num: {width}} {word}'.format(
-                    num=self.morphology["word_counts"][word],
+                    num=self.morphology["wordCounts"][word],
                     width=padding,
                     word=word,
                 )
