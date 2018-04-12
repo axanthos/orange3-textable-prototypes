@@ -37,7 +37,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
-from lxa5crab import find_signatures, build_parser
+import lxa5crab
 
 # Constants...
 LOWER_MIN_STEM_LEN = 3
@@ -95,6 +95,11 @@ class Linguistica(OWTextableBaseWidget):
         self.stemsForParse = list()
         self.selectedSuffixForParse = None
         self.suffixesForParse = list()
+        self.selectedMainSignature = None
+        self.mainSignatures = list()
+        self.wordsForSig = list()
+        self.stemsForSig = list()
+        self.suffixesForSig = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -204,9 +209,7 @@ class Linguistica(OWTextableBaseWidget):
         self.stemsForParseListbox = gui.listBox(
             widget=self.sigForParseBox,
             master=self,
-            value="selectedStemForParse", 
             labels="stemsForParse",
-            callback=None,
             tooltip="TODO.",
         )
         self.stemsForParseListbox.setMaximumHeight(50)
@@ -220,14 +223,80 @@ class Linguistica(OWTextableBaseWidget):
         self.suffixesForParseListbox = gui.listBox(
             widget=self.sigForParseBox,
             master=self,
-            value="selectedSuffixForParse", 
             labels="suffixesForParse",
-            callback=None,
             tooltip="TODO.",
         )
         self.suffixesForParseListbox.setMaximumHeight(50)
         
         gui.rubber(parsesBox)
+
+        # Signature tab...
+        signatureBox = gui.widgetBox(
+            widget=self.signatureTab,
+            orientation="horizontal",
+            margin=5,
+        )
+        
+        self.mainSignatureListbox = gui.listBox(
+            widget=signatureBox,
+            master=self,
+            value="selectedMainSignature", 
+            labels="mainSignatures",
+            callback=self.mainWordSelected,
+            tooltip="Select a signature to display its contents.",
+        )
+        self.mainSignatureListbox.setMinimumHeight(260)
+        self.mainSignatureListbox.setMaximumHeight(260)
+        self.mainSignatureListbox.setFont(font)
+
+        gui.separator(widget=signatureBox, height=3)
+
+        sigContentBox = gui.widgetBox(widget=signatureBox)
+        
+        gui.label(
+            widget=sigContentBox, 
+            master=self,
+            label="Words:",
+        )
+        
+        self.wordsForSigListbox = gui.listBox(
+            widget=sigContentBox,
+            master=self,
+            labels="wordsForSig",
+            tooltip="TODO.",
+        )
+        self.wordsForSigListbox.setMaximumHeight(65)
+        self.wordsForSigListbox.setFont(font)
+        
+        gui.label(
+            widget=sigContentBox, 
+            master=self,
+            label="Stem(s):",
+        )
+        
+        self.stemsForSigListbox = gui.listBox(
+            widget=sigContentBox,
+            master=self,
+            labels="stemsForSig",
+            tooltip="TODO.",
+        )
+        self.stemsForSigListbox.setMaximumHeight(65)
+        
+        gui.label(
+            widget=sigContentBox, 
+            master=self,
+            label="Suffixes(s):",
+        )
+        
+        self.suffixesForSigListbox = gui.listBox(
+            widget=sigContentBox,
+            master=self,
+            labels="suffixesForSig",
+            tooltip="TODO.",
+        )
+        self.suffixesForSigListbox.setMaximumHeight(64)
+        
+        gui.rubber(sigContentBox)
 
         self.mainArea.layout().addWidget(self.tabs)
 
@@ -275,6 +344,8 @@ class Linguistica(OWTextableBaseWidget):
             )
             for parse in parses
         ]
+        self.selectedParse = [0]
+        self.parseSelected()
 
     def parseSelected(self):
         """Display selected parse's signature."""
@@ -303,9 +374,12 @@ class Linguistica(OWTextableBaseWidget):
             self.stemsForParse =    \
                 self.morphology["signatures"][signatures[sigNum-1]]
         else:
-            self.sigForParseBox.setTitle(" Signature ")
-            self.suffixesForParse = list()
-            self.stemsForParse = list()
+            self.sigForParseBox.setTitle(" Signature 0 ")
+            self.suffixesForParse = ["NULL"]
+            self.stemsForParse = sorted([
+                w for w in words 
+                if self.morphology["parser"][w][0].signature == 0
+            ])
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
@@ -343,7 +417,8 @@ class Linguistica(OWTextableBaseWidget):
         
         # Learn signatures...
         try:
-            signatures, stems, suffixes = find_signatures(wordCounts)
+            lxa5crab.crab_nebula.MIN_STEM_LEN = self.minStemLen
+            signatures, stems, suffixes = lxa5crab.find_signatures(wordCounts)
             self.morphology["signatures"] = signatures
             self.morphology["stems"] = stems
             self.morphology["suffixes"] = suffixes
@@ -362,7 +437,7 @@ class Linguistica(OWTextableBaseWidget):
         progressBar.advance(80)        
         
         # Parse words...
-        parser = build_parser(wordCounts, signatures, stems, suffixes)
+        parser = lxa5crab.build_parser(wordCounts, signatures, stems, suffixes)
         self.morphology["parser"] = parser
         newSegments = list()
         num_analyzed_words = 0
@@ -411,6 +486,10 @@ class Linguistica(OWTextableBaseWidget):
         self.stemsForParse = list()
         self.suffixesForParse = list()
         self.sigForParseBox.setTitle(" Signature ")
+        self.mainSignatures = list()
+        self.wordsForSig = list()
+        self.stemsForSig = list()
+        self.suffixesForSig = list()
         
         # Fill main lists if necessary...
         if len(self.morphology):
@@ -429,13 +508,20 @@ class Linguistica(OWTextableBaseWidget):
                 for word in words
             ]
             
-            # self.mainWords = list()
-            # self.selectedParse = None
-            # self.parses = list()
-            # self.selectedStemForParse = None
-            # self.stemsForParse = list()
-            # self.selectedSuffixForParse = None
-            # self.suffixesForParse = list()
+            # Main signature list...
+            sigs = [["NULL"]] + list(self.morphology["signatures"].keys())
+            padding = len(str(len(sigs)))+1
+            self.mainSignatures = [
+                '{num: {width}} {sig}'.format(
+                    num=idx+1,
+                    width=padding,
+                    sig=", ".join(
+                        [suff or "NULL" for suff in sig]
+                    )
+                )
+                for idx, sig in enumerate(sigs)
+            ]
+            
 
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
