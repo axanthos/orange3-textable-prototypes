@@ -44,6 +44,8 @@ from os import listdir
 from os.path import isfile, join
 import platform
 
+from unicodedata import normalize
+
 # Global variables
 defaultDict = {}
 
@@ -411,15 +413,15 @@ class WidgetEditList(OWTextableBaseWidget):
         self.ExportList = gui.button(
             widget=controlBox,
             master=self,
-            label="Export",
-            callback=self.makeChange,
+            label="Export All",
+            callback=self.exportAllLexics,
             width=130,
         )
         self.ImportSelectedList = gui.button(
             widget=controlBox,
             master=self,
             label="Export Selected",
-            callback=self.setEditContent,
+            callback=self.exportOneLexic,
             width=130,
         )
         self.NewList = gui.button(
@@ -578,24 +580,22 @@ class WidgetEditList(OWTextableBaseWidget):
 
     ## OK ##
     def saveEdit(self):
-        """Saves the modified list"""
+        """Saves the modifications made by the user on the list"""
         # Getting textfields values
         self.val = self.editor.toPlainText()
         self.newTitle = self.titleEdit.text()
-        
+
         # Reset textfields values
         self.titleEdit.setText("")
         self.editor.setPlainText("")
-        
-        # Converting the string into a list (separates each word with \n)
-        self.val.split('\n')
-        # Setting new dictionnary value
+
         self.tempDict[self.newTitle] = self.val
         # Deleting old key and value
-        del self.tempDict[self.oldTitle]
-        
+        if self.newTitle != self.oldTitle:
+            del self.tempDict[self.oldTitle]
+
         self.titleList = self.tempDict.keys()
-        
+
     ## OK ##
     def saveChanges(self):
         """Saves changes made by the user"""
@@ -638,10 +638,9 @@ class WidgetEditList(OWTextableBaseWidget):
         # Trying to open the files and store their content in a dictionnary
         # then store all of theses in a list
         try:
-            fileHandle = codecs.open(fileName, encoding='utf-8')
-            fileContent = fileHandle.read()
+            fileHandle = open(fileName, encoding='utf-8')
+            self.tempDict[lexicName] = fileHandle.readlines()
             fileHandle.close()
-            self.tempDict[lexicName] = fileContent.split('\n')
             self.setTitleList()
         except IOError:
             QMessageBox.warning(
@@ -651,14 +650,73 @@ class WidgetEditList(OWTextableBaseWidget):
                 QMessageBox.Ok
             )
             return
-        
+    ## OK ##
     def exportOneLexic(self):
         """Lets the user export the selected lexic to a text file"""
-        pass
+        # Opening file browser
+        filePath = QFileDialog.getSaveFileName(
+            self,
+            u'Export Selected Lexic',
+            self.baseLocation,
+        )
+
+        # Setting content to save
+        exportTitle = list(self.titleList)[self.selectedTitles[0]]
+        #exportContent = '\n'.join(self.tempDict[exportTitle])
+        exportContent = self.tempDict[exportTitle]
+        #textFieldContent.replace('\r\n', '\n').replace('\r', '\n')
+        #exportContent = self.tempDict[exportTitle].replace('\r\n', '\n').replace('\r', '\n')
+
+        # Saving lexic content
+        if filePath:
+            outputFile = open(
+                filePath,
+                encoding='utf8',
+                mode='w+',
+                errors='xmlcharrefreplace',
+            )
+
+            outputFile.write(exportContent)
+            outputFile.close()
+            QMessageBox.information(
+                None,
+                'Textable',
+                'Lexic file correctly exported',
+                QMessageBox.Ok
+            )
+        
 
     def exportAllLexics(self):
         """Lets the user export all the lexics"""
-        pass
+        # Opening file browser
+        filePath = QFileDialog.getExistingDirectory(
+            self,
+            u'Export Selected Lexic',
+            self.baseLocation
+        )
+        
+        if filePath:
+            for name in self.tempDict:
+                exportName = name.replace(" ", "_")
+                if platform.system() == "Windows":
+                    fullName = r"{}\{}.txt".format(filePath, exportName)
+                else:
+                    fullName = r"{}/{}.txt".format(filePath, exportName)
+
+                outputFile = open(
+                    fullName,
+                    encoding='utf8',
+                    mode='w+',
+                    errors='xmlcharrefreplace',
+                )
+                outputFile.write('\n'.join(self.tempDict[name]))
+                outputFile.close()
+            QMessageBox.information(
+                None,
+                'Textable',
+                'Lexic files correctly exported',
+                QMessageBox.Ok
+            )
 
     def dontforgettosaveChange(self):
         """Diplay a warning message when the user edit the textfield of the list"""
