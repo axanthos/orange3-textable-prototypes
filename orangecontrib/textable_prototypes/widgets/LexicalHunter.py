@@ -136,6 +136,15 @@ class LexicalHunter(OWTextableBaseWidget):
             callback=self.editList,
             width=100,
         )
+        
+        # Update lists ...
+        self.Update = gui.button(
+            widget=titleLabelsList,
+            master=self,
+            label="Update",
+            callback=self.setTitleList,
+            width=100,
+        )
 
         ###### START NOTA BENNE ######
 
@@ -202,17 +211,21 @@ class LexicalHunter(OWTextableBaseWidget):
                     )
                     return
 
+
     def setTitleList(self):
         """Creates a list with each key of the default dictionnaries to display them on the list box
         Be careful, the order really metter for the selectedTitles variable !"""
 
         self.titleLabels = defaultDict.keys()
+        self.infoBox.setText(self.titleLabels)
 
     def editList(self):
         """ Edit the list of lexical word. Nothing to do now"""
-        #self.labelControl.setText("hello")
-        widgetEdit = WidgetEditList()
-        widgetEdit.show()
+        self.widgetEdit = WidgetEditList()
+        self.widgetEdit.show()
+        
+    def hideEditWidget(self):
+        self.widgetEdit.hide()
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -369,7 +382,7 @@ class WidgetEditList(OWTextableBaseWidget):
             widget=SaveBox,
             master=self,
             label="Cancel",
-            callback=self.cancelChanges,
+            callback=self.closeWindow,
             width=130,
         )
         ### END OF SAVE AREA
@@ -417,7 +430,7 @@ class WidgetEditList(OWTextableBaseWidget):
             callback=self.exportAllLexics,
             width=130,
         )
-        self.ImportSelectedList = gui.button(
+        self.ExportSelectedList = gui.button(
             widget=controlBox,
             master=self,
             label="Export Selected",
@@ -533,6 +546,9 @@ class WidgetEditList(OWTextableBaseWidget):
         self.editor.setPlainText(self.editContent)
         # Getting old title (to delete it later if the users wants to)
         self.oldTitle = self.listTitle
+        
+        #self.CommitList.setDisabled(True)
+        self.updateGUI()
     
     ## OK ##
     def setTitleList(self):
@@ -595,15 +611,19 @@ class WidgetEditList(OWTextableBaseWidget):
             del self.tempDict[self.oldTitle]
 
         self.titleList = self.tempDict.keys()
+        
+        self.updateGUI()
 
     ## OK ##
     def saveChanges(self):
         """Saves changes made by the user"""
-        defaultDict = self.tempDict.copy()
-        
-    def cancelChanges(self):
+        defaultDict.update(self.tempDict)
+        self.hide()
+
+    ## OK ##
+    def closeWindow(self):
         """Cancels changes made by the user"""
-        pass
+        self.hide()
     
     ## OK ##
     def importLexic(self):
@@ -650,6 +670,8 @@ class WidgetEditList(OWTextableBaseWidget):
                 QMessageBox.Ok
             )
             return
+
+
     ## OK ##
     def exportOneLexic(self):
         """Lets the user export the selected lexic to a text file"""
@@ -684,8 +706,9 @@ class WidgetEditList(OWTextableBaseWidget):
                 'Lexic file correctly exported',
                 QMessageBox.Ok
             )
-        
 
+
+    ## OK ##
     def exportAllLexics(self):
         """Lets the user export all the lexics"""
         # Opening file browser
@@ -731,12 +754,47 @@ class WidgetEditList(OWTextableBaseWidget):
         """Compute result of widget processing and send to output"""
         #self.labelControl.setText("selectedTitles = " + str(self.selectedTitles))
         pass
-
+    
     def updateGUI(self):
-        """Update GUI state"""
+        if self.titleEdit.text() != "":
+            # Disabled elements
+            self.SaveChanges.setDisabled(True)
+            self.CancelChanges.setDisabled(True)
+            self.EditList.setDisabled(True)
+            self.ImportList.setDisabled(True)
+            self.ExportList.setDisabled(True)
+            self.ExportSelectedList.setDisabled(True)
+            self.NewList.setDisabled(True)
+            self.ClearList.setDisabled(True)
+            self.RemoveSelectedList.setDisabled(True)
 
-        if len(self.titleLabels) > 0:
-            self.selectedTitles = self.selectedTitles
+            # Enabled elements
+            self.CommitList.setDisabled(False)
+            self.editor.setDisabled(False)
+            self.titleEdit.setDisabled(False)
+            
+        if self.titleEdit.text() == "":
+            # Enabled elements
+            self.SaveChanges.setDisabled(False)
+            self.CancelChanges.setDisabled(False)
+            self.EditList.setDisabled(False)
+            self.ImportList.setDisabled(False)
+            self.ExportList.setDisabled(False)
+            self.ExportSelectedList.setDisabled(False)
+            self.NewList.setDisabled(False)
+            self.ClearList.setDisabled(False)
+            self.RemoveSelectedList.setDisabled(False)
+
+            # Disabled elements
+            self.CommitList.setDisabled(True)
+            self.editor.setDisabled(True)
+            self.titleEdit.setDisabled(True)
+
+    #def updateGUI(self):
+        #"""Update GUI state"""
+
+        #if len(self.titleLabels) > 0:
+            #self.selectedTitles = self.selectedTitles
 
 
 if __name__ == "__main__":
