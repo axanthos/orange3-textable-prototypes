@@ -25,6 +25,7 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 import collections
+import itertools
 
 from Orange.widgets import widget, gui, settings
 
@@ -247,7 +248,7 @@ class Linguistica(OWTextableBaseWidget):
             master=self,
             value="selectedMainSignature", 
             labels="mainSignatures",
-            callback=self.mainWordSelected,
+            callback=self.mainSignatureSelected,
             tooltip="Select a signature to display its contents.",
         )
         self.mainSignatureListbox.setFont(font)
@@ -319,6 +320,40 @@ class Linguistica(OWTextableBaseWidget):
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
         
+    def mainSignatureSelected(self):
+        """Display selected signature and generated words."""
+        # Return if no selected signature...
+        if len(self.selectedMainSignature) == 0:
+            self.wordsForSig = list()
+            return
+        
+        # Get generated words (by decreasing frequency)...
+        sigs = self.morphology["signatures"]
+        if self.selectedMainSignature[0] == 0:
+            words = sorted([
+                w for w in self.morphology["wordCounts"].keys() 
+                if self.morphology["parser"][w][0].signature == 0
+            ])          
+        else:
+            su = list(sigs.keys())[self.selectedMainSignature[0]-1]
+            words = ["".join(pair) for pair in itertools.product(sigs[su], su)]
+        words.sort(key=self.morphology["wordCounts"].get, reverse=True)
+
+        # Display generated words...
+        max_count = self.morphology["wordCounts"][words[0]]
+        padding = len(str(max_count))+1
+        self.wordsForSig = [
+            '{num: {width}} {word}'.format(
+                num=self.morphology["wordCounts"][word],
+                width=padding,
+                word=word,
+            )
+            for word in words
+        ]
+
+        # self.selectedParse = [0]
+        # self.parseSelected()
+
     def mainWordSelected(self):
         """Display possible parses for selected word."""
 
@@ -514,7 +549,7 @@ class Linguistica(OWTextableBaseWidget):
             padding = len(str(len(sigs)))+1
             self.mainSignatures = [
                 '{num: {width}} {sig}'.format(
-                    num=idx+1,
+                    num=idx,
                     width=padding,
                     sig=", ".join(
                         [suff or "NULL" for suff in sig]
