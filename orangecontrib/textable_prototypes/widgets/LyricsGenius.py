@@ -17,6 +17,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
+
+TAF 12.04.18:
+-méthode qui prend les éléments séléctionnées, fait une requête, et créer une segmentation avec le resultats
+-s'inspirer fortement de la méthode sendData = TheatreClassique
+-https://github.com/johnwmillr/LyricsGenius
+-introduire une durée de temps entre les requêtes pour éviter d'être bani
 """
 
 __version__ = u"0.0.1"
@@ -324,7 +330,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
-    
+
     def sendData(self):
         """Compute result of widget processing and send to output"""
 
