@@ -28,6 +28,7 @@ from Orange.widgets import widget, gui, settings
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
+from LTTL.Input import Input
 
 import urllib
 import urllib.request
@@ -36,6 +37,7 @@ import json
 import requests
 from urllib import request
 from urllib import parse
+from bs4 import BeautifulSoup
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
@@ -58,7 +60,8 @@ class LyricsGenius(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Channel definitions...
 
-    outputs = [("Lyrics imporation", Segmentation)]
+    inputs = []
+    outputs = [("Lyrics importation", Segmentation)]
 
     #----------------------------------------------------------------------
     # Layout parameters...
@@ -86,6 +89,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.inputSeg = None
         # newQuery = attribut box lineEdit (rechercher qqch)
         self.newQuery = ''
+        self.nbr_results = 10
         # types = attribut box choix entre artistes et chansons
         self.types = ''
         # attributs de la box de resultats
@@ -114,6 +118,8 @@ class LyricsGenius(OWTextableBaseWidget):
             box="Query",
             orientation="vertical",
         )
+        
+        """
         # permet de choisir une recherche entre artistes ou chansons
         # utilise l attribut "types"
         query = gui.comboBox(
@@ -133,6 +139,34 @@ class LyricsGenius(OWTextableBaseWidget):
                 "Please select the desired search.\n"
             ),
         )
+        """
+
+        # permet de choisir le nombre de résultats voulus (par tranche de dix)
+        queryNbr = gui.comboBox(
+            widget=queryBox,
+            master=self,
+            value="nbr_results",
+            items=[
+                "10",
+                "20",
+                "30",
+                "50",
+                "60",
+                "70",
+                "80",
+                "90",
+                "100",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Number of results: ",
+            labelWidth=120,
+            #callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
+        )
+
         # permet de rentrer du text pour rechercher
         # utilise l attribut "newQuery"
         gui.lineEdit(
@@ -145,6 +179,7 @@ class LyricsGenius(OWTextableBaseWidget):
             callback=self.updateGUI,
             tooltip=("Enter a string"),
         )
+
         # bouton qui lance la recherche
         # utilise la fonction "searchFunction"
         gui.button(
@@ -203,44 +238,49 @@ class LyricsGenius(OWTextableBaseWidget):
     # au choix de l utilisasteur
     def searchFunction(self):
         """Search from website Genius"""
+
         result_list = {}
         query_string = self.newQuery
         page = 1
+        page_max = int(self.nbr_results)/10
         result_id = 0
         result_artist = []
 
-        values = {'q':query_string, 'page':page}
-        data = urllib.parse.urlencode(values)
-        query_url = 'http://api.genius.com/search?' + data
-        json_obj = self.url_request(query_url)
-        body = json_obj["response"]["hits"]
+        while page <= page_max:
+            # Donne un objet JSON avec les 10 resultats de la page cherchee
+            values = {'q':query_string, 'page':page}
+            data = urllib.parse.urlencode(values)
+            query_url = 'http://api.genius.com/search?' + data
+            json_obj = self.url_request(query_url)
+            body = json_obj["response"]["hits"]
 
-        for result in body:
             # Chaque resultat est stocke dans un dict avec titre, nom d'artiste, id d'artiste et path pour l'url des paroles
-            result_id += 1
-            title = result["result"]["title"]
-            artist = result["result"]["primary_artist"]["name"]
-            artist_id = result["result"]["primary_artist"]["id"]
-            path = result["result"]["path"]
-            result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+            for result in body:
+                result_id += 1
+                title = result["result"]["title"]
+                artist = result["result"]["primary_artist"]["name"]
+                artist_id = result["result"]["primary_artist"]["id"]
+                path = result["result"]["path"]
+                result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+            page += 1
 
+        # Met la liste de resultats dans une autre variable
         self.searchResults = result_list
-        """
-        # Liste de résultats factice pour test hors-ligne
-        self.searchResults = {
-            "id1":{"title":'Les lacs', "artist":'Sardou', "artist_id":10, "path":'path/sardou/lacs'},
-            "id2":{"title":'Je vole', "artist":'Sardou', "artist_id":10, "path":'path/sardou/vole'}
-            }
-        """
+        
+        # Remet a zero la liste qui affiche les resultats dans le widget
         del self.titleLabels[:]
-        for id in self.searchResults:
-            result_string = self.searchResults[id]["title"] + " - " + self.searchResults[id]["artist"]
+        
+        # Update la liste qui affiche les resultats dans le widget avec les resultats de la recherche
+        for idx in self.searchResults:
+            result_string = self.searchResults[idx]["title"] + " - " + self.searchResults[idx]["artist"]
             self.titleLabels.append(result_string)
 
         self.titleLabels = self.titleLabels
 
     def url_request(self, url):
         """Opens a URL and returns it as a JSON object"""
+
+        # Token to use the Genius API. DO NOT CHANGE.
         ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
         USER_AGENT = "CompuServe Classic/1.22"
 
@@ -251,40 +291,116 @@ class LyricsGenius(OWTextableBaseWidget):
         response = urllib.request.urlopen(request)
         raw = response.read().decode('utf-8')
         json_obj = json.loads(raw)
+        
         return json_obj
 
-    # Fonction qui vide la liste des resultats
+    def html_to_text(self, page_url):
+        """Extracts the lyrics (as a string) of the html page"""
+
+        page = requests.get(page_url)
+        html = BeautifulSoup(page.text, "html.parser")
+        [h.extract() for h in html('script')]
+        lyrics = html.find("div", class_="lyrics").get_text()
+        lyrics.replace('\\n', '\n')
+        
+        return lyrics
+
+    def lyrics_display(self, result_list, progressBar):
+        """Returns a list of the lyrics of the song(s) chosen by the user in the search results"""
+
+        lyrics_content = list()
+
+        for song in result_list:
+            page_url = "http://genius.com" + song['path']
+            lyrics = self.html_to_text(page_url)
+            song_info = song['artist'] + " - " + song['title']
+            lyrics_content.append(lyrics)
+            progressBar.advance()   # 1 tick on the progress bar of the widget
+
+        return lyrics_content
+
     def clearResults(self):
         """Clear the results list"""
+
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
     
     def sendData(self):
         """Compute result of widget processing and send to output"""
 
-        # Check that there's an input...
-        if self.inputSeg is None:
-            self.send("Improted lyrics", None, self)
+        # Skip if title list is empty:
+        if self.titleLabels == list():
             return
 
-        # For now, just send a copy of input to output (will be replaced with
-        # actual processing)...
-        self.send(
-            "Improted lyrics",
-            Segmenter.bypass(self.inputSeg, self.captionTitle),
+        # Check that something has been selected...
+        if len(self.selectedTitles) == 0:
+            self.infoBox.setText(
+                "Please select one or more titles.",
+                "warning"
+            )
+            return
+
+        # Clear created Inputs.
+        self.clearCreatedInputs()
+
+        # Initialize progress bar.
+        progressBar = gui.ProgressBar(
             self,
+            iterations=len(self.selectedTitles)
         )
-        self.infoBox.setText(
-            "Lyrics importation not yet implemented...",
-            "error",
-        )
+
+        # Attempt to connect to Genius and retrieve lyrics...
+        selectedSongs = list()
+        song_content = list()
+        annotations = list()
+        try:
+            for idx in self.selectedTitles:
+                selectedSongs.append(self.searchResults[idx+1]) # premier idx: searchResults = 1, selectedTitles = 0
+
+            song_content = self.lyrics_display(selectedSongs, progressBar)
+
+        # If an error occurs (e.g. http error, or memory error)...
+        except:
+            # Set Info box and widget to "error" state.
+            self.infoBox.setText(
+                "Couldn't download data from Genius website.",
+                "error"
+            )
+            return
+
+        # Store downloaded lyrics strings in input objects...
+        for song in song_content:
+            newInput = Input(song, self.captionTitle)
+            self.createdInputs.append(newInput)
+
+        # If there"s only one play, the widget"s output is the created Input.
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget"s output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                self.captionTitle,
+                import_labels_as=None,
+            )
+
+        # Clear progress bar.
+        progressBar.finish()
+        
+        self.send("Lyrics importation", self.segmentation, self)
+        self.sendButton.resetSettingsChangedFlag()
 
         # Set status to OK and report data size...
         # message = "%i segment@p sent to output." % len(self.segmentation)
         # message = pluralize(message, len(self.segmentation))
         # self.infoBox.setText(message)
 
-        self.sendButton.resetSettingsChangedFlag()
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
 
     def updateGUI(self):
         """Update GUI state"""
