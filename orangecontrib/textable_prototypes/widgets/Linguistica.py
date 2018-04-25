@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.4"
+__version__ = u"0.0.5"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -283,6 +283,7 @@ class Linguistica(OWTextableBaseWidget):
             labels="stemsForSig",
             tooltip="TODO.",
         )
+        self.stemsForSigListbox.setFont(font)
         
         gui.label(
             widget=signatureBoxLeft, 
@@ -296,6 +297,7 @@ class Linguistica(OWTextableBaseWidget):
             labels="suffixesForSig",
             tooltip="TODO.",
         )
+        self.suffixesForSigListbox.setFont(font)
 
         signatureTabBox.addWidget(signatureBox)
         self.signatureTab.setLayout(signatureTabBox)
@@ -350,9 +352,15 @@ class Linguistica(OWTextableBaseWidget):
             )
             for word in words
         ]
-
-        # self.selectedParse = [0]
-        # self.parseSelected()
+        
+        # Display stems and suffixes in signature...
+        if self.selectedMainSignature[0] > 0:
+            suffixes = list(sigs.keys())[self.selectedMainSignature[0]-1]
+            self.suffixesForSig = [suffix or "NULL" for suffix in suffixes]
+            self.stemsForSig = sigs[suffixes]
+        else:
+            self.suffixesForSig = ["NULL"]
+            self.stemsForSig = sorted(words[:])
 
     def mainWordSelected(self):
         """Display possible parses for selected word."""
