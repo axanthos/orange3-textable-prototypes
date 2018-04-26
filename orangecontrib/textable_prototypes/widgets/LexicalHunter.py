@@ -612,6 +612,7 @@ class WidgetEditList(OWTextableBaseWidget):
     ## OK ##
     def saveChanges(self):
         """Saves changes made by the user"""
+        defaultDict.clear()
         defaultDict.update(self.tempDict)
         self.hide()
         self.caller.setTitleList()
