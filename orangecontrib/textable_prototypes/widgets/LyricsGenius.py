@@ -60,7 +60,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
     name = "LyricsGenius"
     description = "Lyrics importation"
-    icon = "icons/LyricsGenius.svg"
+    icon = "icons/LyricsGenius.png"
     priority = 10
 
     #----------------------------------------------------------------------
