@@ -58,9 +58,9 @@ class LyricsGenius(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "LyricsGenius_V2"
+    name = "Lyrics_V2"
     description = "Lyrics importation"
-    icon = "icons/LyricsGenius.svg"
+    icon = "icons/V2.png"
     priority = 10
 
     #----------------------------------------------------------------------
@@ -101,6 +101,8 @@ class LyricsGenius(OWTextableBaseWidget):
         # attributs de la box de resultats
         self.titleLabels = list()
         self.selectedTitles = list()
+        self.myTitles = list()
+        self.mytitleLabels = list()
 
         # stock tous les inputs (chansons) dans une liste
         self.createdInputs = list()
@@ -208,6 +210,51 @@ class LyricsGenius(OWTextableBaseWidget):
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
+            callback=self.sendButton.settingsChanged,
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.titleListbox.setMinimumHeight(150)
+        self.titleListbox.setSelectionMode(3)
+        gui.separator(widget=titleBox, height=3)
+        gui.rubber(self.controlArea)
+
+        opperationBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="What you wana do?",
+            orientation="horizontal",
+        )
+        gui.button(
+            widget=opperationBox,
+            master=self,
+            label="Move down",
+            callback=self.addFunction,
+            tooltip="Add songs in your bag fool!",
+        )
+        gui.button(
+            widget=opperationBox,
+            master=self,
+            label="Clear selection",
+            callback=self.clearBagFunction,
+            tooltip="Clear your bag fool!",
+        )
+        gui.button(
+            widget=opperationBox,
+            master=self,
+            label="Move up",
+            callback=self.removeFunction,
+            tooltip="Remove songs from your bag fool!",
+        )
+
+        titleBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="My titles, fool",
+            orientation="vertical",
+        )
+        self.titleListbox = gui.listBox(
+            widget=titleBox,
+            master=self,
+            value="myTitles",    # setting (list)
+            labels="mytitleLabels",      # setting (list)
             callback=self.sendButton.settingsChanged,
             tooltip="The list of titles whose content will be imported",
         )
@@ -331,6 +378,18 @@ class LyricsGenius(OWTextableBaseWidget):
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
+
+    def addFunction(self):
+        """add songs in your selection"""
+        return
+
+    def clearBagFunction(self):
+        """Clear your selection"""
+        return
+
+    def removeFunction(self):
+        """remove songs in your selection """
+        return
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
