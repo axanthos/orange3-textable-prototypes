@@ -297,9 +297,9 @@ class LyricsGenius(OWTextableBaseWidget):
             # Clear progress bar.
             progressBar.finish()
             self.controlArea.setDisabled(False)
-            self.infoBox.setText("Select at least one song from the list", "warning")
+            self.infoBox.setText("Select at least one song from the list, fool", "warning")
         else:
-            self.infoBox.setText("Fool you didn't search anything", "warning")
+            self.infoBox.setText("Fool, you didn't search anything", "warning")
 
 
     def url_request(self, url):
@@ -336,6 +336,7 @@ class LyricsGenius(OWTextableBaseWidget):
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
+        self.infoBox.setText("Search at least something, fool", "warning")
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
