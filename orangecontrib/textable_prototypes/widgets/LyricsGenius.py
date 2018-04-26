@@ -242,59 +242,64 @@ class LyricsGenius(OWTextableBaseWidget):
 
         result_list = {}
         query_string = self.newQuery
-        page = 1
-        page_max = int(self.nbr_results)/10
-        result_id = 0
-        result_artist = []
+        
+        if query_string != "":    
+            page = 1
+            page_max = int(self.nbr_results)/10
+            result_id = 0
+            result_artist = []
 
-        self.controlArea.setDisabled(True)
+            self.controlArea.setDisabled(True)
 
-        # Initialize progress bar.
-        progressBar = ProgressBar(
-            self,
-            iterations=len(self.selectedTitles)
-        )
+            # Initialize progress bar.
+            progressBar = ProgressBar(
+                self,
+                iterations=len(self.selectedTitles)
+            )
 
-        while page <= page_max:
-            # Donne un objet JSON avec les 10 resultats de la page cherchee
-            values = {'q':query_string, 'page':page}
-            data = urllib.parse.urlencode(values)
-            query_url = 'http://api.genius.com/search?' + data
-            json_obj = self.url_request(query_url)
-            body = json_obj["response"]["hits"]
+            while page <= page_max:
+                # Donne un objet JSON avec les 10 resultats de la page cherchee
+                values = {'q':query_string, 'page':page}
+                data = urllib.parse.urlencode(values)
+                query_url = 'http://api.genius.com/search?' + data
+                json_obj = self.url_request(query_url)
+                body = json_obj["response"]["hits"]
 
-            # Chaque resultat est stocke dans un dict avec titre, nom d'artiste,
-            # id d'artiste et path pour l'url des paroles
-            for result in body:
-                result_id += 1
-                title = result["result"]["title"]
-                artist = result["result"]["primary_artist"]["name"]
-                artist_id = result["result"]["primary_artist"]["id"]
-                path = result["result"]["path"]
-                result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
-            page += 1
+                # Chaque resultat est stocke dans un dict avec titre, nom d'artiste,
+                # id d'artiste et path pour l'url des paroles
+                for result in body:
+                    result_id += 1
+                    title = result["result"]["title"]
+                    artist = result["result"]["primary_artist"]["name"]
+                    artist_id = result["result"]["primary_artist"]["id"]
+                    path = result["result"]["path"]
+                    result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+                page += 1
 
-            progressBar.advance()   # 1 tick on the progress bar of the widget
+                progressBar.advance()   # 1 tick on the progress bar of the widget
 
-        # Met la liste de resultats dans une autre variable
-        self.searchResults = result_list
+            # Met la liste de resultats dans une autre variable
+            self.searchResults = result_list
 
-        # Remet a zero la liste qui affiche les resultats dans le widget
-        del self.titleLabels[:]
+            # Remet a zero la liste qui affiche les resultats dans le widget
+            del self.titleLabels[:]
 
-        # Update la liste qui affiche les resultats dans le
-        # widget avec les resultats de la recherche
-        for idx in self.searchResults:
-            result_string = self.searchResults[idx]["title"] + " - " + self.searchResults[idx]["artist"]
-            self.titleLabels.append(result_string)
+            # Update la liste qui affiche les resultats dans le
+            # widget avec les resultats de la recherche
+            for idx in self.searchResults:
+                result_string = self.searchResults[idx]["title"] + " - " + self.searchResults[idx]["artist"]
+                self.titleLabels.append(result_string)
 
-        self.titleLabels = self.titleLabels
-        self.clearButton.setDisabled(False)
+            self.titleLabels = self.titleLabels
+            self.clearButton.setDisabled(False)
 
 
-        # Clear progress bar.
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
+            # Clear progress bar.
+            progressBar.finish()
+            self.controlArea.setDisabled(False)
+            self.infoBox.setText("Select at least one song from the list", "warning")
+        else:
+            self.infoBox.setText("Fool you didn't search anything", "warning")
 
 
     def url_request(self, url):
