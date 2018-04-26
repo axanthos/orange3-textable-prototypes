@@ -234,12 +234,6 @@ class LyricsGenius(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
-    def inputData(self, newInput):
-        """Process incoming data."""
-        self.inputSeg = newInput
-        self.infoBox.inputChanged()
-        self.sendButton.sendIf()
-
     # Fonction qui recherche sur Genius les chanson par rapport
     # au choix de l utilisasteur
     def searchFunction(self):
@@ -270,6 +264,7 @@ class LyricsGenius(OWTextableBaseWidget):
                 path = result["result"]["path"]
                 result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
             page += 1
+            # progressBar.advance()   # 1 tick on the progress bar of the widget
 
         # Met la liste de resultats dans une autre variable
         self.searchResults = result_list
@@ -395,6 +390,17 @@ class LyricsGenius(OWTextableBaseWidget):
         progressBar.finish()
 
         self.controlArea.setDisabled(False)
+
+        # Set status to OK and report data size...
+        message = "%i segment@p sent to output " % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
+        numChars = 0
+        for segment in self.segmentation:
+            segmentLength = len(Segmentation.get_data(segment.str_index))
+            numChars += segmentLength
+        message += "(%i character@p)." % numChars
+        message = pluralize(message, numChars)
+        self.infoBox.setText(message)
 
         self.send("Lyrics importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
