@@ -47,7 +47,7 @@ from bs4 import BeautifulSoup
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton
+    InfoBox, SendButton, ProgressBar,
 )
 
 class LyricsGenius(OWTextableBaseWidget):
@@ -337,8 +337,10 @@ class LyricsGenius(OWTextableBaseWidget):
         # Clear created Inputs.
         self.clearCreatedInputs()
 
+        self.controlArea.setDisabled(True)
+
         # Initialize progress bar.
-        progressBar = gui.ProgressBar(
+        progressBar = ProgressBar(
             self,
             iterations=len(self.selectedTitles)
         )
@@ -364,6 +366,7 @@ class LyricsGenius(OWTextableBaseWidget):
                 "Couldn't download data from Genius website.",
                 "error"
             )
+            self.controlArea.setDisabled(False)
             return
 
         # Store downloaded lyrics strings in input objects...
@@ -390,6 +393,8 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Clear progress bar.
         progressBar.finish()
+
+        self.controlArea.setDisabled(False)
 
         self.send("Lyrics importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
