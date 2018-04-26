@@ -124,7 +124,7 @@ class LyricsGenius(OWTextableBaseWidget):
             box="Query",
             orientation="vertical",
         )
-        
+
         """
         # permet de choisir une recherche entre artistes ou chansons
         # utilise l attribut "types"
@@ -260,7 +260,8 @@ class LyricsGenius(OWTextableBaseWidget):
             json_obj = self.url_request(query_url)
             body = json_obj["response"]["hits"]
 
-            # Chaque resultat est stocke dans un dict avec titre, nom d'artiste, id d'artiste et path pour l'url des paroles
+            # Chaque resultat est stocke dans un dict avec titre, nom d'artiste,
+            # id d'artiste et path pour l'url des paroles
             for result in body:
                 result_id += 1
                 title = result["result"]["title"]
@@ -272,11 +273,12 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Met la liste de resultats dans une autre variable
         self.searchResults = result_list
-        
+
         # Remet a zero la liste qui affiche les resultats dans le widget
         del self.titleLabels[:]
-        
-        # Update la liste qui affiche les resultats dans le widget avec les resultats de la recherche
+
+        # Update la liste qui affiche les resultats dans le
+        # widget avec les resultats de la recherche
         for idx in self.searchResults:
             result_string = self.searchResults[idx]["title"] + " - " + self.searchResults[idx]["artist"]
             self.titleLabels.append(result_string)
@@ -297,7 +299,7 @@ class LyricsGenius(OWTextableBaseWidget):
         response = urllib.request.urlopen(request)
         raw = response.read().decode('utf-8')
         json_obj = json.loads(raw)
-        
+
         return json_obj
 
     def html_to_text(self, page_url):
@@ -308,7 +310,7 @@ class LyricsGenius(OWTextableBaseWidget):
         [h.extract() for h in html('script')]
         lyrics = html.find("div", class_="lyrics").get_text()
         lyrics.replace('\\n', '\n')
-        
+
         return lyrics
 
     def lyrics_display(self, result_list, progressBar):
@@ -361,7 +363,8 @@ class LyricsGenius(OWTextableBaseWidget):
         annotations = list()
         try:
             for idx in self.selectedTitles:
-                selectedSongs.append(self.searchResults[idx+1]) # premier idx: searchResults = 1, selectedTitles = 0
+                # premier idx: searchResults = 1, selectedTitles = 0
+                selectedSongs.append(self.searchResults[idx+1])
 
             song_content = self.lyrics_display(selectedSongs, progressBar)
 
@@ -393,7 +396,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Clear progress bar.
         progressBar.finish()
-        
+
         self.send("Lyrics importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
