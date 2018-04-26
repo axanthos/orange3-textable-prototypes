@@ -313,20 +313,6 @@ class LyricsGenius(OWTextableBaseWidget):
 
         return lyrics
 
-    def lyrics_display(self, result_list, progressBar):
-        """Returns a list of the lyrics of the song(s) chosen by the user in the search results"""
-
-        lyrics_content = list()
-
-        for song in result_list:
-            page_url = "http://genius.com" + song['path']
-            lyrics = self.html_to_text(page_url)
-            # song_info = song['artist'] + " - " + song['title']
-            lyrics_content.append(lyrics)
-            progressBar.advance()   # 1 tick on the progress bar of the widget
-
-        return lyrics_content
-
     def clearResults(self):
         """Clear the results list"""
 
@@ -363,7 +349,6 @@ class LyricsGenius(OWTextableBaseWidget):
         annotations = list()
         try:
             for idx in self.selectedTitles:
-<<<<<<< HEAD
                 # searchResults est un dict de dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
                 song = self.searchResults[idx+1]
                 page_url = "http://genius.com" + song['path']
@@ -371,11 +356,6 @@ class LyricsGenius(OWTextableBaseWidget):
                 song_content.append(lyrics)
                 annotations.append(song.copy())
                 progressBar.advance()   # 1 tick on the progress bar of the widget
-=======
-                # premier idx: searchResults = 1, selectedTitles = 0
-                selectedSongs.append(self.searchResults[idx+1])
->>>>>>> d4a207e3696b8deaad7692fd348d6ed4e7515268
-
 
         # If an error occurs (e.g. http error, or memory error)...
         except:
