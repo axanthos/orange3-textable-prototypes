@@ -319,7 +319,7 @@ class LyricsGenius(OWTextableBaseWidget):
         for song in result_list:
             page_url = "http://genius.com" + song['path']
             lyrics = self.html_to_text(page_url)
-            song_info = song['artist'] + " - " + song['title']
+            # song_info = song['artist'] + " - " + song['title']
             lyrics_content.append(lyrics)
             progressBar.advance()   # 1 tick on the progress bar of the widget
 
@@ -361,9 +361,14 @@ class LyricsGenius(OWTextableBaseWidget):
         annotations = list()
         try:
             for idx in self.selectedTitles:
-                selectedSongs.append(self.searchResults[idx+1]) # premier idx: searchResults = 1, selectedTitles = 0
+                # searchResults est un dict de dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
+                song = self.searchResults[idx+1]
+                page_url = "http://genius.com" + song['path']
+                lyrics = self.html_to_text(page_url)
+                song_content.append(lyrics)
+                annotations.append(song.copy())
+                progressBar.advance()   # 1 tick on the progress bar of the widget
 
-            song_content = self.lyrics_display(selectedSongs, progressBar)
 
         # If an error occurs (e.g. http error, or memory error)...
         except:
@@ -390,6 +395,11 @@ class LyricsGenius(OWTextableBaseWidget):
                 self.captionTitle,
                 import_labels_as=None,
             )
+
+        # Annotate segments...
+        for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations[idx])
+            self.segmentation[idx] = segment
 
         # Clear progress bar.
         progressBar.finish()
