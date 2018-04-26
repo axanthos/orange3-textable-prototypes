@@ -218,13 +218,14 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # bouton qui nettoye les resultats
         # utilise la fonction "clearResults"
-        gui.button(
+        self.clearButton = gui.button(
             widget=queryBox,
             master=self,
             label="Clear",
             callback=self.clearResults,
             tooltip="Clear results",
         )
+        self.clearButton.setDisabled(True)
         #----------------------------------------------------------------------
 
         # Now Info box and Send button must be drawn...
@@ -279,6 +280,7 @@ class LyricsGenius(OWTextableBaseWidget):
             self.titleLabels.append(result_string)
 
         self.titleLabels = self.titleLabels
+        self.clearButton.setDisabled(False)
 
     def url_request(self, url):
         """Opens a URL and returns it as a JSON object"""
@@ -313,6 +315,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
+        self.clearButton.setDisabled(True)
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
