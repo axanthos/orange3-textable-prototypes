@@ -534,7 +534,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # Getting selected list title
         self.listTitle = list(self.titleList)[self.selectedTitles[0]]
         # Converting words list to string
-        self.editContent = ''.join(self.tempDict[self.listTitle])
+        self.editContent = '\n'.join(self.tempDict[self.listTitle])
         # Setting editor content with words list (converted to string)
         self.editor.setPlainText(self.editContent)
         # Getting old title (to delete it later if the users wants to)
@@ -597,8 +597,10 @@ class WidgetEditList(OWTextableBaseWidget):
         # Reset textfields values
         self.titleEdit.setText("")
         self.editor.setPlainText("")
+        
+        wordList = self.val.split("\n")
 
-        self.tempDict[self.newTitle] = self.val
+        self.tempDict[self.newTitle] = wordList
         # Deleting old key and value
         if self.newTitle != self.oldTitle:
             del self.tempDict[self.oldTitle]
