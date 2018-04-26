@@ -60,7 +60,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
     name = "LyricsGenius"
     description = "Lyrics importation"
-    icon = "icons/LyricsGenius.png"
+    icon = "icons/LyricsGenius.svg"
     priority = 10
 
     #----------------------------------------------------------------------
@@ -180,7 +180,7 @@ class LyricsGenius(OWTextableBaseWidget):
             master=self,
             value='newQuery',
             orientation='horizontal',
-            label=u"You searching for?",
+            label=u"Watcha want, fool?",
             labelWidth=120,
             callback=self.updateGUI,
             tooltip=("Enter a string"),
@@ -200,7 +200,7 @@ class LyricsGenius(OWTextableBaseWidget):
         # utilise l attribut "selectedTitles"
         titleBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Titles",
+            box="Titles, fool",
             orientation="vertical",
         )
         self.titleListbox = gui.listBox(
@@ -247,6 +247,14 @@ class LyricsGenius(OWTextableBaseWidget):
         result_id = 0
         result_artist = []
 
+        self.controlArea.setDisabled(True)
+
+        # Initialize progress bar.
+        progressBar = ProgressBar(
+            self,
+            iterations=len(self.selectedTitles)
+        )
+
         while page <= page_max:
             # Donne un objet JSON avec les 10 resultats de la page cherchee
             values = {'q':query_string, 'page':page}
@@ -265,7 +273,8 @@ class LyricsGenius(OWTextableBaseWidget):
                 path = result["result"]["path"]
                 result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
             page += 1
-            # progressBar.advance()   # 1 tick on the progress bar of the widget
+
+            progressBar.advance()   # 1 tick on the progress bar of the widget
 
         # Met la liste de resultats dans une autre variable
         self.searchResults = result_list
@@ -281,6 +290,12 @@ class LyricsGenius(OWTextableBaseWidget):
 
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(False)
+
+
+        # Clear progress bar.
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
+
 
     def url_request(self, url):
         """Opens a URL and returns it as a JSON object"""
