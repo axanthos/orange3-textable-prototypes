@@ -557,7 +557,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # Deleting all lexical fields
         self.tempDict.clear()
         self.setTitleList()
-        
+
     ## OK ##
     def deleteSelectedList(self):
         """Deletes selected lexical field"""
@@ -569,7 +569,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # Deleting selected list
         self.tempDict.pop(self.listToDelete, None)
         self.titleList = self.tempDict.keys()
-        
+
     ## OK ##
     def newLexicalField(self):
         """Sets a new entry in the lexical fields dictionnary"""
