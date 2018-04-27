@@ -37,6 +37,8 @@ from _textable.widgets.TextableUtils import (
 
 from PyQt4.QtGui import QPlainTextEdit, QFileDialog, QMessageBox
 
+import PyQt4.QtCore as QtCore
+
 import os
 import codecs
 import re
@@ -48,7 +50,6 @@ from unicodedata import normalize
 
 # Global variables
 defaultDict = {}
-
 
 class LexicalHunter(OWTextableBaseWidget):
     """Textable widget for identifying lexical fields in segments
@@ -80,10 +81,11 @@ class LexicalHunter(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
 
+    savedDict = settings.Setting({})
     lexicalDict = settings.Setting({})
-    selectedTitles = settings.Setting([])
-    titleLabels = settings.Setting([])
+    selectedFields = settings.Setting([])
     autoSend = settings.Setting(False)
+    labelName = settings.Setting("Topic")
 
     def __init__(self):
         """Widget creator."""
@@ -93,7 +95,14 @@ class LexicalHunter(OWTextableBaseWidget):
         # Other attributes...
         self.inputSeg = None
         self.outputSeg = None
-        #self.defaultDict = {}
+        self.titleLabels = []
+        # Put the saved dictionarys in the global variable defaultDict
+        defaultDict.update(self.savedDict)
+
+        ######TESTINGVARIABLESSTART######
+        #only for testing the output
+        # self.labelControl = gui.widgetLabel(self.controlArea, "[J'affiche des variables pour les controler]")
+        ######TESTINGVARIABLESEND#######
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -119,8 +128,8 @@ class LexicalHunter(OWTextableBaseWidget):
         self.titleListbox = gui.listBox(
             widget=titleLabelsList,
             master=self,
-            ########## selectedTitles retourne un tabeau de int suivant la position dans selectedTitles des listes selectionnees ########
-            value="selectedTitles",    # setting (list)
+            ########## selectedFields retourne un tabeau de int suivant la position dans selectedFields des listes selectionnees ########
+            value="selectedFields",    # setting (list)
             labels="titleLabels",   # setting (list)
             callback=self.sendButton.settingsChanged,
             tooltip="The list of lexical list that you want to use for annotation",
@@ -137,10 +146,16 @@ class LexicalHunter(OWTextableBaseWidget):
             width=100,
         )
 
-        ###### START NOTA BENNE ######
+        self.titleEdit = gui.lineEdit(
+            widget=self.controlArea,
+            master=self,
+            value="labelName",
+            label="Annotation key : ",
+            orientation="horizontal",
+        )
 
-        # Utiliser self.labelControl.setText(str(Ma_variable)) pour afficher une variable dans le widget
-        self.labelControl = gui.widgetLabel(self.controlArea, "[J'affiche des variables pour les controler]")
+
+        ###### START NOTA BENNE ######
 
         #A definire plus tard
         #gui.separator(widget=optionsBox, height=3)
@@ -168,7 +183,7 @@ class LexicalHunter(OWTextableBaseWidget):
             __location__ += r"/lexicalfields"
 
         # Initiations
-        #self.myContent = {}
+        self.myContent = {}
 
         # For each txt file in the directory...
         for file in os.listdir(__location__):
@@ -184,7 +199,7 @@ class LexicalHunter(OWTextableBaseWidget):
 
                 lexicName = listLexicName[-1]
                 lexicName = re.sub('\.txt$', '', lexicName)
-                
+
 
                 # Trying to open the files and store their content in a dictionnary
                 # then store all of theses in a list
@@ -207,14 +222,16 @@ class LexicalHunter(OWTextableBaseWidget):
         """Creates a list with each key of the default dictionnaries to display them on the list box
         Be careful, the order really metter for the selectedTitles variable !"""
         self.titleLabels = defaultDict.keys()
-        self.infoBox.setText(self.titleLabels)
+        # save the dictionnary used to display the list as a setting
+        self.savedDict.clear()
+        self.savedDict.update(defaultDict)
 
     def editList(self):
         """ Edit the list of lexical word. Nothing to do now"""
         self.widgetEdit = WidgetEditList(self)
         self.widgetEdit.show()
         self.setTitleList()
-        
+
     def hideEditWidget(self):
         self.widgetEdit.hide()
 
@@ -229,9 +246,9 @@ class LexicalHunter(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
-        #self.labelControl.setText("selectedTitles = " + str(self.selectedTitles))
+        #self.labelControl.setText("selectedFields = " + str(self.selectedFields))
 
-        # A input is needed
+        # An input is needed
         if self.inputSeg == None:
             self.infoBox.setText(
                 "A segmentation input is needed",
@@ -250,13 +267,23 @@ class LexicalHunter(OWTextableBaseWidget):
             return
 
         # A list must have been selected
-        if len(self.selectedTitles) == 0:
+        if len(self.selectedFields) == 0:
             self.infoBox.setText(
                 "Please select one or more lexical lists.",
                 "warning"
             )
             self.send("Segmentation with annotations", None, self)
             return
+
+        # A annotation key must have been defined
+        if self.labelName == "":
+            self.infoBox.setText(
+                "A annoatation key is needed.",
+                "warning"
+            )
+            self.send("Segmentation with annotations", None, self)
+            return
+
 
         self.huntTheLexic()
 
@@ -267,30 +294,83 @@ class LexicalHunter(OWTextableBaseWidget):
         # Segmentation go to outputs...
         self.send("Segmentation with annotations", self.outputSeg, self)
         self.infoBox.setText(message)
+
         self.sendButton.resetSettingsChangedFlag()
 
     ######## NOTRE FONCTION PRINCIPALE !!! #######
     def huntTheLexic(self):
-        """ Je traite le segement (inputSeg) pour en retourner un output (outputSeg) de ouf """
-        self.outputSeg = self.inputSeg #lourd!
+        """
+            main I/O function, filters the inputSeg with the selected
+            lexical fields and outputs a copy of the input this Segmentation
+            with segments labelised according to the topic they belong in
+        """
+
+        # initiations...
+        out = list()
+        selectedListsNames = list()
+
+        # first we select the topics according to the ones the user chose
+        if self.titleLabels:
+            selectedListsNames = [list(self.titleLabels)[idx] for idx
+                                    in self.selectedFields]
+
+        # we can then associate the topics with their respective lists
+        selectedLists = {key:value for key, value in defaultDict.items()
+                        if key in selectedListsNames}
+
+        # if we have an input, we can select the segments of the input and
+        # label them according to the lists they are found in
+        if self.inputSeg is not None:
+            for filter_list in selectedLists:
+                work_list = [i for i in selectedLists[filter_list] if i]
+                if work_list:
+                    out.append(
+                        Segmenter.select(
+                            self.inputSeg,
+                            self.listToRegex(work_list),
+                            label=filter_list,
+                        )[0]
+                    )
+
+        # lastly we define the output as a segmentation that is a copy of
+        # the input, with the segments that we found labeled accordingly
+        self.outputSeg = Segmenter.concatenate(
+            [Segmenter.bypass(self.inputSeg, label="__None__")] + out,
+            merge_duplicates=True,
+            label=self.captionTitle,
+            import_labels_as=self.labelName,
+        )
 
     def updateGUI(self):
         """Update GUI state"""
 
         if len(self.titleLabels) > 0:
-            self.selectedTitles = self.selectedTitles
+            self.selectedFields = self.selectedFields
 
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
-            
+
             super().setCaption(title)
             if changed:
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
+
+    #An eventually useful function, set aside for the moment
+    def listToRegex(self,list):
+        """
+        Takes a list and turns it into a
+        regex that matches any elements within it
+        """
+
+        regexString = "^("+"|".join(list)+")$"
+        exitRegex = re.compile(regexString, re.IGNORECASE)
+
+        return exitRegex
+
 
 class WidgetEditList(OWTextableBaseWidget):
     """Textable widget for modifing the lexical content of the list
@@ -323,8 +403,7 @@ class WidgetEditList(OWTextableBaseWidget):
 
     textFieldContent = settings.Setting(u''.encode('utf-8'))
     encoding = settings.Setting(u'utf-8')
-    selectedTitles = []
-    titleList = ["amour","colere","et autres!"]
+    selectedFields = []
     listTitle = ""
     listWord = ""
 
@@ -335,6 +414,7 @@ class WidgetEditList(OWTextableBaseWidget):
         """Widget creator."""
 
         super().__init__()
+        # Variable to communicate with the base widjet by calling self.creator.vriable_name
 
         self.caller = caller
         # Other attributes...
@@ -383,8 +463,8 @@ class WidgetEditList(OWTextableBaseWidget):
         self.titleLabelsList = gui.listBox(
             widget=titleListBox,
             master=self,
-            ########## selectedTitles retourne un tabeau de int suivant la position dans selectedTitles des listes selectionnees ########
-            value="selectedTitles",    # setting (list)
+            ########## selectedFields retourne un tabeau de int suivant la position dans selectedFields des listes selectionnees ########
+            value="selectedFields",    # setting (list)
             labels="titleList",   # setting (list)
             tooltip="The list of lexical list that you want to use for annotation",
         )
@@ -468,17 +548,7 @@ class WidgetEditList(OWTextableBaseWidget):
             orientation="vertical",
             callback=self.makeChange,
         )
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         # structure ...
         editBox = gui.widgetBox(
             widget=listEditBox,
@@ -487,19 +557,6 @@ class WidgetEditList(OWTextableBaseWidget):
             margin=0,
             spacing=0,
         )
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 
         #Editable text Field. Each line gonna be a enter of the lexical list selected
         self.editor = QPlainTextEdit()
@@ -527,49 +584,62 @@ class WidgetEditList(OWTextableBaseWidget):
 
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
-        
+
     ## OK ##
     def setEditContent(self):
         """Sets the lexical field informations when the user wants to edit it"""
         # Getting selected list title
-        self.listTitle = list(self.titleList)[self.selectedTitles[0]]
+        self.listTitle = list(self.titleList)[self.selectedFields[0]]
         # Converting words list to string
         self.editContent = '\n'.join(self.tempDict[self.listTitle])
         # Setting editor content with words list (converted to string)
         self.editor.setPlainText(self.editContent)
         # Getting old title (to delete it later if the users wants to)
         self.oldTitle = self.listTitle
-        
+
         #self.CommitList.setDisabled(True)
         self.updateGUI()
-    
+
     ## OK ##
     def setTitleList(self):
         """Displays the lexical fields titles in the edit widget view"""
         self.titleList = self.tempDict.keys()
-        
+
     ## OK ##
     def clearList(self):
         """Clears the list of lexical fields"""
-        # Reset textfields values
-        self.titleEdit.setText("")
-        self.editor.setPlainText("")
-        # Deleting all lexical fields
-        self.tempDict.clear()
-        self.setTitleList()
+        confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete all the lexic lists?", QMessageBox.Yes | QMessageBox.No)
+        
+        # Getting the answer of the user
+        result = confBox.exec_()
+        if result == QMessageBox.Yes:
+            # Reset textfields values
+            self.titleEdit.setText("")
+            self.editor.setPlainText("")
+            # Deleting all lexical fields
+            self.tempDict.clear()
+            self.setTitleList()
+        else:
+            pass
 
     ## OK ##
     def deleteSelectedList(self):
         """Deletes selected lexical field"""
-        # Getting selected list title
-        self.listToDelete = list(self.titleList)[self.selectedTitles[0]]
-        # Reset textfields values
-        self.titleEdit.setText("")
-        self.editor.setPlainText("")
-        # Deleting selected list
-        self.tempDict.pop(self.listToDelete, None)
-        self.titleList = self.tempDict.keys()
-
+        confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete this list?", QMessageBox.Yes | QMessageBox.No)
+        
+        # Getting the answer of the user
+        result = confBox.exec_()
+        if result == QMessageBox.Yes:
+            # Getting selected list title
+            self.listToDelete = list(self.titleList)[self.selectedFields[0]]
+            # Reset textfields values
+            self.titleEdit.setText("")
+            self.editor.setPlainText("")
+            # Deleting selected list
+            self.tempDict.pop(self.listToDelete, None)
+            self.titleList = self.tempDict.keys()
+        else:
+            pass
     ## OK ##
     def newLexicalField(self):
         """Sets a new entry in the lexical fields dictionnary"""
@@ -578,7 +648,7 @@ class WidgetEditList(OWTextableBaseWidget):
         while newDict in self.tempDict.keys():
             newDict = "New lexical field %i" %i
             i += 1
-            
+
         self.tempDict[newDict] = ""
         self.setTitleList()
 
@@ -597,7 +667,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # Reset textfields values
         self.titleEdit.setText("")
         self.editor.setPlainText("")
-        
+
         wordList = self.val.split("\n")
 
         self.tempDict[self.newTitle] = wordList
@@ -606,7 +676,7 @@ class WidgetEditList(OWTextableBaseWidget):
             del self.tempDict[self.oldTitle]
 
         self.titleList = self.tempDict.keys()
-        
+
         self.updateGUI()
 
     ## OK ##
@@ -621,11 +691,11 @@ class WidgetEditList(OWTextableBaseWidget):
     def closeWindow(self):
         """Cancels changes made by the user"""
         self.hide()
-    
+
     ## OK ##
     def importLexic(self):
         """Lets the user import a lexical field from a text file"""
-        
+
         # Opening a file browser
         filePath = QFileDialog.getOpenFileName(
             self,
@@ -650,7 +720,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # Getting file name
         lexicName = listLexicName[-1]
         lexicName = re.sub('\.txt$', '', lexicName)
-                
+
 
         # Trying to open the files and store their content in a dictionnary
         # then store all of theses in a list
@@ -680,7 +750,7 @@ class WidgetEditList(OWTextableBaseWidget):
         )
 
         # Setting content to save
-        exportTitle = list(self.titleList)[self.selectedTitles[0]]
+        exportTitle = list(self.titleList)[self.selectedFields[0]]
         #exportContent = '\n'.join(self.tempDict[exportTitle])
         exportContent = self.tempDict[exportTitle]
         #textFieldContent.replace('\r\n', '\n').replace('\r', '\n')
@@ -714,7 +784,7 @@ class WidgetEditList(OWTextableBaseWidget):
             u'Export Selected Lexic',
             self.baseLocation
         )
-        
+
         if filePath:
             for name in self.tempDict:
                 exportName = name.replace(" ", "_")
@@ -749,9 +819,9 @@ class WidgetEditList(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
-        #self.labelControl.setText("selectedTitles = " + str(self.selectedTitles))
+        #self.labelControl.setText("selectedFields = " + str(self.selectedFields))
         pass
-    
+
     def updateGUI(self):
         if self.titleEdit.text() != "":
             # Disabled elements
@@ -769,7 +839,7 @@ class WidgetEditList(OWTextableBaseWidget):
             self.CommitList.setDisabled(False)
             self.editor.setDisabled(False)
             self.titleEdit.setDisabled(False)
-            
+
         if self.titleEdit.text() == "":
             # Enabled elements
             self.SaveChanges.setDisabled(False)
@@ -791,7 +861,16 @@ class WidgetEditList(OWTextableBaseWidget):
         #"""Update GUI state"""
 
         #if len(self.titleLabels) > 0:
-            #self.selectedTitles = self.selectedTitles
+            #self.selectedFields = self.selectedFields
+
+    def setCaption(self, title):
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
 
 if __name__ == "__main__":
