@@ -182,9 +182,6 @@ class LexicalHunter(OWTextableBaseWidget):
         else:
             __location__ += r"/lexicalfields"
 
-        # Initiations
-        self.myContent = {}
-
         # For each txt file in the directory...
         for file in os.listdir(__location__):
             if file.endswith(".txt"):
@@ -546,7 +543,6 @@ class WidgetEditList(OWTextableBaseWidget):
             value="listTitle",
             label="List name",
             orientation="vertical",
-            callback=self.makeChange,
         )
 
         # structure ...
@@ -585,27 +581,24 @@ class WidgetEditList(OWTextableBaseWidget):
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
 
-    ## OK ##
     def setEditContent(self):
         """Sets the lexical field informations when the user wants to edit it"""
         # Getting selected list title
         self.listTitle = list(self.titleList)[self.selectedFields[0]]
         # Converting words list to string
-        self.editContent = '\n'.join(self.tempDict[self.listTitle])
+        editContent = '\n'.join(self.tempDict[self.listTitle])
         # Setting editor content with words list (converted to string)
-        self.editor.setPlainText(self.editContent)
+        self.editor.setPlainText(editContent)
         # Getting old title (to delete it later if the users wants to)
         self.oldTitle = self.listTitle
 
         #self.CommitList.setDisabled(True)
         self.updateGUI()
 
-    ## OK ##
     def setTitleList(self):
         """Displays the lexical fields titles in the edit widget view"""
         self.titleList = self.tempDict.keys()
 
-    ## OK ##
     def clearList(self):
         """Clears the list of lexical fields"""
         confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete all the lexic lists?", QMessageBox.Yes | QMessageBox.No)
@@ -622,7 +615,6 @@ class WidgetEditList(OWTextableBaseWidget):
         else:
             pass
 
-    ## OK ##
     def deleteSelectedList(self):
         """Deletes selected lexical field"""
         confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete this list?", QMessageBox.Yes | QMessageBox.No)
@@ -640,7 +632,7 @@ class WidgetEditList(OWTextableBaseWidget):
             self.titleList = self.tempDict.keys()
         else:
             pass
-    ## OK ##
+
     def newLexicalField(self):
         """Sets a new entry in the lexical fields dictionnary"""
         newDict = "New lexical field"
@@ -652,34 +644,27 @@ class WidgetEditList(OWTextableBaseWidget):
         self.tempDict[newDict] = ""
         self.setTitleList()
 
-    def makeChange(self):
-        pass
-        #"""Do the chane on the list"""
-        #self.infoBox.setText("je change les listes")
-
-    ## OK ##
     def saveEdit(self):
         """Saves the modifications made by the user on the list"""
         # Getting textfields values
-        self.val = self.editor.toPlainText()
-        self.newTitle = self.titleEdit.text()
+        val = self.editor.toPlainText()
+        newTitle = self.titleEdit.text()
 
         # Reset textfields values
         self.titleEdit.setText("")
         self.editor.setPlainText("")
 
-        wordList = self.val.split("\n")
+        wordList = val.split("\n")
 
-        self.tempDict[self.newTitle] = wordList
+        self.tempDict[newTitle] = wordList
         # Deleting old key and value
-        if self.newTitle != self.oldTitle:
+        if newTitle != self.oldTitle:
             del self.tempDict[self.oldTitle]
 
         self.titleList = self.tempDict.keys()
 
         self.updateGUI()
 
-    ## OK ##
     def saveChanges(self):
         """Saves changes made by the user"""
         defaultDict.clear()
@@ -687,15 +672,12 @@ class WidgetEditList(OWTextableBaseWidget):
         self.hide()
         self.caller.setTitleList()
 
-    ## OK ##
     def closeWindow(self):
         """Cancels changes made by the user"""
         self.hide()
 
-    ## OK ##
     def importLexic(self):
         """Lets the user import a lexical field from a text file"""
-
         # Opening a file browser
         filePath = QFileDialog.getOpenFileName(
             self,
@@ -705,10 +687,10 @@ class WidgetEditList(OWTextableBaseWidget):
         )
         if not filePath:
             return
-        self.file = os.path.normpath(filePath)
-        self.baseLocation = os.path.dirname(filePath)
+        file = os.path.normpath(filePath)
+        baseLocation = os.path.dirname(filePath)
         # Gets txt file name and substracts .txt extension
-        fileName = os.path.join(self.baseLocation, self.file);
+        fileName = os.path.join(baseLocation, file);
 
         # Cutting the path to get the name
         if platform.system() == "Windows":
@@ -738,8 +720,6 @@ class WidgetEditList(OWTextableBaseWidget):
             )
             return
 
-
-    ## OK ##
     def exportOneLexic(self):
         """Lets the user export the selected lexic to a text file"""
         # Opening file browser
@@ -751,10 +731,7 @@ class WidgetEditList(OWTextableBaseWidget):
 
         # Setting content to save
         exportTitle = list(self.titleList)[self.selectedFields[0]]
-        #exportContent = '\n'.join(self.tempDict[exportTitle])
         exportContent = self.tempDict[exportTitle]
-        #textFieldContent.replace('\r\n', '\n').replace('\r', '\n')
-        #exportContent = self.tempDict[exportTitle].replace('\r\n', '\n').replace('\r', '\n')
 
         # Saving lexic content
         if filePath:
@@ -774,8 +751,6 @@ class WidgetEditList(OWTextableBaseWidget):
                 QMessageBox.Ok
             )
 
-
-    ## OK ##
     def exportAllLexics(self):
         """Lets the user export all the lexics"""
         # Opening file browser
@@ -856,12 +831,6 @@ class WidgetEditList(OWTextableBaseWidget):
             self.CommitList.setDisabled(True)
             self.editor.setDisabled(True)
             self.titleEdit.setDisabled(True)
-
-    #def updateGUI(self):
-        #"""Update GUI state"""
-
-        #if len(self.titleLabels) > 0:
-            #self.selectedFields = self.selectedFields
 
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
