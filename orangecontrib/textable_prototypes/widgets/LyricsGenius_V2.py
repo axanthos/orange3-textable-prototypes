@@ -107,6 +107,8 @@ class LyricsGenius(OWTextableBaseWidget):
         # stock tous les inputs (chansons) dans une liste
         self.createdInputs = list()
 
+        self.myselection = list()
+
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -217,32 +219,49 @@ class LyricsGenius(OWTextableBaseWidget):
         self.titleListbox.setSelectionMode(3)
         gui.separator(widget=titleBox, height=3)
         gui.rubber(self.controlArea)
+        # bouton qui nettoye les resultats
+        # utilise la fonction "clearResults"
+        self.clearButton = gui.button(
+            widget=queryBox,
+            master=self,
+            label="Clear",
+            callback=self.clearResults,
+            tooltip="Clear results",
+        )
+        self.clearButton.setDisabled(True)
 
         opperationBox = gui.widgetBox(
             widget=self.controlArea,
             box="What you wana do?",
             orientation="horizontal",
         )
-        gui.button(
+
+        self.moveDownButton = gui.button(
             widget=opperationBox,
             master=self,
-            label="Move down",
-            callback=self.addFunction,
-            tooltip="Add songs in your bag fool!",
+            label=u'Move Down',
+            callback=self.moveDown,
+            tooltip=(
+                u"Move the selected song downward in the list."
+            ),
         )
-        gui.button(
+        self.removeButton = gui.button(
             widget=opperationBox,
             master=self,
-            label="Clear selection",
-            callback=self.clearBagFunction,
-            tooltip="Clear your bag fool!",
+            label=u'Remove',
+            callback=self.remove,
+            tooltip=(
+                u"Remove the selected song from the list."
+            ),
         )
-        gui.button(
+        self.clearAllButton = gui.button(
             widget=opperationBox,
             master=self,
-            label="Move up",
-            callback=self.removeFunction,
-            tooltip="Remove songs from your bag fool!",
+            label=u'Clear All',
+            callback=self.clearAll,
+            tooltip=(
+                u"Remove all songs from the list."
+            ),
         )
 
         titleBox = gui.widgetBox(
@@ -254,7 +273,7 @@ class LyricsGenius(OWTextableBaseWidget):
             widget=titleBox,
             master=self,
             value="myTitles",    # setting (list)
-            labels="mytitleLabels",      # setting (list)
+            labels="myselection",      # setting (list)
             callback=self.sendButton.settingsChanged,
             tooltip="The list of titles whose content will be imported",
         )
@@ -262,17 +281,6 @@ class LyricsGenius(OWTextableBaseWidget):
         self.titleListbox.setSelectionMode(3)
         gui.separator(widget=titleBox, height=3)
         gui.rubber(self.controlArea)
-
-        # bouton qui nettoye les resultats
-        # utilise la fonction "clearResults"
-        self.clearButton = gui.button(
-            widget=queryBox,
-            master=self,
-            label="Clear",
-            callback=self.clearResults,
-            tooltip="Clear results",
-        )
-        self.clearButton.setDisabled(True)
         #----------------------------------------------------------------------
 
         # Now Info box and Send button must be drawn...
@@ -289,59 +297,64 @@ class LyricsGenius(OWTextableBaseWidget):
 
         result_list = {}
         query_string = self.newQuery
-        page = 1
-        page_max = int(self.nbr_results)/10
-        result_id = 0
-        result_artist = []
 
-        self.controlArea.setDisabled(True)
+        if query_string != "":
+            page = 1
+            page_max = int(self.nbr_results)/10
+            result_id = 0
+            result_artist = []
 
-        # Initialize progress bar.
-        progressBar = ProgressBar(
-            self,
-            iterations=len(self.selectedTitles)
-        )
+            self.controlArea.setDisabled(True)
 
-        while page <= page_max:
-            # Donne un objet JSON avec les 10 resultats de la page cherchee
-            values = {'q':query_string, 'page':page}
-            data = urllib.parse.urlencode(values)
-            query_url = 'http://api.genius.com/search?' + data
-            json_obj = self.url_request(query_url)
-            body = json_obj["response"]["hits"]
+            # Initialize progress bar.
+            progressBar = ProgressBar(
+                self,
+                iterations=len(self.selectedTitles)
+            )
 
-            # Chaque resultat est stocke dans un dict avec titre, nom d'artiste,
-            # id d'artiste et path pour l'url des paroles
-            for result in body:
-                result_id += 1
-                title = result["result"]["title"]
-                artist = result["result"]["primary_artist"]["name"]
-                artist_id = result["result"]["primary_artist"]["id"]
-                path = result["result"]["path"]
-                result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
-            page += 1
+            while page <= page_max:
+                # Donne un objet JSON avec les 10 resultats de la page cherchee
+                values = {'q':query_string, 'page':page}
+                data = urllib.parse.urlencode(values)
+                query_url = 'http://api.genius.com/search?' + data
+                json_obj = self.url_request(query_url)
+                body = json_obj["response"]["hits"]
 
-            progressBar.advance()   # 1 tick on the progress bar of the widget
+                # Chaque resultat est stocke dans un dict avec titre, nom d'artiste,
+                # id d'artiste et path pour l'url des paroles
+                for result in body:
+                    result_id += 1
+                    title = result["result"]["title"]
+                    artist = result["result"]["primary_artist"]["name"]
+                    artist_id = result["result"]["primary_artist"]["id"]
+                    path = result["result"]["path"]
+                    result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+                page += 1
 
-        # Met la liste de resultats dans une autre variable
-        self.searchResults = result_list
+                progressBar.advance()   # 1 tick on the progress bar of the widget
 
-        # Remet a zero la liste qui affiche les resultats dans le widget
-        del self.titleLabels[:]
+            # Met la liste de resultats dans une autre variable
+            self.searchResults = result_list
 
-        # Update la liste qui affiche les resultats dans le
-        # widget avec les resultats de la recherche
-        for idx in self.searchResults:
-            result_string = self.searchResults[idx]["title"] + " - " + self.searchResults[idx]["artist"]
-            self.titleLabels.append(result_string)
+            # Remet a zero la liste qui affiche les resultats dans le widget
+            del self.titleLabels[:]
 
-        self.titleLabels = self.titleLabels
-        self.clearButton.setDisabled(False)
+            # Update la liste qui affiche les resultats dans le
+            # widget avec les resultats de la recherche
+            for idx in self.searchResults:
+                result_string = self.searchResults[idx]["title"] + " - " + self.searchResults[idx]["artist"]
+                self.titleLabels.append(result_string)
+
+            self.titleLabels = self.titleLabels
+            self.clearButton.setDisabled(False)
 
 
-        # Clear progress bar.
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
+            # Clear progress bar.
+            progressBar.finish()
+            self.controlArea.setDisabled(False)
+            self.infoBox.setText("Select at least one song from the list, fool", "warning")
+        else:
+            self.infoBox.setText("Fool, you didn't search anything", "warning")
 
 
     def url_request(self, url):
@@ -379,15 +392,15 @@ class LyricsGenius(OWTextableBaseWidget):
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
 
-    def addFunction(self):
-        """add songs in your selection"""
+    def moveDown(self):
+        """remove songs in your selection """
         return
 
-    def clearBagFunction(self):
-        """Clear your selection"""
+    def remove(self):
+        """remove songs in your selection """
         return
 
-    def removeFunction(self):
+    def clearAll(self):
         """remove songs in your selection """
         return
 

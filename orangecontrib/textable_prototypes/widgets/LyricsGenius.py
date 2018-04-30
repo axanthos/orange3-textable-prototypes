@@ -242,8 +242,8 @@ class LyricsGenius(OWTextableBaseWidget):
 
         result_list = {}
         query_string = self.newQuery
-        
-        if query_string != "":    
+
+        if query_string != "":
             page = 1
             page_max = int(self.nbr_results)/10
             result_id = 0
