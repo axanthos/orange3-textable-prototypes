@@ -101,13 +101,15 @@ class LyricsGenius(OWTextableBaseWidget):
         # attributs de la box de resultats
         self.titleLabels = list()
         self.selectedTitles = list()
+        # attributs de la box de selection
         self.myTitles = list()
         self.mytitleLabels = list()
 
         # stock tous les inputs (chansons) dans une liste
         self.createdInputs = list()
 
-        self.myselection = list()
+        # ADD / REMOVE /CLEAR
+        self.myBasket = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -212,7 +214,7 @@ class LyricsGenius(OWTextableBaseWidget):
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
-            callback=self.sendButton.settingsChanged,
+            #callback=self.sendButton.settingsChanged,
             tooltip="The list of titles whose content will be imported",
         )
         self.titleListbox.setMinimumHeight(150)
@@ -239,7 +241,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.moveDownButton = gui.button(
             widget=opperationBox,
             master=self,
-            label=u'Move Down',
+            label=u'Add',
             callback=self.moveDown,
             tooltip=(
                 u"Move the selected song downward in the list."
@@ -254,31 +256,33 @@ class LyricsGenius(OWTextableBaseWidget):
                 u"Remove the selected song from the list."
             ),
         )
-        self.clearAllButton = gui.button(
+        self.clearmyBasket = gui.button(
             widget=opperationBox,
             master=self,
             label=u'Clear All',
-            callback=self.clearAll,
+            callback=self.clearmyBasket,
             tooltip=(
                 u"Remove all songs from the list."
             ),
         )
+        self.clearmyBasket.setDisabled(True)
 
-        titleBox = gui.widgetBox(
+
+        mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="My titles, fool",
             orientation="vertical",
         )
-        self.titleListbox = gui.listBox(
-            widget=titleBox,
+        self.mytitleListbox = gui.listBox(
+            widget=mytitleBox,
             master=self,
             value="myTitles",    # setting (list)
-            labels="myselection",      # setting (list)
-            callback=self.sendButton.settingsChanged,
+            labels="mytitleLabels",      # setting (list)
+            #callback=self.sendButton.settingsChanged,
             tooltip="The list of titles whose content will be imported",
         )
-        self.titleListbox.setMinimumHeight(150)
-        self.titleListbox.setSelectionMode(3)
+        self.mytitleListbox.setMinimumHeight(150)
+        self.mytitleListbox.setSelectionMode(3)
         gui.separator(widget=titleBox, height=3)
         gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
@@ -352,7 +356,7 @@ class LyricsGenius(OWTextableBaseWidget):
             # Clear progress bar.
             progressBar.finish()
             self.controlArea.setDisabled(False)
-            self.infoBox.setText("Select at least one song from the list, fool", "warning")
+            #self.infoBox.setText("Select at least one song from the list, fool", "warning")
         else:
             self.infoBox.setText("Fool, you didn't search anything", "warning")
 
@@ -387,34 +391,59 @@ class LyricsGenius(OWTextableBaseWidget):
 
     def clearResults(self):
         """Clear the results list"""
-
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
 
     def moveDown(self):
         """remove songs in your selection """
+        # selectedTitles myBasket
+        # ajouter une copie des éléments séléctionné de searchResults
+        for selectedTitle in self.selectedTitles:
+            songData = self.searchResults[selectedTitle+1]
+            if songData not in self.myBasket:
+                self.myBasket.append(songData)
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
+
+        return
+
+    def updateMytitleLabels(self):
+        self.mytitleLabels = list()
+        for songData in self.myBasket:
+            result_string = songData["title"] + " - " + songData["artist"]
+            self.mytitleLabels.append(result_string)
+        self.mytitleLabels = self.mytitleLabels
+        self.clearmyBasket.setDisabled(False)
         return
 
     def remove(self):
         """remove songs in your selection """
+        self.myBasket = [
+            song for idx, song in enumerate(self.myBasket)
+            if idx not in self.myTitles
+        ]
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
+
         return
 
-    def clearAll(self):
+    def clearmyBasket(self):
         """remove songs in your selection """
+        self.mytitleLabels = list()
+        self.myBasket = list()
+        self.sendButton.settingsChanged()
+        self.clearmyBasket.setDisabled(True)
+
         return
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
 
         # Skip if title list is empty:
-        if self.titleLabels == list():
-            return
-
-        # Check that something has been selected...
-        if len(self.selectedTitles) == 0:
+        if self.myBasket == list():
             self.infoBox.setText(
-                "Please select one or more titles.",
+                "Your basket is empty, please add some songs first, fool",
                 "warning"
             )
             return
@@ -427,7 +456,7 @@ class LyricsGenius(OWTextableBaseWidget):
         # Initialize progress bar.
         progressBar = ProgressBar(
             self,
-            iterations=len(self.selectedTitles)
+            iterations=len(self.myBasket)
         )
 
         # Attempt to connect to Genius and retrieve lyrics...
@@ -435,9 +464,8 @@ class LyricsGenius(OWTextableBaseWidget):
         song_content = list()
         annotations = list()
         try:
-            for idx in self.selectedTitles:
-                # searchResults est un dict de dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
-                song = self.searchResults[idx+1]
+            for song in self.myBasket:
+                # song est un dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
                 page_url = "http://genius.com" + song['path']
                 lyrics = self.html_to_text(page_url)
                 song_content.append(lyrics)
