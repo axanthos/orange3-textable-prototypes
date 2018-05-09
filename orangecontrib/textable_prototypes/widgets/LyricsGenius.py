@@ -82,6 +82,10 @@ class LyricsGenius(OWTextableBaseWidget):
     )
 
     autoSend = settings.Setting(False)
+    selectedTitles = settings.Setting([])
+    titleLabels = settings.Setting([])
+    createdInputs = settings.Setting([])
+
 
     def __init__(self):
         """Widget creator."""
@@ -99,11 +103,11 @@ class LyricsGenius(OWTextableBaseWidget):
         # types = attribut box choix entre artistes et chansons
         self.types = ''
         # attributs de la box de resultats
-        self.titleLabels = list()
-        self.selectedTitles = list()
+        #####self.titleLabels = list()
+        #####self.selectedTitles = list()
 
         # stock tous les inputs (chansons) dans une liste
-        self.createdInputs = list()
+        #####self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
