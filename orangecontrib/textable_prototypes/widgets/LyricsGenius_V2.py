@@ -238,15 +238,17 @@ class LyricsGenius(OWTextableBaseWidget):
             orientation="horizontal",
         )
 
-        self.moveDownButton = gui.button(
+        self.addButton = gui.button(
             widget=opperationBox,
             master=self,
             label=u'Add',
-            callback=self.moveDown,
+            callback=self.add,
             tooltip=(
                 u"Move the selected song downward in the list."
             ),
         )
+        self.addButton.setDisabled(True)
+
         self.removeButton = gui.button(
             widget=opperationBox,
             master=self,
@@ -256,6 +258,8 @@ class LyricsGenius(OWTextableBaseWidget):
                 u"Remove the selected song from the list."
             ),
         )
+        self.removeButton.setDisabled(True)
+
         self.clearmyBasket = gui.button(
             widget=opperationBox,
             master=self,
@@ -357,6 +361,8 @@ class LyricsGenius(OWTextableBaseWidget):
             progressBar.finish()
             self.controlArea.setDisabled(False)
             #self.infoBox.setText("Select at least one song from the list, fool", "warning")
+            self.addButton.setDisabled(False)
+
         else:
             self.infoBox.setText("Fool, you didn't search anything", "warning")
 
@@ -395,7 +401,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
 
-    def moveDown(self):
+    def add(self):
         """remove songs in your selection """
         # selectedTitles myBasket
         # ajouter une copie des éléments séléctionné de searchResults
@@ -415,6 +421,7 @@ class LyricsGenius(OWTextableBaseWidget):
             self.mytitleLabels.append(result_string)
         self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(False)
+        self.removeButton.setDisabled(False)
         return
 
     def remove(self):
@@ -425,7 +432,6 @@ class LyricsGenius(OWTextableBaseWidget):
         ]
         self.updateMytitleLabels()
         self.sendButton.settingsChanged()
-
         return
 
     def clearmyBasket(self):
