@@ -19,16 +19,17 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.5"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 import collections
+import itertools
 
 from Orange.widgets import widget, gui, settings
 
-from PyQt4.QtGui import QTabWidget, QWidget, QFont
+from PyQt4.QtGui import QTabWidget, QWidget, QFont, QHBoxLayout
 
 from LTTL.Segmentation import Segmentation
 
@@ -156,47 +157,47 @@ class Linguistica(OWTextableBaseWidget):
         self.tabs.addTab(self.signatureTab, "Signatures")
         
         # Words tab...
+        wordTabBox = QHBoxLayout()
         wordBox = gui.widgetBox(
             widget=self.wordTab,
             orientation="horizontal",
             margin=5,
         )
         
+        wordBoxRight = gui.widgetBox(widget=wordBox)
+        
         self.mainWordListbox = gui.listBox(
-            widget=wordBox,
+            widget=wordBoxRight,
             master=self,
             value="selectedMainWord", 
             labels="mainWords",
             callback=self.mainWordSelected,
             tooltip="Select a word to display its possible parses.",
         )
-        self.mainWordListbox.setMinimumHeight(260)
-        self.mainWordListbox.setMaximumHeight(260)
         self.mainWordListbox.setFont(font)
 
-        gui.separator(widget=wordBox, height=3)
+        gui.separator(widget=wordBox, width=3)
 
-        parsesBox = gui.widgetBox(widget=wordBox)
+        wordBoxLeft = gui.widgetBox(widget=wordBox)
         
         gui.label(
-            widget=parsesBox, 
+            widget=wordBoxLeft, 
             master=self,
             label="Parse(s):",
         )
         
         self.parsesListbox = gui.listBox(
-            widget=parsesBox,
+            widget=wordBoxLeft,
             master=self,
             value="selectedParse", 
             labels="parses",
             callback=self.parseSelected,
             tooltip="Select a parse to display the corresponding signature.",
         )
-        self.parsesListbox.setMaximumHeight(55)
         self.parsesListbox.setFont(font)
         
         self.sigForParseBox = gui.widgetBox(
-            widget=parsesBox,
+            widget=wordBoxLeft,
             box="Signature",
         )
         
@@ -212,8 +213,9 @@ class Linguistica(OWTextableBaseWidget):
             labels="stemsForParse",
             tooltip="TODO.",
         )
-        self.stemsForParseListbox.setMaximumHeight(50)
         
+        gui.separator(widget=self.sigForParseBox, height=2)
+
         gui.label(
             widget=self.sigForParseBox, 
             master=self,
@@ -226,77 +228,79 @@ class Linguistica(OWTextableBaseWidget):
             labels="suffixesForParse",
             tooltip="TODO.",
         )
-        self.suffixesForParseListbox.setMaximumHeight(50)
         
-        gui.rubber(parsesBox)
+        wordTabBox.addWidget(wordBox)
+        self.wordTab.setLayout(wordTabBox)
 
         # Signature tab...
+        signatureTabBox = QHBoxLayout()
+
         signatureBox = gui.widgetBox(
             widget=self.signatureTab,
             orientation="horizontal",
             margin=5,
         )
         
+        signatureBoxRight = gui.widgetBox(widget=signatureBox)
+
         self.mainSignatureListbox = gui.listBox(
-            widget=signatureBox,
+            widget=signatureBoxRight,
             master=self,
             value="selectedMainSignature", 
             labels="mainSignatures",
-            callback=self.mainWordSelected,
+            callback=self.mainSignatureSelected,
             tooltip="Select a signature to display its contents.",
         )
-        self.mainSignatureListbox.setMinimumHeight(260)
-        self.mainSignatureListbox.setMaximumHeight(260)
         self.mainSignatureListbox.setFont(font)
 
-        gui.separator(widget=signatureBox, height=3)
+        gui.separator(widget=signatureBox, width=3)
 
-        sigContentBox = gui.widgetBox(widget=signatureBox)
+        signatureBoxLeft = gui.widgetBox(widget=signatureBox)
         
         gui.label(
-            widget=sigContentBox, 
+            widget=signatureBoxLeft, 
             master=self,
             label="Words:",
         )
         
         self.wordsForSigListbox = gui.listBox(
-            widget=sigContentBox,
+            widget=signatureBoxLeft,
             master=self,
             labels="wordsForSig",
             tooltip="TODO.",
         )
-        self.wordsForSigListbox.setMaximumHeight(65)
         self.wordsForSigListbox.setFont(font)
         
         gui.label(
-            widget=sigContentBox, 
+            widget=signatureBoxLeft, 
             master=self,
             label="Stem(s):",
         )
         
         self.stemsForSigListbox = gui.listBox(
-            widget=sigContentBox,
+            widget=signatureBoxLeft,
             master=self,
             labels="stemsForSig",
             tooltip="TODO.",
         )
-        self.stemsForSigListbox.setMaximumHeight(65)
+        self.stemsForSigListbox.setFont(font)
         
         gui.label(
-            widget=sigContentBox, 
+            widget=signatureBoxLeft, 
             master=self,
             label="Suffixes(s):",
         )
         
         self.suffixesForSigListbox = gui.listBox(
-            widget=sigContentBox,
+            widget=signatureBoxLeft,
             master=self,
             labels="suffixesForSig",
             tooltip="TODO.",
         )
-        self.suffixesForSigListbox.setMaximumHeight(64)
-        
-        gui.rubber(sigContentBox)
+        self.suffixesForSigListbox.setFont(font)
+
+        signatureTabBox.addWidget(signatureBox)
+        self.signatureTab.setLayout(signatureTabBox)
 
         self.mainArea.layout().addWidget(self.tabs)
 
@@ -318,6 +322,46 @@ class Linguistica(OWTextableBaseWidget):
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
         
+    def mainSignatureSelected(self):
+        """Display selected signature and generated words."""
+        # Return if no selected signature...
+        if len(self.selectedMainSignature) == 0:
+            self.wordsForSig = list()
+            return
+        
+        # Get generated words (by decreasing frequency)...
+        sigs = self.morphology["signatures"]
+        if self.selectedMainSignature[0] == 0:
+            words = sorted([
+                w for w in self.morphology["wordCounts"].keys() 
+                if self.morphology["parser"][w][0].signature == 0
+            ])          
+        else:
+            su = list(sigs.keys())[self.selectedMainSignature[0]-1]
+            words = ["".join(pair) for pair in itertools.product(sigs[su], su)]
+        words.sort(key=self.morphology["wordCounts"].get, reverse=True)
+
+        # Display generated words...
+        max_count = self.morphology["wordCounts"][words[0]]
+        padding = len(str(max_count))+1
+        self.wordsForSig = [
+            '{num: {width}} {word}'.format(
+                num=self.morphology["wordCounts"][word],
+                width=padding,
+                word=word,
+            )
+            for word in words
+        ]
+        
+        # Display stems and suffixes in signature...
+        if self.selectedMainSignature[0] > 0:
+            suffixes = list(sigs.keys())[self.selectedMainSignature[0]-1]
+            self.suffixesForSig = [suffix or "NULL" for suffix in suffixes]
+            self.stemsForSig = sigs[suffixes]
+        else:
+            self.suffixesForSig = ["NULL"]
+            self.stemsForSig = sorted(words[:])
+
     def mainWordSelected(self):
         """Display possible parses for selected word."""
 
@@ -513,7 +557,7 @@ class Linguistica(OWTextableBaseWidget):
             padding = len(str(len(sigs)))+1
             self.mainSignatures = [
                 '{num: {width}} {sig}'.format(
-                    num=idx+1,
+                    num=idx,
                     width=padding,
                     sig=", ".join(
                         [suff or "NULL" for suff in sig]
