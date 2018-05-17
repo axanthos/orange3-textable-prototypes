@@ -41,6 +41,9 @@ Each segment has 4 annotations with keys *artist*,
 Interface
 ~~~~~~~~~
 
+The **LyricsGenius** widget simply lets the user make a search on the
+`Genius <https://genius.com/>`_ website.
+
 .. _LyricsGenius_fig1:
 
 .. figure:: figures/LyricsGenius_Search.png
@@ -48,9 +51,6 @@ Interface
     :alt: Interface of the LyricsGenius widget
 
     Figure 1: **LyricsGenius** widget interface.
-
-The **LyricsGenius** widget simply lets the user make a search on the
-`Genius <https://genius.com/>`_ website.
 
 The **Create my corpus** section allows the user to add or remove songs from
 the search results.
