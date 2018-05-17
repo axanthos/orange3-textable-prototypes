@@ -100,7 +100,7 @@ class LexicalHunter(OWTextableBaseWidget):
         self.inputSeg = None
         self.outputSeg = None
         self.titleLabels = []
-        # Put the saved dictionarys, if exist, in the global variable defaultDict
+        # Put the saved dictionaries in the global variable defaultDict
         if self.savedDict :
             defaultDict.clear()
             defaultDict.update(self.savedDict)
@@ -169,7 +169,7 @@ class LexicalHunter(OWTextableBaseWidget):
     def getDefaultLists(self):
         """ DEPRECATED
         Gets default lexical lists stored in txt files """
-        # Seting the path of the files...
+        # Setting the path of the files...
         __location__ = os.path.realpath(
             os.path.join(
                 os.getcwd(),
@@ -222,7 +222,7 @@ class LexicalHunter(OWTextableBaseWidget):
         them on the list box Be careful, the order really matter for the
         selectedFields variable !"""
         self.titleLabels = defaultDict.keys()
-        # save the dictionnary used to display the list as a setting
+        # Save as a setting the dictionnary used to display the list
         self.savedDict.clear()
         self.savedDict.update(defaultDict)
 
@@ -237,7 +237,6 @@ class LexicalHunter(OWTextableBaseWidget):
 
     def inputData(self, newInput):
         """Process incoming data."""
-        ######### traiter inputSeg comme le segement d entree ##########
         self.inputSeg = newInput
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
@@ -275,7 +274,7 @@ class LexicalHunter(OWTextableBaseWidget):
         # A annotation key must have been defined
         if self.labelName == "":
             self.infoBox.setText(
-                "A annoatation key is needed.",
+                "A annotation key is needed.",
                 "warning"
             )
             self.send("Segmentation with annotations", None, self)
@@ -298,11 +297,11 @@ class LexicalHunter(OWTextableBaseWidget):
     def huntTheLexic(self):
         """
             main I/O function, filters the inputSeg with the selected
-            lexical fields and outputs a copy of the input this Segmentation
+            lexical fields and outputs a copy of the input Segmentation
             with segments labelised according to the topic they belong in
         """
 
-        # initiations...
+        # initialisations...
         out = list()
         selectedListsNames = list()
 
@@ -411,7 +410,7 @@ class WidgetEditList(OWTextableBaseWidget):
         """Widget creator."""
 
         super().__init__()
-        # Variable to communicate with the base widjet by calling
+        # Variable to communicate with the base widget by calling
         # self.creator.vriable_name
 
         self.caller = caller
@@ -530,7 +529,7 @@ class WidgetEditList(OWTextableBaseWidget):
             width=130,
         )
 
-        # MAIN AREA (edit list) #
+        # MAIN AREA (edit list)
         # structure ...
         listEditBox = gui.widgetBox(
             widget=self.mainArea,
@@ -600,7 +599,7 @@ class WidgetEditList(OWTextableBaseWidget):
     def clearList(self):
         """Clears the list of lexical fields"""
         confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete all the lexic lists?", QMessageBox.Yes | QMessageBox.No)
-        
+
         # Getting the answer of the user
         result = confBox.exec_()
         if result == QMessageBox.Yes:
@@ -616,7 +615,7 @@ class WidgetEditList(OWTextableBaseWidget):
     def deleteSelectedList(self):
         """Deletes selected lexical field"""
         confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete this list?", QMessageBox.Yes | QMessageBox.No)
-        
+
         # Getting the answer of the user
         result = confBox.exec_()
         if result == QMessageBox.Yes:
