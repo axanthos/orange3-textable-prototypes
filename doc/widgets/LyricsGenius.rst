@@ -1,4 +1,4 @@
-.. meta::
+3.. meta::
    :description: Orange3 Textable Prototypes documentation, LyricsGenius
                  widget
    :keywords: Orange3, Textable, Prototypes, documentation, LyricsGenius,
@@ -41,9 +41,6 @@ Each segment has 4 annotations with keys *artist*,
 Interface
 ~~~~~~~~~
 
-The **LyricsGenius** widget simply lets the user make a search on the
-`Genius <https://genius.com/>`_ website.
-
 .. _LyricsGenius_fig1:
 
 .. figure:: figures/LyricsGenius_Search.png
@@ -51,6 +48,9 @@ The **LyricsGenius** widget simply lets the user make a search on the
     :alt: Interface of the LyricsGenius widget
 
     Figure 1: **LyricsGenius** widget interface.
+
+The **LyricsGenius** widget simply lets the user make a search on the
+`Genius <https://genius.com/>`_ website.
 
 The **Create my corpus** section allows the user to add or remove songs from
 the search results.
