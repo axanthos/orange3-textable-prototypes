@@ -17,12 +17,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
-
-TAF 12.04.18:
--méthode qui prend les éléments séléctionnées, fait une requête, et créer une segmentation avec le resultats
--s'inspirer fortement de la méthode sendData = TheatreClassique
--https://github.com/johnwmillr/LyricsGenius
--introduire une durée de temps entre les requêtes pour éviter d'être bani
 """
 
 __version__ = u"0.0.1"
@@ -81,11 +75,9 @@ class LyricsGenius(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
 
-    autoSend = settings.Setting(False)
-    selectedTitles = settings.Setting([])
-    titleLabels = settings.Setting([])
-    createdInputs = settings.Setting([])
-
+    # Settings sauvegardés
+    autoSend = settings.Setting(True)
+    myBasket = settings.Setting([])
 
     def __init__(self):
         """Widget creator."""
@@ -93,21 +85,20 @@ class LyricsGenius(OWTextableBaseWidget):
         super().__init__()
 
         # ATTRIBUTS
-        # test de l'interface creer une recherche definie dans la fonction
         # searchFunction
         self.searchResults = None
         self.inputSeg = None
         # newQuery = attribut box lineEdit (rechercher qqch)
         self.newQuery = ''
         self.nbr_results = 10
-        # types = attribut box choix entre artistes et chansons
-        self.types = ''
         # attributs de la box de resultats
-        #####self.titleLabels = list()
-        #####self.selectedTitles = list()
-
+        self.titleLabels = list()
+        self.selectedTitles = list()
+        # attributs de la box de selection
+        self.myTitles = list()
+        self.mytitleLabels = list()
         # stock tous les inputs (chansons) dans une liste
-        #####self.createdInputs = list()
+        self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -118,7 +109,6 @@ class LyricsGenius(OWTextableBaseWidget):
             master=self,
             callback=self.sendData,
             infoBoxAttribute="infoBox",
-            sendIfPreCallback=self.updateGUI,
         )
         #----------------------------------------------------------------------
         # User interface...
@@ -128,28 +118,6 @@ class LyricsGenius(OWTextableBaseWidget):
             box="Query",
             orientation="vertical",
         )
-
-        """
-        # permet de choisir une recherche entre artistes ou chansons
-        # utilise l attribut "types"
-        query = gui.comboBox(
-            widget=queryBox,
-            master=self,
-            value="types",
-            items=[
-                "artists",
-                "songs",
-            ],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Make a search by:",
-            labelWidth=120,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                "Please select the desired search.\n"
-            ),
-        )
-        """
 
         # permet de choisir le nombre de résultats voulus (par tranche de dix)
         queryNbr = gui.comboBox(
@@ -171,7 +139,6 @@ class LyricsGenius(OWTextableBaseWidget):
             orientation="horizontal",
             label="Number of results: ",
             labelWidth=120,
-            #callback=self.sendButton.settingsChanged,
             tooltip=(
                 "Please select the desired search.\n"
             ),
@@ -184,15 +151,14 @@ class LyricsGenius(OWTextableBaseWidget):
             master=self,
             value='newQuery',
             orientation='horizontal',
-            label=u"Watcha want, fool?",
+            label=u"My research: ",
             labelWidth=120,
-            callback=self.updateGUI,
             tooltip=("Enter a string"),
         )
 
         # bouton qui lance la recherche
         # utilise la fonction "searchFunction"
-        gui.button(
+        self.searchButton = gui.button(
             widget=queryBox,
             master=self,
             label="Search",
@@ -204,7 +170,7 @@ class LyricsGenius(OWTextableBaseWidget):
         # utilise l attribut "selectedTitles"
         titleBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Titles, fool",
+            box="Titles",
             orientation="vertical",
         )
         self.titleListbox = gui.listBox(
@@ -212,7 +178,7 @@ class LyricsGenius(OWTextableBaseWidget):
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
-            callback=self.sendButton.settingsChanged,
+            callback=lambda: self.addButton.setDisabled(self.selectedTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
         self.titleListbox.setMinimumHeight(150)
@@ -223,21 +189,88 @@ class LyricsGenius(OWTextableBaseWidget):
         # bouton qui nettoye les resultats
         # utilise la fonction "clearResults"
         self.clearButton = gui.button(
-            widget=queryBox,
+            widget=titleBox,
             master=self,
             label="Clear",
             callback=self.clearResults,
             tooltip="Clear results",
         )
         self.clearButton.setDisabled(True)
+
+        # Creation de la zone de travail
+        opperationBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Create my corpus: ",
+            orientation="horizontal",
+        )
+
+        # bouton qui ajoute la selection dans notre panier
+        self.addButton = gui.button(
+            widget=opperationBox,
+            master=self,
+            label=u'Add',
+            callback=self.add,
+            tooltip=(
+                u"Move the selected song downward in your corpus."
+            ),
+        )
+        self.addButton.setDisabled(True)
+
+        # bouton qui retire la selection dans notre panier
+        self.removeButton = gui.button(
+            widget=opperationBox,
+            master=self,
+            label=u'Remove',
+            callback=self.remove,
+            tooltip=(
+                u"Remove the selected song from your corpus."
+            ),
+        )
+        self.removeButton.setDisabled(True)
+
+        # bouton qui supprime tout notre panier
+        self.clearmyBasket = gui.button(
+            widget=opperationBox,
+            master=self,
+            label=u'Clear All',
+            callback=self.clearmyBasket,
+            tooltip=(
+                u"Remove all songs from your corpus."
+            ),
+        )
+        self.clearmyBasket.setDisabled(True)
+
+        # zone dans laquelle est stocke les chansons selectionnees
+        mytitleBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="My titles",
+            orientation="vertical",
+        )
+        self.mytitleListbox = gui.listBox(
+            widget=mytitleBox,
+            master=self,
+            value="myTitles",
+            labels="mytitleLabels",
+            callback=lambda: self.removeButton.setDisabled(self.myTitles == list()),
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.mytitleListbox.setMinimumHeight(150)
+        self.mytitleListbox.setSelectionMode(3)
+        gui.separator(widget=titleBox, height=3)
+        gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
 
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
+        self.searchButton.setDefault(True)
         self.infoBox.draw()
+
+        # met a jour la liste de selection avec les elements selectionnes
+        self.updateMytitleLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
+
 
     # Fonction qui recherche sur Genius les chanson par rapport
     # au choix de l utilisasteur
@@ -280,8 +313,8 @@ class LyricsGenius(OWTextableBaseWidget):
                     result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
                 page += 1
 
-                progressBar.advance()   # 1 tick on the progress bar of the widget
-
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
             # Met la liste de resultats dans une autre variable
             self.searchResults = result_list
 
@@ -296,16 +329,19 @@ class LyricsGenius(OWTextableBaseWidget):
 
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
+            self.addButton.setDisabled(self.selectedTitles == list())
 
 
             # Clear progress bar.
             progressBar.finish()
             self.controlArea.setDisabled(False)
-            self.infoBox.setText("Select at least one song from the list, fool", "warning")
+            #self.infoBox.setText("Select at least one song from the list, fool", "warning")
+
         else:
-            self.infoBox.setText("Fool, you didn't search anything", "warning")
+            self.infoBox.setText("You didn't search anything", "warning")
 
 
+    # Fontion qui fait la quete sur Genius
     def url_request(self, url):
         """Opens a URL and returns it as a JSON object"""
 
@@ -320,9 +356,10 @@ class LyricsGenius(OWTextableBaseWidget):
         response = urllib.request.urlopen(request)
         raw = response.read().decode('utf-8')
         json_obj = json.loads(raw)
-
+        # retourne un objet json
         return json_obj
 
+    # fontion qui transforme le htlm en string
     def html_to_text(self, page_url):
         """Extracts the lyrics (as a string) of the html page"""
 
@@ -331,31 +368,72 @@ class LyricsGenius(OWTextableBaseWidget):
         [h.extract() for h in html('script')]
         lyrics = html.find("div", class_="lyrics").get_text()
         lyrics.replace('\\n', '\n')
-
+        # retourne un string
         return lyrics
 
+
+    # fonction qui vide la liste des résulats
     def clearResults(self):
         """Clear the results list"""
-
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
-        self.infoBox.setText("Search at least something, fool", "warning")
+        self.addButton.setDisabled(self.titleLabels == list())
 
+
+    # fonction qui ajoute la selection à notre panier
+    def add(self):
+        """Add songs in your selection """
+        for selectedTitle in self.selectedTitles:
+            songData = self.searchResults[selectedTitle+1]
+            if songData not in self.myBasket:
+                self.myBasket.append(songData)
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
+
+
+    # fonction qui permet met a jour notre panier
+    def updateMytitleLabels(self):
+        self.mytitleLabels = list()
+        for songData in self.myBasket:
+            result_string = songData["title"] + " - " + songData["artist"]
+            self.mytitleLabels.append(result_string)
+        self.mytitleLabels = self.mytitleLabels
+
+        self.clearmyBasket.setDisabled(self.myBasket == list())
+        self.removeButton.setDisabled(self.myTitles == list())
+
+
+    # fonction qui retire la selection de notre panier
+    def remove(self):
+        """Remove the selected songs in your selection """
+        self.myBasket = [
+            song for idx, song in enumerate(self.myBasket)
+            if idx not in self.myTitles
+        ]
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
+
+
+    # fonction qui vide notre panier
+    def clearmyBasket(self):
+        """Remove all songs in your selection """
+        self.mytitleLabels = list()
+        self.myBasket = list()
+        self.sendButton.settingsChanged()
+        self.clearmyBasket.setDisabled(True)
+
+
+    # fonction qui envoit la selection dans la segmentation
     def sendData(self):
         """Compute result of widget processing and send to output"""
-
         # Skip if title list is empty:
-        if self.titleLabels == list():
-            return
-
-        # Check that something has been selected...
-        if len(self.selectedTitles) == 0:
+        if self.myBasket == list():
             self.infoBox.setText(
-                "Please select one or more titles.",
+                "Your corpus is empty, please add some songs first",
                 "warning"
             )
-            return
+
 
         # Clear created Inputs.
         self.clearCreatedInputs()
@@ -365,7 +443,7 @@ class LyricsGenius(OWTextableBaseWidget):
         # Initialize progress bar.
         progressBar = ProgressBar(
             self,
-            iterations=len(self.selectedTitles)
+            iterations=len(self.myBasket)
         )
 
         # Attempt to connect to Genius and retrieve lyrics...
@@ -373,9 +451,8 @@ class LyricsGenius(OWTextableBaseWidget):
         song_content = list()
         annotations = list()
         try:
-            for idx in self.selectedTitles:
-                # searchResults est un dict de dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
-                song = self.searchResults[idx+1]
+            for song in self.myBasket:
+                # song est un dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
                 page_url = "http://genius.com" + song['path']
                 lyrics = self.html_to_text(page_url)
                 song_content.append(lyrics)
@@ -433,10 +510,6 @@ class LyricsGenius(OWTextableBaseWidget):
         self.send("Lyrics importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
-        # Set status to OK and report data size...
-        # message = "%i segment@p sent to output." % len(self.segmentation)
-        # message = pluralize(message, len(self.segmentation))
-        # self.infoBox.setText(message)
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
@@ -444,13 +517,9 @@ class LyricsGenius(OWTextableBaseWidget):
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
 
-    def updateGUI(self):
-        """Update GUI state"""
-        pass
 
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
