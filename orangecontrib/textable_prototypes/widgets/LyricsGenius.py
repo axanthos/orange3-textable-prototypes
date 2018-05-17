@@ -433,6 +433,7 @@ class LyricsGenius(OWTextableBaseWidget):
                 "Your corpus is empty, please add some songs first",
                 "warning"
             )
+            return
 
 
         # Clear created Inputs.
