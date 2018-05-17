@@ -9,7 +9,7 @@
 LyricsGenius
 ============
 
-.. image:: figures/LyricsGenius.svg
+.. image:: figures/LyricsGenius.png
 
 Make a corpus with songs lyrics.
 
