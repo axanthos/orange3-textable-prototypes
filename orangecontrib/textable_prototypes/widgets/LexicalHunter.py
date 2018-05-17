@@ -248,7 +248,7 @@ class LexicalHunter(OWTextableBaseWidget):
         # An input is needed
         if self.inputSeg == None:
             self.infoBox.setText(
-                "A segmentation input is needed.",
+                "A segmentation input is needed",
                 "warning"
             )
             self.send("Segmentation with annotations", None, self)
@@ -257,7 +257,7 @@ class LexicalHunter(OWTextableBaseWidget):
         # Skip if no list is selected
         if self.titleLabels == None:
             self.infoBox.setText(
-                "You need to define at least one lexical list.",
+                "You need to define at least one lexical list",
                 "error"
             )
             self.send("Segmentation with annotations", None, self)
@@ -275,7 +275,7 @@ class LexicalHunter(OWTextableBaseWidget):
         # A annotation key must have been defined
         if self.labelName == "":
             self.infoBox.setText(
-                "An annoatation key is needed.",
+                "A annoatation key is needed.",
                 "warning"
             )
             self.send("Segmentation with annotations", None, self)
@@ -560,6 +560,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # the lexical list selected
         self.editor = QPlainTextEdit()
         editBox.layout().addWidget(self.editor)
+        self.editor.textChanged.connect(self.dontforgettosaveChange)
         self.editor.setMinimumHeight(300)
 
         # For saving the chang on the list edit
@@ -780,6 +781,13 @@ class WidgetEditList(OWTextableBaseWidget):
                 'Lexic files correctly exported',
                 QMessageBox.Ok
             )
+
+    def dontforgettosaveChange(self):
+        """
+        Diplay a warning message when the user edit the textfield of the list
+        """
+        self.infoBox.setText("Don't forget to save your changes after \
+            commiting your list", "warning")
 
     def inputData(self, newInput):
         """Process incoming data."""
