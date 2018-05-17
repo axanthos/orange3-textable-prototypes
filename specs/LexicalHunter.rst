@@ -82,7 +82,7 @@ Créer un widget pour Orange Textable permettant de détecter des "champs lexica
 2.4 Fonctionnalités optionnelles
 ================================
 
-* Histogramme de la distribution des éléments.
+* Gestion des mots présents dans 2 listes ou plus
 
 2.5 Tests
 =========
