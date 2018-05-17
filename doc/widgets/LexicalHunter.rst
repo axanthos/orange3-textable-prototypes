@@ -9,7 +9,7 @@
 LexicalHunter
 =================
 
-.. image:: figures/lexicalhunter.png
+.. image:: figures/lexical_hunter.png
 
 Annotates a segmentation based on one or more lexical fields.
 
