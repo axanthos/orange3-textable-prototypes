@@ -741,7 +741,7 @@ class WidgetEditList(OWTextableBaseWidget):
                 errors='xmlcharrefreplace',
             )
 
-            outputFile.write(exportContent)
+            outputFile.write('\n'.join(exportContent))
             outputFile.close()
             QMessageBox.information(
                 None,
