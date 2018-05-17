@@ -560,7 +560,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # the lexical list selected
         self.editor = QPlainTextEdit()
         editBox.layout().addWidget(self.editor)
-        self.editor.textChanged.connect(self.dontforgettosaveChange)
+        #self.editor.textChanged.connect(self.dontforgettosaveChange)
         self.editor.setMinimumHeight(300)
 
         # For saving the chang on the list edit
