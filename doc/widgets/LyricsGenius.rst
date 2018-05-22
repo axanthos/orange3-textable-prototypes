@@ -59,7 +59,7 @@ The **My titles** section is the user "Corb". He can add or remove songs form
 his corpus with the section **Create my corpus**.
 
 The **Send** button triggers the emission of a segmentation to the output
-connection(s). When it is selected, the **Send automatically** checkbox
+connection(s). When selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface.
 
