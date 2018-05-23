@@ -32,9 +32,8 @@ Widgets
     :maxdepth: 1
 
     Theatre Classique <widgets/theatre_classique>
-    Topic Models <widgets/topic_models>
     18th Century Poetry <widgets/18th_Century_Poetry>
-..    Text Tree <widgets/TextTree>
-    
+    Topic Models <widgets/topic_models>
+    Linguistica <widgets/linguistica>
 
 

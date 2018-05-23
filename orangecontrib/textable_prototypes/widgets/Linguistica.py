@@ -41,7 +41,7 @@ from _textable.widgets.TextableUtils import (
 import lxa5crab
 
 # Constants...
-LOWER_MIN_STEM_LEN = 3
+LOWER_MIN_STEM_LEN = 4
 MAX_MORPH_LEN = 50
 
 
@@ -56,7 +56,7 @@ class Linguistica(OWTextableBaseWidget):
     name = "Linguistica"
     description = "Unupervised morphological analysis"
     icon = "icons/linguistica.svg"
-    priority = 10
+    priority = 21
 
     #----------------------------------------------------------------------
     # Channel definitions...
@@ -210,7 +210,7 @@ class Linguistica(OWTextableBaseWidget):
         self.stemsForParseListbox = gui.listBox(
             widget=self.sigForParseBox,
             master=self,
-            labels="stemsForParse",
+            labels="Stems associated with the parse selected above",
             tooltip="TODO.",
         )
         
@@ -226,7 +226,7 @@ class Linguistica(OWTextableBaseWidget):
             widget=self.sigForParseBox,
             master=self,
             labels="suffixesForParse",
-            tooltip="TODO.",
+            tooltip="Suffixes associated with the parse selected above.",
         )
         
         wordTabBox.addWidget(wordBox)
@@ -267,7 +267,7 @@ class Linguistica(OWTextableBaseWidget):
             widget=signatureBoxLeft,
             master=self,
             labels="wordsForSig",
-            tooltip="TODO.",
+            tooltip="Words associated with the selected signature.",
         )
         self.wordsForSigListbox.setFont(font)
         
@@ -281,7 +281,7 @@ class Linguistica(OWTextableBaseWidget):
             widget=signatureBoxLeft,
             master=self,
             labels="stemsForSig",
-            tooltip="TODO.",
+            tooltip="Stems associated with the selected signature.",
         )
         self.stemsForSigListbox.setFont(font)
         
@@ -295,7 +295,7 @@ class Linguistica(OWTextableBaseWidget):
             widget=signatureBoxLeft,
             master=self,
             labels="suffixesForSig",
-            tooltip="TODO.",
+            tooltip="Suffixes associated with the selected signature.",
         )
         self.suffixesForSigListbox.setFont(font)
 
