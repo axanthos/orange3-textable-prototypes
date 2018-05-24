@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48"
+   height="48"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="linguistica.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1458"
+     inkscape:window-height="768"
+     id="namedview12"
+     showgrid="false"
+     inkscape:zoom="11.052972"
+     inkscape:cx="1.8752734"
+     inkscape:cy="27.308607"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="-12.730897,49.644101"
+       orientation="0,1"
+       id="guide4187" />
+    <sodipodi:guide
+       position="-16.013792,30.218117"
+       orientation="1,0"
+       id="guide4189" />
+    <sodipodi:guide
+       position="-4.9899998,-1.791282"
+       orientation="0,1"
+       id="guide4191" />
+    <sodipodi:guide
+       position="-4.1617766,26.599181"
+       orientation="1,0"
+       id="guide4193" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata16">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Category Icon</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs14" />
+  <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+  <title
+     id="title4">Category Icon</title>
+  <text
+     xml:space="preserve"
+     style="font-size:30.71389389px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+     x="5.2459688"
+     y="35.002991"
+     id="text3775"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3777"
+       x="5.2459688"
+       y="35.002991">L</tspan></text>
+  <g
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+     id="text3779"
+     transform="matrix(0.76784736,0,0,0.76784736,-4.8966167,9.9561736)">
+    <path
+       style="fill:#333333;fill-opacity:1;stroke:none"
+       d="m 21.635103,24.838808 7.578125,-10.78125 -7.011719,-9.9609374 4.394532,0 3.183593,4.8632812 c 0.59895,0.9244941 1.08072,1.6992332 1.445313,2.3242192 0.572906,-0.859361 1.100249,-1.621079 1.582031,-2.2851567 l 3.496094,-4.9023437 4.199219,0 -7.167969,9.7656254 3.894249,6.313903 -1.421192,3.652487 -3.332432,-5.43514 -1.132813,-1.738282 -5.449218,8.183594 z"
+       id="path3788"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccccccc" />
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:30.71389389px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#333333;fill-opacity:1;stroke:none;font-family:Sans"
+     x="19.97356"
+     y="34.982639"
+     id="text3783"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3785"
+       x="19.97356"
+       y="34.982639">A</tspan></text>
+</svg>
