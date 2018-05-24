@@ -210,8 +210,8 @@ class Linguistica(OWTextableBaseWidget):
         self.stemsForParseListbox = gui.listBox(
             widget=self.sigForParseBox,
             master=self,
-            labels="Stems associated with the parse selected above",
-            tooltip="TODO.",
+            labels="stemsForParse",
+            tooltip="Stems associated with the parse selected above.",
         )
         
         gui.separator(widget=self.sigForParseBox, height=2)
