@@ -228,13 +228,10 @@ class LexicalHunter(OWTextableBaseWidget):
         self.savedDict.update(defaultDict)
 
     def editList(self):
-        """ Edit the list of lexical word. Nothing to do now"""
+        """Creates edit list widget"""
         self.widgetEdit = WidgetEditList(self)
         self.widgetEdit.show()
         self.setTitleList()
-
-    def hideEditWidget(self):
-        self.widgetEdit.hide()
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -538,6 +535,11 @@ class WidgetEditList(OWTextableBaseWidget):
             box="Edit",
             orientation="vertical",
         )
+        buttonEditBox = gui.widgetBox(
+            widget=self.mainArea,
+            box=None,
+            orientation="horizontal"
+        )
         listEditBox.setMinimumWidth(300)
         # Edit the titile of the list
         self.titleEdit = gui.lineEdit(
@@ -565,11 +567,19 @@ class WidgetEditList(OWTextableBaseWidget):
 
         # For saving the chang on the list edit
         self.CommitList = gui.button(
-            widget=listEditBox,
+            widget=buttonEditBox,
             master=self,
             label="Commit",
             callback=self.saveEdit,
             width=100,
+        )
+        
+        self.CancelList = gui.button(
+            widget=buttonEditBox,
+            master=self,
+            label="Cancel list changes",
+            callback=self.cancelListChanges,
+            width=100
         )
 
         gui.rubber(self.controlArea)
@@ -664,6 +674,12 @@ class WidgetEditList(OWTextableBaseWidget):
 
         self.titleList = sorted(self.tempDict.keys())
 
+        self.updateGUI()
+    
+    def cancelListChanges(self):
+        # Reset textfields values
+        self.titleEdit.setText("")
+        self.editor.setPlainText("")
         self.updateGUI()
 
     def saveChanges(self):
@@ -804,6 +820,7 @@ class WidgetEditList(OWTextableBaseWidget):
 
             # Enabled elements
             self.CommitList.setDisabled(False)
+            self.CancelList.setDisabled(False)
             self.editor.setDisabled(False)
             self.titleEdit.setDisabled(False)
 
@@ -821,6 +838,7 @@ class WidgetEditList(OWTextableBaseWidget):
 
             # Disabled elements
             self.CommitList.setDisabled(True)
+            self.CancelList.setDisabled(True)
             self.editor.setDisabled(True)
             self.titleEdit.setDisabled(True)
 
