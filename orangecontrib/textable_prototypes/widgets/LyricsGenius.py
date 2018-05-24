@@ -115,8 +115,19 @@ class LyricsGenius(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Query",
+            box="Search songs",
             orientation="vertical",
+        )
+        # Allows to enter specific text to the research
+        #  Uses "newQuery" attribut
+        gui.lineEdit(
+            widget=queryBox,
+            master=self,
+            value='newQuery',
+            orientation='horizontal',
+            label=u"Query: ",
+            labelWidth=120,
+            tooltip=("Enter a string"),
         )
 
         # Allows to choose the wanted results numberp (10 by 10)
@@ -144,18 +155,6 @@ class LyricsGenius(OWTextableBaseWidget):
             ),
         )
 
-        # Allows to enter specific text to the research
-        #  Uses "newQuery" attribut
-        gui.lineEdit(
-            widget=queryBox,
-            master=self,
-            value='newQuery',
-            orientation='horizontal',
-            label=u"My research: ",
-            labelWidth=120,
-            tooltip=("Enter a string"),
-        )
-
         # Reasearch button
         # Uses "searchFunction" attribut
         self.searchButton = gui.button(
@@ -165,16 +164,8 @@ class LyricsGenius(OWTextableBaseWidget):
             callback=self.searchFunction,
             tooltip="Connect Genius and make a research",
         )
-
-        # Creates a list allowing to select results
-        # Uses "selectedTitles" attribut
-        titleBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="Titles",
-            orientation="vertical",
-        )
         self.titleListbox = gui.listBox(
-            widget=titleBox,
+            widget=queryBox,
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
@@ -183,32 +174,19 @@ class LyricsGenius(OWTextableBaseWidget):
         )
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
-        gui.separator(widget=titleBox, height=3)
+        gui.separator(widget=queryBox, height=3)
         gui.rubber(self.controlArea)
 
-        # Clear button
-        # Uses "clearResults" function
-        self.clearButton = gui.button(
-            widget=titleBox,
-            master=self,
-            label="Clear",
-            callback=self.clearResults,
-            tooltip="Clear results",
+        boxbutton = gui.widgetBox(
+            widget=queryBox,
+            box=False,
+            orientation='horizontal',
         )
-        self.clearButton.setDisabled(True)
-
-        # Create the working area
-        opperationBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="Create my corpus: ",
-            orientation="horizontal",
-        )
-
         # Add songs button
         self.addButton = gui.button(
-            widget=opperationBox,
+            widget=boxbutton,
             master=self,
-            label=u'Add',
+            label=u'Add to corpus',
             callback=self.add,
             tooltip=(
                 u"Move the selected song downward in your corpus."
@@ -216,11 +194,33 @@ class LyricsGenius(OWTextableBaseWidget):
         )
         self.addButton.setDisabled(True)
 
+        # Clear button
+        # Uses "clearResults" function
+        self.clearButton = gui.button(
+            widget=boxbutton,
+            master=self,
+            label="Clear results",
+            callback=self.clearResults,
+            tooltip="Clear results",
+        )
+        self.clearButton.setDisabled(True)
+
+        # area where confirmed songs are moved and stocked
+        mytitleBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Corpus",
+            orientation="vertical",
+        )
+        boxbutton2 = gui.widgetBox(
+            widget=mytitleBox,
+            box=False,
+            orientation='horizontal',
+        )
         # Remove songs button
         self.removeButton = gui.button(
-            widget=opperationBox,
+            widget=boxbutton2,
             master=self,
-            label=u'Remove',
+            label=u'Remove from corpus',
             callback=self.remove,
             tooltip=(
                 u"Remove the selected song from your corpus."
@@ -230,9 +230,9 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Delete all confirmed songs button
         self.clearmyBasket = gui.button(
-            widget=opperationBox,
+            widget=boxbutton2,
             master=self,
-            label=u'Clear All',
+            label=u'Clear corpus',
             callback=self.clearmyBasket,
             tooltip=(
                 u"Remove all songs from your corpus."
@@ -240,12 +240,6 @@ class LyricsGenius(OWTextableBaseWidget):
         )
         self.clearmyBasket.setDisabled(True)
 
-        # area where confirmed songs are moved and stocked
-        mytitleBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="My titles",
-            orientation="vertical",
-        )
         self.mytitleListbox = gui.listBox(
             widget=mytitleBox,
             master=self,
@@ -256,7 +250,7 @@ class LyricsGenius(OWTextableBaseWidget):
         )
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
-        gui.separator(widget=titleBox, height=3)
+        gui.separator(widget=queryBox, height=3)
         gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
 

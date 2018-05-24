@@ -13,11 +13,13 @@
 	</links>
 	<annotations>
 		<arrow end="(143.99999999999994, 320.0)" fill="#C1272D" id="0" start="(129.99999999999994, 436.0)" />
-		<text font-family="Helvetica" font-size="16" id="1" rect="(64.0, 437.0, 150.0, 60.0)" type="text/plain">Made here your corpus, choosing some songs</text>
+		<text font-family="Helvetica" font-size="16" id="1" rect="(64.0, 437.0, 150.0, 60.0)" type="text/plain">Build a corpus of song lyrics here.
+
+First search for a few songs, then add them to your corpus and click "Send"</text>
 		<arrow end="(302.00000000000006, 216.00000000000006)" fill="#C1272D" id="2" start="(300.00000000000006, 142.00000000000003)" />
 		<text font-family="Helvetica" font-size="16" id="3" rect="(232.0, 101.0, 150.0, 60.0)" type="text/plain">Segmentation into words</text>
 		<arrow end="(447.0, 326.0)" fill="#C1272D" id="4" start="(430.0, 435.0)" />
-		<text font-family="Helvetica" font-size="16" id="5" rect="(363.0, 438.0, 150.0, 44.0)" type="text/plain">Count the words by artists</text>
+		<text font-family="Helvetica" font-size="16" id="5" rect="(363.0, 438.0, 150.0, 44.0)" type="text/plain">Count the number of words per artist.</text>
 	</annotations>
 	<thumbnail />
 	<node_properties>
@@ -37,26 +39,26 @@ aAtLAXVoGH1xIyhYDQAAAE1pY2hlbCBTYXJkb3VxJEsCWBAAAABNaWNoZWwgUG9sbmFyZWZmcSVL
 AnVoG31xJlgLAAAAX19jb250ZXh0X19xJ0sDc3ViaA4pgXEofXEpKGgRR0HWwZ21XWkaaBJ9cSoo
 aBRdcStoFl1xLGgLSwF1aBh9cS1YCwAAAF9fdmFyaWV0eV9fcS5LAnNoG31xL2gnSwNzdWJldS4=
 </properties>
-		<properties format="pickle" node_id="3">gAN9cQAoWAgAAABhdXRvU2VuZHEBiVgSAAAAY29udHJvbEFyZWFWaXNpYmxlcQKIWA0AAABpbnRy
+		<properties format="pickle" node_id="3">gAN9cQAoWAgAAABhdXRvU2VuZHEBiFgSAAAAY29udHJvbEFyZWFWaXNpYmxlcQKIWA0AAABpbnRy
 YVNlcURlbGltcQNYAQAAACNxBFgNAAAAbWVyZ2VDb250ZXh0c3EFiVgMAAAAbWVyZ2VTdHJpbmdz
 cQaJWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQdDMgHZ0MsAAgAAAAABlwAAAMcAAAM4AAACmgAA
 AZcAAADdAAADOAAAApoAAAAAAAAAAAUAcQhYDgAAAHNlcXVlbmNlTGVuZ3RocQlLAVgNAAAAdW5p
 dFBvc01hcmtlcnEKWAEAAABfcQtYBAAAAHV1aWRxDFgkAAAANDM0MWU0MmYtM2E3ZS00ZjIzLWIy
 MjgtNWVmNzU3N2RiOGMxcQ1YCwAAAF9fdmVyc2lvbl9fcQ5LAVgQAAAAY29udGV4dF9zZXR0aW5n
 c3EPXXEQKGNPcmFuZ2Uud2lkZ2V0cy5zZXR0aW5ncwpDb250ZXh0CnERKYFxEn1xEyhYBAAAAHRp
-bWVxFEdB1sGeOlpQrFgGAAAAdmFsdWVzcRV9cRYoWAkAAABfY29udGV4dHNxF0r/////WBQAAABj
+bWVxFEdB1sGidHDCKlgGAAAAdmFsdWVzcRV9cRYoWAkAAABfY29udGV4dHNxF0r/////WBQAAABj
 b250ZXh0QW5ub3RhdGlvbktleXEYWAYAAAAobm9uZSlxGVgPAAAAbGVmdENvbnRleHRTaXplcRpL
 AFgEAAAAbW9kZXEbWAoAAABObyBjb250ZXh0cRxYEAAAAHJpZ2h0Q29udGV4dFNpemVxHUsAWBEA
 AAB1bml0QW5ub3RhdGlvbktleXEeWAAAAABxH1gFAAAAdW5pdHNxIEr/////WAoAAAB3aW5kb3dT
-aXplcSFLAVgNAAAAc2VnbWVudGF0aW9uc3EiXXEjWAsAAABfX3ZlcnNpb25fX3EkSwF1WAcAAABl
-bmNvZGVkcSVoDWgjhnEmdWJoESmBcSd9cSgoaBRHQdbBnbk4JXRoFX1xKShYCQAAAF9jb250ZXh0
-c3EqSwBYFAAAAGNvbnRleHRBbm5vdGF0aW9uS2V5cStYBQAAAHRpdGxlcSxYDwAAAGxlZnRDb250
-ZXh0U2l6ZXEtSwBYBAAAAG1vZGVxLlgKAAAATm8gY29udGV4dHEvWBAAAAByaWdodENvbnRleHRT
-aXplcTBLAFgRAAAAdW5pdEFubm90YXRpb25LZXlxMVgGAAAAYXJ0aXN0cTJYBQAAAHVuaXRzcTNL
-AFgKAAAAd2luZG93U2l6ZXE0SwFYDQAAAHNlZ21lbnRhdGlvbnNxNV1xNlgHAAAAU2VnbWVudHE3
-KFgGAAAAYXJ0aXN0cThYCQAAAGFydGlzdF9pZHE5WAQAAABwYXRocTpYBQAAAHRpdGxlcTt0cTxY
-JAAAAGJlNjEwYTIyLWFiMTktNDc1Zi1hMjA3LTNhMTNlMzU1ZTYyYnE9h3E+YWgkSwF1aCVoDWg2
-hnE/dWJlWCEAAABfVGV4dGFibGVVdGlsc19zZXR0aW5nc192ZXJzaW9uX19xQEsASxWGcUF1Lg==
+aXplcSFLAVgNAAAAc2VnbWVudGF0aW9uc3EiXXEjaA5LAXVYBwAAAGVuY29kZWRxJGgNaCOGcSV1
+YmgRKYFxJn1xJyhoFEdB1sGduTgldGgVfXEoKFgJAAAAX2NvbnRleHRzcSlLAFgUAAAAY29udGV4
+dEFubm90YXRpb25LZXlxKlgFAAAAdGl0bGVxK1gPAAAAbGVmdENvbnRleHRTaXplcSxLAFgEAAAA
+bW9kZXEtWAoAAABObyBjb250ZXh0cS5YEAAAAHJpZ2h0Q29udGV4dFNpemVxL0sAWBEAAAB1bml0
+QW5ub3RhdGlvbktleXEwWAYAAABhcnRpc3RxMVgFAAAAdW5pdHNxMksAWAoAAAB3aW5kb3dTaXpl
+cTNLAVgNAAAAc2VnbWVudGF0aW9uc3E0XXE1WAcAAABTZWdtZW50cTYoWAYAAABhcnRpc3RxN1gJ
+AAAAYXJ0aXN0X2lkcThYBAAAAHBhdGhxOVgFAAAAdGl0bGVxOnRxO1gkAAAAYmU2MTBhMjItYWIx
+OS00NzVmLWEyMDctM2ExM2UzNTVlNjJicTyHcT1haA5LAXVoJGgNaDWGcT51YmVYIQAAAF9UZXh0
+YWJsZVV0aWxzX3NldHRpbmdzX3ZlcnNpb25fX3E/SwBLFYZxQHUu
 </properties>
 	</node_properties>
 </scheme>
