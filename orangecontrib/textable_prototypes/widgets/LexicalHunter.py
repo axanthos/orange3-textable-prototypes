@@ -578,6 +578,9 @@ class WidgetEditList(OWTextableBaseWidget):
 
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
+        
+        # Set the window as modal
+        self.exec()
 
     def setEditContent(self):
         """Sets the lexical field informations when the user wants to edit it"""
