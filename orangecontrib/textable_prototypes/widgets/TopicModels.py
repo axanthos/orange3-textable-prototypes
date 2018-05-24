@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.4"
+__version__ = u"0.1.5"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -34,7 +34,7 @@ from LTTL.Table import Table, PivotCrosstab
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, # pluralize,
-    InfoBox, SendButton
+    InfoBox, SendButton, ProgressBar
 )
 
 from gensim import corpora, models
@@ -56,7 +56,7 @@ class TopicModels(OWTextableBaseWidget):
     name = "Topic Models"
     description = "Build topic models based on term-document matrices"
     icon = "icons/topic_models.svg"
-    priority = 10
+    priority = 20
 
     #----------------------------------------------------------------------
     # Channel definitions...
@@ -193,7 +193,8 @@ class TopicModels(OWTextableBaseWidget):
             return
 
         # Initialize progress bar.
-        progressBar = gui.ProgressBar(
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
             self, 
             iterations=1    # TODO
         )       
@@ -215,7 +216,7 @@ class TopicModels(OWTextableBaseWidget):
             # Create segment-topic PivotCrosstab table.
             values = dict()
             terms = list()
-            for topic in xrange(self.numTopics):
+            for topic in range(self.numTopics):
                 topic_terms = model.get_topic_terms(
                     topic, 
                     len(self.inputTable.col_ids),
@@ -418,10 +419,10 @@ class TopicModels(OWTextableBaseWidget):
             
         # Set status to OK and report...
         self.infoBox.setText("Tables correctly sent to output.")
-        progressBar.finish()
 
         # Clear progress bar.
         progressBar.finish()
+        self.controlArea.setDisabled(False)        
         
         # Send tokens...
         self.send("Term-topic Textable table", segmentTopicTable)

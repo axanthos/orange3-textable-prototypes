@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="This workflow illustrates how the Linguistica widget can be used to discover the (suffixal) morphology of a text corpus without using language-specific linguistic resources.&#10;&#10;The Linguistica widget implements part of John Goldsmith's &quot;Crab Nebula&quot; algorithm for unsupervised morphology learning." title="Morphology learning example" version="2.0">
+	<nodes>
+		<node id="0" name="URLs" position="(150, 300)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableURLs.OWTextableURLs" title="De Oratore, Liber Primus" version="" />
+		<node id="1" name="Extract XML" position="(450, 300)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableExtractXML.OWTextableExtractXML" title="Extract text from html" version="" />
+		<node id="2" name="Preprocess" position="(300, 300)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextablePreprocess.OWTextablePreprocess" title="lowercase" version="" />
+		<node id="3" name="Segment" position="(600, 300)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableSegment.OWTextableSegment" title="Segment into words" version="" />
+		<node id="4" name="Linguistica" position="(750, 300)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.Linguistica.Linguistica" title="Linguistica" version="" />
+		<node id="5" name="Display" position="(900, 300)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="2" source_channel="Text data" source_node_id="0" />
+		<link enabled="true" id="1" sink_channel="Segmentation" sink_node_id="1" source_channel="Preprocessed data" source_node_id="2" />
+		<link enabled="true" id="2" sink_channel="Segmentation" sink_node_id="3" source_channel="Extracted data" source_node_id="1" />
+		<link enabled="true" id="3" sink_channel="Word segmentation" sink_node_id="4" source_channel="Segmented data" source_node_id="3" />
+		<link enabled="true" id="4" sink_channel="Segmentation" sink_node_id="5" source_channel="Morphologically analyzed data" source_node_id="4" />
+	</links>
+	<annotations>
+		<arrow end="(728.0, 367.0)" fill="#C1272D" id="0" start="(686.0, 483.0)" />
+		<text font-family="Helvetica" font-size="16" id="1" rect="(634.0, 492.0, 150.0, 88.0)" type="text/plain">Explore the discovered morphological structures here</text>
+		<arrow end="(901.0, 365.0)" fill="#C1272D" id="2" start="(901.0, 483.0)" />
+		<text font-family="Helvetica" font-size="16" id="3" rect="(836.0, 491.0, 150.0, 126.0)" type="text/plain">The Linguistica widget outputs words annotated with stem, suffix and signature information.</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties format="literal" node_id="0">{'URL': 'http://www.thelatinlibrary.com/cicero/oratore1.shtml', 'URLs': [], 'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'displayAdvancedSettings': False, 'encoding': '(auto-detect)', 'importURLs': True, 'importURLsKey': 'url', 'lastLocation': '.', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x01\xf8\x00\x00\x00\xf1\x00\x00\x03j\x00\x00\x01\xfa\x00\x00\x02\x00\x00\x00\x01\x10\x00\x00\x03b\x00\x00\x01\xf2\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'uuid': 'e1a1fbc2-4fb4-4695-996b-83e744116e8e', '__version__': 1, '_TextableUtils_settings_version__': (0, 14)}</properties>
+		<properties format="literal" node_id="1">{'autoNumber': True, 'autoNumberKey': 'num', 'autoSend': True, 'conditions': [], 'deleteMarkup': True, 'displayAdvancedSettings': True, 'element': 'p', 'importAnnotations': True, 'importElementAs': '', 'mergeDuplicates': False, 'preserveLeaves': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x04X\x00\x00\x00\xc2\x00\x00\x05\xc0\x00\x00\x03\x98\x00\x00\x04`\x00\x00\x00\xe1\x00\x00\x05\xb8\x00\x00\x03\x90\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'uuid': 'f5575545-3ddc-456b-a327-d9d958cae07a', '__version__': 1, '_TextableUtils_settings_version__': (0, 15)}</properties>
+		<properties format="literal" node_id="2">{'applyCaseTransform': True, 'autoSend': True, 'caseTransform': 'to lower', 'copyAnnotations': True, 'removeAccents': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x02\x9d\x00\x00\x01v\x00\x00\x03\xfa\x00\x00\x02q\x00\x00\x02\xa5\x00\x00\x01\x95\x00\x00\x03\xf2\x00\x00\x02i\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'uuid': '753f7602-03c5-4382-8ca7-e9dd6dc0f9ac', '__version__': 1, '_TextableUtils_settings_version__': (0, 11)}</properties>
+		<properties format="literal" node_id="3">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'displayAdvancedSettings': False, 'importAnnotations': True, 'lastLocation': '.', 'mergeDuplicates': False, 'mode': 'Tokenize', 'regex': "[\\w']+", 'regexes': [], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x02\xe0\x00\x00\x01{\x00\x00\x03\xbb\x00\x00\x02|\x00\x00\x02\xe8\x00\x00\x01\x9a\x00\x00\x03\xb3\x00\x00\x02t\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'segmentType': 'Segment into words', 'uuid': '48eab73a-c17d-49b7-911d-3bbf242e3f94', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties format="literal" node_id="4">{'autoSend': True, 'maxSuffixLen': 2, 'minStemLen': 4, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x01\x88\x00\x00\x01\xbf\x00\x00\x04G\x00\x00\x03\xab\x00\x00\x01\x90\x00\x00\x01\xde\x00\x00\x04?\x00\x00\x03\xa3\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'uuid': '7f596f44-2532-4497-b15f-bd51395ce7e1', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties format="literal" node_id="5">{'autoSend': True, 'basicFormatHTML': True, 'customFormat': '%(ecep:pron)s', 'customFormatting': True, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x8e\x00\x00\x01\xe0\x00\x00\x00\x08\x00\x00\x00\x1f\x00\x00\x02\x86\x00\x00\x01\xd8\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'segmentDelimiter': '\\n', 'uuid': 'd962a347-a7e1-4bc4-a589-f0f59746f06b', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+	</node_properties>
+</scheme>

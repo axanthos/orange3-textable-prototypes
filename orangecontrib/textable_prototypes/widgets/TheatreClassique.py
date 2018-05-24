@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.3"
+__version__ = u"0.1.4"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -34,7 +34,7 @@ import LTTL.Processor as Processor
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton, AdvancedSettings
+    InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
 
 import urllib
@@ -229,8 +229,14 @@ class TheatreClassique(OWTextableBaseWidget):
         self.clearCreatedInputs()
 
         # Initialize progress bar.
+<<<<<<< HEAD
         progressBar = gui.ProgressBar(
             self,
+=======
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
+            self, 
+>>>>>>> 85dac3ce5eb9f6112573b5ba68781a5f9c7efdf3
             iterations=len(self.selectedTitles)
         )
 
@@ -260,6 +266,7 @@ class TheatreClassique(OWTextableBaseWidget):
 
             # Reset output channel.
             self.send("XML-TEI data", None, self)
+            self.controlArea.setDisabled(False)
             return
 
         # Store downloaded XML in input objects...
@@ -303,7 +310,12 @@ class TheatreClassique(OWTextableBaseWidget):
 
         # Clear progress bar.
         progressBar.finish()
+<<<<<<< HEAD
 
+=======
+        self.controlArea.setDisabled(False)
+        
+>>>>>>> 85dac3ce5eb9f6112573b5ba68781a5f9c7efdf3
         # Send token...
         self.send("XML-TEI data", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()

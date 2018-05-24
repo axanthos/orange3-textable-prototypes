@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Frank Dattai Pham & Adriano Matos Barbosa"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -34,7 +34,7 @@ import LTTL.Processor as Processor
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton, AdvancedSettings
+    InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
 
 import urllib
@@ -55,7 +55,7 @@ class ECP(OWTextableBaseWidget):
     name = "18th Century Poetry"
     description = "Import XML-TEI data from ECP website"
     icon = "icons/18th_century_poetry.svg"
-    priority = 10
+    priority = 11 
 
     #----------------------------------------------------------------------
     # Channel definitions (NB: no input in this case)...
@@ -229,7 +229,8 @@ class ECP(OWTextableBaseWidget):
         self.clearCreatedInputs()
 
         # Initialize progress bar.
-        progressBar = gui.ProgressBar(
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
             self,
             iterations=len(self.selectedTitles)
         )
@@ -262,6 +263,7 @@ class ECP(OWTextableBaseWidget):
             )
             # Reset output channel.
             self.send("XML-TEI data", None, self)
+            self.controlArea.setDisabled(False)
             return
 
         # Store downloaded XML in input objects...
@@ -301,10 +303,10 @@ class ECP(OWTextableBaseWidget):
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
-        progressBar.finish()
 
         # Clear progress bar.
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
         # Send token...
         self.send("XML-TEI data", self.segmentation, self)
