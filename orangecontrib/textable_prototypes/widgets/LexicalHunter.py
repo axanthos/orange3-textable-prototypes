@@ -221,7 +221,8 @@ class LexicalHunter(OWTextableBaseWidget):
         """Creates a list with each key of the default dictionnaries to display
         them on the list box Be careful, the order really matter for the
         selectedFields variable !"""
-        self.titleLabels = defaultDict.keys()
+
+        self.titleLabels = sorted(defaultDict.keys())
         # save the dictionnary used to display the list as a setting
         self.savedDict.clear()
         self.savedDict.update(defaultDict)
@@ -578,7 +579,7 @@ class WidgetEditList(OWTextableBaseWidget):
 
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
-        
+
         # Set the window as modal
         self.exec()
 
@@ -597,12 +598,12 @@ class WidgetEditList(OWTextableBaseWidget):
 
     def setTitleList(self):
         """Displays the lexical fields titles in the edit widget view"""
-        self.titleList = self.tempDict.keys()
+        self.titleList = sorted(self.tempDict.keys())
 
     def clearList(self):
         """Clears the list of lexical fields"""
         confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete all the lexic lists?", QMessageBox.Yes | QMessageBox.No)
-        
+
         # Getting the answer of the user
         result = confBox.exec_()
         if result == QMessageBox.Yes:
@@ -618,7 +619,7 @@ class WidgetEditList(OWTextableBaseWidget):
     def deleteSelectedList(self):
         """Deletes selected lexical field"""
         confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete this list?", QMessageBox.Yes | QMessageBox.No)
-        
+
         # Getting the answer of the user
         result = confBox.exec_()
         if result == QMessageBox.Yes:
@@ -629,7 +630,7 @@ class WidgetEditList(OWTextableBaseWidget):
             self.editor.setPlainText("")
             # Deleting selected list
             self.tempDict.pop(self.listToDelete, None)
-            self.titleList = self.tempDict.keys()
+            self.titleList = sorted(self.tempDict.keys())
         else:
             pass
 
@@ -661,7 +662,7 @@ class WidgetEditList(OWTextableBaseWidget):
         if self.newTitle != self.oldTitle:
             del self.tempDict[self.oldTitle]
 
-        self.titleList = self.tempDict.keys()
+        self.titleList = sorted(self.tempDict.keys())
 
         self.updateGUI()
 
