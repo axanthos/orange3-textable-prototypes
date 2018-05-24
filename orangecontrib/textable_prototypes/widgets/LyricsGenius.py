@@ -1,4 +1,4 @@
-1"""
+"""
 Class LyricsGenius
 Copyright 2018 University of Lausanne
 -----------------------------------------------------------------------------
