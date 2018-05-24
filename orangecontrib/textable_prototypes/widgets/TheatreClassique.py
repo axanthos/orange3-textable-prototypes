@@ -229,14 +229,9 @@ class TheatreClassique(OWTextableBaseWidget):
         self.clearCreatedInputs()
 
         # Initialize progress bar.
-<<<<<<< HEAD
-        progressBar = gui.ProgressBar(
-            self,
-=======
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(
-            self, 
->>>>>>> 85dac3ce5eb9f6112573b5ba68781a5f9c7efdf3
+            self,
             iterations=len(self.selectedTitles)
         )
 
@@ -310,12 +305,8 @@ class TheatreClassique(OWTextableBaseWidget):
 
         # Clear progress bar.
         progressBar.finish()
-<<<<<<< HEAD
-
-=======
         self.controlArea.setDisabled(False)
-        
->>>>>>> 85dac3ce5eb9f6112573b5ba68781a5f9c7efdf3
+
         # Send token...
         self.send("XML-TEI data", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
