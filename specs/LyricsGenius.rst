@@ -29,13 +29,13 @@ Créer un widget pour Orange Textable (v3.7) permettant l'importation de paroles
 
 * Basile Maillard:
 
-  - code: Backend, module "gestion corpus"
   - tests
   - documentation
   - github
 
 * Rafael Bruni Baschino:
 
+  - code: Backend, module "gestion corpus"
   - spécification
   - interface
   - tests
