@@ -144,7 +144,7 @@ class LyricsGenius(OWTextableBaseWidget):
             ),
         )
 
-        # Allows to enter specific text to the research
+        # Allows to enter specific text to the search
         #  Uses "newQuery" attribut
         gui.lineEdit(
             widget=queryBox,
@@ -156,7 +156,7 @@ class LyricsGenius(OWTextableBaseWidget):
             tooltip=("Enter a string"),
         )
 
-        # Reasearch button
+        # Search button
         # Uses "searchFunction" attribut
         self.searchButton = gui.button(
             widget=queryBox,
@@ -294,7 +294,7 @@ class LyricsGenius(OWTextableBaseWidget):
             )
 
             while page <= page_max:
-                # Donne un objet JSON avec les 10 resultats de la page cherchee
+                # Gives a JSON object with 10 results of the page searched
                 values = {'q':query_string, 'page':page}
                 data = urllib.parse.urlencode(values)
                 query_url = 'http://api.genius.com/search?' + data
@@ -353,7 +353,7 @@ class LyricsGenius(OWTextableBaseWidget):
         response = urllib.request.urlopen(request)
         raw = response.read().decode('utf-8')
         json_obj = json.loads(raw)
-        # retourne un objet json
+        # return a JSON object
         return json_obj
 
     # Function converting HTML to string
@@ -401,7 +401,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.removeButton.setDisabled(self.myTitles == list())
 
 
-    # fonction qui retire la selection de notre panier
+    # function that removes the selection from our basket
     def remove(self):
         """Remove the selected songs in your selection """
         self.myBasket = [
@@ -450,7 +450,7 @@ class LyricsGenius(OWTextableBaseWidget):
         annotations = list()
         try:
             for song in self.myBasket:
-                # song est un dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
+                # song is a dictionnary {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
                 page_url = "http://genius.com" + song['path']
                 lyrics = self.html_to_text(page_url)
                 song_content.append(lyrics)
