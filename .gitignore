@@ -112,3 +112,4 @@ build/*
 Thumbs.db
 
 release.bat
+orangecontrib/textable_prototypes/widgets/cached_title_list_ecp
