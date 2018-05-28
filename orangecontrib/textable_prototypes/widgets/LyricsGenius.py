@@ -22,7 +22,8 @@ along with Orange-Textable-Prototypes. If not, see
 __version__ = u"0.0.1"
 __author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
 __maintainer__ = "Aris Xanthos"
-__email__ = "cyrille.gay-crosier@unil.ch, rafael.brunibaschino@unil.ch, basile.maillard@unil.ch"
+__email__ = "cyrille.gay-crosier@unil.ch, rafael.brunibaschino@unil.ch, " \
+            "basile.maillard@unil.ch"
 
 from Orange.widgets import widget, gui, settings
 
@@ -169,13 +170,12 @@ class LyricsGenius(OWTextableBaseWidget):
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
-            callback=lambda: self.addButton.setDisabled(self.selectedTitles == list()),
+            callback=lambda: self.addButton.setDisabled(
+                self.selectedTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
-        gui.separator(widget=queryBox, height=3)
-        gui.rubber(self.controlArea)
 
         boxbutton = gui.widgetBox(
             widget=queryBox,
@@ -204,6 +204,7 @@ class LyricsGenius(OWTextableBaseWidget):
             tooltip="Clear results",
         )
         self.clearButton.setDisabled(True)
+        gui.separator(widget=queryBox, height=3)
 
         # area where confirmed songs are moved and stocked
         mytitleBox = gui.widgetBox(
@@ -211,6 +212,21 @@ class LyricsGenius(OWTextableBaseWidget):
             box="Corpus",
             orientation="vertical",
         )
+
+        self.mytitleListbox = gui.listBox(
+            widget=mytitleBox,
+            master=self,
+            value="myTitles",
+            labels="mytitleLabels",
+            callback=lambda: self.removeButton.setDisabled(
+                self.myTitles == list()),
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.mytitleListbox.setMinimumHeight(150)
+        self.mytitleListbox.setSelectionMode(3)
+        gui.separator(widget=mytitleBox, height=3)
+        gui.rubber(self.controlArea)
+
         boxbutton2 = gui.widgetBox(
             widget=mytitleBox,
             box=False,
@@ -240,18 +256,6 @@ class LyricsGenius(OWTextableBaseWidget):
         )
         self.clearmyBasket.setDisabled(True)
 
-        self.mytitleListbox = gui.listBox(
-            widget=mytitleBox,
-            master=self,
-            value="myTitles",
-            labels="mytitleLabels",
-            callback=lambda: self.removeButton.setDisabled(self.myTitles == list()),
-            tooltip="The list of titles whose content will be imported",
-        )
-        self.mytitleListbox.setMinimumHeight(150)
-        self.mytitleListbox.setSelectionMode(3)
-        gui.separator(widget=queryBox, height=3)
-        gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
 
         # Draw Info box and Send button
@@ -288,21 +292,23 @@ class LyricsGenius(OWTextableBaseWidget):
             )
 
             while page <= page_max:
-                # Donne un objet JSON avec les 10 resultats de la page cherchee
                 values = {'q':query_string, 'page':page}
                 data = urllib.parse.urlencode(values)
                 query_url = 'http://api.genius.com/search?' + data
                 json_obj = self.url_request(query_url)
                 body = json_obj["response"]["hits"]
 
-                # Each result is stored in a dictionnary with its title, artist's name, artist's ID and URL path
+                # Each result is stored in a dictionnary with its title,
+                # artist's name, artist's ID and URL path
                 for result in body:
                     result_id += 1
                     title = result["result"]["title"]
                     artist = result["result"]["primary_artist"]["name"]
                     artist_id = result["result"]["primary_artist"]["id"]
                     path = result["result"]["path"]
-                    result_list[result_id] = {'artist': artist, 'artist_id':artist_id, 'path':path, 'title':title}
+                    result_list[result_id] = {'artist': artist,
+                                              'artist_id':artist_id,
+                                              'path':path, 'title':title}
                 page += 1
 
                 # 1 tick on the progress bar of the widget
@@ -313,9 +319,11 @@ class LyricsGenius(OWTextableBaseWidget):
             # Reset and clear the visible widget list
             del self.titleLabels[:]
 
-            # Update the results list with the search results in order to display them
+            # Update the results list with the search results
+            # in order to display them
             for idx in self.searchResults:
-                result_string = self.searchResults[idx]["title"] + " - " + self.searchResults[idx]["artist"]
+                result_string = self.searchResults[idx]["title"] + " - " + \
+                                self.searchResults[idx]["artist"]
                 self.titleLabels.append(result_string)
 
             self.titleLabels = self.titleLabels
@@ -326,7 +334,6 @@ class LyricsGenius(OWTextableBaseWidget):
             # Clear progress bar.
             progressBar.finish()
             self.controlArea.setDisabled(False)
-            #self.infoBox.setText("Select at least one song from the list, fool", "warning")
 
         else:
             self.infoBox.setText("You didn't search anything", "warning")
@@ -337,10 +344,11 @@ class LyricsGenius(OWTextableBaseWidget):
         """Opens a URL and returns it as a JSON object"""
 
         # Token to use the Genius API. DO NOT CHANGE.
-        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
+        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey9pReIjz" \
+                       "NiVKbHBrn3o59d5Zx7Yej8g"
         USER_AGENT = "CompuServe Classic/1.22"
 
-        request = urllib.request.Request(url,headers={
+        request = urllib.request.Request(url, headers={
             "Authorization" : "Bearer " + ACCESS_TOKEN,
             "User-Agent" : USER_AGENT
             })
@@ -444,12 +452,14 @@ class LyricsGenius(OWTextableBaseWidget):
         annotations = list()
         try:
             for song in self.myBasket:
-                # song est un dict {'idx1':{'title':'song1'...},'idx2':{'title':'song2'...}}
+                # song est un dict {'idx1':{'title':'song1'...},
+                # 'idx2':{'title':'song2'...}}
                 page_url = "http://genius.com" + song['path']
                 lyrics = self.html_to_text(page_url)
                 song_content.append(lyrics)
                 annotations.append(song.copy())
-                progressBar.advance()   # 1 tick on the progress bar of the widget
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
         except:
