@@ -43,7 +43,7 @@ t is possible to export these lexical fields as well.
 The interface of LexicalHunter is available in two versions, a basic one that lets the user select some 
 lexical fields to annotate the segmented data and an advanced one that lets the user manage these lexical lists.
 Do not put any special characters in your lists, unless you know what you are doing, otherwise the widget will 
-interpret them as a regex component.
+interpret them as a regex.
 
 
 Basic interface
