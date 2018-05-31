@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
 __maintainer__ = "Aris Xanthos"
 __email__ = "cyrille.gay-crosier@unil.ch, rafael.brunibaschino@unil.ch," \
@@ -305,11 +305,11 @@ class LyricsGenius(OWTextableBaseWidget):
                     result_id += 1
                     title = result["result"]["title"]
                     artist = result["result"]["primary_artist"]["name"]
-                    artist_id = result["result"]["primary_artist"]["id"]
+                    artist_id = str(result["result"]["primary_artist"]["id"])
                     path = result["result"]["path"]
                     result_list[result_id] = {'artist': artist,
-                                              'artist_id':artist_id,
-                                              'path':path, 'title':title}
+                                              'artist_id': artist_id,
+                                              'path': path, 'title': title}
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
