@@ -42,6 +42,8 @@ The user can also create and/or import custom lexical fields.
 t is possible to export these lexical fields as well.
 The interface of LexicalHunter is available in two versions, a basic one that lets the user select some 
 lexical fields to annotate the segmented data and an advanced one that lets the user manage these lexical lists.
+Do not put any special characters in your lists, unless you know what you are doing, otherwise the widget will 
+interpret them as a regex component.
 
 
 Basic interface
@@ -149,3 +151,7 @@ Errors
 ~~~~~~
 *You need to define at least one lexical list*
     The user needs to define at least one lexical list.
+    
+Note
+~~~~
+The widget still has a problem with the edit window on Windows. You have to close it twice or click twice the "Save changes" or "Cancel changes" button to close it.
