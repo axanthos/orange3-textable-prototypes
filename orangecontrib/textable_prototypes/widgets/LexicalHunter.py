@@ -221,7 +221,6 @@ class LexicalHunter(OWTextableBaseWidget):
         """Creates a list with each key of the default dictionnaries to display
         them on the list box Be careful, the order really matter for the
         selectedFields variable !"""
-
         self.titleLabels = sorted(defaultDict.keys())
         # save the dictionnary used to display the list as a setting
         self.savedDict.clear()
@@ -535,11 +534,13 @@ class WidgetEditList(OWTextableBaseWidget):
             box="Edit",
             orientation="vertical",
         )
+        
         buttonEditBox = gui.widgetBox(
             widget=self.mainArea,
             box=None,
             orientation="horizontal"
         )
+        
         listEditBox.setMinimumWidth(300)
         # Edit the titile of the list
         self.titleEdit = gui.lineEdit(
@@ -550,20 +551,24 @@ class WidgetEditList(OWTextableBaseWidget):
             orientation="vertical",
         )
 
-        # structure ...
-        editBox = gui.widgetBox(
-            widget=listEditBox,
-            box="List content",
-            orientation="vertical",
-            margin=0,
-            spacing=0,
-        )
+
 
         # Editable text Field. Each line gonna be a enter of
         # the lexical list selected
+        self.ContentLabel = gui.label(
+            widget=listEditBox,
+            master=self,
+            label="List content",
+        )
         self.editor = QPlainTextEdit()
-        editBox.layout().addWidget(self.editor)
+        listEditBox.layout().addWidget(self.editor)
         self.editor.setMinimumHeight(300)
+        
+        buttonEditBox = gui.widgetBox(
+            widget=listEditBox,
+            box=None,
+            orientation="horizontal"
+        )
 
         # For saving the chang on the list edit
         self.CommitList = gui.button(
@@ -589,7 +594,7 @@ class WidgetEditList(OWTextableBaseWidget):
 
         # Now Info box and Send button must be drawn...
         self.infoBox.draw()
-
+        
         # Set the window as modal
         self.exec()
 
@@ -612,8 +617,8 @@ class WidgetEditList(OWTextableBaseWidget):
 
     def clearList(self):
         """Clears the list of lexical fields"""
-        confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete all the lexic lists?", QMessageBox.Yes | QMessageBox.No)
-
+        confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete all the lexical lists?", QMessageBox.Yes | QMessageBox.No)
+        
         # Getting the answer of the user
         result = confBox.exec_()
         if result == QMessageBox.Yes:
@@ -629,7 +634,7 @@ class WidgetEditList(OWTextableBaseWidget):
     def deleteSelectedList(self):
         """Deletes selected lexical field"""
         confBox = QMessageBox(QMessageBox.Question, "Textable", "Do you really want to delete this list?", QMessageBox.Yes | QMessageBox.No)
-
+        
         # Getting the answer of the user
         result = confBox.exec_()
         if result == QMessageBox.Yes:
@@ -675,7 +680,7 @@ class WidgetEditList(OWTextableBaseWidget):
         self.titleList = sorted(self.tempDict.keys())
 
         self.updateGUI()
-    
+        
     def cancelListChanges(self):
         # Reset textfields values
         self.titleEdit.setText("")
@@ -726,7 +731,8 @@ class WidgetEditList(OWTextableBaseWidget):
         # then store all of theses in a list
         try:
             fileHandle = open(fileName, encoding='utf-8')
-            self.tempDict[lexicName] = fileHandle.readlines()
+            content = fileHandle.readlines()
+            self.tempDict[lexicName] = [i for i in content if i]
             fileHandle.close()
             self.setTitleList()
         except IOError:
@@ -739,11 +745,11 @@ class WidgetEditList(OWTextableBaseWidget):
             return
 
     def exportOneLexic(self):
-        """Lets the user export the selected lexic to a text file"""
+        """Lets the user export the selected list to a text file"""
         # Opening file browser
         filePath = QFileDialog.getSaveFileName(
             self,
-            u'Export Selected Lexic',
+            u'Export Selected List',
             self.baseLocation,
         )
 
@@ -765,7 +771,7 @@ class WidgetEditList(OWTextableBaseWidget):
             QMessageBox.information(
                 None,
                 'Textable',
-                'Lexic file correctly exported',
+                'Lexical file correctly exported',
                 QMessageBox.Ok
             )
 
@@ -774,7 +780,7 @@ class WidgetEditList(OWTextableBaseWidget):
         # Opening file browser
         filePath = QFileDialog.getExistingDirectory(
             self,
-            u'Export Selected Lexic',
+            u'Export Selected List',
             self.baseLocation
         )
 
