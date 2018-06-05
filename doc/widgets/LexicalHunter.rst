@@ -23,7 +23,8 @@ Authors
 Signals
 -------
 
-Inputs: 
+Inputs:
+
 * ``Text segmentation``
 
 Outputs:
