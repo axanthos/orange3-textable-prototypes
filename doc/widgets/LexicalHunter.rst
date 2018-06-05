@@ -31,7 +31,6 @@ Outputs:
 
 * ``Text segmentation``
 
-  Segmentation with annotations
 
 Description
 -----------
