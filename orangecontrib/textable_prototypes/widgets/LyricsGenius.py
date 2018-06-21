@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
 __maintainer__ = "Aris Xanthos"
 __email__ = "cyrille.gay-crosier@unil.ch, rafael.brunibaschino@unil.ch," \
@@ -53,7 +53,7 @@ class LyricsGenius(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "LyricsGenius"
+    name = "Lyrics Genius"
     description = "Lyrics importation"
     icon = "icons/LyricsGenius.svg"
     priority = 10
@@ -288,7 +288,7 @@ class LyricsGenius(OWTextableBaseWidget):
             # Initialize progress bar.
             progressBar = ProgressBar(
                 self,
-                iterations=len(self.selectedTitles)
+                iterations=page_max
             )
 
             while page <= page_max:
