@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="" title="Counting songs words" version="2.0">
+	<nodes>
+		<node id="0" name="LyricsGenius" position="(152.0, 257.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.LyricsGenius.LyricsGenius" title="LyricsGenius" version="" />
+		<node id="1" name="Segment" position="(302.0, 257.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableSegment.OWTextableSegment" title="Segment" version="" />
+		<node id="2" name="Data Table" position="(602.0, 257.0)" project_name="Orange3" qualified_name="Orange.widgets.data.owtable.OWDataTable" title="Data Table" version="" />
+		<node id="3" name="Count" position="(452.0, 257.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableCount.OWTextableCount" title="Count" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Lyrics importation" source_node_id="0" />
+		<link enabled="true" id="1" sink_channel="Segmentation" sink_node_id="3" source_channel="Segmented data" source_node_id="1" />
+		<link enabled="true" id="2" sink_channel="Data" sink_node_id="2" source_channel="Orange table" source_node_id="3" />
+	</links>
+	<annotations>
+		<arrow end="(143.99999999999994, 320.0)" fill="#C1272D" id="0" start="(129.99999999999994, 436.0)" />
+		<text font-family="Helvetica" font-size="16" id="1" rect="(64.0, 437.0, 150.0, 60.0)" type="text/plain">Build a corpus of song lyrics here.
+
+First search for a few songs, then add them to your corpus and click "Send"</text>
+		<arrow end="(302.00000000000006, 216.00000000000006)" fill="#C1272D" id="2" start="(300.00000000000006, 142.00000000000003)" />
+		<text font-family="Helvetica" font-size="16" id="3" rect="(232.0, 101.0, 150.0, 60.0)" type="text/plain">Segmentation into words</text>
+		<arrow end="(447.0, 326.0)" fill="#C1272D" id="4" start="(430.0, 435.0)" />
+		<text font-family="Helvetica" font-size="16" id="5" rect="(363.0, 438.0, 150.0, 44.0)" type="text/plain">Count the number of words per artist.</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties format="literal" node_id="0">{'autoSend': False, 'controlAreaVisible': True, 'myBasket': [{'artist': 'Michel Sardou', 'artist_id': 41749, 'path': '/Michel-sardou-les-lacs-du-connemara-lyrics', 'title': 'Les lacs du Connemara'}, {'artist': 'Michel Sardou', 'artist_id': 41749, 'path': '/Michel-sardou-je-vole-lyrics', 'title': 'Je vole'}, {'artist': 'Michel Sardou', 'artist_id': 41749, 'path': '/Michel-sardou-etre-une-femme-lyrics', 'title': 'Etre une femme'}, {'artist': 'Michel Polnareff', 'artist_id': 198744, 'path': '/Michel-polnareff-on-ira-tous-au-paradis-lyrics', 'title': 'On ira tous au paradis'}, {'artist': 'Michel Polnareff', 'artist_id': 198744, 'path': '/Michel-polnareff-love-me-please-love-me-lyrics', 'title': 'Love Me, Please Love Me'}, {'artist': 'Michel Polnareff', 'artist_id': 198744, 'path': '/Michel-polnareff-la-poupee-qui-fait-non-lyrics', 'title': 'La poupée qui fait non'}], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x01\xf9\x00\x00\x00\x17\x00\x00\x04%\x00\x00\x03\t\x00\x00\x01\xf9\x00\x00\x00-\x00\x00\x04%\x00\x00\x03\t\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00', 'uuid': '2ca7d258-3d15-4bd8-9528-84de8d1997ad', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties format="literal" node_id="1">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'controlAreaVisible': True, 'displayAdvancedSettings': False, 'importAnnotations': True, 'lastLocation': '.', 'mergeDuplicates': False, 'mode': 'Tokenize', 'regex': '', 'regexes': [], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x02\xb2\x00\x00\x00L\x00\x00\x03\x9c\x00\x00\x01\x18\x00\x00\x02\xb2\x00\x00\x00b\x00\x00\x03\x9c\x00\x00\x01\x18\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00', 'segmentType': 'Segment into words', 'uuid': 'be610a22-ab19-475f-a207-3a13e355e62b', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties format="pickle" node_id="2">gAN9cQAoWAsAAABhdXRvX2NvbW1pdHEBiFgOAAAAY29sb3JfYnlfY2xhc3NxAohYEgAAAGNvbnRy
+b2xBcmVhVmlzaWJsZXEDiFgOAAAAZGlzdF9jb2xvcl9SR0JxBChL3EvcS9xL/3RxBVgTAAAAc2F2
+ZWRXaWRnZXRHZW9tZXRyeXEGQzIB2dDLAAIAAAAAARMAAAB4AAAEMgAAAoEAAAETAAAAjgAABDIA
+AAKBAAAAAAAAAAAFAHEHWAsAAABzZWxlY3Rfcm93c3EIiFgVAAAAc2hvd19hdHRyaWJ1dGVfbGFi
+ZWxzcQmIWBIAAABzaG93X2Rpc3RyaWJ1dGlvbnNxColYCwAAAF9fdmVyc2lvbl9fcQtLAVgQAAAA
+Y29udGV4dF9zZXR0aW5nc3EMXXENKGNPcmFuZ2Uud2lkZ2V0cy5zZXR0aW5ncwpDb250ZXh0CnEO
+KYFxD31xEChYBAAAAHRpbWVxEUdB1sGd3L3TJFgGAAAAdmFsdWVzcRJ9cRMoWA0AAABzZWxlY3Rl
+ZF9jb2xzcRRdcRUoSwBLAWVYDQAAAHNlbGVjdGVkX3Jvd3NxFl1xF0sBYWgLSwF1WAoAAABhdHRy
+aWJ1dGVzcRh9cRlYCgAAAF9fZ2xvYmFsX19xGksCc1gFAAAAbWV0YXNxG31xHFgIAAAAX191bml0
+X19xHUsDc3ViaA4pgXEefXEfKGgRR0HWwZ3PSvGiaBJ9cSAoaBRdcSEoSwBLAUsCZWgWXXEiSwJh
+aAtLAXVoGH1xIyhYDQAAAE1pY2hlbCBTYXJkb3VxJEsCWBAAAABNaWNoZWwgUG9sbmFyZWZmcSVL
+AnVoG31xJlgLAAAAX19jb250ZXh0X19xJ0sDc3ViaA4pgXEofXEpKGgRR0HWwZ21XWkaaBJ9cSoo
+aBRdcStoFl1xLGgLSwF1aBh9cS1YCwAAAF9fdmFyaWV0eV9fcS5LAnNoG31xL2gnSwNzdWJldS4=
+</properties>
+		<properties format="pickle" node_id="3">gAN9cQAoWAgAAABhdXRvU2VuZHEBiFgSAAAAY29udHJvbEFyZWFWaXNpYmxlcQKIWA0AAABpbnRy
+YVNlcURlbGltcQNYAQAAACNxBFgNAAAAbWVyZ2VDb250ZXh0c3EFiVgMAAAAbWVyZ2VTdHJpbmdz
+cQaJWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQdDMgHZ0MsAAgAAAAABlwAAAMcAAAM4AAACmgAA
+AZcAAADdAAADOAAAApoAAAAAAAAAAAUAcQhYDgAAAHNlcXVlbmNlTGVuZ3RocQlLAVgNAAAAdW5p
+dFBvc01hcmtlcnEKWAEAAABfcQtYBAAAAHV1aWRxDFgkAAAANDM0MWU0MmYtM2E3ZS00ZjIzLWIy
+MjgtNWVmNzU3N2RiOGMxcQ1YCwAAAF9fdmVyc2lvbl9fcQ5LAVgQAAAAY29udGV4dF9zZXR0aW5n
+c3EPXXEQKGNPcmFuZ2Uud2lkZ2V0cy5zZXR0aW5ncwpDb250ZXh0CnERKYFxEn1xEyhYBAAAAHRp
+bWVxFEdB1sGidHDCKlgGAAAAdmFsdWVzcRV9cRYoWAkAAABfY29udGV4dHNxF0r/////WBQAAABj
+b250ZXh0QW5ub3RhdGlvbktleXEYWAYAAAAobm9uZSlxGVgPAAAAbGVmdENvbnRleHRTaXplcRpL
+AFgEAAAAbW9kZXEbWAoAAABObyBjb250ZXh0cRxYEAAAAHJpZ2h0Q29udGV4dFNpemVxHUsAWBEA
+AAB1bml0QW5ub3RhdGlvbktleXEeWAAAAABxH1gFAAAAdW5pdHNxIEr/////WAoAAAB3aW5kb3dT
+aXplcSFLAVgNAAAAc2VnbWVudGF0aW9uc3EiXXEjaA5LAXVYBwAAAGVuY29kZWRxJGgNaCOGcSV1
+YmgRKYFxJn1xJyhoFEdB1sGduTgldGgVfXEoKFgJAAAAX2NvbnRleHRzcSlLAFgUAAAAY29udGV4
+dEFubm90YXRpb25LZXlxKlgFAAAAdGl0bGVxK1gPAAAAbGVmdENvbnRleHRTaXplcSxLAFgEAAAA
+bW9kZXEtWAoAAABObyBjb250ZXh0cS5YEAAAAHJpZ2h0Q29udGV4dFNpemVxL0sAWBEAAAB1bml0
+QW5ub3RhdGlvbktleXEwWAYAAABhcnRpc3RxMVgFAAAAdW5pdHNxMksAWAoAAAB3aW5kb3dTaXpl
+cTNLAVgNAAAAc2VnbWVudGF0aW9uc3E0XXE1WAcAAABTZWdtZW50cTYoWAYAAABhcnRpc3RxN1gJ
+AAAAYXJ0aXN0X2lkcThYBAAAAHBhdGhxOVgFAAAAdGl0bGVxOnRxO1gkAAAAYmU2MTBhMjItYWIx
+OS00NzVmLWEyMDctM2ExM2UzNTVlNjJicTyHcT1haA5LAXVoJGgNaDWGcT51YmVYIQAAAF9UZXh0
+YWJsZVV0aWxzX3NldHRpbmdzX3ZlcnNpb25fX3E/SwBLFYZxQHUu
+</properties>
+	</node_properties>
+</scheme>
