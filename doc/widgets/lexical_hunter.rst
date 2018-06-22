@@ -1,20 +1,20 @@
 .. meta::
-   :description: Orange3 Textable Prototypes documentation, LexicalHunter 
+   :description: Orange3 Textable Prototypes documentation, Lexical Hunter 
                  widget
-   :keywords: Orange3, Textable, Prototypes, documentation, LexicalHunter,
+   :keywords: Orange3, Textable, Prototypes, documentation, Lexical Hunter,
               widget
 
-.. _LexicalHunter:
+.. _Lexical Hunter:
 
-LexicalHunter
-=================
+Lexical Hunter
+==============
 
 .. image:: figures/lexical_hunter.png
 
 Annotates a segmentation based on one or more lexical fields.
 
 Authors
-------
+-------
 
 * Maxime Bony
 * Simon Cappelle
@@ -40,7 +40,7 @@ It creates annotation based on one or multiple lexical fields.
 There are some basic lexical fields, but the user can modify or remove them. 
 The user can also create and/or import custom lexical fields. 
 t is possible to export these lexical fields as well.
-The interface of LexicalHunter is available in two versions, a basic one that lets the user select some 
+The interface of Lexical Hunter is available in two versions, a basic one that lets the user select some 
 lexical fields to annotate the segmented data and an advanced one that lets the user manage these lexical lists.
 Do not put any special characters in your lists, unless you know what you are doing, otherwise the widget will 
 interpret them as a regex.
@@ -50,7 +50,7 @@ Basic interface
 ~~~~~~~~~~~~~~~
 
 In its basic version (see :ref:`figure 1 <lexicalhunter_fig1>` below), the
-**LexicalHunter** widget simply lets the user select one or more lexical fields
+**Lexical Hunter** widget simply lets the user select one or more lexical fields
 in the default list. To select multiple files use either control/command-click 
 or shift-click.
 
@@ -58,9 +58,9 @@ or shift-click.
 
 .. figure:: figures/lexicalhunter_basic.png
     :align: center
-    :alt: Basic interface of the LexicalHunter widget
+    :alt: Basic interface of the Lexical Hunter widget
 
-    Figure 1: **LexicalHunter** widget (basic interface).
+    Figure 1: **Lexical Hunter** widget (basic interface).
 
 The **Annotation key** section allows the user to define the name of the 
 annotation key.
@@ -76,7 +76,7 @@ segmentation at every modification of its interface.
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of **LexicalHunter**  (see :ref:`figure 2 
+The advanced version of **Lexical Hunter**  (see :ref:`figure 2 
 <lexicalhunter_fig2>` below) lets the user edit, delete, add, import 
 or export lists.
 
@@ -84,9 +84,9 @@ or export lists.
 
 .. figure:: figures/lexicalhunter_advanced.png
     :align: center
-    :alt: Advanced interface of the LexicalHunter widget
+    :alt: Advanced interface of the Lexical Hunter widget
     
-    Figure 2: **LexicalHunter** widget (advanced interface).
+    Figure 2: **Lexical Hunter** widget (advanced interface).
     
     
 The **Edit** button puts the content of the selected list in the text 

@@ -1,13 +1,13 @@
-3.. meta::
-   :description: Orange3 Textable Prototypes documentation, LyricsGenius
+.. meta::
+   :description: Orange3 Textable Prototypes documentation, Lyrics Genius
                  widget
-   :keywords: Orange3, Textable, Prototypes, documentation, LyricsGenius,
+   :keywords: Orange3, Textable, Prototypes, documentation, Lyrics, Genius,
               widget
 
-.. _Topic Models:
+.. _Lyrics Genius:
 
-LyricsGenius
-============
+Lyrics Genius
+=============
 
 .. image:: figures/LyricsGenius.png
 
@@ -45,17 +45,18 @@ Interface
 
 .. figure:: figures/LyricsGenius_Search.png
     :align: center
-    :alt: Interface of the LyricsGenius widget
+    :scale: 50 %
+    :alt: Interface of the Lyrics Genius widget
 
-    Figure 1: **LyricsGenius** widget interface.
+    Figure 1: **Lyrics Genius** widget interface.
 
-The **LyricsGenius** widget simply lets the user make a search on the
+The **Lyrics Genius** widget simply lets the user make a search on the
 `Genius <https://genius.com/>`_ website.
 
 The **Create my corpus** section allows the user to add or remove songs from
 the search results.
 
-The **My titles** section is the user "Corb". He can add or remove songs form
+The **My titles** section is the user "basket". He can add or remove songs from
 his corpus with the section **Create my corpus**.
 
 The **Send** button triggers the emission of a segmentation to the output

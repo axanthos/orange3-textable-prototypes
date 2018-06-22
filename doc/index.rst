@@ -20,7 +20,7 @@ Canvas/Textable users.
 
 The project is brought to the community by the `department of language and
 information sciences (SLI) <http://www.unil.ch/sli>`_ at the `University of
-Lausanne <http://www.unil.ch>`_  It is hosted at 
+Lausanne <http://www.unil.ch>`_. It is hosted at 
 `<https://github.com/axanthos/orange3-textable-prototypes>`_, and the 
 documentation can be found at 
 `<http://orange3-textable-prototypes.readthedocs.org/>`_.
@@ -32,8 +32,10 @@ Widgets
     :maxdepth: 1
 
     Theatre Classique <widgets/theatre_classique>
-    18th Century Poetry <widgets/18th_Century_Poetry>
+    18th Century Poetry <widgets/18th_century_poetry>
+    Lyrics Genius <widgets/lyrics_genius>
     Topic Models <widgets/topic_models>
     Linguistica <widgets/linguistica>
+    Lexical Hunter <widgets/lexical_hunter>
 
 
