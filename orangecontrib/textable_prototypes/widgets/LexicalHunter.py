@@ -21,8 +21,8 @@ along with Orange-Textable-Prototypes. If not, see
 
 __version__ = u"0.0.1"
 __author__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
-__maintainer__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
-__email__ = "maxime.bony@unil.ch, simon.cappelle@unil.ch, robin.pitteloud@unil.ch"
+__maintainer__ = "Aris Xanthos"
+__email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
 
@@ -66,7 +66,7 @@ class LexicalHunter(OWTextableBaseWidget):
     name = "Lexical Hunter"
     description = "Identify words contained in lists (lexical fields)"
     icon = "icons/lexical_hunter.svg"
-    priority = 10
+    priority = 22
 
     #----------------------------------------------------------------------
     # Channel definitions...

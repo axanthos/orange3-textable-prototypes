@@ -45,7 +45,7 @@ Créer un widget pour Orange Textable (v3.1.0) permettant l'importation de corpu
 .. image:: images/childes_minimal.png
 
 * permettre la navigation dans la base de données (à partir d'une version mise en cache) et la sélection d'un corpus.
-* créer et émettre une segmentation avec un segment (=Input) pour le corpus importé.
+* créer et émettre une segmentation avec un segment (=Input) pour chaque fichier du corpus importé.
 * traitement correct des exceptions (HTTPError etc.)
 
 2.3 Fonctionnalités principales
@@ -56,7 +56,7 @@ Créer un widget pour Orange Textable (v3.1.0) permettant l'importation de corpu
 * permettre la navigation dans la base de données (à partir d'une version mise en cache).
 * permettre de recréer le cache.
 * permettre la constitution d'une sélection de corpus multiples (add/remove/clear).
-* créer et émettre une segmentation avec un segment (=Input) pour chaque corpus importé.
+* créer et émettre une segmentation avec un segment (=Input) pour chaque fichier des corpus importés.
 * traitement correct des exceptions (HTTPError etc.)
 
 2.4 Fonctionnalités optionnelles
