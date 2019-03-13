@@ -41,7 +41,7 @@ VERSION = '0.14'  # package version
 
 DESCRIPTION = 'Additional widgets for the Textable add-on to Orange 3.'
 LONG_DESCRIPTION = open(
-    path.join(path.dirname(__file__), 'README.md')
+    path.join(path.dirname(__file__), 'README.rst')
 ).read()
 AUTHOR = 'University of Lausanne'
 AUTHOR_EMAIL = 'aris.xanthos@unil.ch'
