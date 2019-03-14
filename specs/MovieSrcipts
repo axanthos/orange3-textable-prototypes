@@ -38,6 +38,7 @@ Orange Textable 3.1.0
 
 2.4 Fonctionnalités optionnelles
 
+- Ajouter les filtres des recherches (par langue, par genre, etc.) si la base de données le permet
 - Permettre à l’utilisateur de changer l’ordre des scripts dans le corpus
 
 2.5 Tests
