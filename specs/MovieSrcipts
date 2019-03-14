@@ -27,7 +27,7 @@ Orange Textable 3.1.0
 
 2.2 Fonctionnalités minimales
 
--	Effectuer des recherches dans la base de données des scripts
+- Effectuer des recherches dans la base de données des scripts
 - Télécharger le script choisi
 - Traitement correct des exceptions (HTTPError etc.)
 
