@@ -70,7 +70,7 @@ class Childes(OWTextableBaseWidget):
     )
 
     autoSend = settings.Setting(False)
-    displayedFolder = settings.Setting(None)
+    currentFolder = settings.Setting("/French")
     selectedItem = settings.Setting(None)
 
     #----------------------------------------------------------------------
@@ -133,17 +133,25 @@ class Childes(OWTextableBaseWidget):
 
         gui.separator(widget=browseBox, height=3)
 
+        self.currentFolderLabel = gui.label(
+            widget=browseBox,
+            master=self,
+            label=self.currentFolder,
+            tooltip="This is the currently displayed folder.",
+        )
+
+        gui.separator(widget=browseBox, height=3)
+
         self.displayedFolderListbox = gui.listBox(
             widget=browseBox,
             master=self,
             value="selectedItem",    # setting (list)
             labels="displayedFolderLabels",
             callback=self.corpusSelected,
-            tooltip="Select a folder to open or a corpus to import.",
+            tooltip="Select an item to open or import.",
         )
         self.displayedFolderListbox.setMinimumHeight(150)
         self.displayedFolderListbox.setSelectionMode(1)
-        self.displayedFolderLabels = self.displayedFolderLabels
 
         downwardNavBox = gui.widgetBox(
             widget=browseBox,
@@ -174,8 +182,8 @@ class Childes(OWTextableBaseWidget):
         self.infoBox.draw()
 
         # This initialization step needs to be done after infoBox has been
-        # drawn (because getTitleSeg may need to display an error message).
-        #self.getTitleSeg()
+        # drawn (because we may need to display an error message).
+        self.updateBrowseBox()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -188,24 +196,35 @@ class Childes(OWTextableBaseWidget):
         pass
 
     def homeRefreshPressed(self):
-        """Refresh title segmentation from website"""
+        """Refresh database file tree"""
         pass
 
     def backPressed(self):
-        """Refresh title segmentation from website"""
+        """Display parent folder's contents"""
         pass
 
     def corpusSelected(self):
-        """Refresh title segmentation from website"""
+        """Import selected corpus"""
         pass
 
     def openPressed(self):
-        """Refresh title segmentation from website"""
+        """Display selected folder's contents"""
         pass
 
     def importPressed(self):
-        """Refresh title segmentation from website"""
+        """Import selected corpus"""
         pass
+
+    def updateBrowseBox(self):
+        """Refresh UI state of Browse box"""
+        self.currentFolderLabel.setText("Current folder: " + self.currentFolder)
+        response = requests.get(self.__class__.base_url + self.currentFolder)
+        html = BeautifulSoup(response.content, 'html.parser')
+        self.displayedFolderLabels = [ 
+            link.get_text()
+            for link in html.find_all('a')
+            if link.get_text().endswith(".zip")
+        ]           
 
     # The following method need to be copied (without any change) in
     # every Textable widget...
