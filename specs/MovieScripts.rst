@@ -17,6 +17,7 @@ Movie Scripts widget permettra de rajouter les scripts des films ce que facilite
 - Remise et presentation du projet: 30 mai 2019
 
 1.3 Equipe et responsabilitées
+----
 - Leonardo Cavaliere (leonardo.cavaliere@unil.ch): specification
 - Kirill Melnikov (kirill.melnikov@unil.ch): specification
 - David Fluhmannn (david.fluhmann@unil.ch): interface, code, documentation, tests
