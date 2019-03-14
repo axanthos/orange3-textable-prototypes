@@ -19,11 +19,32 @@ Créer un widget pour Orange Textable (v3.1.0) créant une interface visuelle po
 1.3 Equipe et responsabilitées
 ==============================
 
-* Loris Rimaz:
+* Olivia Edelman (olivia.edelman@unil.ch):
+    - 
+    - 
+    - 
 
-* Nahuel Degonda:
+.. _olivia.edelman@unil.ch: mailto:olivia.edelman@unil.ch
 
-* Olivia Edelman:
+
+* Nahuel Degonda (nahuel.degonda@unil.ch):
+    - 
+    - 
+    - 
+
+.. _nahuel.degonda@unil.ch: mailto:nahuel.degonda@unil.ch
+
+
+* Loris Rimaz (loris.rimaz@unil.ch):
+    - 
+    - 
+    - 
+
+.. _loris.rimaz@unil.ch: mailto:loris.rimaz@unil.ch
+
+
+
+
 
 2. Technique
 ************
@@ -32,31 +53,27 @@ Créer un widget pour Orange Textable (v3.1.0) créant une interface visuelle po
 ===============
 * Orange 3.18
 * Orange Textable 3.1.0
-* requests
-* BeautifulSoup
+* Praw 6.0.0
 
 2.2 Fonctionnalités minimales
 =============================
-
-.. image:: 
-
-*
-*
-*
+* Permettre le choix et l'importation d'un post à partir de deux méthodes:
+    - La recherche par subreddit (filtre par défaut: hot)
+    - La recherche par lien
+* Permettre de récupérer le titre et le contenu du post ainsi que tous ses commentaires
+* Créer et émettre une segmentation contenant un segment pour le post ainsi qu'un segment par commentaires
+* Traitement correct des exceptions
 
 2.3 Fonctionnalités principales
 ===============================
-
-.. image::
-
-*
-*
-*
+* Permettre de sélectionner plusieurs posts (et ainsi émettre une segmentation par post)
+* Permettre de filter les commentaires (par upvotes, etc)
+* Permettre de changer le filtre des posts sur les subreddits (new, hot, controversial, rising et top)
 
 2.4 Fonctionnalités optionnelles
 ================================
-*
-*
+* Permettre de rechercher plusieurs posts avec une liste de liens
+
 
 2.5 Tests
 =========
@@ -76,8 +93,7 @@ TODO
 * Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
 
-
 4. Infrastructure
 =================
-Le projet est disponible sur GitHub à l'adresse `https://github.com/axanthos/Orange3TextablePrototypes.git
-<https://github.com/axanthos/Orange3TextablePrototypes.git>`_
+Le projet est disponible sur GitHub à l'adresse `https://github.com/DigitalDW/orange3-textable-prototypes
+<https://github.com/DigitalDW/orange3-textable-prototypes>`_
