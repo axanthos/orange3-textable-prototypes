@@ -1,4 +1,4 @@
-Specification widget Movie Scripts
+Specifications widget Movie Scripts
 =====
 
 1 Introduction
