@@ -72,6 +72,7 @@ class Childes(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
 
+    importedCorpus = settings.Setting(None)
     autoSend = settings.Setting(False)
 
     #----------------------------------------------------------------------
@@ -141,7 +142,7 @@ class Childes(OWTextableBaseWidget):
         self.currentFolderLabel = gui.label(
             widget=browseBox,
             master=self,
-            label=self.currentFolder,
+            label="Current folder: /",
             tooltip="This is the currently displayed folder.",
         )
 
@@ -158,6 +159,15 @@ class Childes(OWTextableBaseWidget):
         displayedFolderListbox.setMinimumHeight(150)
         displayedFolderListbox.setSelectionMode(1)
         displayedFolderListbox.doubleClicked.connect(self.listBoxDoubleClicked)
+
+        self.importedCorpusLabel = gui.label(
+            widget=browseBox,
+            master=self,
+            label="No corpus imported yet.",
+            tooltip="This is the currently imported corpus.",
+        )
+
+        gui.separator(widget=browseBox, height=3)
 
         downwardNavBox = gui.widgetBox(
             widget=browseBox,
@@ -176,7 +186,7 @@ class Childes(OWTextableBaseWidget):
             master=self,
             label="Import",
             callback=self.importPressed,
-            tooltip="View selected item's contents.",
+            tooltip="Import selected item's contents.",
         )
 
         gui.separator(widget=browseBox, height=3)
@@ -199,7 +209,22 @@ class Childes(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
-        pass
+        if not self.importedCorpus:
+            self.infoBox.setText(
+                "Please select a corpus to import.",
+                "warning"
+            )
+            self.send("XML data", None, self)
+            return
+        progressBar = ProgressBar(self, iterations=1)
+        response = requests.get(self.importedCorpus)
+        myZip = zipfile.ZipFile(io.BytesIO(response.content))
+        for file in myZip.infolist():
+            print(file.filename, len(myZip.read(file)))
+        progressBar.advance()
+        progressBar.finish()
+        self.infoBox.setText("All good!")
+        self.sendButton.resetSettingsChangedFlag()
 
     def homeRefreshPressed(self):
         """Refresh database file tree"""
@@ -224,14 +249,11 @@ class Childes(OWTextableBaseWidget):
     def importPressed(self):
         """Import selected corpus"""
         # TODO: handle exceptions
-        response = requests.get(
-            self.currentFolder 
-            + self.displayedFolderLabels[self.selectedItems[0]]
-        )
-        myZip = zipfile.ZipFile(io.BytesIO(response.content))
-        for zippedFile in myZip.infolist():
-            print(zippedFile.filename, len(myZip.read(zippedFile)))
+        corpus = self.displayedFolderLabels[self.selectedItems[0]]
+        self.importedCorpus = self.currentFolder + corpus
         self.importButton.setDisabled(True)
+        self.importedCorpusLabel.setText("Corpus %s ready to import." % corpus)
+        self.sendButton.settingsChanged()
 
     def listBoxDoubleClicked(self):
         """Reroute to 'openPressed' or 'importPressed' as needed"""
@@ -277,6 +299,13 @@ class Childes(OWTextableBaseWidget):
                 displayedFolderLabels.append(item.split("/")[-2] + "/")
         self.displayedFolderLabels = displayedFolderLabels
         
+        # Imported corpus label...
+        if self.importedCorpus:
+            self.importedCorpusLabel.setText(
+                "Corpus %s ready to import." 
+                % self.importedCorpus.split("/")[-1]
+            )
+
         # Buttons.
         self.updateBrowseBoxButtons()
             
@@ -314,4 +343,4 @@ if __name__ == "__main__":
     myWidget = Childes()
     myWidget.show()
     myApplication.exec_()
-    myWidget.saveSettings()
+    #myWidget.saveSettings()
