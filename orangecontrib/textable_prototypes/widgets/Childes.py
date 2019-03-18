@@ -90,6 +90,7 @@ class Childes(OWTextableBaseWidget):
 
         # Other (non-setting) attributes...
         self.segmentation = None
+        self.createdInputs = list()
         self.displayedFolderLabels = list()
         self.currentFolder = self.__class__.base_url
         self.database = None
@@ -216,17 +217,67 @@ class Childes(OWTextableBaseWidget):
             )
             self.send("XML data", None, self)
             return
+       
+        # Clear created Inputs and initialize progress bar...
+        self.clearCreatedInputs()
         progressBar = ProgressBar(self, iterations=1)
+        self.controlArea.setDisabled(True)
+        
+        corpus = self.importedCorpus.split("/")[-1]
+        
+        # Download requested zip file...
         response = requests.get(self.importedCorpus)
         myZip = zipfile.ZipFile(io.BytesIO(response.content))
+        
+        # Create Input for each zipped file and store annotations...
+        annotations = list()
         for file in myZip.infolist():
-            print(file.filename, len(myZip.read(file)))
+            newInput = Input(
+                myZip.read(file).decode('utf-8'), 
+                self.captionTitle
+            )
+            self.createdInputs.append(newInput)
+            annotations.append({"corpus": corpus, "filename": file.filename})
+
+        # If there's only one file, the widget's output is the created Input...
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget's output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                self.captionTitle,
+                import_labels_as=None,
+            )
+
+        # Annotate segments...
+        for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations[idx])
+            self.segmentation[idx] = segment
+
+        # Set status to OK and report data size...
+        message = "%i segment@p sent to output " % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
+        numChars = 0
+        for segment in self.segmentation:
+            segmentLength = len(Segmentation.get_data(segment.str_index))
+            numChars += segmentLength
+        message += "(%i character@p)." % numChars
+        message = pluralize(message, numChars)
+        self.infoBox.setText(message)
+        self.importedCorpusLabel.setText(
+            "Corpus %s correctly imported." % corpus
+        )
+
+        # Terminate progress bar...
         progressBar.advance()
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
-        corpus = self.displayedFolderLabels[self.selectedItems[0]]
-        self.importedCorpusLabel.setText("Corpus %s correctly imported." % corpus)
-        self.infoBox.setText("All good!")
+        # Send token...
+        self.send("XML data", self.segmentation, self)
+
         self.sendButton.resetSettingsChangedFlag()
 
     def homeRefreshPressed(self):
@@ -326,9 +377,18 @@ class Childes(OWTextableBaseWidget):
             self.displayedFolderLabels[self.selectedItems[0]].endswith("/")
         )
 
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
+    def onDeleteWidget(self):
+        """Free memory when widget is deleted (overriden method)"""
+        self.clearCreatedInputs()
+
     # The following method need to be copied (without any change) in
     # every Textable widget...
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
@@ -346,4 +406,4 @@ if __name__ == "__main__":
     myWidget = Childes()
     myWidget.show()
     myApplication.exec_()
-    #myWidget.saveSettings()
+    myWidget.saveSettings()
