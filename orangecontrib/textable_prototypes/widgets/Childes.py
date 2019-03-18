@@ -223,6 +223,9 @@ class Childes(OWTextableBaseWidget):
             print(file.filename, len(myZip.read(file)))
         progressBar.advance()
         progressBar.finish()
+
+        corpus = self.displayedFolderLabels[self.selectedItems[0]]
+        self.importedCorpusLabel.setText("Corpus %s correctly imported." % corpus)
         self.infoBox.setText("All good!")
         self.sendButton.resetSettingsChangedFlag()
 
