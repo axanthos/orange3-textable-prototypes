@@ -20,31 +20,30 @@ Créer un widget pour Orange Textable (v3.1.0) créant une interface visuelle po
 ==============================
 
 * Olivia Edelman (olivia.edelman@unil.ch):
-    - 
-    - 
-    - 
+    - Specification
+    - Code
+    - Documentation
+    - Verification orthographe
 
 .. _olivia.edelman@unil.ch: mailto:olivia.edelman@unil.ch
 
 
 * Nahuel Degonda (nahuel.degonda@unil.ch):
-    - 
-    - 
-    - 
+    - Specification
+    - Maquettes
+    - Code
+    - Verification orthographe
 
 .. _nahuel.degonda@unil.ch: mailto:nahuel.degonda@unil.ch
 
 
 * Loris Rimaz (loris.rimaz@unil.ch):
-    - 
-    - 
-    - 
+    - Specification
+    - Maquettes
+    - Code
+    - Debuggage
 
 .. _loris.rimaz@unil.ch: mailto:loris.rimaz@unil.ch
-
-
-
-
 
 2. Technique
 ************
