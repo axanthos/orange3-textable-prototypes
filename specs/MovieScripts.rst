@@ -29,6 +29,7 @@ Movie Scripts widget permettra de rajouter les scripts des films ce que facilite
 - Orange 3.18
 - Orange Textable 3.1.0
 - imsdb.com
+  - met à disposition un flux RSS
 
 2.2 Fonctionnalités minimales
 -----
