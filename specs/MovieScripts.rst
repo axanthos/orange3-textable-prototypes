@@ -18,9 +18,9 @@ Movie Scripts widget permettra de rajouter les scripts des films ce que facilite
 
 1.3 Equipe et responsabilitées
 ----
-- Leonardo Cavaliere (leonardo.cavaliere@unil.ch): specification
-- Kirill Melnikov (kirill.melnikov@unil.ch): specification
-- David Fluhmannn (david.fluhmann@unil.ch): interface, code, documentation, tests
+- Leonardo Cavaliere (leonardo.cavaliere@unil.ch): specification, interface, code
+- Kirill Melnikov (kirill.melnikov@unil.ch): specification, interface, code
+- David Fluhmannn (david.fluhmann@unil.ch): code, documentation, tests
 
 2. Technique
 ====
@@ -33,12 +33,14 @@ Movie Scripts widget permettra de rajouter les scripts des films ce que facilite
 
 2.2 Fonctionnalités minimales
 -----
+.. image:: images/Movie_Scripts_minimal_version.png
 - Effectuer des recherches dans la base de données des scripts
 - Télécharger le script choisi
 - Traitement correct des exceptions (HTTPError etc.)
 
 2.3 Fonctionnalités principales
 -----
+.. image:: images/Movie_Scripts_principal_version.png
 - Créer un corpus, pouvoir rajouter et supprimer les scripts dans ce corpus
 
 2.4 Fonctionnalités optionnelles
