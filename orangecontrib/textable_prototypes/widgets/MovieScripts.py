@@ -188,25 +188,6 @@ class MovieScripts(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        self.mytitleListbox = gui.listBox(
-            widget=mytitleBox,
-            master=self,
-            value="myTitles",
-            labels="mytitleLabels",
-            callback=lambda: self.removeButton.setDisabled(
-                self.myTitles == list()),
-            tooltip="The list of movies whose content will be imported",
-        )
-        self.mytitleListbox.setMinimumHeight(150)
-        self.mytitleListbox.setSelectionMode(3)
-
-        boxbutton2 = gui.widgetBox(
-            widget=mytitleBox,
-            box=False,
-            orientation='horizontal',
-        )
-
-        gui.separator(widget=mytitleBox, height=3)
         gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
 
@@ -214,9 +195,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.sendButton.draw()
         self.searchButton.setDefault(True)
         self.infoBox.draw()
-
-        # Update the selections list
-        self.updateMytitleLabels()
+        
 
         # Send data if autoSend.
         self.sendButton.sendIf()
