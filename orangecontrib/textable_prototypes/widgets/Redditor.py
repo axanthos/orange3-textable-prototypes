@@ -34,6 +34,7 @@ from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
+from Orange.widgets.settings import Setting
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, ProgressBar
@@ -41,8 +42,95 @@ from _textable.widgets.TextableUtils import (
 
 
 class Redditor(OWTextableBaseWidget):
+    #----------------------------------------------------------------------
+    # Widget's metadata...
+
+    name = "Redditor"
+    description = "Scrap on Reddit"
+    priority = 20
+
+    outputs = [("Operation result", Segmentation)]
     
+    mode = Setting("Subreddit")
+    subreddit = Setting(u'')
+    URL = Setting(u'')
+
+    want_main_area = False
+
     def __init__(self):
         super().__init__()
 
-    pass
+        self.infoBox = InfoBox(widget=self.controlArea)
+        self.sendButton = SendButton(
+            widget=self.controlArea,
+            master=self,
+            callback=self.fct,
+            infoBoxAttribute="infoBox",
+        )
+
+        # Basic URL box
+        basicBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Source',
+            orientation='vertical',
+            addSpace=False,
+        )
+
+        gui.comboBox(
+            widget=basicBox,
+            master=self,
+            value='mode',
+            items=["Subreddit", "URL"],
+            sendSelectedValue=True,
+            orientation='horizontal',
+            label=u'Mode:',
+            callback=self.fct,
+            tooltip=(
+                u"Select URL's encoding."
+            ),
+        )
+
+        gui.lineEdit(
+            widget=basicBox,
+            master=self,
+            value='URL',
+            orientation='horizontal',
+            label=u'URL:',
+            labelWidth=101,
+            callback=self.fct,
+            tooltip=(
+                u"The URL whose content will be imported."
+            ),
+        )
+
+        gui.lineEdit(
+            widget=basicBox,
+            master=self,
+            value='subreddit',
+            orientation='horizontal',
+            label=u'reddit.com/r/...:',
+            labelWidth=101,
+            callback=self.fct,
+            tooltip=(
+                u"The URL whose content will be imported."
+            ),
+        )
+
+        self.sendButton.draw()
+        self.infoBox.draw()
+
+        gui.rubber(self.controlArea)
+        self.adjustSizeWithTimer()
+
+    def fct(self):
+        pass
+
+
+if __name__ == "__main__":
+    import sys
+    from PyQt4.QtGui import QApplication
+    myApplication = QApplication(sys.argv)
+    myWidget = Redditor()
+    myWidget.show()
+    myApplication.exec_()
+    myWidget.saveSettings()
