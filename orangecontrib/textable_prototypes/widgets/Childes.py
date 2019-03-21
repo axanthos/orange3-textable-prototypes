@@ -226,10 +226,26 @@ class Childes(OWTextableBaseWidget):
         corpus = self.importedCorpus.split("/")[-1]
         
         # Download requested zip file...
-        response = requests.get(self.importedCorpus)
-        myZip = zipfile.ZipFile(io.BytesIO(response.content))
+        try:
+            response = requests.get(self.importedCorpus)
+            
+        # If an error occurs (e.g. http error)...
+        except:
+
+            # Set Info box and widget to "error" state.
+            self.infoBox.setText(
+                "Couldn't download data from CHILDES website.",
+                "error"
+            )
+
+            # Reset output channel.
+            self.send("XML data", None, self)
+            progressBar.finish()
+            self.controlArea.setDisabled(False)
+            return
         
         # Create Input for each zipped file and store annotations...
+        myZip = zipfile.ZipFile(io.BytesIO(response.content))
         annotations = list()
         for file in myZip.infolist():
             newInput = Input(
@@ -302,7 +318,6 @@ class Childes(OWTextableBaseWidget):
 
     def importPressed(self):
         """Import selected corpus"""
-        # TODO: handle exceptions
         corpus = self.displayedFolderLabels[self.selectedItems[0]]
         self.importedCorpus = self.currentFolder + corpus
         self.importButton.setDisabled(True)
