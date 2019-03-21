@@ -1,6 +1,6 @@
 """
-Class LyricsGenius
-Copyright 2018 University of Lausanne
+Class Movie Scripts
+Copyright 2019 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 Orange3-Textable-Prototypes is free software: you can redistribute it
@@ -17,10 +17,9 @@ along with Orange-Textable-Prototypes. If not, see
 """
 
 __version__ = u"0.0.2"
-__author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
+__author__ = "David Fluhmann, Leonardo Cavaliere, Kirill Melnikov"
 __maintainer__ = "Aris Xanthos"
-__email__ = "cyrille.gay-crosier@unil.ch, rafael.brunibaschino@unil.ch," \
-            "basile.maillard@unil.ch"
+__email__ = "david.fluhmann@unil.ch, leonardo.cavaliere@unil.ch, kirill.melnikov@unil.ch"
 
 from Orange.widgets import widget, gui, settings
 
@@ -42,24 +41,24 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
-class LyricsGenius(OWTextableBaseWidget):
-    """Textable widget for importing JSON data from the website Genius
-    (https://genius.com/)
+class Movie Scripts(OWTextableBaseWidget):
+    """Textable widget for importing movie scripts from the website IMSDB.com
+    (https://www.imsdb.com)
     """
 
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Lyrics Genius"
-    description = "Lyrics importation"
-    icon = "icons/LyricsGenius.svg"
-    priority = 10
+    name = "Movie Scripts"
+    description = "Movie Script Importation"
+    icon = "icons/Movie_Scripts.png"
+    priority = 11
 
     #----------------------------------------------------------------------
     # Channel definitions...
 
     inputs = []
-    outputs = [("Lyrics importation", Segmentation)]
+    outputs = [("Movie Scripts importation", Segmentation)]
 
     #----------------------------------------------------------------------
     # Layout parameters...
