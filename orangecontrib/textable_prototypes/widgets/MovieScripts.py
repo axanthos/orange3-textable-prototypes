@@ -438,7 +438,7 @@ class Movie Scripts(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-        # Attempt to connect to Genius and retrieve lyrics...
+        # Attempt to connect to IMSDB and retrieve movie scripts...
         selectedSongs = list()
         song_content = list()
         annotations = list()
