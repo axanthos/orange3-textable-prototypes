@@ -266,7 +266,9 @@ class Childes(OWTextableBaseWidget):
         progressBar = ProgressBar(self, iterations=len(self.importedCorpora))
         self.controlArea.setDisabled(True)
         
-        # Iterate over corpora:
+        annotations = list()
+
+        # Iterate over corpora...
         for importedCorpus in self.importedCorpora:
         
             corpus = importedCorpus.split("/")[-1]
@@ -293,7 +295,6 @@ class Childes(OWTextableBaseWidget):
             
             # Create Input for each zipped file and store annotations...
             myZip = zipfile.ZipFile(io.BytesIO(response.content))
-            annotations = list()
             for file in myZip.infolist():
                 newInput = Input(
                     myZip.read(file).decode('utf-8'), 
