@@ -58,7 +58,8 @@ Créer un widget pour Orange Textable (v3.1.0) créant une interface visuelle po
 =============================
 .. image:: https://zupimages.net/up/19/12/510f.png
 
-* Permettre le choix et l'importation d'un post à partir de deux méthodes
+
+* Permettre de chercher des posts selon deux méthodes:
     - La recherche par subreddit (filtre par défaut: hot, on retourne le premier post trouvé)
     - La recherche par lien
 * Permettre de récupérer le titre et le contenu du post ainsi que tous ses commentaires
