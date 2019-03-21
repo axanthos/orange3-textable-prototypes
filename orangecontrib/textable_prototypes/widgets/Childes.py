@@ -161,8 +161,10 @@ class Childes(OWTextableBaseWidget):
             tooltip="Select an item to open or import.",
         )
         displayedFolderListbox.setMinimumHeight(150)
-        displayedFolderListbox.setSelectionMode(1)
-        displayedFolderListbox.doubleClicked.connect(self.displayedFoldersDoubleClicked)
+        displayedFolderListbox.setSelectionMode(3)
+        displayedFolderListbox.doubleClicked.connect(
+            self.displayedFoldersDoubleClicked
+        )
 
         gui.separator(widget=browseBox, height=3)
 
@@ -302,7 +304,7 @@ class Childes(OWTextableBaseWidget):
                     self.captionTitle
                 )
                 self.createdInputs.append(newInput)
-                annotations.append({"corpus": corpus, "filename": file.filename})
+                annotations.append({"corpus":corpus, "filename":file.filename})
             
             progressBar.advance()
 
@@ -360,25 +362,39 @@ class Childes(OWTextableBaseWidget):
 
     def openPressed(self):
         """Display selected folder's contents"""
-        self.currentFolder += self.displayedFolderLabels[
-            self.selectedInDisplayedFolder[0]
-        ]
-        self.updateDisplayedFolders()
+        if len(self.selectedInDisplayedFolder) == 1:
+            self.currentFolder += self.displayedFolderLabels[
+                self.selectedInDisplayedFolder[0]
+            ]
+            self.updateDisplayedFolders()
 
     def addPressed(self):
-        """Import selected corpus"""
-        corpora = [
-            self.displayedFolderLabels[idx]
-            for idx in self.selectedInDisplayedFolder
-        ]
-        self.importedCorpora += [self.currentFolder + c for c in corpora]
+        """Import selected corpora"""
+        corpora = list()
+        for item in self.selectedInDisplayedFolder:
+            label = self.displayedFolderLabels[item]
+            self.getZipsFromItem(label, self.currentFolder, corpora)
+        self.importedCorpora += corpora
         self.importedCorpora = sorted(list(set((self.importedCorpora))))
         self.addButton.setDisabled(True)
         self.updateSelection()
         self.sendButton.settingsChanged()
 
+    def getZipsFromItem(self, label, folder, zipList):
+        """Get selected zip files or those contained in selected folders"""
+        if label.endswith(".zip"):
+            zipList.append(folder + label)
+            return
+        else:
+            newFolder = self.getFolderContent(folder + label)
+            for label in newFolder.keys():
+                if label.endswith(".zip"):
+                    label = newFolder[label]
+                label = label[len(self.__class__.base_url):]
+                self.getZipsFromItem(label, folder, zipList)
+                
     def displayedFoldersDoubleClicked(self):
-        """Reroute to 'openPressed' or 'importPressed' as needed"""
+        """Reroute to 'openPressed' or 'addPressed' as needed"""
         if self.displayedFolderLabels[
             self.selectedInDisplayedFolder[0]
         ].endswith(".zip"):
@@ -427,11 +443,7 @@ class Childes(OWTextableBaseWidget):
         self.currentFolderLabel.setText("Current folder: " + currentFolder)
         
         # Populate listbox...
-        folderContent = self.database[self.__class__.base_url]
-        steps = currentFolder[:-1].split("/")[1:]
-        for idx, _ in enumerate(steps):
-            path = self.__class__.base_url + "/".join(steps[:idx+1]) + "/"
-            folderContent = folderContent[path]
+        folderContent = self.getFolderContent(self.currentFolder)
         displayedFolderLabels = list()
         for item in folderContent.keys():
             if item.endswith(".zip"):
@@ -443,23 +455,27 @@ class Childes(OWTextableBaseWidget):
         # Buttons.
         self.updateBrowseBoxButtons()
             
+    def getFolderContent(self, folder):
+        folderContent = self.database[self.__class__.base_url]
+        folder = folder[len(self.__class__.base_url)-1:]
+        steps = folder[:-1].split("/")[1:]
+        for idx, _ in enumerate(steps):
+            path = self.__class__.base_url + "/".join(steps[:idx+1]) + "/"
+            folderContent = folderContent[path]
+        return folderContent
+
     def updateBrowseBoxButtons(self):
         """Refresh state of Browse box buttons"""
         currentFolder = self.currentFolder[len(self.__class__.base_url)-1:]
         self.homeRefreshButton.setDisabled(currentFolder == "/")
         self.backButton.setDisabled(currentFolder == "/")
         self.openButton.setDisabled(
-            len(self.selectedInDisplayedFolder) == 0 or 
+            len(self.selectedInDisplayedFolder) != 1 or 
             self.displayedFolderLabels[
                 self.selectedInDisplayedFolder[0]
             ].endswith(".zip")
         )
-        self.addButton.setDisabled(
-            len(self.selectedInDisplayedFolder) == 0 or 
-            self.displayedFolderLabels[
-                self.selectedInDisplayedFolder[0]
-            ].endswith("/")
-        )
+        self.addButton.setDisabled(not self.selectedInDisplayedFolder) 
 
     def updateSelection(self):
         """Refresh state of selection listbox"""
