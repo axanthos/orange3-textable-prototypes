@@ -56,6 +56,8 @@ Créer un widget pour Orange Textable (v3.1.0) créant une interface visuelle po
 
 2.2 Fonctionnalités minimales
 =============================
+.. image:: https://zupimages.net/up/19/12/510f.png
+
 * Permettre le choix et l'importation d'un post à partir de deux méthodes:
     - La recherche par subreddit (filtre par défaut: hot)
     - La recherche par lien
@@ -65,13 +67,16 @@ Créer un widget pour Orange Textable (v3.1.0) créant une interface visuelle po
 
 2.3 Fonctionnalités principales
 ===============================
-* Permettre de sélectionner plusieurs posts (et ainsi émettre une segmentation par post)
+.. image:: https://zupimages.net/up/19/12/drqe.png
+
+* Permettre de récupérer plusieurs posts avec la recherche par subreddit (et ainsi créer un annotation sur chaque post)
 * Permettre de filter les commentaires (par upvotes, etc)
 * Permettre de changer le filtre des posts sur les subreddits (new, hot, controversial, rising et top)
 
 2.4 Fonctionnalités optionnelles
 ================================
 * Permettre de rechercher plusieurs posts avec une liste de liens
+* Permettre de retourner une liste d'éléments avec la recherche par subreddit
 
 
 2.5 Tests
