@@ -162,7 +162,7 @@ class Childes(OWTextableBaseWidget):
         )
         displayedFolderListbox.setMinimumHeight(150)
         displayedFolderListbox.setSelectionMode(1)
-        displayedFolderListbox.doubleClicked.connect(self.listBoxDoubleClicked)
+        displayedFolderListbox.doubleClicked.connect(self.displayedFoldersDoubleClicked)
 
         gui.separator(widget=browseBox, height=3)
 
@@ -196,17 +196,18 @@ class Childes(OWTextableBaseWidget):
             addSpace=False,
         )
 
-        self.selectionListbox = gui.listBox(
+        selectionListbox = gui.listBox(
             widget=selectionBox,
             master=self,
             value="selectedInSelection",
             labels="selectionLabels",
             callback=lambda: self.removeButton.setDisabled( # TODO move
-                self.selection == list()),
+                self.selectedInSelection == list()),
             tooltip="The list of corpora whose content will be imported",
         )
-        self.selectionListbox.setMinimumHeight(150)
-        self.selectionListbox.setSelectionMode(3)
+        selectionListbox.setMinimumHeight(150)
+        selectionListbox.setSelectionMode(3)
+        selectionListbox.doubleClicked.connect(self.selectionDoubleClicked)
 
         removalBox = gui.widgetBox(
             widget=selectionBox,
@@ -221,7 +222,6 @@ class Childes(OWTextableBaseWidget):
             callback=self.removePressed,
             tooltip="Remove the selected corpus.",
         )
-        self.removeButton.setDisabled(True) # TODO move
 
         # Delete all confirmed songs button
         self.clearButton = gui.button(
@@ -231,12 +231,11 @@ class Childes(OWTextableBaseWidget):
             callback=self.clearPressed,
             tooltip="Remove all corpora from selection.",
         )
-        self.clearButton.setDisabled(True) # TODO move
 
         gui.separator(widget=selectionBox, height=3)
 
         gui.rubber(self.controlArea)
-
+        
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
@@ -244,6 +243,8 @@ class Childes(OWTextableBaseWidget):
         # This initialization step needs to be done after infoBox has been
         # drawn (because we may need to display an error message).
         self.loadDatabaseCache()
+
+        self.updateSelection()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -302,6 +303,8 @@ class Childes(OWTextableBaseWidget):
                 )
                 self.createdInputs.append(newInput)
                 annotations.append({"corpus": corpus, "filename": file.filename})
+            
+            progressBar.advance()
 
         # If there's only one file, the widget's output is the created Input...
         if len(self.createdInputs) == 1:
@@ -330,12 +333,8 @@ class Childes(OWTextableBaseWidget):
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
-        # self.importedCorpusLabel.setText(
-            # "Corpus %s correctly imported." % corpus
-        # )
 
         # Terminate progress bar...
-        progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
 
@@ -373,11 +372,12 @@ class Childes(OWTextableBaseWidget):
             for idx in self.selectedInDisplayedFolder
         ]
         self.importedCorpora += [self.currentFolder + c for c in corpora]
-        self.importedCorpora = list(set((self.importedCorpora)))
+        self.importedCorpora = sorted(list(set((self.importedCorpora))))
         self.addButton.setDisabled(True)
+        self.updateSelection()
         self.sendButton.settingsChanged()
 
-    def listBoxDoubleClicked(self):
+    def displayedFoldersDoubleClicked(self):
         """Reroute to 'openPressed' or 'importPressed' as needed"""
         if self.displayedFolderLabels[
             self.selectedInDisplayedFolder[0]
@@ -391,8 +391,14 @@ class Childes(OWTextableBaseWidget):
         pass
 
     def clearPressed(self):
-        """TODO"""
-        pass
+        """Empty the selection"""
+        self.importedCorpora = list()
+        self.updateSelection()
+        self.sendButton.settingsChanged()      
+
+    def selectionDoubleClicked(self):
+        """Reroute to removePressed"""
+        self.removePressed()
 
     def loadDatabaseCache(self):
         """Load the cached database"""
@@ -451,6 +457,19 @@ class Childes(OWTextableBaseWidget):
                 self.selectedInDisplayedFolder[0]
             ].endswith("/")
         )
+
+    def updateSelection(self):
+        """Refresh state of selection listbox"""
+        self.selectionLabels = [
+            corpus[len(self.__class__.base_url)-1:]
+            for corpus in self.importedCorpora
+        ]
+        self.updateRemovalButtons()
+
+    def updateRemovalButtons(self):
+        """Refresh state of Browse box buttons"""
+        self.removeButton.setDisabled(not self.selectedInSelection)
+        self.clearButton.setDisabled(not self.importedCorpora)
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
