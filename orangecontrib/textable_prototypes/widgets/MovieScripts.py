@@ -401,7 +401,7 @@ if __name__ == "__main__":
     import sys
     from PyQt4.QtGui import QApplication
     myApplication = QApplication(sys.argv)
-    myWidget = LyricsGenius()
+    myWidget = MovieScripts()
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
