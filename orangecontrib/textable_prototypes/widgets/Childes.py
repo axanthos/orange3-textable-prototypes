@@ -72,7 +72,7 @@ class Childes(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
 
-    importedCorpus = settings.Setting(None)
+    importedCorpora = settings.Setting(list())
     autoSend = settings.Setting(False)
 
     #----------------------------------------------------------------------
@@ -164,13 +164,6 @@ class Childes(OWTextableBaseWidget):
         displayedFolderListbox.setSelectionMode(1)
         displayedFolderListbox.doubleClicked.connect(self.listBoxDoubleClicked)
 
-        self.importedCorpusLabel = gui.label(
-            widget=browseBox,
-            master=self,
-            label="No corpus imported yet.",
-            tooltip="This is the currently imported corpus.",
-        )
-
         gui.separator(widget=browseBox, height=3)
 
         downwardNavBox = gui.widgetBox(
@@ -260,7 +253,7 @@ class Childes(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
-        if not self.importedCorpus:
+        if not self.importedCorpora:
             self.infoBox.setText(
                 "Please select a corpus to import.",
                 "warning"
@@ -270,40 +263,44 @@ class Childes(OWTextableBaseWidget):
        
         # Clear created Inputs and initialize progress bar...
         self.clearCreatedInputs()
-        progressBar = ProgressBar(self, iterations=1)
+        progressBar = ProgressBar(self, iterations=len(self.importedCorpora))
         self.controlArea.setDisabled(True)
         
-        corpus = self.importedCorpus.split("/")[-1]
+        # Iterate over corpora:
+        for importedCorpus in self.importedCorpora:
         
-        # Download requested zip file...
-        try:
-            response = requests.get(self.importedCorpus)
+            corpus = importedCorpus.split("/")[-1]
             
-        # If an error occurs (e.g. http error)...
-        except:
+            # Download requested zip file...
+            try:    # TODO Test errors
+                response = requests.get(importedCorpus)
+                
+            # If an error occurs (e.g. http error)...
+            except:
 
-            # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't download data from CHILDES website.",
-                "error"
-            )
+                # Set Info box and widget to "error" state.
+                self.infoBox.setText(
+                    "Couldn't download corpus %s from CHILDES website."
+                        % corpus,
+                    "error"
+                )
 
-            # Reset output channel.
-            self.send("XML data", None, self)
-            progressBar.finish()
-            self.controlArea.setDisabled(False)
-            return
-        
-        # Create Input for each zipped file and store annotations...
-        myZip = zipfile.ZipFile(io.BytesIO(response.content))
-        annotations = list()
-        for file in myZip.infolist():
-            newInput = Input(
-                myZip.read(file).decode('utf-8'), 
-                self.captionTitle
-            )
-            self.createdInputs.append(newInput)
-            annotations.append({"corpus": corpus, "filename": file.filename})
+                # Reset output channel.
+                self.send("XML data", None, self)
+                progressBar.finish()
+                self.controlArea.setDisabled(False)
+                return
+            
+            # Create Input for each zipped file and store annotations...
+            myZip = zipfile.ZipFile(io.BytesIO(response.content))
+            annotations = list()
+            for file in myZip.infolist():
+                newInput = Input(
+                    myZip.read(file).decode('utf-8'), 
+                    self.captionTitle
+                )
+                self.createdInputs.append(newInput)
+                annotations.append({"corpus": corpus, "filename": file.filename})
 
         # If there's only one file, the widget's output is the created Input...
         if len(self.createdInputs) == 1:
@@ -332,9 +329,9 @@ class Childes(OWTextableBaseWidget):
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
-        self.importedCorpusLabel.setText(
-            "Corpus %s correctly imported." % corpus
-        )
+        # self.importedCorpusLabel.setText(
+            # "Corpus %s correctly imported." % corpus
+        # )
 
         # Terminate progress bar...
         progressBar.advance()
@@ -370,10 +367,13 @@ class Childes(OWTextableBaseWidget):
 
     def addPressed(self):
         """Import selected corpus"""
-        corpus = self.displayedFolderLabels[self.selectedInDisplayedFolder[0]]
-        self.importedCorpus = self.currentFolder + corpus
+        corpora = [
+            self.displayedFolderLabels[idx]
+            for idx in self.selectedInDisplayedFolder
+        ]
+        self.importedCorpora += [self.currentFolder + c for c in corpora]
+        self.importedCorpora = list(set((self.importedCorpora)))
         self.addButton.setDisabled(True)
-        self.importedCorpusLabel.setText("Corpus %s ready to import." % corpus)
         self.sendButton.settingsChanged()
 
     def listBoxDoubleClicked(self):
@@ -430,13 +430,6 @@ class Childes(OWTextableBaseWidget):
                 displayedFolderLabels.append(item.split("/")[-2] + "/")
         self.displayedFolderLabels = displayedFolderLabels
         
-        # Imported corpus label...
-        if self.importedCorpus:
-            self.importedCorpusLabel.setText(
-                "Corpus %s ready to import." 
-                % self.importedCorpus.split("/")[-1]
-            )
-
         # Buttons.
         self.updateBrowseBoxButtons()
             
