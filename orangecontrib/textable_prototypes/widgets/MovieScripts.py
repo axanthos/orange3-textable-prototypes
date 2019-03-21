@@ -136,12 +136,8 @@ class Movie Scripts(OWTextableBaseWidget):
                 "10",
                 "20",
                 "30",
+                "40",
                 "50",
-                "60",
-                "70",
-                "80",
-                "90",
-                "100",
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -159,7 +155,7 @@ class Movie Scripts(OWTextableBaseWidget):
             master=self,
             label="Search",
             callback=self.searchFunction,
-            tooltip="Connect Genius and make a research",
+            tooltip="Search for a script",
         )
         self.titleListbox = gui.listBox(
             widget=queryBox,
