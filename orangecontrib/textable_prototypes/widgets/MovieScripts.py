@@ -182,7 +182,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=boxbutton,
             master=self,
             label="Clear results",
-            callback=self.clearResults,
+            # callback=self.clearResults,
             tooltip="Clear results",
         )
         self.clearButton.setDisabled(True)
