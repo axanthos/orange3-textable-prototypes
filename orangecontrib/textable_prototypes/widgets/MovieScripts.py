@@ -175,6 +175,16 @@ class MovieScripts(OWTextableBaseWidget):
             orientation='horizontal',
         )
         
+        # select button
+        # Uses "select" function
+        self.selectButton = gui.button(
+            widget=boxbutton,
+            master=self,
+            label="Select",
+            # callback=self.clearResults,
+            tooltip="Select",
+        )
+        self.selectButton.setDisabled(True)
 
         # Clear button
         # Uses "clearResults" function
