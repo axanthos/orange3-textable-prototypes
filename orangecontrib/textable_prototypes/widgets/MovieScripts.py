@@ -122,7 +122,7 @@ class MovieScripts(OWTextableBaseWidget):
             master=self,
             value='newQuery',
             orientation='horizontal',
-            label=u"Query: ",
+            label=u"Film title: ",
             labelWidth=120,
             tooltip=("Enter a string"),
         )
@@ -195,7 +195,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.sendButton.draw()
         self.searchButton.setDefault(True)
         self.infoBox.draw()
-        
+
 
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -285,7 +285,7 @@ class MovieScripts(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty, please add some songs first",
+                "Your corpus is empty, please add some scripts first",
                 "warning"
             )
             return
