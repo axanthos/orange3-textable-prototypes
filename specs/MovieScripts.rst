@@ -43,6 +43,7 @@ Movie Scripts widget permettra de rajouter les scripts des films ce que facilite
 
 2.4 Fonctionnalités optionnelles
 -----
+.. image:: images/Movie_Scripts_optional_version.png
 - Ajouter les filtres des recherches (par langue, par genre, etc.) si la base de données le permet
 - Permettre à l’utilisateur de changer l’ordre des scripts dans le corpus
 
