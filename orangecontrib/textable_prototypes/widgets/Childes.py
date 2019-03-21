@@ -387,8 +387,11 @@ class Childes(OWTextableBaseWidget):
             self.openPressed()
 
     def removePressed(self):
-        """TODO"""
-        pass
+        """Remove selected items"""
+        for idx in sorted(self.selectedInSelection, reverse=True):
+            del self.importedCorpora[idx]            
+        self.updateSelection()
+        self.sendButton.settingsChanged()      
 
     def clearPressed(self):
         """Empty the selection"""
