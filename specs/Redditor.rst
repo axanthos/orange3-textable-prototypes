@@ -67,7 +67,7 @@ Créer un widget pour Orange Textable (v3.1.0) créant une interface visuelle po
 
 2.3 Fonctionnalités principales
 ===============================
-.. image:: https://zupimages.net/up/19/12/drqe.png
+.. image:: https://zupimages.net/up/19/12/u9et.png
 
 * Permettre de récupérer plusieurs posts avec la recherche par subreddit (et ainsi créer un annotation sur chaque post)
 * Permettre de changer le filtre des posts sur les subreddits (new, hot, controversial, rising et top)
