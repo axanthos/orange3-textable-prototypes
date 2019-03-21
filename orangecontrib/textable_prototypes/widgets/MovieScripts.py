@@ -41,7 +41,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
-class Movie Scripts(OWTextableBaseWidget):
+class MovieScripts(OWTextableBaseWidget):
     """Textable widget for importing movie scripts from the website IMSDB.com
     (https://www.imsdb.com)
     """
