@@ -41,7 +41,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
-class MovieScripts(OWTextableBaseWidget):
+class Movie Scripts(OWTextableBaseWidget):
     """Textable widget for importing movie scripts from the website IMSDB.com
     (https://www.imsdb.com)
     """
@@ -265,8 +265,6 @@ class MovieScripts(OWTextableBaseWidget):
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
-            # Stored the results list in the "result_list" variable
-            self.searchResults = result_list
 
             # Reset and clear the visible widget list
             del self.titleLabels[:]
@@ -290,26 +288,6 @@ class MovieScripts(OWTextableBaseWidget):
         else:
             self.infoBox.setText("You didn't search anything", "warning")
 
-
-    # Function contacting the Genius API and returning JSON objects
-    def url_request(self, url):
-        """Opens a URL and returns it as a JSON object"""
-
-        # Token to use the Genius API. DO NOT CHANGE.
-        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
-                       "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
-        USER_AGENT = "CompuServe Classic/1.22"
-
-        request = urllib.request.Request(url, headers={
-            "Authorization" : "Bearer " + ACCESS_TOKEN,
-            "User-Agent" : USER_AGENT
-            })
-        response = urllib.request.urlopen(request)
-        raw = response.read().decode('utf-8')
-        json_obj = json.loads(raw)
-        # retourne un objet json
-        return json_obj
-
     # Function converting HTML to string
     def html_to_text(self, page_url):
         """Extracts the lyrics (as a string) of the html page"""
@@ -321,59 +299,6 @@ class MovieScripts(OWTextableBaseWidget):
         lyrics.replace('\\n', '\n')
         # return a string
         return lyrics
-
-
-    # Function clearing the results list
-    def clearResults(self):
-        """Clear the results list"""
-        del self.titleLabels[:]
-        self.titleLabels = self.titleLabels
-        self.clearButton.setDisabled(True)
-        self.addButton.setDisabled(self.titleLabels == list())
-
-
-    # Add songs function
-    def add(self):
-        """Add songs in your selection """
-        for selectedTitle in self.selectedTitles:
-            songData = self.searchResults[selectedTitle+1]
-            if songData not in self.myBasket:
-                self.myBasket.append(songData)
-        self.updateMytitleLabels()
-        self.sendButton.settingsChanged()
-
-
-    # Update selections function
-    def updateMytitleLabels(self):
-        self.mytitleLabels = list()
-        for songData in self.myBasket:
-            result_string = songData["title"] + " - " + songData["artist"]
-            self.mytitleLabels.append(result_string)
-        self.mytitleLabels = self.mytitleLabels
-
-        self.clearmyBasket.setDisabled(self.myBasket == list())
-        self.removeButton.setDisabled(self.myTitles == list())
-
-
-    # fonction qui retire la selection de notre panier
-    def remove(self):
-        """Remove the selected songs in your selection """
-        self.myBasket = [
-            song for idx, song in enumerate(self.myBasket)
-            if idx not in self.myTitles
-        ]
-        self.updateMytitleLabels()
-        self.sendButton.settingsChanged()
-
-
-    # Clear selections function
-    def clearmyBasket(self):
-        """Remove all songs in your selection """
-        self.mytitleLabels = list()
-        self.myBasket = list()
-        self.sendButton.settingsChanged()
-        self.clearmyBasket.setDisabled(True)
-
 
     # Function computing results then sending them to the widget output
     def sendData(self):
@@ -423,22 +348,10 @@ class MovieScripts(OWTextableBaseWidget):
             self.controlArea.setDisabled(False)
             return
 
-        # Store downloaded lyrics strings in input objects...
+        # Store downloaded movie scripts in input objects...
         for song in song_content:
             newInput = Input(song, self.captionTitle)
             self.createdInputs.append(newInput)
-
-        # If there"s only one play, the widget"s output is the created Input.
-        if len(self.createdInputs) == 1:
-            self.segmentation = self.createdInputs[0]
-
-        # Otherwise the widget"s output is a concatenation...
-        else:
-            self.segmentation = Segmenter.concatenate(
-                self.createdInputs,
-                self.captionTitle,
-                import_labels_as=None,
-            )
 
         # Annotate segments...
         for idx, segment in enumerate(self.segmentation):
