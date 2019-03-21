@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -94,7 +94,10 @@ class Childes(OWTextableBaseWidget):
         self.displayedFolderLabels = list()
         self.currentFolder = self.__class__.base_url
         self.database = None
-        self.selectedItems = list()
+        self.selectedInDisplayedFolder = list()
+        self.selectedInSelection = list()
+        self.selectionLabels = list()
+        
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -152,7 +155,7 @@ class Childes(OWTextableBaseWidget):
         displayedFolderListbox = gui.listBox(
             widget=browseBox,
             master=self,
-            value="selectedItems", 
+            value="selectedInDisplayedFolder", 
             labels="displayedFolderLabels",
             callback=self.corpusSelected,
             tooltip="Select an item to open or import.",
@@ -182,15 +185,62 @@ class Childes(OWTextableBaseWidget):
             callback=self.openPressed,
             tooltip="View selected folder's contents.",
         )
-        self.importButton = gui.button(
+        self.addButton = gui.button(
             widget=downwardNavBox,
             master=self,
-            label="Import",
-            callback=self.importPressed,
-            tooltip="Import selected item's contents.",
+            label="Add to selection",
+            callback=self.addPressed,
+            tooltip="Add selected items contents to selection.",
         )
 
         gui.separator(widget=browseBox, height=3)
+
+        # Selection box...
+        selectionBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Selection",
+            orientation="vertical",
+            addSpace=False,
+        )
+
+        self.selectionListbox = gui.listBox(
+            widget=selectionBox,
+            master=self,
+            value="selectedInSelection",
+            labels="selectionLabels",
+            callback=lambda: self.removeButton.setDisabled( # TODO move
+                self.selection == list()),
+            tooltip="The list of corpora whose content will be imported",
+        )
+        self.selectionListbox.setMinimumHeight(150)
+        self.selectionListbox.setSelectionMode(3)
+
+        removalBox = gui.widgetBox(
+            widget=selectionBox,
+            box=False,
+            orientation="horizontal",
+        )
+        # Remove songs button
+        self.removeButton = gui.button(
+            widget=removalBox,
+            master=self,
+            label="Remove from selection",
+            callback=self.removePressed,
+            tooltip="Remove the selected corpus.",
+        )
+        self.removeButton.setDisabled(True) # TODO move
+
+        # Delete all confirmed songs button
+        self.clearButton = gui.button(
+            widget=removalBox,
+            master=self,
+            label="Clear selection",
+            callback=self.clearPressed,
+            tooltip="Remove all corpora from selection.",
+        )
+        self.clearButton.setDisabled(True) # TODO move
+
+        gui.separator(widget=selectionBox, height=3)
 
         gui.rubber(self.controlArea)
 
@@ -313,23 +363,35 @@ class Childes(OWTextableBaseWidget):
 
     def openPressed(self):
         """Display selected folder's contents"""
-        self.currentFolder += self.displayedFolderLabels[self.selectedItems[0]]
+        self.currentFolder += self.displayedFolderLabels[
+            self.selectedInDisplayedFolder[0]
+        ]
         self.updateDisplayedFolders()
 
-    def importPressed(self):
+    def addPressed(self):
         """Import selected corpus"""
-        corpus = self.displayedFolderLabels[self.selectedItems[0]]
+        corpus = self.displayedFolderLabels[self.selectedInDisplayedFolder[0]]
         self.importedCorpus = self.currentFolder + corpus
-        self.importButton.setDisabled(True)
+        self.addButton.setDisabled(True)
         self.importedCorpusLabel.setText("Corpus %s ready to import." % corpus)
         self.sendButton.settingsChanged()
 
     def listBoxDoubleClicked(self):
         """Reroute to 'openPressed' or 'importPressed' as needed"""
-        if self.displayedFolderLabels[self.selectedItems[0]].endswith(".zip"):
-            self.importPressed()
+        if self.displayedFolderLabels[
+            self.selectedInDisplayedFolder[0]
+        ].endswith(".zip"):
+            self.addPressed()
         else:
             self.openPressed()
+
+    def removePressed(self):
+        """TODO"""
+        pass
+
+    def clearPressed(self):
+        """TODO"""
+        pass
 
     def loadDatabaseCache(self):
         """Load the cached database"""
@@ -384,12 +446,16 @@ class Childes(OWTextableBaseWidget):
         self.homeRefreshButton.setDisabled(currentFolder == "/")
         self.backButton.setDisabled(currentFolder == "/")
         self.openButton.setDisabled(
-            len(self.selectedItems) == 0 or 
-            self.displayedFolderLabels[self.selectedItems[0]].endswith(".zip")
+            len(self.selectedInDisplayedFolder) == 0 or 
+            self.displayedFolderLabels[
+                self.selectedInDisplayedFolder[0]
+            ].endswith(".zip")
         )
-        self.importButton.setDisabled(
-            len(self.selectedItems) == 0 or 
-            self.displayedFolderLabels[self.selectedItems[0]].endswith("/")
+        self.addButton.setDisabled(
+            len(self.selectedInDisplayedFolder) == 0 or 
+            self.displayedFolderLabels[
+                self.selectedInDisplayedFolder[0]
+            ].endswith("/")
         )
 
     def clearCreatedInputs(self):
