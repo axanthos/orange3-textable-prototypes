@@ -174,17 +174,7 @@ class Movie Scripts(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Add songs button
-        self.addButton = gui.button(
-            widget=boxbutton,
-            master=self,
-            label=u'Add to corpus',
-            callback=self.add,
-            tooltip=(
-                u"Move the selected song downward in your corpus."
-            ),
-        )
-        self.addButton.setDisabled(True)
+        
 
         # Clear button
         # Uses "clearResults" function
@@ -198,13 +188,6 @@ class Movie Scripts(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        # area where confirmed songs are moved and stocked
-        mytitleBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="Corpus",
-            orientation="vertical",
-        )
-
         self.mytitleListbox = gui.listBox(
             widget=mytitleBox,
             master=self,
@@ -212,7 +195,7 @@ class Movie Scripts(OWTextableBaseWidget):
             labels="mytitleLabels",
             callback=lambda: self.removeButton.setDisabled(
                 self.myTitles == list()),
-            tooltip="The list of titles whose content will be imported",
+            tooltip="The list of movies whose content will be imported",
         )
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
@@ -222,29 +205,6 @@ class Movie Scripts(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Remove songs button
-        self.removeButton = gui.button(
-            widget=boxbutton2,
-            master=self,
-            label=u'Remove from corpus',
-            callback=self.remove,
-            tooltip=(
-                u"Remove the selected song from your corpus."
-            ),
-        )
-        self.removeButton.setDisabled(True)
-
-        # Delete all confirmed songs button
-        self.clearmyBasket = gui.button(
-            widget=boxbutton2,
-            master=self,
-            label=u'Clear corpus',
-            callback=self.clearmyBasket,
-            tooltip=(
-                u"Remove all songs from your corpus."
-            ),
-        )
-        self.clearmyBasket.setDisabled(True)
 
         gui.separator(widget=mytitleBox, height=3)
         gui.rubber(self.controlArea)
