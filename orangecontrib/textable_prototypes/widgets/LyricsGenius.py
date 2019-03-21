@@ -23,7 +23,7 @@ __version__ = u"0.0.2"
 __author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
 __maintainer__ = "Aris Xanthos"
 __email__ = "cyrille.gay-crosier@unil.ch, rafael.brunibaschino@unil.ch," \
-            "basile.maillard@unil.ch"
+            "basile.maillard@unil.ch, aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
 
@@ -140,6 +140,7 @@ class LyricsGenius(OWTextableBaseWidget):
                 "10",
                 "20",
                 "30",
+                "40",
                 "50",
                 "60",
                 "70",
