@@ -33,8 +33,9 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
-__version__ = "0.01"
-
+from LTTL.Segmentation import Segmentation
+from LTTL.Input import Input
+import LTTL.Segmenter as Segmenter
 
 class Redditor(OWTextableBaseWidget):
     """An Orange widget that adds two numbers"""
