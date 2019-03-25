@@ -38,7 +38,7 @@ from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
 class Redditor(OWTextableBaseWidget):
-    """An Orange widget that adds two numbers"""
+    """An Orange widget to scrape Reddit"""
 
     #----------------------------------------------------------------------
     # Widget's metadata...
