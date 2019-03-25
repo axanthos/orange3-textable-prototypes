@@ -182,7 +182,7 @@ class Redditor(OWTextableBaseWidget):
         if self.mode == 0: # 0 = subreddit selected
             # cacher URL
             self.urlBox.setVisible(False)
-            # monter subreddit
+            # montrer subreddit
             self.subredditBox.setVisible(True)
         else: # self.mode ==1 => post selected
             # cacher subreddit
