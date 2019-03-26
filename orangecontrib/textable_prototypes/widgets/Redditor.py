@@ -218,13 +218,19 @@ class Redditor(OWTextableBaseWidget):
     def get_content(self):
         self.label.setText('Getting content...')
         print(self.reddit.user.me())
+
+        # Differenciate method depending of user selection
         if self.mode == 0:
+            # Get the subreddit based on subreddit name
             subreddit = self.reddit.subreddit(self.subreddit)
+            # Get 1st "hot" post
             posts = subreddit.hot(limit=1)
+            # Loop on the posts found
             for post in posts:
                 print(post.title)
             self.label.setText('Content found !')
         elif self.mode == 1:
+            # Get post based on URL
             post = self.reddit.submission(url=self.URL)
             print(post.title)
             self.label.setText('Content found !')
