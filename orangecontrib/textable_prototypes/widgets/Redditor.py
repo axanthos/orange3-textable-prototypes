@@ -216,16 +216,18 @@ class Redditor(OWTextableBaseWidget):
             self.fetchButton.setDisabled(True)
 
     def get_content(self):
-        self.label.setText('Getting content')
+        self.label.setText('Getting content...')
         print(self.reddit.user.me())
         if self.mode == 0:
-            subreddit_selectionne = self.subreddit
-            subreddit = self.reddit.subreddit(subreddit_selectionne)
+            subreddit = self.reddit.subreddit(self.subreddit)
             posts = subreddit.hot(limit=1)
             for post in posts:
                 print(post.title)
+            self.label.setText('Content found !')
         elif self.mode == 1:
-            post_selectionne = self.URL
+            post = self.reddit.submission(url=self.URL)
+            print(post.title)
+            self.label.setText('Content found !')
 
     def send_data(self):
         self.label.setText("Envoyez! Mode is: %s" % self.mode)
