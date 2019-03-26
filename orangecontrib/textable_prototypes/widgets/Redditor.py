@@ -36,8 +36,9 @@ from _textable.widgets.TextableUtils import (
 )
 
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
+from LTTL.Segment import Segment
+from LTTL.Input import Input
 
 class Redditor(OWTextableBaseWidget):
     """An Orange widget to scrape Reddit"""
@@ -54,7 +55,7 @@ class Redditor(OWTextableBaseWidget):
     # Channel definitions...
 
     # inputs = []
-    outputs = [("Operation result", Segmentation)]
+    outputs = [("Segmentation", Segmentation)]
 
     #----------------------------------------------------------------------
     # GUI layout parameters...
@@ -75,6 +76,9 @@ class Redditor(OWTextableBaseWidget):
         password="RedditorProg2019",
         user_agent="Redditor by /u/RedditorApp"
     )
+
+    # Segment list
+    segments = list()
 
     def __init__(self):
         super().__init__()
@@ -206,7 +210,7 @@ class Redditor(OWTextableBaseWidget):
 
         self.label.setText("Mode is: %s" % self.mode)
         # Clear the channel by sending None.
-        self.send("Operation result", None)
+        self.send("Segmentation", None)
     
     def update_fetch_button(self):
         # self.mode == 0 => subreddit selected, self.mode == 1 => post selected
@@ -227,13 +231,54 @@ class Redditor(OWTextableBaseWidget):
             posts = subreddit.hot(limit=1)
             # Loop on the posts found
             for post in posts:
-                print(post.title)
+                self.get_post_data(post)
+                self.get_comment_content(post)
             self.label.setText('Content found !')
         elif self.mode == 1:
             # Get post based on URL
             post = self.reddit.submission(url=self.URL)
-            print(post.title)
+            self.get_post_data(post)
+            self.get_comment_content(post)
             self.label.setText('Content found !')
+        
+        self.send("Segmentation", Segmentation(self.segments))
+
+    def get_post_data(self, post):
+        annotations = dict()
+        annotations["Title"] = post.title
+        annotations["Id"] = post.id
+        text = Input(post.selftext)
+
+        self.segments.append(
+            Segment(
+                str_index=text[0].str_index,
+                start=text[0].start,
+                end=text[0].end,
+                annotations=annotations
+            )
+        )
+    
+    def get_comment_content(self, post):
+        post.comments.replace_more(limit=0)
+        comments = post.comments.list()
+
+        for comment in comments:
+            annotations = dict()
+            annotations["Title"] = post.title
+            annotations["Id"] = comment.id
+            annotations["Parent"] = comment.parent_id
+
+            text = Input(comment.body)
+
+            self.segments.append(
+                Segment(
+                    str_index=text[0].str_index,
+                    start=text[0].start,
+                    end=text[0].end,
+                    annotations=annotations
+                )
+            )
+
 
     def send_data(self):
         self.label.setText("Envoyez! Mode is: %s" % self.mode)
