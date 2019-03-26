@@ -281,7 +281,7 @@ class Redditor(OWTextableBaseWidget):
 
 
     def send_data(self):
-        self.label.setText("Envoyez! Mode is: %s" % self.mode)
+        self.label.setText("Envoyé! Mode is: {}".format(self.mode))
 
 
  
