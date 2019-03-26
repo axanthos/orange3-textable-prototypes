@@ -25,6 +25,8 @@ __maintainer__ = "Nahuel Degonda, Olivia Edelman, Loris Rimaz"
 __email__ = "nahuel.degonda@unil.ch, olivia.edelman@unil.ch, loris.rimaz@unil.ch"
 
 # Standard imports...
+import praw
+
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
 
@@ -64,6 +66,15 @@ class Redditor(OWTextableBaseWidget):
     mode = Setting(0)
     subreddit = Setting(u'')
     URL = Setting(u'')
+
+    # Praw instance
+    reddit = praw.Reddit(
+        client_id="aHeP3Ub7aILvsg",
+        client_secret=None,
+        username="RedditorApp",
+        password="RedditorProg2019",
+        user_agent="Redditor by /u/RedditorApp"
+    )
 
     def __init__(self):
         super().__init__()
@@ -206,6 +217,15 @@ class Redditor(OWTextableBaseWidget):
 
     def get_content(self):
         self.label.setText('Getting content')
+        print(self.reddit.user.me())
+        if self.mode == 0:
+            subreddit_selectionne = self.subreddit
+            subreddit = self.reddit.subreddit(subreddit_selectionne)
+            posts = subreddit.hot(limit=1)
+            for post in posts:
+                print(post.title)
+        elif self.mode == 1:
+            post_selectionne = self.URL
 
     def send_data(self):
         self.label.setText("Envoyez! Mode is: %s" % self.mode)
