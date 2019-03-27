@@ -26,6 +26,7 @@ __email__ = "nahuel.degonda@unil.ch, olivia.edelman@unil.ch, loris.rimaz@unil.ch
 
 # Standard imports...
 import praw
+import prawcore
 
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
@@ -136,7 +137,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='URL',
             orientation='horizontal',
-            label=u'URL',
+            label=u'URL:',
             labelWidth=101,
             callback=self.update_fetch_button
         )
@@ -152,7 +153,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='subreddit',
             orientation='horizontal',
-            label=u'Subreddit',
+            label=u'reddit.com/r/...:',
             labelWidth=101,
             callback=self.update_fetch_button
         )
@@ -226,22 +227,31 @@ class Redditor(OWTextableBaseWidget):
         # Differenciate method depending of user selection
         if self.mode == 0:
             # Get the subreddit based on subreddit name
-            subreddit = self.reddit.subreddit(self.subreddit)
-            # Get 1st "hot" post
-            posts = subreddit.hot(limit=1)
-            # Loop on the posts found
-            for post in posts:
-                self.get_post_data(post)
-                self.get_comment_content(post)
-            self.label.setText('Content found !')
+            try:
+                subreddit = self.reddit.subreddit(self.subreddit)
+                # Get 1st "hot" post
+                posts = subreddit.hot(limit=1)
+                # Loop on the posts found
+                for post in posts:
+                    self.get_post_data(post)
+                    self.get_comment_content(post)
+                self.label.setText('Content found !')
+            except prawcore.exceptions.Redirect:
+                self.label.setText('Error: subreddit not found !')
         elif self.mode == 1:
             # Get post based on URL
-            post = self.reddit.submission(url=self.URL)
-            self.get_post_data(post)
-            self.get_comment_content(post)
-            self.label.setText('Content found !')
+            try:
+                post = self.reddit.submission(url=self.URL)
+                self.get_post_data(post)
+                self.get_comment_content(post)
+                self.label.setText('Content found !')
+            except prawcore.exceptions.NotFound:
+                self.label.setText('Error: no match for URL')
         
-        self.send("Segmentation", Segmentation(self.segments))
+        if len(self.segments) > 0:
+            self.send("Segmentation", Segmentation(self.segments))
+        else:
+            return
 
     def get_post_data(self, post):
         annotations = dict()
