@@ -248,10 +248,8 @@ class Redditor(OWTextableBaseWidget):
             except prawcore.exceptions.NotFound:
                 self.label.setText('Error: no match for URL')
         
-        if len(self.segments) > 0:
-            self.send("Segmentation", Segmentation(self.segments))
-        else:
-            return
+        self.send("Segmentation", Segmentation(self.segments))
+        self.segments = []
 
     def get_post_data(self, post):
         annotations = dict()
