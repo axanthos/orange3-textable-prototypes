@@ -255,12 +255,17 @@ class Redditor(OWTextableBaseWidget):
                     for post in posts:
                         self.get_post_data(post)
                         self.get_comment_content(post)
-                    # self.label.setText('Content found !')
                 except prawcore.exceptions.Redirect:
-                    # self.label.setText('Error: subreddit not found !')
+                    self.infoBox.setText(
+                        "Error in redirect, please make sure the subreddit name is correct.",
+                        "error"
+                    )
                     return
                 except prawcore.exceptions.NotFound:
-                    # self.label.setText('Error: subreddit not found !')
+                    self.infoBox.setText(
+                        "Subreddit not found.",
+                        "error"
+                    )
                     return
             elif self.mode == "URL":
                 # Get post based on URL
@@ -268,12 +273,17 @@ class Redditor(OWTextableBaseWidget):
                     post = self.reddit.submission(url=self.URL)
                     self.get_post_data(post)
                     self.get_comment_content(post)
-                    # self.label.setText('Content found !')
                 except prawcore.exceptions.NotFound:
-                    # self.label.setText('Error: no match for URL')
+                    self.infoBox.setText(
+                        "No match forURL.",
+                        "error"
+                    )
                     return
                 except praw.exceptions.ClientException:
-                    # self.label.setText('Error: Invalid URL !')
+                    self.infoBox.setText(
+                        "URL not found.",
+                        "error"
+                    )
                     return
             elif self.mode == "Full text":
                 userSearch = self.fullText
@@ -281,13 +291,15 @@ class Redditor(OWTextableBaseWidget):
                 for post in reddit.search(userSearch, sort="relevance", limit=1):
                     self.get_post_data(post)
                     self.get_comment_content(post)
-                # self.label.setText('Content found !')
 
             self.send("Segmentation", Segmentation(self.segments))
+            self.infoBox.setText("{} segments sent to output !".format(len(self.segments)))
             self.segments = []
         else:
-            # self.label.setText('Please enter a value !')
-            return
+            self.infoBox.setText(
+                "Please fill in the input box.",
+                "warning"
+            )
 
     def get_post_data(self, post):
         annotations = dict()
