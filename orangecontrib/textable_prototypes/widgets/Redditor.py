@@ -68,6 +68,7 @@ class Redditor(OWTextableBaseWidget):
     mode = Setting("Subreddit")
     subreddit = Setting(u'')
     URL = Setting(u'')
+    fullText = Setting(u'')
 
     # Praw instance
     reddit = praw.Reddit(
@@ -140,7 +141,7 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             label=u'URL:',
             labelWidth=101,
-            callback=self.update_fetch_button
+            callback=self.update_send_button
         )
 
         self.subredditBox = gui.widgetBox(
@@ -156,9 +157,25 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             label=u'reddit.com/r/...:',
             labelWidth=101,
-            callback=self.update_fetch_button
+            callback=self.update_send_button
+        
         )
-
+        self.fullTextBox = gui.widgetBox(
+            widget=sourceBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+        
+        fullText = gui.lineEdit(
+            widget=self.fullTextBox,
+            master=self,
+            value='fullText',
+            orientation='horizontal',
+            label=u'search all reddit',
+            labelWidth=101,
+            callback=self.update_send_button
+        )
+        '''
         self.fetchButton = gui.button(
             widget=sourceBox,
             master=self,
@@ -180,7 +197,7 @@ class Redditor(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
 
         )
-        '''
+        
 
         self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
@@ -192,7 +209,7 @@ class Redditor(OWTextableBaseWidget):
 
         self.mode_changed()
 
-        self.update_fetch_button()
+        self.update_send_button()
 
     def mode_changed(self):
         """Reimplemented from OWWidget."""
@@ -214,18 +231,18 @@ class Redditor(OWTextableBaseWidget):
             # montrer URL
             self.urlBox.setVisible(True)
 
-        self.update_fetch_button()
+        self.update_send_button()
 
         self.label.setText("Mode is: %s" % self.mode)
         # Clear the channel by sending None.
         self.send("Segmentation", None)
     
-    def update_fetch_button(self):
+    def update_send_button(self):
         # self.mode == 0 => subreddit selected, self.mode == 1 => post selected
         if (self.mode == 0 and len(self.subreddit) > 0) or (self.mode == 1 and len(self.URL) > 0):
-            self.fetchButton.setDisabled(False)
+            self.sendButton.setDisabled(False)
         else:
-            self.fetchButton.setDisabled(True)
+            self.sendButton.setDisabled(True)
 
     def get_content(self):
         self.label.setText('Getting content...')
