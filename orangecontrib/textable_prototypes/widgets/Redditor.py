@@ -238,6 +238,8 @@ class Redditor(OWTextableBaseWidget):
                 self.label.setText('Content found !')
             except prawcore.exceptions.Redirect:
                 self.label.setText('Error: subreddit not found !')
+            except prawcore.exceptions.NotFound:
+                self.label.setText('Error: subreddit not found !')
         elif self.mode == 1:
             # Get post based on URL
             try:
