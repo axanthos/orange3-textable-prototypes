@@ -239,8 +239,10 @@ class Redditor(OWTextableBaseWidget):
     
     def update_send_button(self):
         # self.mode == 0 => subreddit selected, self.mode == 1 => post selected
-        if (self.mode == 0 and len(self.subreddit) > 0) or (self.mode == 1 and len(self.URL) > 0):
-            self.sendButton.setDisabled(False)
+        if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
+            (self.mode == "URL" and len(self.URL) > 0) or
+            (self.mode == "Full text" and len(self.URL) > 0)):
+            self.fetchButton.setDisabled(False)
         else:
             self.sendButton.setDisabled(True)
 
@@ -249,7 +251,7 @@ class Redditor(OWTextableBaseWidget):
         print(self.reddit.user.me())
 
         # Differenciate method depending of user selection
-        if self.mode == 0:
+        if self.mode == "Subreddit":
             # Get the subreddit based on subreddit name
             try:
                 subreddit = self.reddit.subreddit(self.subreddit)
@@ -264,7 +266,7 @@ class Redditor(OWTextableBaseWidget):
                 self.label.setText('Error: subreddit not found !')
             except prawcore.exceptions.NotFound:
                 self.label.setText('Error: subreddit not found !')
-        elif self.mode == 1:
+        elif self.mode == "URL":
             # Get post based on URL
             try:
                 post = self.reddit.submission(url=self.URL)
@@ -275,7 +277,14 @@ class Redditor(OWTextableBaseWidget):
                 self.label.setText('Error: no match for URL')
             except praw.exceptions.ClientException:
                 self.label.setText('Error: Invalid URL !')
-        
+        elif self.mode == "Full text":
+            reddit = self.reddit.subreddit("all")
+            for post in reddit.search("yellow car", sort="relevance", limit=1):
+                self.get_post_data(post)
+                self.get_comment_content(post)
+                print(post.title)
+            self.label.setText('Content found !')
+
         self.send("Segmentation", Segmentation(self.segments))
         self.segments = []
 
