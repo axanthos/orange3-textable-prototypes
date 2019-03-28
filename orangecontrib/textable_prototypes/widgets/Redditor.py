@@ -247,6 +247,8 @@ class Redditor(OWTextableBaseWidget):
                 self.label.setText('Content found !')
             except prawcore.exceptions.NotFound:
                 self.label.setText('Error: no match for URL')
+            except praw.exceptions.ClientException:
+                self.label.setText('Error: Invalid URL !')
         
         self.send("Segmentation", Segmentation(self.segments))
         self.segments = []
