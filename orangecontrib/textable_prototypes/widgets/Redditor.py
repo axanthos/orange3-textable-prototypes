@@ -65,7 +65,7 @@ class Redditor(OWTextableBaseWidget):
     resizing_enabled = True
 
     # Settings
-    mode = Setting(0)
+    mode = Setting("Subreddit")
     subreddit = Setting(u'')
     URL = Setting(u'')
 
@@ -97,25 +97,25 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
-        '''
-        modeBox = gui.comboBox(
+        self.choiceBox = gui.comboBox(
             widget=sourceBox,
             master=self, 
             value='mode', 
-            label="Mode",
+            label="Mode:",
             callback=self.mode_changed,
             tooltip= "Chose mode",
             orientation='horizontal',
             sendSelectedValue=True,
-            items=["subreddit", "post"],
-            )
-        '''
+            items=["Subreddit", "URL", "Full text"],
+        )
+
         self.modeBox = gui.widgetBox(
             widget=sourceBox,
             orientation='horizontal',
             addSpace=False,
         )
 
+        """
         modeRadio = gui.radioButtons(
             widget=self.modeBox,
             master=self,
@@ -125,6 +125,7 @@ class Redditor(OWTextableBaseWidget):
             callback=self.mode_changed,
             btnLabels=["SubReddit", "Post"],
         )
+        """
 
         self.urlBox = gui.widgetBox(
             widget=sourceBox,
@@ -195,12 +196,18 @@ class Redditor(OWTextableBaseWidget):
 
     def mode_changed(self):
         """Reimplemented from OWWidget."""
-        if self.mode == 0: # 0 = subreddit selected
+        if self.mode == "Subreddit": # 0 = subreddit selected
             # cacher URL
             self.urlBox.setVisible(False)
             # montrer subreddit
             self.subredditBox.setVisible(True)
-        else: # self.mode ==1 => post selected
+        elif self.mode == "URL": # self.mode ==1 => post selected
+            # cacher subreddit
+            self.subredditBox.setVisible(False)
+
+            # montrer URL
+            self.urlBox.setVisible(True)
+        elif self.mode == "Full text":
             # cacher subreddit
             self.subredditBox.setVisible(False)
 
