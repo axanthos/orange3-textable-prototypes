@@ -134,13 +134,13 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
-        urlPath = gui.lineEdit(
+        gui.lineEdit(
             widget=self.urlBox,
             master=self,
             value='URL',
             orientation='horizontal',
-            label=u'URL:',
-            labelWidth=101
+            label=u'Search with URL:',
+            labelWidth=110
         )
 
         self.subredditBox = gui.widgetBox(
@@ -149,13 +149,13 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
-        subredditName = gui.lineEdit(
+        gui.lineEdit(
             widget=self.subredditBox,
             master=self,
             value='subreddit',
             orientation='horizontal',
             label=u'reddit.com/r/...:',
-            labelWidth=101
+            labelWidth=110
         
         )
         self.fullTextBox = gui.widgetBox(
@@ -164,13 +164,13 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
         
-        fullText = gui.lineEdit(
+        gui.lineEdit(
             widget=self.fullTextBox,
             master=self,
             value='fullText',
             orientation='horizontal',
-            label=u'search all reddit',
-            labelWidth=101
+            label=u'Search on reddit:',
+            labelWidth=110
         )
         '''
         self.fetchButton = gui.button(
@@ -195,12 +195,6 @@ class Redditor(OWTextableBaseWidget):
 
         )
         
-
-        self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
-
-        # Send button...
-        #self.sendButton.draw()
-
         # Info box...
         self.infoBox.draw()
         self.sendButton.draw()
@@ -210,26 +204,30 @@ class Redditor(OWTextableBaseWidget):
     def mode_changed(self):
         """Reimplemented from OWWidget."""
         if self.mode == "Subreddit": # 0 = subreddit selected
-            # cacher URL
+            # cacher URL et Full text
             self.urlBox.setVisible(False)
+            self.fullTextBox.setVisible(False)
+
             # montrer subreddit
             self.subredditBox.setVisible(True)
         elif self.mode == "URL": # self.mode ==1 => post selected
-            # cacher subreddit
+            # cacher subreddit et Full text
             self.subredditBox.setVisible(False)
+            self.fullTextBox.setVisible(False)
 
             # montrer URL
             self.urlBox.setVisible(True)
         elif self.mode == "Full text":
             # cacher subreddit
             self.subredditBox.setVisible(False)
+            self.urlBox.setVisible(False)
 
-            # montrer URL
-            self.urlBox.setVisible(True)
+            # montrer Full text
+            self.fullTextBox.setVisible(True)
 
-        self.label.setText("Mode is: %s" % self.mode)
         # Clear the channel by sending None.
         self.send("Segmentation", None)
+
     """
     def update_send_button(self):
         # self.mode == 0 => subreddit selected, self.mode == 1 => post selected
@@ -240,47 +238,56 @@ class Redditor(OWTextableBaseWidget):
         else:
             self.sendButton.setDisabled(True)
     """
-    def get_content(self):
-        self.label.setText('Getting content...')
-        print(self.reddit.user.me())
 
-        # Differenciate method depending of user selection
-        if self.mode == "Subreddit":
-            # Get the subreddit based on subreddit name
-            try:
-                subreddit = self.reddit.subreddit(self.subreddit)
-                # Get 1st "hot" post
-                posts = subreddit.hot(limit=1)
-                # Loop on the posts found
-                for post in posts:
+    def get_content(self):
+        print(self.reddit.user.me())
+        if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
+            (self.mode == "URL" and len(self.URL) > 0) or
+            (self.mode == "Full text" and len(self.fullText) > 0)):
+            # Differenciate method depending of user selection
+            if self.mode == "Subreddit":
+                # Get the subreddit based on subreddit name
+                try:
+                    subreddit = self.reddit.subreddit(self.subreddit)
+                    # Get 1st "hot" post
+                    posts = subreddit.hot(limit=1)
+                    # Loop on the posts found
+                    for post in posts:
+                        self.get_post_data(post)
+                        self.get_comment_content(post)
+                    # self.label.setText('Content found !')
+                except prawcore.exceptions.Redirect:
+                    # self.label.setText('Error: subreddit not found !')
+                    return
+                except prawcore.exceptions.NotFound:
+                    # self.label.setText('Error: subreddit not found !')
+                    return
+            elif self.mode == "URL":
+                # Get post based on URL
+                try:
+                    post = self.reddit.submission(url=self.URL)
                     self.get_post_data(post)
                     self.get_comment_content(post)
-                self.label.setText('Content found !')
-            except prawcore.exceptions.Redirect:
-                self.label.setText('Error: subreddit not found !')
-            except prawcore.exceptions.NotFound:
-                self.label.setText('Error: subreddit not found !')
-        elif self.mode == "URL":
-            # Get post based on URL
-            try:
-                post = self.reddit.submission(url=self.URL)
-                self.get_post_data(post)
-                self.get_comment_content(post)
-                self.label.setText('Content found !')
-            except prawcore.exceptions.NotFound:
-                self.label.setText('Error: no match for URL')
-            except praw.exceptions.ClientException:
-                self.label.setText('Error: Invalid URL !')
-        elif self.mode == "Full text":
-            reddit = self.reddit.subreddit("all")
-            for post in reddit.search("yellow car", sort="relevance", limit=1):
-                self.get_post_data(post)
-                self.get_comment_content(post)
-                print(post.title)
-            self.label.setText('Content found !')
+                    # self.label.setText('Content found !')
+                except prawcore.exceptions.NotFound:
+                    # self.label.setText('Error: no match for URL')
+                    return
+                except praw.exceptions.ClientException:
+                    # self.label.setText('Error: Invalid URL !')
+                    return
+            elif self.mode == "Full text":
+                userSearch = self.fullText
+                reddit = self.reddit.subreddit("all")
+                for post in reddit.search(userSearch, sort="relevance", limit=1):
+                    self.get_post_data(post)
+                    self.get_comment_content(post)
+                # self.label.setText('Content found !')
 
-        self.send("Segmentation", Segmentation(self.segments))
-        self.segments = []
+            self.send("Segmentation", Segmentation(self.segments))
+            self.segments = []
+        else:
+            # self.label.setText('Please enter a value !')
+            return
 
     def get_post_data(self, post):
         annotations = dict()
