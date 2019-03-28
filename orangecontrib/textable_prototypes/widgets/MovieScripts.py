@@ -31,6 +31,7 @@ import urllib
 import urllib.request
 import urllib.parse
 import json
+import pickle
 import requests
 from urllib import request
 from urllib import parse
@@ -215,7 +216,8 @@ class MovieScripts(OWTextableBaseWidget):
     # Search function which contacts the Genius API
     def searchFunction(self):
         """Search from website IMSDB.com"""
-        quote_page = 'https://www.imsdb.com/search.php'
+        #Instead of searching for a title from the website, have a cache of all title which widget will access
+        quote_page = 'http://www.imsdb.com/feeds/fromtitle.php?title=' + movie_title
         page = urllib.urlopen(quote_page)
         soup = BeautifulSoup(page, 'html.parser')
         for link in soup.find_all('a'):
