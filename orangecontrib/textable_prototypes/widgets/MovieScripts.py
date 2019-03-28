@@ -112,7 +112,7 @@ class MovieScripts(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search songs",
+            box="Search movie",
             orientation="vertical",
         )
         # Allows to enter specific text to the research
@@ -133,6 +133,7 @@ class MovieScripts(OWTextableBaseWidget):
             master=self,
             value="nbr_results",
             items=[
+                "5",
                 "10",
                 "20",
                 "30",
