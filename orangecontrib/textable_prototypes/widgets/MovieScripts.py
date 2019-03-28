@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 __version__ = u"0.0.2"
 __author__ = "David Fluhmann, Leonardo Cavaliere, Kirill Melnikov"
 __maintainer__ = "Aris Xanthos"
-__email__ = "david.fluhmann@unil.ch, leonardo.cavaliere@unil.ch, kirill.melnikov@unil.ch"
+__email__ = "DAVID.fluhmann@unil.ch, leonardo.cavaliere@unil.ch, kirill.melnikov@unil.ch"
 
 from Orange.widgets import widget, gui, settings
 
