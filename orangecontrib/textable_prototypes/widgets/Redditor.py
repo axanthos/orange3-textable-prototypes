@@ -300,6 +300,7 @@ class Redditor(OWTextableBaseWidget):
                 "Please fill in the input box.",
                 "warning"
             )
+            return
 
     def get_post_data(self, post):
         annotations = dict()
