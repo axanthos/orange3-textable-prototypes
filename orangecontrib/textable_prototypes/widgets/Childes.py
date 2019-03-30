@@ -27,6 +27,7 @@ __email__ = "aris.xanthos@unil.ch"
 
 import os
 import io
+import re
 import pickle
 import inspect
 import zipfile
@@ -304,8 +305,43 @@ class Childes(OWTextableBaseWidget):
                     self.captionTitle
                 )
                 self.createdInputs.append(newInput)
-                annotations.append({"corpus":corpus, "filename":file.filename})
-            
+                chatSeg = Segmenter.import_xml(newInput, "CHAT")
+                annotations.append(dict())
+                annotations[-1]["file_path"] = file.filename
+                for key in ["Corpus", "Lang", "PID"]:
+                    try:
+                        annotations[-1][key.lower()] =  \
+                            chatSeg[0].annotations[key]
+                    except KeyError:
+                        pass
+                participantListSeg = Segmenter.import_xml(
+                    newInput, "Participants"
+                )
+                recodedInput, _ = Segmenter.recode(
+                    participantListSeg, [
+                        (re.compile("/>"), "> </participant>")
+                    ]
+                )
+                participantSeg = Segmenter.import_xml(
+                    recodedInput, "participant"
+                )
+                targetChildData = list()
+                for participant in participantSeg:
+                    if participant.annotations["role"] != "Target_Child":
+                        continue
+                    targetChildData.append(dict())
+                    if "age" in participant.annotations:
+                        targetChildData[-1]["target_child_age"] =   \
+                            participant.annotations["age"]
+                    if "id" in participant.annotations:
+                        targetChildData[-1]["target_child_id"] =   \
+                            participant.annotations["id"]
+                    if "sex" in participant.annotations:
+                        targetChildData[-1]["target_child_sex"] =   \
+                            participant.annotations["sex"]
+                if len(targetChildData) == 1:
+                    annotations[-1].update(targetChildData[0])
+                    
             progressBar.advance()
 
         # If there's only one file, the widget's output is the created Input...
