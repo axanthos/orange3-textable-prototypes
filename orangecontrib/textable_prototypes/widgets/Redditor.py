@@ -69,6 +69,9 @@ class Redditor(OWTextableBaseWidget):
     subreddit = Setting(u'')
     URL = Setting(u'')
     fullText = Setting(u'')
+    includeTitle = Setting(False)
+    includeContent = Setting(False)
+    includeComments = Setting(False)
 
     # Praw instance
     reddit = praw.Reddit(
@@ -172,7 +175,41 @@ class Redditor(OWTextableBaseWidget):
             label=u'Search on reddit:',
             labelWidth=110
         )
+
         '''
+        Include Box
+        '''
+
+        self.includeBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Include',
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        includeTitleBox = gui.checkBox(
+            widget=self.includeBox,
+            master=self,
+            value='includeTitle',
+            label=u'Title',
+            callback=self.get_content,
+            
+        )
+        includeContentBox = gui.checkBox(
+            widget=self.includeBox,
+            master=self,
+            value='includeContent',
+            label=u'Content',
+            callback=self.get_content,
+        )
+        includeCommentsBox = gui.checkBox(
+            widget=self.includeBox,
+            master=self,
+            value='includeComments',
+            label=u'Comments',
+            callback=self.get_content,
+        )
+        """
         self.fetchButton = gui.button(
             widget=sourceBox,
             master=self,
@@ -180,7 +217,7 @@ class Redditor(OWTextableBaseWidget):
             callback=self.get_content,
         )
 
-        '''
+        """
         self.sendBox = gui.widgetBox(
             widget=self.controlArea,
             orientation='vertical',
@@ -194,7 +231,24 @@ class Redditor(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
 
         )
-        
+
+        """
+        self.includeBox = gui.comboBox( # PETIT ESSAI INCLUDE !
+            widget=infoBox,
+            master=self, 
+            value='include', 
+            label="Title:", "Content", "Comments",
+            callback=self.mode_changed,
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["Title", "Content", "Comment"],
+        )
+		"""
+        self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
+
+        # Send button...
+        #self.sendButton.draw()
+
         # Info box...
         self.infoBox.draw()
         self.sendButton.draw()
