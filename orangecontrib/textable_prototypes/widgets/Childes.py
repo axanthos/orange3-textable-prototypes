@@ -74,6 +74,7 @@ class Childes(OWTextableBaseWidget):
     )
 
     importedCorpora = settings.Setting(list())
+    outputUtterances = settings.Setting(False)
     autoSend = settings.Setting(False)
 
     #----------------------------------------------------------------------
@@ -161,7 +162,7 @@ class Childes(OWTextableBaseWidget):
             callback=self.corpusSelected,
             tooltip="Select an item to open or import.",
         )
-        displayedFolderListbox.setMinimumHeight(150)
+        displayedFolderListbox.setMinimumHeight(120)
         displayedFolderListbox.setSelectionMode(3)
         displayedFolderListbox.doubleClicked.connect(
             self.displayedFoldersDoubleClicked
@@ -208,7 +209,7 @@ class Childes(OWTextableBaseWidget):
                 self.selectedInSelection == list()),
             tooltip="The list of corpora whose content will be imported",
         )
-        selectionListbox.setMinimumHeight(150)
+        selectionListbox.setMinimumHeight(120)
         selectionListbox.setSelectionMode(3)
         selectionListbox.doubleClicked.connect(self.selectionDoubleClicked)
 
@@ -236,6 +237,25 @@ class Childes(OWTextableBaseWidget):
         )
 
         gui.separator(widget=selectionBox, height=3)
+
+        # Options box...
+        optionBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Options",
+            orientation="vertical",
+            addSpace=False,
+        )
+        
+        gui.checkBox(
+            widget=optionBox,
+            master=self,
+            value='outputUtterances',
+            label=u'Output utterance segmentation',
+            callback=self.outputUtterancesClicked,
+            tooltip=u"TODO",
+        )
+
+        gui.separator(widget=optionBox, height=3)
 
         gui.rubber(self.controlArea)
         
@@ -267,6 +287,10 @@ class Childes(OWTextableBaseWidget):
        
         # Clear created Inputs and initialize progress bar...
         self.clearCreatedInputs()
+        self.infoBox.setText(
+            "Downloading data from CHILDES website, please wait...", 
+            "warning",
+        )     
         progressBar = ProgressBar(self, iterations=len(self.importedCorpora))
         self.controlArea.setDisabled(True)
         
@@ -383,8 +407,11 @@ class Childes(OWTextableBaseWidget):
 
     def homeRefreshPressed(self):
         """Refresh database file tree"""
-        self.currentFolder = self.__class__.base_url
-        self.updateDisplayedFolders()
+        if self.currentFolder != self.__class__.base_url:
+            self.currentFolder = self.__class__.base_url
+            self.updateDisplayedFolders()
+        else:
+            self.refreshDatabaseCache()
 
     def backPressed(self):
         """Display parent folder's contents"""
@@ -455,6 +482,80 @@ class Childes(OWTextableBaseWidget):
         """Reroute to removePressed"""
         self.removePressed()
 
+    def outputUtterancesClicked(self):
+        """Handle 'output utterances' checkbox"""
+        pass
+        
+    def refreshDatabaseCache(self):
+        """Refresh the database cache"""
+        self.infoBox.setText(
+            "Scraping CHILDES website, please wait...", 
+            "warning",
+        )     
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)
+        
+        # Scrape website...
+        self.database = dict()
+        self.importedCorpora = list()
+        try:
+            self.recursivelyScrapeUrl(
+                self.__class__.base_url, 
+                self.database,
+            )
+            # Dump cache to file...
+            path = os.path.dirname(
+                os.path.abspath(inspect.getfile(inspect.currentframe()))
+            )
+            try:
+                file = open(
+                    os.path.join(path, self.__class__.cache_filename),
+                    "wb",
+                )
+                pickle.dump(self.database, file)
+                file.close()
+            except IOError:
+                self.infoBox.setText(
+                    "Couldn't save database to disk.", 
+                    "warning",
+                )
+            self.sendButton.settingsChanged()
+        except requests.exceptions.ConnectionError:
+            self.infoBox.setText(
+                "Error while attempting to scrape the CHILDES website.", 
+                "error",
+            )
+            self.send("XML data", None, self)
+              
+        progressBar.advance()
+        progressBar.finish()
+        self.currentFolder = self.__class__.base_url
+        self.updateDisplayedFolders()
+        self.updateSelection()
+        self.controlArea.setDisabled(False)
+
+    def recursivelyScrapeUrl(self, url, urls):
+        """Scrape the CHILDES website recursively"""
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, "html.parser")
+        links = soup.find_all('a')
+        if links is None or len(links) == 0:
+            return
+        else:
+            urls[url] = dict()
+            for link in links:
+                new_url = url+link["href"]
+                if(
+                    link["href"].endswith("/") 
+                    and len(link["href"]) > 1
+                    and not link["href"].startswith("/data-xml/")
+                ):
+                    self.recursivelyScrapeUrl(new_url, urls[url])
+                elif link["href"].endswith(".zip"):
+                    urls[url][link["href"]] = new_url
+            if len(urls[url]) == 0:
+                del urls[url]
+        
     def loadDatabaseCache(self):
         """Load the cached database"""
         # Try to open saved file in this module"s directory...
@@ -465,15 +566,26 @@ class Childes(OWTextableBaseWidget):
             file = open(os.path.join(path, self.__class__.cache_filename),"rb")
             self.database = pickle.load(file)
             file.close()
+            self.currentFolder = self.__class__.base_url
+            self.updateDisplayedFolders()
         # Else try to rebuild cache from CHILDES website...
         except IOError:
-            self.database = self.rebuildCacheFromWebsite()
-
-        self.currentFolder = self.__class__.base_url
-        self.updateDisplayedFolders()
+            self.refreshDatabaseCache()
 
     def updateDisplayedFolders(self):
         """Refresh state of displayed folder listbox"""
+        # If database couldn't be loaded...
+        if not self.database:
+            self.currentFolderLabel.setText(
+                "No database loaded, please click 'Refresh'."
+            )
+            self.homeRefreshButton.setDisabled(False)
+            self.homeRefreshButton.setText("Refresh")
+            self.backButton.setDisabled(True)
+            self.openButton.setDisabled(True)
+            self.addButton.setDisabled(True)
+            return
+        
         # Current folder label...
         currentFolder = self.currentFolder[len(self.__class__.base_url)-1:]
         self.currentFolderLabel.setText("Current folder: " + currentFolder)
@@ -503,7 +615,10 @@ class Childes(OWTextableBaseWidget):
     def updateBrowseBoxButtons(self):
         """Refresh state of Browse box buttons"""
         currentFolder = self.currentFolder[len(self.__class__.base_url)-1:]
-        self.homeRefreshButton.setDisabled(currentFolder == "/")
+        if currentFolder == "/": # TODO change tooltip
+            self.homeRefreshButton.setText("Refresh")
+        else:
+            self.homeRefreshButton.setText("Home")
         self.backButton.setDisabled(currentFolder == "/")
         self.openButton.setDisabled(
             len(self.selectedInDisplayedFolder) != 1 or 
