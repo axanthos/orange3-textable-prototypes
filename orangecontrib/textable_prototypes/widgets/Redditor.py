@@ -69,6 +69,9 @@ class Redditor(OWTextableBaseWidget):
     subreddit = Setting(u'')
     URL = Setting(u'')
     fullText = Setting(u'')
+    sortBy = Setting("Hot")
+    postedAt = Setting("All")
+    amount = Setting(1)
     includeTitle = Setting(True)
     includeContent = Setting(True)
     includeComments = Setting(True)
@@ -107,7 +110,7 @@ class Redditor(OWTextableBaseWidget):
             value='mode', 
             label="Mode:",
             callback=self.mode_changed,
-            tooltip= "Chose mode",
+            tooltip= "Choose mode",
             orientation='horizontal',
             sendSelectedValue=True,
             items=["Subreddit", "URL", "Full text"],
@@ -176,6 +179,51 @@ class Redditor(OWTextableBaseWidget):
             labelWidth=110
         )
 
+        """
+        Filter box
+        """
+
+        self.filterBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Filters',
+            orientation='vertical',
+            addSpace=False,
+        )
+
+        gui.comboBox(
+            widget=self.filterBox,
+            master=self,
+            value='sortBy',
+            label=u'Sort by:',
+            tooltip= "Choose mode to sort your posts",
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["Hot", "New", "Controversial", "Top", "Rising"],
+        )
+
+        gui.comboBox(
+            widget=self.filterBox,
+            master=self,
+            value='postedAt',
+            label=u'Time:',
+            tooltip= "Choose mode to sort your posts",
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["All", "Past day", "Past hour", "Past month", "Past year"],
+        )
+
+        gui.spin(
+            widget=self.filterBox,
+            master=self,
+            value="amount",
+            minv=1,
+            maxv=200,
+            label="Amount:",
+            labelWidth=101,
+            orientation="horizontal",
+            tooltip="Select the amount of posts that you want",
+        )
+
         '''
         Include Box
         '''
@@ -187,22 +235,23 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
-        includeTitleBox = gui.checkBox(
+        gui.checkBox(
             widget=self.includeBox,
             master=self,
             value='includeTitle',
             label=u'Title',
-            callback=self.includeTitle_changed,
-            
+            callback=self.includeTitle_changed,  
         )
-        includeContentBox = gui.checkBox(
+
+        gui.checkBox(
             widget=self.includeBox,
             master=self,
             value='includeContent',
             label=u'Content',
             callback=self.includeContent_changed,
         )
-        includeCommentsBox = gui.checkBox(
+        
+        gui.checkBox(
             widget=self.includeBox,
             master=self,
             value='includeComments',
@@ -244,7 +293,7 @@ class Redditor(OWTextableBaseWidget):
             items=["Title", "Content", "Comment"],
         )
 		"""
-        self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
+        # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
         # Send button...
         #self.sendButton.draw()
@@ -261,13 +310,19 @@ class Redditor(OWTextableBaseWidget):
             # cacher URL et Full text
             self.urlBox.setVisible(False)
             self.fullTextBox.setVisible(False)
-
+            print("{}; {}; {}".format(
+                self.sortBy,
+                self.postedAt,
+                self.amount
+            ))
             # montrer subreddit
             self.subredditBox.setVisible(True)
+            self.filterBox.setVisible(True)
         elif self.mode == "URL": # self.mode ==1 => post selected
             # cacher subreddit et Full text
             self.subredditBox.setVisible(False)
             self.fullTextBox.setVisible(False)
+            self.filterBox.setVisible(False)
 
             # montrer URL
             self.urlBox.setVisible(True)
@@ -278,6 +333,7 @@ class Redditor(OWTextableBaseWidget):
 
             # montrer Full text
             self.fullTextBox.setVisible(True)
+            self.filterBox.setVisible(True)
 
         # Clear the channel by sending None.
         # TODO: pas sûr que ce soit utile. Je pense qu'un return suffit
