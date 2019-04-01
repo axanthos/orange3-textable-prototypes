@@ -385,9 +385,15 @@ class Redditor(OWTextableBaseWidget):
 
     def get_post_data(self, post):
         annotations = dict()
-        annotations["Title"] = post.title
+        if self.includeTitle:
+            annotations["Title"] = post.title
         annotations["Id"] = post.id
-        text = Input(post.selftext)
+        annotations["Parent"] = post.id
+
+        if self.includeContent:
+            text = Input(post.selftext)
+        else:
+            text = Input("")
 
         self.segments.append(
             Segment(
@@ -400,26 +406,33 @@ class Redditor(OWTextableBaseWidget):
         return
     
     def get_comment_content(self, post):
-        post.comments.replace_more(limit=0)
-        comments = post.comments.list()
+        if self.includeComments:
+            post.comments.replace_more(limit=0)
+            comments = post.comments.list()
 
-        for comment in comments:
-            annotations = dict()
-            annotations["Title"] = post.title
-            annotations["Id"] = comment.id
-            annotations["Parent"] = comment.parent_id
+            for comment in comments:
+                annotations = dict()
+                if self.includeTitle:
+                    annotations["Title"] = post.title
+                annotations["Id"] = comment.id
 
-            text = Input(comment.body)
+                parentId= comment.parent_id.split("_")
+                annotations["Parent"] = parentId[1]
+                annotations["Parent_type"] = parentId[0][1]
 
-            self.segments.append(
-                Segment(
-                    str_index=text[0].str_index,
-                    start=text[0].start,
-                    end=text[0].end,
-                    annotations=annotations
+                text = Input(comment.body)
+
+                self.segments.append(
+                    Segment(
+                        str_index=text[0].str_index,
+                        start=text[0].start,
+                        end=text[0].end,
+                        annotations=annotations
+                    )
                 )
-            )
-        return
+            return
+        else:
+            pass
 
     """
     def send_data(self):
