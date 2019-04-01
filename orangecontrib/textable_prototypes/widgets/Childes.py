@@ -64,7 +64,10 @@ class Childes(OWTextableBaseWidget):
     # Channel definitions (NB: no input in this case)...
 
     inputs = []
-    outputs = [("XML data", Segmentation)]
+    outputs = [
+        ("Files", Segmentation, widget.Default),
+        ("Utterances", Segmentation),
+    ]
 
     #----------------------------------------------------------------------
     # Settings...
@@ -75,6 +78,7 @@ class Childes(OWTextableBaseWidget):
 
     importedCorpora = settings.Setting(list())
     outputUtterances = settings.Setting(False)
+    outputWords = settings.Setting(False)
     autoSend = settings.Setting(False)
 
     #----------------------------------------------------------------------
@@ -91,7 +95,7 @@ class Childes(OWTextableBaseWidget):
         super().__init__()
 
         # Other (non-setting) attributes...
-        self.segmentation = None
+        self.fileSegmentation = None
         self.createdInputs = list()
         self.displayedFolderLabels = list()
         self.currentFolder = self.__class__.base_url
@@ -132,8 +136,6 @@ class Childes(OWTextableBaseWidget):
             master=self,
             label="Home",
             callback=self.homeRefreshPressed,
-            tooltip="Return to database root.",
-            # tooltip="Connect to CHILDES website and refresh corpus list.",
         )
         self.backButton = gui.button(
             widget=upwardNavBox,
@@ -251,8 +253,8 @@ class Childes(OWTextableBaseWidget):
             master=self,
             value='outputUtterances',
             label=u'Output utterance segmentation',
-            callback=self.outputUtterancesClicked,
-            tooltip=u"TODO",
+            callback=self.sendButton.settingsChanged,
+            tooltip=u"Toggle emission of utterance segmentation on or off.",
         )
 
         gui.separator(widget=optionBox, height=3)
@@ -282,7 +284,8 @@ class Childes(OWTextableBaseWidget):
                 "Please select a corpus to import.",
                 "warning"
             )
-            self.send("XML data", None, self)
+            self.send("Files", None, self)
+            self.send("Utterances", None, self)
             return
        
         # Clear created Inputs and initialize progress bar...
@@ -291,8 +294,8 @@ class Childes(OWTextableBaseWidget):
             "Downloading data from CHILDES website, please wait...", 
             "warning",
         )     
-        progressBar = ProgressBar(self, iterations=len(self.importedCorpora))
         self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=len(self.importedCorpora))
         
         annotations = list()
 
@@ -302,10 +305,10 @@ class Childes(OWTextableBaseWidget):
             corpus = importedCorpus.split("/")[-1]
             
             # Download requested zip file...
-            try:    # TODO Test errors
+            try:    
                 response = requests.get(importedCorpus)
                 
-            # If an error occurs (e.g. http error)...
+            # If an error occurs (e.g. connection error)...
             except:
 
                 # Set Info box and widget to "error" state.
@@ -316,7 +319,8 @@ class Childes(OWTextableBaseWidget):
                 )
 
                 # Reset output channel.
-                self.send("XML data", None, self)
+                self.send("Files", None, self)
+                self.send("Utterances", None, self)
                 progressBar.finish()
                 self.controlArea.setDisabled(False)
                 return
@@ -370,38 +374,64 @@ class Childes(OWTextableBaseWidget):
 
         # If there's only one file, the widget's output is the created Input...
         if len(self.createdInputs) == 1:
-            self.segmentation = self.createdInputs[0]
+            self.fileSegmentation = self.createdInputs[0]
 
         # Otherwise the widget's output is a concatenation...
         else:
-            self.segmentation = Segmenter.concatenate(
+            self.fileSegmentation = Segmenter.concatenate(
                 self.createdInputs,
                 self.captionTitle,
                 import_labels_as=None,
             )
 
         # Annotate segments...
-        for idx, segment in enumerate(self.segmentation):
+        for idx, segment in enumerate(self.fileSegmentation):
             segment.annotations.update(annotations[idx])
-            self.segmentation[idx] = segment
+            self.fileSegmentation[idx] = segment
+
+        # Terminate progress bar...
+        progressBar.finish()
+
+        message = "%i file@p" % len(self.fileSegmentation)
+        message = pluralize(message, len(self.fileSegmentation))
+        
+        # Build utterance segmentation if needed...
+        if self.outputUtterances:
+            self.infoBox.setText(
+                "Building utterance segmentation, please wait...", 
+                "warning",
+            )     
+            progressBar = ProgressBar(
+                self, 
+                iterations=len(self.fileSegmentation)
+            )
+            self.utteranceSegmentation = Segmenter.import_xml(
+                self.fileSegmentation,
+                "u",
+                progress_callback=progressBar.advance,
+            )
+            message += " and " if not self.outputWords else ", "
+            message += "%i utterance@p" % len(self.utteranceSegmentation)
+            message = pluralize(message, len(self.utteranceSegmentation))
+            self.send("Utterances", self.utteranceSegmentation, self)
+        else:
+            self.send("Utterances", None, self)
 
         # Set status to OK and report data size...
-        message = "%i segment@p sent to output " % len(self.segmentation)
-        message = pluralize(message, len(self.segmentation))
+        message += " sent to output "
+        message = pluralize(message, len(self.fileSegmentation))
         numChars = 0
-        for segment in self.segmentation:
+        for segment in self.fileSegmentation:
             segmentLength = len(Segmentation.get_data(segment.str_index))
             numChars += segmentLength
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
-        self.infoBox.setText(message)
-
-        # Terminate progress bar...
-        progressBar.finish()
+        self.infoBox.setText(message)     
+        
         self.controlArea.setDisabled(False)
 
         # Send token...
-        self.send("XML data", self.segmentation, self)
+        self.send("Files", self.fileSegmentation, self)
 
         self.sendButton.resetSettingsChangedFlag()
 
@@ -482,18 +512,14 @@ class Childes(OWTextableBaseWidget):
         """Reroute to removePressed"""
         self.removePressed()
 
-    def outputUtterancesClicked(self):
-        """Handle 'output utterances' checkbox"""
-        pass
-        
     def refreshDatabaseCache(self):
         """Refresh the database cache"""
         self.infoBox.setText(
             "Scraping CHILDES website, please wait...", 
             "warning",
         )     
-        self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)
+        self.controlArea.setDisabled(True)
         
         # Scrape website...
         self.database = dict()
@@ -525,7 +551,8 @@ class Childes(OWTextableBaseWidget):
                 "Error while attempting to scrape the CHILDES website.", 
                 "error",
             )
-            self.send("XML data", None, self)
+            self.send("Files", None, self)
+            self.send("Utterances", None, self)
               
         progressBar.advance()
         progressBar.finish()
@@ -617,8 +644,13 @@ class Childes(OWTextableBaseWidget):
         currentFolder = self.currentFolder[len(self.__class__.base_url)-1:]
         if currentFolder == "/": # TODO change tooltip
             self.homeRefreshButton.setText("Refresh")
+            self.homeRefreshButton.setToolTip(
+                "Connect to CHILDES website and refresh corpus list."
+            )
+            tooltip="Return to database root.",
         else:
             self.homeRefreshButton.setText("Home")
+            self.homeRefreshButton.setToolTip("Return to database root.")
         self.backButton.setDisabled(currentFolder == "/")
         self.openButton.setDisabled(
             len(self.selectedInDisplayedFolder) != 1 or 
