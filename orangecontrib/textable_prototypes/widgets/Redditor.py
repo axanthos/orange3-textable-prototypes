@@ -384,26 +384,29 @@ class Redditor(OWTextableBaseWidget):
             return
 
     def get_post_data(self, post):
-        annotations = dict()
-        if self.includeTitle:
-            annotations["Title"] = post.title
-        annotations["Id"] = post.id
-        annotations["Parent"] = post.id
+        if not self.check_post:
+            annotations = dict()
+            if self.includeTitle:
+                annotations["Title"] = post.title
+            annotations["Id"] = post.id
+            annotations["Parent"] = post.id
 
-        if self.includeContent:
-            text = Input(post.selftext)
-        else:
-            text = Input("")
+            if self.includeContent:
+                text = Input(post.selftext)
+            else:
+                text = Input("")
 
-        self.segments.append(
-            Segment(
-                str_index=text[0].str_index,
-                start=text[0].start,
-                end=text[0].end,
-                annotations=annotations
+            self.segments.append(
+                Segment(
+                    str_index=text[0].str_index,
+                    start=text[0].start,
+                    end=text[0].end,
+                    annotations=annotations
+                )
             )
-        )
-        return
+            return
+        else:
+            return
     
     def get_comment_content(self, post):
         if self.includeComments:
@@ -433,6 +436,19 @@ class Redditor(OWTextableBaseWidget):
             return
         else:
             pass
+
+    def check_post(self):
+        if not self.includeTitle and self.includeContent:
+            return True
+        else:
+            return False
+
+    def check_comments(self):
+        if not self.includeComments:
+            return True
+        else:
+            return False
+
 
     """
     def send_data(self):
