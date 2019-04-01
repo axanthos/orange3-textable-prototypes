@@ -69,9 +69,9 @@ class Redditor(OWTextableBaseWidget):
     subreddit = Setting(u'')
     URL = Setting(u'')
     fullText = Setting(u'')
-    includeTitle = Setting(False)
-    includeContent = Setting(False)
-    includeComments = Setting(False)
+    includeTitle = Setting(True)
+    includeContent = Setting(True)
+    includeComments = Setting(True)
 
     # Praw instance
     reddit = praw.Reddit(
@@ -192,7 +192,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeTitle',
             label=u'Title',
-            callback=self.get_content,
+            callback=self.includeTitle_changed,
             
         )
         includeContentBox = gui.checkBox(
@@ -200,14 +200,14 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeContent',
             label=u'Content',
-            callback=self.get_content,
+            callback=self.includeContent_changed,
         )
         includeCommentsBox = gui.checkBox(
             widget=self.includeBox,
             master=self,
             value='includeComments',
             label=u'Comments',
-            callback=self.get_content,
+            callback=self.includeComments_changed,
         )
         """
         self.fetchButton = gui.button(
@@ -280,7 +280,33 @@ class Redditor(OWTextableBaseWidget):
             self.fullTextBox.setVisible(True)
 
         # Clear the channel by sending None.
-        self.send("Segmentation", None)
+        # TODO: pas sûr que ce soit utile. Je pense qu'un return suffit
+        # self.send("Segmentation", None)
+        return
+
+    def includeTitle_changed(self):
+        if self.includeTitle == True:
+            self.includeTitle == False
+            return
+        else:
+            self.includeTitle == True
+            return
+    
+    def includeContent_changed(self):
+        if self.includeContent == True:
+            self.includeContent == False
+            return
+        else:
+            self.includeContent == True
+            return
+    
+    def includeComments_changed(self):
+        if self.includeComments == True:
+            self.includeComments == False
+            return
+        else:
+            self.includeComments == True
+            return
 
     """
     def update_send_button(self):
@@ -349,6 +375,7 @@ class Redditor(OWTextableBaseWidget):
             self.send("Segmentation", Segmentation(self.segments))
             self.infoBox.setText("{} segments sent to output !".format(len(self.segments)))
             self.segments = []
+            return
         else:
             self.infoBox.setText(
                 "Please fill in the input box.",
@@ -370,6 +397,7 @@ class Redditor(OWTextableBaseWidget):
                 annotations=annotations
             )
         )
+        return
     
     def get_comment_content(self, post):
         post.comments.replace_more(limit=0)
@@ -391,6 +419,7 @@ class Redditor(OWTextableBaseWidget):
                     annotations=annotations
                 )
             )
+        return
 
     """
     def send_data(self):
