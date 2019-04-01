@@ -372,10 +372,14 @@ class Redditor(OWTextableBaseWidget):
                     self.get_post_data(post)
                     self.get_comment_content(post)
 
-            self.send("Segmentation", Segmentation(self.segments))
-            self.infoBox.setText("{} segments sent to output !".format(len(self.segments)))
-            self.segments = []
-            return
+            if len(self.segments) > 0:
+                self.send("Segmentation", Segmentation(self.segments))
+                self.infoBox.setText("{} segments sent to output !".format(len(self.segments)))
+                self.segments = []
+                return
+            else:
+                self.infoBox.setText("{There are 0 segments here !", "warning")
+                return
         else:
             self.infoBox.setText(
                 "Please fill in the input box.",
@@ -384,29 +388,25 @@ class Redditor(OWTextableBaseWidget):
             return
 
     def get_post_data(self, post):
-        if not self.check_post:
-            annotations = dict()
-            if self.includeTitle:
-                annotations["Title"] = post.title
-            annotations["Id"] = post.id
-            annotations["Parent"] = post.id
+        annotations = dict()
+        if self.includeTitle:
+            annotations["Title"] = post.title
+        annotations["Id"] = post.id
+        annotations["Parent"] = post.id
 
-            if self.includeContent:
-                text = Input(post.selftext)
-            else:
-                text = Input("")
-
-            self.segments.append(
-                Segment(
-                    str_index=text[0].str_index,
-                    start=text[0].start,
-                    end=text[0].end,
-                    annotations=annotations
-                )
-            )
-            return
+        if self.includeContent:
+            text = Input(post.selftext)
         else:
-            return
+            text = Input("")
+
+        self.segments.append(
+            Segment(
+                str_index=text[0].str_index,
+                start=text[0].start,
+                end=text[0].end,
+                annotations=annotations
+            )
+        )
     
     def get_comment_content(self, post):
         if self.includeComments:
@@ -436,7 +436,7 @@ class Redditor(OWTextableBaseWidget):
             return
         else:
             pass
-
+    """
     def check_post(self):
         if not self.includeTitle and self.includeContent:
             return True
@@ -448,6 +448,7 @@ class Redditor(OWTextableBaseWidget):
             return True
         else:
             return False
+    """
 
 
     """
