@@ -79,6 +79,8 @@ class Childes(OWTextableBaseWidget):
     importedCorpora = settings.Setting(list())
     outputUtterances = settings.Setting(False)
     outputWords = settings.Setting(False)
+    includePrefixes = settings.Setting(False)
+    includePOSTag = settings.Setting(False)
     autoSend = settings.Setting(False)
 
     #----------------------------------------------------------------------
@@ -241,7 +243,7 @@ class Childes(OWTextableBaseWidget):
         gui.separator(widget=selectionBox, height=3)
 
         # Options box...
-        optionBox = gui.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box="Options",
             orientation="vertical",
@@ -249,7 +251,7 @@ class Childes(OWTextableBaseWidget):
         )
         
         gui.checkBox(
-            widget=optionBox,
+            widget=optionsBox,
             master=self,
             value='outputUtterances',
             label=u'Output utterance segmentation',
@@ -257,7 +259,52 @@ class Childes(OWTextableBaseWidget):
             tooltip=u"Toggle emission of utterance segmentation on or off.",
         )
 
-        gui.separator(widget=optionBox, height=3)
+        gui.checkBox(
+            widget=optionsBox,
+            master=self,
+            value='outputWords',
+            label=u'Output word segmentation',
+            callback=self.toggleWordOptions,
+            tooltip=u"Toggle emission of word segmentation on or off.",
+        )
+
+        self.wordOptionsBox = gui.indentedBox(
+            widget=optionsBox,
+            orientation="horizontal",
+            addSpace=False,
+        )
+
+        gui.label(
+            widget=self.wordOptionsBox,
+            master=self,
+            labelWidth=120,
+            label="Word stem includes: ",
+            tooltip="TODO.",
+        )
+
+        gui.checkBox(
+            widget=self.wordOptionsBox,
+            master=self,
+            labelWidth=70,
+            value='includePrefixes',
+            label=u'prefixes',
+            callback=self.sendButton.settingsChanged,
+            tooltip=u"TODO.",
+        )
+
+        gui.checkBox(
+            widget=self.wordOptionsBox,
+            master=self,
+            labelWidth=70,
+            value='includePOSTag',
+            label=u'POS-tags',
+            callback=self.sendButton.settingsChanged,
+            tooltip=u"TODO.",
+        )
+
+        gui.rubber(self.wordOptionsBox)
+        
+        gui.separator(widget=optionsBox, height=3)
 
         gui.rubber(self.controlArea)
         
@@ -394,6 +441,7 @@ class Childes(OWTextableBaseWidget):
 
         message = "%i file@p" % len(self.fileSegmentation)
         message = pluralize(message, len(self.fileSegmentation))
+        self.send("Files", self.fileSegmentation, self)
         
         # Build utterance segmentation if needed...
         if self.outputUtterances:
@@ -429,9 +477,6 @@ class Childes(OWTextableBaseWidget):
         self.infoBox.setText(message)     
         
         self.controlArea.setDisabled(False)
-
-        # Send token...
-        self.send("Files", self.fileSegmentation, self)
 
         self.sendButton.resetSettingsChangedFlag()
 
@@ -511,6 +556,10 @@ class Childes(OWTextableBaseWidget):
     def selectionDoubleClicked(self):
         """Reroute to removePressed"""
         self.removePressed()
+
+    def toggleWordOptions(self):
+        """Toggle display of word options on or off"""
+        self.wordOptionsBox.setVisible(self.outputWords)
 
     def refreshDatabaseCache(self):
         """Refresh the database cache"""
