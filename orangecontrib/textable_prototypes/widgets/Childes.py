@@ -442,8 +442,6 @@ class Childes(OWTextableBaseWidget):
         # Terminate progress bar...
         progressBar.finish()
 
-        # TODO LABELS...
-        
         message = "%i file@p" % len(self.fileSegmentation)
         message = pluralize(message, len(self.fileSegmentation))
         self.send("Files", self.fileSegmentation, self)
