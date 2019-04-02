@@ -286,8 +286,8 @@ class Childes(OWTextableBaseWidget):
             widget=self.wordOptionsBox,
             master=self,
             labelWidth=70,
-            value='includePrefixes',
-            label=u'prefixes',
+            value='includePOSTag',
+            label=u'POS-tag',
             callback=self.sendButton.settingsChanged,
             tooltip=u"TODO.",
         )
@@ -296,8 +296,8 @@ class Childes(OWTextableBaseWidget):
             widget=self.wordOptionsBox,
             master=self,
             labelWidth=70,
-            value='includePOSTag',
-            label=u'POS-tags',
+            value='includePrefixes',
+            label=u'prefixes',
             callback=self.sendButton.settingsChanged,
             tooltip=u"TODO.",
         )
@@ -559,7 +559,8 @@ class Childes(OWTextableBaseWidget):
 
     def toggleWordOptions(self):
         """Toggle display of word options on or off"""
-        self.wordOptionsBox.setVisible(self.outputWords)
+        self.wordOptionsBox.setDisabled(not self.outputWords)
+        self.sendButton.settingsChanged()
 
     def refreshDatabaseCache(self):
         """Refresh the database cache"""
