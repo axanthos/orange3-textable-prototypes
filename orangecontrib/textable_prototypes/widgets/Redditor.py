@@ -430,7 +430,10 @@ class Redditor(OWTextableBaseWidget):
                 self.segments = []
                 return
             else:
-                self.infoBox.setText("{There are 0 segments here !", "warning")
+                self.infoBox.setText(
+                    "There is nothing! Maybe you should include at least one item",
+                    "warning"
+                )
                 return
         else:
             self.infoBox.setText(
@@ -451,14 +454,15 @@ class Redditor(OWTextableBaseWidget):
         else:
             text = Input("")
 
-        self.segments.append(
-            Segment(
-                str_index=text[0].str_index,
-                start=text[0].start,
-                end=text[0].end,
-                annotations=annotations
+        if self.includeTitle or self.includeContent:
+            self.segments.append(
+                Segment(
+                    str_index=text[0].str_index,
+                    start=text[0].start,
+                    end=text[0].end,
+                    annotations=annotations
+                )
             )
-        )
     
     def get_comment_content(self, post):
         if self.includeComments:
