@@ -31,6 +31,7 @@ import re
 import pickle
 import inspect
 import zipfile
+import xml.etree.ElementTree as ET
 
 import requests
 from bs4 import BeautifulSoup
@@ -38,6 +39,7 @@ from bs4 import BeautifulSoup
 from Orange.widgets import widget, gui, settings
 
 from LTTL.Segmentation import Segmentation
+from LTTL.Segment import Segment
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
@@ -67,6 +69,7 @@ class Childes(OWTextableBaseWidget):
     outputs = [
         ("Files", Segmentation, widget.Default),
         ("Utterances", Segmentation),
+        ("Words", Segmentation),
     ]
 
     #----------------------------------------------------------------------
@@ -439,6 +442,8 @@ class Childes(OWTextableBaseWidget):
         # Terminate progress bar...
         progressBar.finish()
 
+        # TODO LABELS...
+        
         message = "%i file@p" % len(self.fileSegmentation)
         message = pluralize(message, len(self.fileSegmentation))
         self.send("Files", self.fileSegmentation, self)
@@ -465,6 +470,64 @@ class Childes(OWTextableBaseWidget):
         else:
             self.send("Utterances", None, self)
 
+        # Build word segmentation if needed...
+        if self.outputWords:
+            self.infoBox.setText(
+                "Building word segmentation, please wait...", 
+                "warning",
+            )     
+            progressBar = ProgressBar(
+                self, 
+                iterations=5*len(self.fileSegmentation)
+            )
+            wordSegmentation = Segmenter.import_xml(
+                self.fileSegmentation,
+                "w",
+                progress_callback=progressBar.advance,
+            )
+            replSegmentation = Segmenter.import_xml(
+                self.fileSegmentation,
+                "replacement",
+                progress_callback=progressBar.advance,
+            )
+            replWordSegmentation = Segmenter.import_xml(
+                replSegmentation,
+                "w",
+                progress_callback=progressBar.advance,
+            )
+            mwSegmentation = Segmenter.import_xml(
+                self.fileSegmentation,
+                "mw",
+                progress_callback=progressBar.advance,
+            )
+            
+            # Analyze words to extract annotations...
+            wordSegments = list()
+            for word in wordSegmentation:
+                replacements = word.get_contained_segments(replWordSegmentation)
+                wordsOrReplacements = replacements if replacements else [word]
+                for wordOrRepl in wordsOrReplacements:
+                    mws = wordOrRepl.get_contained_segments(
+                        mwSegmentation
+                    )
+                    if mws:
+                        for mw in mws:
+                            wordSegment = wordOrRepl.deepcopy()
+                            wordSegment.annotations.update(
+                                self.extractWordAnnotations(mw)
+                            )
+                            wordSegments.append(wordSegment) 
+                    else:
+                        wordSegments.append(wordOrRepl)
+                                                    
+            self.wordSegmentation = Segmentation(wordSegments)
+            
+            message += " and %i word@p" % len(self.wordSegmentation)
+            message = pluralize(message, len(self.wordSegmentation))
+            self.send("Words", self.wordSegmentation, self)
+        else:
+            self.send("Words", None, self)
+
         # Set status to OK and report data size...
         message += " sent to output "
         message = pluralize(message, len(self.fileSegmentation))
@@ -480,6 +543,24 @@ class Childes(OWTextableBaseWidget):
 
         self.sendButton.resetSettingsChangedFlag()
 
+    def extractWordAnnotations(self, mw):
+        """Extract annotations from a word's mor tag in CHILDES XML format and 
+        return an annotated segment.
+        """
+        # morCopy = mor.deepcopy()
+        # root = ET.fromstring(
+            # "<w>" + word.get_content() + "</w>"
+        # )
+        # for mor in mors:
+            # for grandchild in mor:
+                # if grandchild.tag == "mw":
+                    # for ggrandchild in grandchild:
+                        # print(word.get_content(), ggrandchild.tag, ggrandchild.attrib)
+                # elif grandchild.tag == "menx":
+                    # print("menx")
+                    # pass
+        return dict()
+        
     def homeRefreshPressed(self):
         """Refresh database file tree"""
         if self.currentFolder != self.__class__.base_url:
