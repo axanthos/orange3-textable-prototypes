@@ -380,7 +380,7 @@ class Childes(OWTextableBaseWidget):
             for file in myZip.infolist():
                 newInput = Input(
                     myZip.read(file).decode('utf-8'), 
-                    self.captionTitle
+                    self.captionTitle + "_files"
                 )
                 self.createdInputs.append(newInput)
                 chatSeg = Segmenter.import_xml(newInput, "CHAT")
@@ -430,7 +430,7 @@ class Childes(OWTextableBaseWidget):
         else:
             self.fileSegmentation = Segmenter.concatenate(
                 self.createdInputs,
-                self.captionTitle,
+                self.captionTitle + "_files",
                 import_labels_as=None,
             )
 
@@ -462,6 +462,7 @@ class Childes(OWTextableBaseWidget):
                 self.fileSegmentation,
                 "u",
                 progress_callback=progressBar.advance,
+                label=self.captionTitle + "_utterances",
             )
             message += " and " if not self.outputWords else ", "
             message += "%i utterance@p" % len(self.utteranceSegmentation)
@@ -478,7 +479,7 @@ class Childes(OWTextableBaseWidget):
             )     
             progressBar = ProgressBar(
                 self, 
-                iterations=5*len(self.fileSegmentation)
+                iterations=4*len(self.fileSegmentation)
             )
             wordSegmentation = Segmenter.import_xml(
                 self.fileSegmentation,
@@ -520,7 +521,10 @@ class Childes(OWTextableBaseWidget):
                     else:
                         wordSegments.append(wordOrRepl)
                                                     
-            self.wordSegmentation = Segmentation(wordSegments)
+            self.wordSegmentation = Segmentation(
+                wordSegments,
+                label=self.captionTitle + "_words",
+            )
             
             message += " and %i word@p" % len(self.wordSegmentation)
             message = pluralize(message, len(self.wordSegmentation))
@@ -547,19 +551,42 @@ class Childes(OWTextableBaseWidget):
         """Extract annotations from a word's mor tag in CHILDES XML format and 
         return an annotated segment.
         """
-        # morCopy = mor.deepcopy()
-        # root = ET.fromstring(
-            # "<w>" + word.get_content() + "</w>"
-        # )
-        # for mor in mors:
-            # for grandchild in mor:
-                # if grandchild.tag == "mw":
-                    # for ggrandchild in grandchild:
-                        # print(word.get_content(), ggrandchild.tag, ggrandchild.attrib)
-                # elif grandchild.tag == "menx":
-                    # print("menx")
-                    # pass
-        return dict()
+        root = ET.fromstring(
+            "<mw>" + mw.get_content() + "</mw>"
+        )
+        annotations = dict()
+        pos_items = list()
+        prefixes = list()
+        suffixes = list()
+        for child in root:
+            if child.tag == "pos":
+                for grandchild in child:
+                    if grandchild.tag == "c":
+                        pos_items.insert(0, grandchild.text)
+                    else:
+                        pos_items.append(grandchild.text)
+            elif child.tag == "stem":
+                stem = child.text
+            elif child.tag == "mpfx":
+                prefixes.append(child.text)
+            elif child.tag == "mk":
+                if child.attrib["type"] == "sfxf":
+                    suffixes.append("&" + child.text)
+                elif child.attrib["type"] == "sfx":
+                    suffixes.append("-" + child.text)
+                elif child.attrib["type"] == "mc":
+                    suffixes.append(":" + child.text)
+        annotations["pos"] = ":".join(pos_items)
+        if prefixes:
+            annotations["prefixes"] = "#".join(prefixes)               
+            if self.includePrefixes:
+                stem = annotations["prefixes"] + "#" + stem
+        if suffixes:
+            annotations["suffixes"] = "".join(suffixes)               
+        if self.includePOSTag:
+            stem = annotations["pos"] + "|" + stem
+        annotations["stem"] = stem
+        return annotations
         
     def homeRefreshPressed(self):
         """Refresh database file tree"""
