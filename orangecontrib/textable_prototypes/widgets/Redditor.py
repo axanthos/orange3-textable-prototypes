@@ -278,7 +278,6 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             callback=self.get_content,
             infoBoxAttribute='infoBox',
-
         )
 
         """
@@ -296,7 +295,7 @@ class Redditor(OWTextableBaseWidget):
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
         # Send button...
-        #self.sendButton.draw()
+        # self.sendButton.draw()
 
         # Info box...
         self.infoBox.draw()
@@ -335,30 +334,6 @@ class Redditor(OWTextableBaseWidget):
         # TODO: pas sûr que ce soit utile. Je pense qu'un return suffit
         # self.send("Segmentation", None)
         return
-
-    def includeTitle_changed(self):
-        if self.includeTitle == True:
-            self.includeTitle == False
-            return
-        else:
-            self.includeTitle == True
-            return
-    
-    def includeContent_changed(self):
-        if self.includeContent == True:
-            self.includeContent == False
-            return
-        else:
-            self.includeContent == True
-            return
-    
-    def includeComments_changed(self):
-        if self.includeComments == True:
-            self.includeComments == False
-            return
-        else:
-            self.includeComments == True
-            return
 
     """
     def update_send_button(self):
@@ -434,6 +409,7 @@ class Redditor(OWTextableBaseWidget):
                     "There is nothing! Maybe you should include at least one item",
                     "warning"
                 )
+                # self.send("Segmentation", Segmentation(self.segments))
                 return
         else:
             self.infoBox.setText(
@@ -444,17 +420,36 @@ class Redditor(OWTextableBaseWidget):
 
     def get_post_data(self, post):
         annotations = dict()
-        if self.includeTitle:
-            annotations["Title"] = post.title
+        annotations["Title"] = post.title
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
 
-        if self.includeContent:
-            text = Input(post.selftext)
-        else:
-            text = Input("")
+        text = Input(post.selftext)
 
-        if self.includeTitle or self.includeContent:
+        self.segments.append(
+            Segment(
+                str_index=text[0].str_index,
+                start=text[0].start,
+                end=text[0].end,
+                annotations=annotations
+            )
+        )
+    
+    def get_comment_content(self, post):
+        post.comments.replace_more(limit=0)
+        comments = post.comments.list()
+
+        for comment in comments:
+            annotations = dict()
+            annotations["Title"] = post.title
+            annotations["Id"] = comment.id
+
+            parentId= comment.parent_id.split("_")
+            annotations["Parent"] = parentId[1]
+            annotations["Parent_type"] = parentId[0][1]
+
+            text = Input(comment.body)
+
             self.segments.append(
                 Segment(
                     str_index=text[0].str_index,
@@ -463,49 +458,7 @@ class Redditor(OWTextableBaseWidget):
                     annotations=annotations
                 )
             )
-    
-    def get_comment_content(self, post):
-        if self.includeComments:
-            post.comments.replace_more(limit=0)
-            comments = post.comments.list()
-
-            for comment in comments:
-                annotations = dict()
-                if self.includeTitle:
-                    annotations["Title"] = post.title
-                annotations["Id"] = comment.id
-
-                parentId= comment.parent_id.split("_")
-                annotations["Parent"] = parentId[1]
-                annotations["Parent_type"] = parentId[0][1]
-
-                text = Input(comment.body)
-
-                self.segments.append(
-                    Segment(
-                        str_index=text[0].str_index,
-                        start=text[0].start,
-                        end=text[0].end,
-                        annotations=annotations
-                    )
-                )
-            return
-        else:
-            pass
-    """
-    def check_post(self):
-        if not self.includeTitle and self.includeContent:
-            return True
-        else:
-            return False
-
-    def check_comments(self):
-        if not self.includeComments:
-            return True
-        else:
-            return False
-    """
-
+        return
 
     """
     def send_data(self):
