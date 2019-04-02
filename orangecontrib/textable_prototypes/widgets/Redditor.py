@@ -310,11 +310,7 @@ class Redditor(OWTextableBaseWidget):
             # cacher URL et Full text
             self.urlBox.setVisible(False)
             self.fullTextBox.setVisible(False)
-            print("{}; {}; {}".format(
-                self.sortBy,
-                self.postedAt,
-                self.amount
-            ))
+
             # montrer subreddit
             self.subredditBox.setVisible(True)
             self.filterBox.setVisible(True)
