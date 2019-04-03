@@ -89,8 +89,9 @@ class Childes(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Other class variables...
     
-    base_url = "https://childes.talkbank.org/data-xml/"
-    cache_filename = "cache_childes"
+    baseUrl = "https://childes.talkbank.org/data-xml/"
+    cacheFilename = "cache_childes"
+    cachedFoldername = "cached_childes_corpora"
 
     want_main_area = False
 
@@ -103,7 +104,7 @@ class Childes(OWTextableBaseWidget):
         self.fileSegmentation = None
         self.createdInputs = list()
         self.displayedFolderLabels = list()
-        self.currentFolder = self.__class__.base_url
+        self.currentFolder = self.__class__.baseUrl
         self.database = None
         self.selectedInDisplayedFolder = list()
         self.selectedInSelection = list()
@@ -341,7 +342,7 @@ class Childes(OWTextableBaseWidget):
         # Clear created Inputs and initialize progress bar...
         self.clearCreatedInputs()
         self.infoBox.setText(
-            "Downloading data from CHILDES website, please wait...", 
+            "Retrieving data, please wait...", 
             "warning",
         )     
         self.controlArea.setDisabled(True)
@@ -354,29 +355,56 @@ class Childes(OWTextableBaseWidget):
         
             corpus = importedCorpus.split("/")[-1]
             
-            # Download requested zip file...
-            try:    
-                response = requests.get(importedCorpus)
-                
-            # If an error occurs (e.g. connection error)...
-            except:
-
-                # Set Info box and widget to "error" state.
-                self.infoBox.setText(
-                    "Couldn't download corpus %s from CHILDES website."
-                        % corpus,
-                    "error"
+            # Try to retrieve corpus from cache...
+            try:
+                basepath = os.path.dirname(
+                    os.path.abspath(inspect.getfile(inspect.currentframe()))
                 )
+                corpusFilepath = os.path.join(
+                    basepath,
+                    self.__class__.cachedFoldername,
+                    importedCorpus[len(self.__class__.baseUrl)-1:],
+                )
+                inputFile = open(corpusFilepath, "rb")
+                myzip = zipfile.ZipFile(inputFile)
+                inputFile.close()
+            except IOError:                
+            
+                # Else try to download (and cache) requested zip file...
+                try:    
+                    response = requests.get(importedCorpus)
+                    myZip = zipfile.ZipFile(io.BytesIO(response.content))
+                    corpusFolderpath = os.path.dirname(corpusFilepath)
+                    print(corpusFolderpath)
+                    try:
+                        os.makedirs(corpusFilepath)
+                    except OSError:
+                        pass
+                    try:
+                        outputFile = open(corpusFilepath, "wb")
+                        outputFile.write(response.content)
+                        outputFile.close()
+                    except IOError:
+                        pass
+                    
+                # If an error occurs (e.g. connection error)...
+                except:
 
-                # Reset output channel.
-                self.send("Files", None, self)
-                self.send("Utterances", None, self)
-                progressBar.finish()
-                self.controlArea.setDisabled(False)
-                return
+                    # Set Info box and widget to "error" state.
+                    self.infoBox.setText(
+                        "Couldn't download corpus %s from CHILDES website."
+                            % corpus,
+                        "error"
+                    )
+
+                    # Reset output channel.
+                    self.send("Files", None, self)
+                    self.send("Utterances", None, self)
+                    progressBar.finish()
+                    self.controlArea.setDisabled(False)
+                    return
             
             # Create Input for each zipped file and store annotations...
-            myZip = zipfile.ZipFile(io.BytesIO(response.content))
             for file in myZip.infolist():
                 newInput = Input(
                     myZip.read(file).decode('utf-8'), 
@@ -462,6 +490,7 @@ class Childes(OWTextableBaseWidget):
                 progress_callback=progressBar.advance,
                 label=self.captionTitle + "_utterances",
             )
+            progressBar.finish()
             message += " and " if not self.outputWords else ", "
             message += "%i utterance@p" % len(self.utteranceSegmentation)
             message = pluralize(message, len(self.utteranceSegmentation))
@@ -477,7 +506,7 @@ class Childes(OWTextableBaseWidget):
             )     
             progressBar = ProgressBar(
                 self, 
-                iterations=4*len(self.fileSegmentation)
+                iterations=2*len(self.fileSegmentation)
             )
             wordSegmentation = Segmenter.import_xml(
                 self.fileSegmentation,
@@ -488,6 +517,15 @@ class Childes(OWTextableBaseWidget):
                 self.fileSegmentation,
                 "replacement",
                 progress_callback=progressBar.advance,
+            )
+            self.infoBox.setText(
+                "Handling word replacements, please wait...", 
+                "warning",
+            )     
+            progressBar.finish()
+            progressBar = ProgressBar(
+                self, 
+                iterations=len(self.fileSegmentation) + len(replSegmentation)
             )
             replWordSegmentation = Segmenter.import_xml(
                 replSegmentation,
@@ -501,6 +539,15 @@ class Childes(OWTextableBaseWidget):
             )
             
             # Analyze words to extract annotations...
+            self.infoBox.setText(
+                "Extracting word annotations, please wait...", 
+                "warning",
+            )     
+            progressBar.finish()
+            progressBar = ProgressBar(
+                self, 
+                iterations=len(wordSegmentation)
+            )
             wordSegments = list()
             for word in wordSegmentation:
                 replacements = word.get_contained_segments(replWordSegmentation)
@@ -518,6 +565,7 @@ class Childes(OWTextableBaseWidget):
                             wordSegments.append(wordSegment) 
                     else:
                         wordSegments.append(wordOrRepl)
+                progressBar.advance()
                                                     
             self.wordSegmentation = Segmentation(
                 wordSegments,
@@ -540,6 +588,7 @@ class Childes(OWTextableBaseWidget):
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)     
+        progressBar.finish()
         
         self.controlArea.setDisabled(False)
 
@@ -588,8 +637,8 @@ class Childes(OWTextableBaseWidget):
         
     def homeRefreshPressed(self):
         """Refresh database file tree"""
-        if self.currentFolder != self.__class__.base_url:
-            self.currentFolder = self.__class__.base_url
+        if self.currentFolder != self.__class__.baseUrl:
+            self.currentFolder = self.__class__.baseUrl
             self.updateDisplayedFolders()
         else:
             self.refreshDatabaseCache()
@@ -634,7 +683,7 @@ class Childes(OWTextableBaseWidget):
             for label in newFolder.keys():
                 if label.endswith(".zip"):
                     label = newFolder[label]
-                label = label[len(self.__class__.base_url):]
+                label = label[len(self.__class__.baseUrl):]
                 self.getZipsFromItem(label, folder, zipList)
                 
     def displayedFoldersDoubleClicked(self):
@@ -682,7 +731,7 @@ class Childes(OWTextableBaseWidget):
         self.importedCorpora = list()
         try:
             self.recursivelyScrapeUrl(
-                self.__class__.base_url, 
+                self.__class__.baseUrl, 
                 self.database,
             )
             # Dump cache to file...
@@ -691,7 +740,7 @@ class Childes(OWTextableBaseWidget):
             )
             try:
                 file = open(
-                    os.path.join(path, self.__class__.cache_filename),
+                    os.path.join(path, self.__class__.cacheFilename),
                     "wb",
                 )
                 pickle.dump(self.database, file)
@@ -712,7 +761,7 @@ class Childes(OWTextableBaseWidget):
               
         progressBar.advance()
         progressBar.finish()
-        self.currentFolder = self.__class__.base_url
+        self.currentFolder = self.__class__.baseUrl
         self.updateDisplayedFolders()
         self.updateSelection()
         self.controlArea.setDisabled(False)
@@ -746,10 +795,10 @@ class Childes(OWTextableBaseWidget):
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
         try:
-            file = open(os.path.join(path, self.__class__.cache_filename),"rb")
+            file = open(os.path.join(path, self.__class__.cacheFilename),"rb")
             self.database = pickle.load(file)
             file.close()
-            self.currentFolder = self.__class__.base_url
+            self.currentFolder = self.__class__.baseUrl
             self.updateDisplayedFolders()
         # Else try to rebuild cache from CHILDES website...
         except IOError:
@@ -770,7 +819,7 @@ class Childes(OWTextableBaseWidget):
             return
         
         # Current folder label...
-        currentFolder = self.currentFolder[len(self.__class__.base_url)-1:]
+        currentFolder = self.currentFolder[len(self.__class__.baseUrl)-1:]
         self.currentFolderLabel.setText("Current folder: " + currentFolder)
         
         # Populate listbox...
@@ -787,17 +836,17 @@ class Childes(OWTextableBaseWidget):
         self.updateBrowseBoxButtons()
             
     def getFolderContent(self, folder):
-        folderContent = self.database[self.__class__.base_url]
-        folder = folder[len(self.__class__.base_url)-1:]
+        folderContent = self.database[self.__class__.baseUrl]
+        folder = folder[len(self.__class__.baseUrl)-1:]
         steps = folder[:-1].split("/")[1:]
         for idx, _ in enumerate(steps):
-            path = self.__class__.base_url + "/".join(steps[:idx+1]) + "/"
+            path = self.__class__.baseUrl + "/".join(steps[:idx+1]) + "/"
             folderContent = folderContent[path]
         return folderContent
 
     def updateBrowseBoxButtons(self):
         """Refresh state of Browse box buttons"""
-        currentFolder = self.currentFolder[len(self.__class__.base_url)-1:]
+        currentFolder = self.currentFolder[len(self.__class__.baseUrl)-1:]
         if currentFolder == "/": # TODO change tooltip
             self.homeRefreshButton.setText("Refresh")
             self.homeRefreshButton.setToolTip(
@@ -819,7 +868,7 @@ class Childes(OWTextableBaseWidget):
     def updateSelection(self):
         """Refresh state of selection listbox"""
         self.selectionLabels = [
-            corpus[len(self.__class__.base_url)-1:]
+            corpus[len(self.__class__.baseUrl)-1:]
             for corpus in self.importedCorpora
         ]
         self.updateRemovalButtons()
