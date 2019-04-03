@@ -360,10 +360,12 @@ class Childes(OWTextableBaseWidget):
                 basepath = os.path.dirname(
                     os.path.abspath(inspect.getfile(inspect.currentframe()))
                 )
-                corpusFilepath = os.path.join(
-                    basepath,
-                    self.__class__.cachedFoldername,
-                    importedCorpus[len(self.__class__.baseUrl)-1:],
+                corpusFilepath = os.path.normpath(
+                    os.path.join(
+                        basepath,
+                        self.__class__.cachedFoldername,
+                        importedCorpus[len(self.__class__.baseUrl):],
+                    )
                 )
                 inputFile = open(corpusFilepath, "rb")
                 myzip = zipfile.ZipFile(inputFile)
@@ -375,14 +377,13 @@ class Childes(OWTextableBaseWidget):
                     response = requests.get(importedCorpus)
                     myZip = zipfile.ZipFile(io.BytesIO(response.content))
                     corpusFolderpath = os.path.dirname(corpusFilepath)
-                    print(corpusFolderpath)
                     try:
                         os.makedirs(corpusFilepath)
                     except OSError:
                         pass
                     try:
                         outputFile = open(corpusFilepath, "wb")
-                        outputFile.write(response.content)
+                        outputFile.write(myZip)
                         outputFile.close()
                     except IOError:
                         pass
