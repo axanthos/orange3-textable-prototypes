@@ -367,9 +367,8 @@ class Childes(OWTextableBaseWidget):
                         importedCorpus[len(self.__class__.baseUrl):],
                     )
                 )
-                inputFile = open(corpusFilepath, "rb")
-                myzip = zipfile.ZipFile(inputFile)
-                inputFile.close()
+                myZip = zipfile.ZipFile(corpusFilepath)
+
             except IOError:                
             
                 # Else try to download (and cache) requested zip file...
@@ -378,12 +377,12 @@ class Childes(OWTextableBaseWidget):
                     myZip = zipfile.ZipFile(io.BytesIO(response.content))
                     corpusFolderpath = os.path.dirname(corpusFilepath)
                     try:
-                        os.makedirs(corpusFilepath)
+                        os.makedirs(corpusFolderpath)
                     except OSError:
                         pass
                     try:
                         outputFile = open(corpusFilepath, "wb")
-                        outputFile.write(myZip)
+                        outputFile.write(response.content)
                         outputFile.close()
                     except IOError:
                         pass
