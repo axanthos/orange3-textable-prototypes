@@ -579,14 +579,8 @@ class Childes(OWTextableBaseWidget):
             self.send("Words", None, self)
 
         # Set status to OK and report data size...
-        message += " sent to output "
+        message += " sent to output."
         message = pluralize(message, len(self.fileSegmentation))
-        numChars = 0
-        for segment in self.fileSegmentation:
-            segmentLength = len(Segmentation.get_data(segment.str_index))
-            numChars += segmentLength
-        message += "(%i character@p)." % numChars
-        message = pluralize(message, numChars)
         self.infoBox.setText(message)     
         progressBar.finish()
         
