@@ -240,7 +240,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeTitle',
             label=u'Title',
-            callback=self.includeTitle_changed,  
+            callback=self.mode_changed,  
         )
 
         gui.checkBox(
@@ -248,7 +248,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeContent',
             label=u'Content',
-            callback=self.includeContent_changed,
+            callback=self.mode_changed,
         )
         
         gui.checkBox(
@@ -256,7 +256,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeComments',
             label=u'Comments',
-            callback=self.includeComments_changed,
+            callback=self.mode_changed,
         )
         """
         self.fetchButton = gui.button(
