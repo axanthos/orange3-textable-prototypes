@@ -146,7 +146,7 @@ class Redditor(OWTextableBaseWidget):
             value='URL',
             orientation='horizontal',
             label=u'Search with URL:',
-            labelWidth=110
+            labelWidth=101
         )
 
         self.subredditBox = gui.widgetBox(
@@ -161,7 +161,7 @@ class Redditor(OWTextableBaseWidget):
             value='subreddit',
             orientation='horizontal',
             label=u'reddit.com/r/...:',
-            labelWidth=110
+            labelWidth=101
         
         )
         self.fullTextBox = gui.widgetBox(
@@ -176,7 +176,7 @@ class Redditor(OWTextableBaseWidget):
             value='fullText',
             orientation='horizontal',
             label=u'Search on reddit:',
-            labelWidth=110
+            labelWidth=101
         )
 
         """
