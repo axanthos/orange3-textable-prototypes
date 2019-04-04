@@ -219,7 +219,7 @@ class Redditor(OWTextableBaseWidget):
             minv=1,
             maxv=200,
             label="Amount:",
-            labelWidth=110,
+            labelWidth=101,
             orientation="horizontal",
             tooltip="Select the amount of posts that you want",
         )
@@ -240,7 +240,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeTitle',
             label=u'Title',
-              
+            callback=self.mode_changed,  
         )
 
         gui.checkBox(
@@ -248,7 +248,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeContent',
             label=u'Content',
-            
+            callback=self.mode_changed,
         )
         
         gui.checkBox(
@@ -256,7 +256,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='includeComments',
             label=u'Comments',
-            
+            callback=self.mode_changed,
         )
         """
         self.fetchButton = gui.button(
@@ -280,7 +280,18 @@ class Redditor(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
         )
 
-     
+        """
+        self.includeBox = gui.comboBox( # PETIT ESSAI INCLUDE !
+            widget=infoBox,
+            master=self, 
+            value='include', 
+            label="Title:", "Content", "Comments",
+            callback=self.mode_changed,
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["Title", "Content", "Comment"],
+        )
+		"""
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
         # Send button...
@@ -340,13 +351,26 @@ class Redditor(OWTextableBaseWidget):
         if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
             (self.mode == "URL" and len(self.URL) > 0) or
             (self.mode == "Full text" and len(self.fullText) > 0)):
+            tmp = self.postedAt
+            if tmp == "All":
+                varTimeFilter = "all"
+            elif tmp == "Past day":
+                varTimeFilter = "day"
+            elif tmp == "Past hour":
+                varTimeFilter = "hour"
+            elif tmp == "Past week":
+                varTimeFilter = "week":
+            elif tmp == "Past month":
+                varTimeFilter = "month":
+            elif tmp == "Past year":
+                varTimeFilter = "year":
             # Differenciate method depending of user selection
             if self.mode == "Subreddit":
                 # Get the subreddit based on subreddit name
                 try:
                     subreddit = self.reddit.subreddit(self.subreddit)
                     # Get 1st "hot" post
-                    posts = subreddit.hot(limit=1)
+                    posts = subreddit.hot(limit=self.amount)
                     # Loop on the posts found
                     for post in posts:
                         self.get_post_data(post)
