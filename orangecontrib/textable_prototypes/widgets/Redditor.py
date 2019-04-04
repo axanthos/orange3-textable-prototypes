@@ -70,6 +70,7 @@ class Redditor(OWTextableBaseWidget):
     URL = Setting(u'')
     fullText = Setting(u'')
     sortBy = Setting("Hot")
+    sortByFT = Setting("Relevance")
     postedAt = Setting("All")
     amount = Setting(1)
     includeTitle = Setting(True)
@@ -190,8 +191,14 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
-        gui.comboBox(
+        self.subredditFilter = gui.widgetBox(
             widget=self.filterBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        gui.comboBox(
+            widget=self.subredditFilter,
             master=self,
             value='sortBy',
             label=u'Sort by:',
@@ -199,6 +206,23 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             sendSelectedValue=True,
             items=["Hot", "New", "Controversial", "Top", "Rising"],
+        )
+
+        self.fullTextFilter = gui.widgetBox(
+            widget=self.filterBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        gui.comboBox(
+            widget=self.fullTextFilter,
+            master=self, 
+            value='sortByFT', 
+            label="Sort by:",
+            tooltip= "Choose mode",
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["Relevance", "Top", "New", "Comments"],
         )
 
         gui.comboBox(
@@ -309,10 +333,12 @@ class Redditor(OWTextableBaseWidget):
             # cacher URL et Full text
             self.urlBox.setVisible(False)
             self.fullTextBox.setVisible(False)
+            self.fullTextFilter.setVisible(False)
 
             # montrer subreddit
             self.subredditBox.setVisible(True)
             self.filterBox.setVisible(True)
+            self.subredditFilter.setVisible(True)
         elif self.mode == "URL": # self.mode ==1 => post selected
             # cacher subreddit et Full text
             self.subredditBox.setVisible(False)
@@ -325,10 +351,12 @@ class Redditor(OWTextableBaseWidget):
             # cacher subreddit
             self.subredditBox.setVisible(False)
             self.urlBox.setVisible(False)
+            self.subredditFilter.setVisible(False)
 
             # montrer Full text
             self.fullTextBox.setVisible(True)
             self.filterBox.setVisible(True)
+            self.fullTextFilter.setVisible(True)
 
         # Clear the channel by sending None.
         # TODO: pas sûr que ce soit utile. Je pense qu'un return suffit
@@ -401,6 +429,8 @@ class Redditor(OWTextableBaseWidget):
             elif self.mode == "URL":
                 # Get post based on URL
                 try:
+                    # Set list of posts "posts" according to filter
+                    # Initiate lists without time filters applicable first
                     post = self.reddit.submission(url=self.URL)
                     self.get_post_data(post)
                     self.get_comment_content(post)
@@ -419,7 +449,38 @@ class Redditor(OWTextableBaseWidget):
             elif self.mode == "Full text":
                 userSearch = self.fullText
                 reddit = self.reddit.subreddit("all")
-                for post in reddit.search(userSearch, sort="relevance", limit=1):
+
+                modeTri = self.sortByFT
+                if modeTri == "Relevance":
+                    posts = reddit.search(
+                        userSearch,
+                        sort="relevance",
+                        limit=self.amount,
+                        time_filter=varTimeFilter
+                    )
+                elif modeTri == "Top":
+                    posts = reddit.search(
+                        userSearch,
+                        sort="top",
+                        limit=self.amount,
+                        time_filter=varTimeFilter
+                    )
+                elif modeTri == "Comments":
+                    posts = reddit.search(
+                        userSearch,
+                        sort="comments",
+                        limit=self.amount,
+                        time_filter=varTimeFilter
+                    )
+                elif modeTri == "New":
+                    posts = reddit.search(
+                        userSearch,
+                        sort="new",
+                        limit=self.amount,
+                        time_filter=varTimeFilter
+                    )
+            
+                for post in posts:
                     self.get_post_data(post)
                     self.get_comment_content(post)
 
