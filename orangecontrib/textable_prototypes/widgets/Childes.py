@@ -439,6 +439,21 @@ class Childes(OWTextableBaseWidget):
                     if "age" in participant.annotations:
                         targetChildData[-1]["target_child_age"] =   \
                             participant.annotations["age"]
+                        age_parse = re.search(
+                            r"(\d+)Y(\d+)M(\d+)D",
+                            participant.annotations["age"],
+                        )
+                        if age_parse:
+                            targetChildData[-1]["target_child_years"] =     \
+                                age_parse.group(1)
+                            months = int(age_parse.group(2))   \
+                                + 12 * int(age_parse.group(1))
+                            targetChildData[-1]["target_child_months"] =     \
+                            '%02d' % months
+                            days = int(age_parse.group(3))   \
+                                + 30 * months
+                            targetChildData[-1]["target_child_days"] =     \
+                            '%02d' % days
                     if "id" in participant.annotations:
                         targetChildData[-1]["target_child_id"] =   \
                             participant.annotations["id"]
@@ -590,7 +605,7 @@ class Childes(OWTextableBaseWidget):
 
     def extractWordAnnotations(self, mw):
         """Extract annotations from a word's mor tag in CHILDES XML format and 
-        return an annotated segment.
+        return a dict of annotations.
         """
         root = ET.fromstring(
             "<mw>" + mw.get_content() + "</mw>"
