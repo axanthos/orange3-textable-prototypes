@@ -218,8 +218,8 @@ class Redditor(OWTextableBaseWidget):
             value="amount",
             minv=1,
             maxv=200,
-            label="Amount:",
-            labelWidth=101,
+            label="Amount of posts:",
+            labelWidth=110,
             orientation="horizontal",
             tooltip="Select the amount of posts that you want",
         )
@@ -347,7 +347,6 @@ class Redditor(OWTextableBaseWidget):
     """
 
     def get_content(self):
-        print(self.reddit.user.me())
         if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
             (self.mode == "URL" and len(self.URL) > 0) or
             (self.mode == "Full text" and len(self.fullText) > 0)):
@@ -359,18 +358,30 @@ class Redditor(OWTextableBaseWidget):
             elif tmp == "Past hour":
                 varTimeFilter = "hour"
             elif tmp == "Past week":
-                varTimeFilter = "week":
+                varTimeFilter = "week"
             elif tmp == "Past month":
-                varTimeFilter = "month":
+                varTimeFilter = "month"
             elif tmp == "Past year":
-                varTimeFilter = "year":
+                varTimeFilter = "year"
             # Differenciate method depending of user selection
             if self.mode == "Subreddit":
                 # Get the subreddit based on subreddit name
                 try:
                     subreddit = self.reddit.subreddit(self.subreddit)
-                    # Get 1st "hot" post
-                    posts = subreddit.hot(limit=self.amount)
+                    # Set list of posts "posts" according to filter
+                    # Initiate lists without time filters applicable first
+                    modeTri = self.sortBy
+                    if modeTri == "Hot":
+                        posts = subreddit.hot(limit=self.amount)
+                    elif modeTri == "New":
+                        posts = subreddit.new(limit=self.amount)
+                    elif modeTri == "Rising":
+                        posts = subreddit.rising(limit=self.amount)
+                    # Initiate lists with time filters
+                    elif modeTri == "Controversial":
+                        posts = subreddit.controversial(limit=self.amount, time_filter=varTimeFilter)
+                    elif modeTri == "Top":
+                        posts = subreddit.top(limit=self.amount, time_filter=varTimeFilter)
                     # Loop on the posts found
                     for post in posts:
                         self.get_post_data(post)
