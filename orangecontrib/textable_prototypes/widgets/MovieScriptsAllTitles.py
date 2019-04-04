@@ -12,3 +12,22 @@ for link in soup.find_all('a'):
     print(link.get('href'))
 
     #soup.find_all('p')[0].get_text()
+    
+    
+import pickle
+import requests
+import urllib
+from urllib import request, parse
+from urllib import parse
+from bs4 import BeautifulSoup
+import re
+
+all_titles_page = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?all'
+page = urllib.request.urlopen(all_titles_page)
+soup = BeautifulSoup(page, 'html.parser')
+links = []
+ 
+for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
+    links.append(link.get('href'))
+ 
+print(links)
