@@ -146,7 +146,7 @@ class Redditor(OWTextableBaseWidget):
             value='URL',
             orientation='horizontal',
             label=u'Search with URL:',
-            labelWidth=101
+            labelWidth=110
         )
 
         self.subredditBox = gui.widgetBox(
@@ -161,7 +161,7 @@ class Redditor(OWTextableBaseWidget):
             value='subreddit',
             orientation='horizontal',
             label=u'reddit.com/r/...:',
-            labelWidth=101
+            labelWidth=110
         
         )
         self.fullTextBox = gui.widgetBox(
@@ -176,7 +176,7 @@ class Redditor(OWTextableBaseWidget):
             value='fullText',
             orientation='horizontal',
             label=u'Search on reddit:',
-            labelWidth=101
+            labelWidth=110
         )
 
         """
@@ -219,7 +219,7 @@ class Redditor(OWTextableBaseWidget):
             minv=1,
             maxv=200,
             label="Amount:",
-            labelWidth=101,
+            labelWidth=110,
             orientation="horizontal",
             tooltip="Select the amount of posts that you want",
         )
@@ -280,18 +280,7 @@ class Redditor(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
         )
 
-        """
-        self.includeBox = gui.comboBox( # PETIT ESSAI INCLUDE !
-            widget=infoBox,
-            master=self, 
-            value='include', 
-            label="Title:", "Content", "Comments",
-            callback=self.mode_changed,
-            orientation='horizontal',
-            sendSelectedValue=True,
-            items=["Title", "Content", "Comment"],
-        )
-		"""
+     
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
         # Send button...
