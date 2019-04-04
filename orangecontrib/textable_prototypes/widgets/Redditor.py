@@ -205,6 +205,7 @@ class Redditor(OWTextableBaseWidget):
             tooltip= "Choose mode to sort your posts",
             orientation='horizontal',
             sendSelectedValue=True,
+            callback=self.checkSubredditSortMode,
             items=["Hot", "New", "Controversial", "Top", "Rising"],
         )
 
@@ -222,11 +223,18 @@ class Redditor(OWTextableBaseWidget):
             tooltip= "Choose mode",
             orientation='horizontal',
             sendSelectedValue=True,
+            callback=self.checkSearchSortMode,
             items=["Relevance", "Top", "New", "Comments"],
         )
 
-        gui.comboBox(
+        self.timeBox = gui.widgetBox(
             widget=self.filterBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        gui.comboBox(
+            widget=self.timeBox,
             master=self,
             value='postedAt',
             label=u'Time:',
@@ -339,6 +347,8 @@ class Redditor(OWTextableBaseWidget):
             self.subredditBox.setVisible(True)
             self.filterBox.setVisible(True)
             self.subredditFilter.setVisible(True)
+
+            self.checkSubredditSortMode()
         elif self.mode == "URL": # self.mode ==1 => post selected
             # cacher subreddit et Full text
             self.subredditBox.setVisible(False)
@@ -357,6 +367,8 @@ class Redditor(OWTextableBaseWidget):
             self.fullTextBox.setVisible(True)
             self.filterBox.setVisible(True)
             self.fullTextFilter.setVisible(True)
+
+            self.checkSearchSortMode()
 
         # Clear the channel by sending None.
         # TODO: pas sûr que ce soit utile. Je pense qu'un return suffit
@@ -544,6 +556,28 @@ class Redditor(OWTextableBaseWidget):
                 )
             )
         return
+    
+    def checkSubredditSortMode(self):
+        if self.sortBy == "Hot":
+            self.timeBox.setDisabled(True)
+        elif self.sortBy == "New":
+            self.timeBox.setDisabled(True)
+        elif self.sortBy == "Controversial":
+            self.timeBox.setDisabled(False)
+        elif self.sortBy == "Top":
+            self.timeBox.setDisabled(False)
+        elif self.sortBy == "Rising":
+            self.timeBox.setDisabled(True)
+    
+    def checkSearchSortMode(self):
+        if self.sortByFT == "Relevance":
+            self.timeBox.setDisabled(False)
+        elif self.sortByFT == "New":
+            self.timeBox.setDisabled(True)
+        elif self.sortByFT == "Top":
+            self.timeBox.setDisabled(False)
+        elif self.sortByFT == "Comments":
+            self.timeBox.setDisabled(False)
 
     """
     def send_data(self):
