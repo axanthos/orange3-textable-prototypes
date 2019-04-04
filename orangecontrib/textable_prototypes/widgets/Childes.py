@@ -341,8 +341,11 @@ class Childes(OWTextableBaseWidget):
        
         # Clear created Inputs and initialize progress bar...
         self.clearCreatedInputs()
+        numberOfSteps = 1
+        numberOfSteps += 1 if self.outputUtterances else 0
+        numberOfSteps += 3 if self.outputWords else 0        
         self.infoBox.setText(
-            "Retrieving data, please wait...", 
+            "(1/%i) Retrieving data, please wait..." % numberOfSteps, 
             "warning",
         )     
         self.controlArea.setDisabled(True)
@@ -492,7 +495,8 @@ class Childes(OWTextableBaseWidget):
         # Build utterance segmentation if needed...
         if self.outputUtterances:
             self.infoBox.setText(
-                "Building utterance segmentation, please wait...", 
+                "(2/%i) Building utterance segmentation, please wait..."    \
+                    % numberOfSteps, 
                 "warning",
             )     
             progressBar = ProgressBar(
@@ -516,7 +520,8 @@ class Childes(OWTextableBaseWidget):
         # Build word segmentation if needed...
         if self.outputWords:
             self.infoBox.setText(
-                "Building word segmentation, please wait...", 
+                "(%i/%i) Building word segmentation, please wait..."    \
+                    % (2 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar = ProgressBar(
@@ -534,7 +539,8 @@ class Childes(OWTextableBaseWidget):
                 progress_callback=progressBar.advance,
             )
             self.infoBox.setText(
-                "Handling word replacements, please wait...", 
+                "(%i/%i) Handling word replacements, please wait..."    \
+                    % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar.finish()
@@ -555,7 +561,8 @@ class Childes(OWTextableBaseWidget):
             
             # Analyze words to extract annotations...
             self.infoBox.setText(
-                "Extracting word annotations, please wait...", 
+                "(%i/%i) Extracting word annotations, please wait..."    \
+                    % (4 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar.finish()
