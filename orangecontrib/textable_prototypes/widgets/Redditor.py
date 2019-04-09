@@ -424,8 +424,8 @@ class Redditor(OWTextableBaseWidget):
                         posts = subreddit.top(limit=self.amount, time_filter=varTimeFilter)
                     # Loop on the posts found
                     for post in posts:
-                        self.get_post_data(post)
-                        self.get_comment_content(post)
+                		# On crée les segments appropriés
+                        self.create_post_segments(post)
                 except prawcore.exceptions.Redirect:
                     self.infoBox.setText(
                         "Error in redirect, please make sure the subreddit name is correct.",
@@ -444,8 +444,8 @@ class Redditor(OWTextableBaseWidget):
                     # Set list of posts "posts" according to filter
                     # Initiate lists without time filters applicable first
                     post = self.reddit.submission(url=self.URL)
-                    self.get_post_data(post)
-                    self.get_comment_content(post)
+                	# On crée les segments appropriés
+                    self.create_post_segments(post)
                 except prawcore.exceptions.NotFound:
                     self.infoBox.setText(
                         "No match forURL.",
@@ -493,8 +493,8 @@ class Redditor(OWTextableBaseWidget):
                     )
             
                 for post in posts:
-                    self.get_post_data(post)
-                    self.get_comment_content(post)
+                    # On crée les segments appropriés
+                    self.create_post_segments(post)
 
             if len(self.segments) > 0:
                 self.send("Segmentation", Segmentation(self.segments))
@@ -515,7 +515,38 @@ class Redditor(OWTextableBaseWidget):
             )
             return
 
-    def get_post_data(self, post):
+    def create_post_segments(self, post):
+        # Si "Title" est coché, on crée le segment correspondant
+        if self.includeTitle is True:
+            self.create_title_segment(post)
+        # Si "Content" est coché ou si aucune case ne l'est, on crée le segment correspondant
+        # et vérifie que "Content" est bien coché
+        if self.includeContent is True or (self.includeTitle is not True and self.includeComments is not True):
+            self.includeContent = True
+            self.create_content_segment(post)
+        # Si "Comments" est coché, on crée les segments correspondants
+        if self.includeComments is True:
+            self.create_comments_segments(post)
+         return
+        
+    def create_title_segment(self, post):
+        annotations = dict()
+        #annotations["Title"] = post.title
+        annotations["Id"] = post.id
+        annotations["Parent"] = post.id
+        text = Input(post.title)
+
+        self.segments.append(
+            Segment(
+                str_index=text[0].str_index,
+                start=text[0].start,
+                end=text[0].end,
+                annotations=annotations
+            )
+        )
+        return
+    
+    def create_content_segment(self, post):
         annotations = dict()
         annotations["Title"] = post.title
         annotations["Id"] = post.id
@@ -531,11 +562,13 @@ class Redditor(OWTextableBaseWidget):
                 annotations=annotations
             )
         )
+        return
     
-    def get_comment_content(self, post):
+    def create_comments_segments(self, post):
         post.comments.replace_more(limit=0)
         comments = post.comments.list()
 
+        # On crée un segment pour chaque commentaire
         for comment in comments:
             annotations = dict()
             annotations["Title"] = post.title
