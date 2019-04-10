@@ -527,7 +527,7 @@ class Redditor(OWTextableBaseWidget):
         # Si "Comments" est coché, on crée les segments correspondants
         if self.includeComments is True:
             self.create_comments_segments(post)
-         return
+            return
         
     def create_title_segment(self, post):
         annotations = dict()
