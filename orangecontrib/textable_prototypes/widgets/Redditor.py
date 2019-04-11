@@ -267,6 +267,8 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
+        # TODO: replace checkboxes
+
         gui.checkBox(
             widget=self.includeBox,
             master=self,
@@ -468,28 +470,27 @@ class Redditor(OWTextableBaseWidget):
                         userSearch,
                         sort="relevance",
                         limit=self.amount,
-                        time_filter=varTimeFilter
+                        time_filter=varTimeFilter,
                     )
                 elif modeTri == "Top":
                     posts = reddit.search(
                         userSearch,
                         sort="top",
                         limit=self.amount,
-                        time_filter=varTimeFilter
+                        time_filter=varTimeFilter,
                     )
                 elif modeTri == "Comments":
                     posts = reddit.search(
                         userSearch,
                         sort="comments",
                         limit=self.amount,
-                        time_filter=varTimeFilter
+                        time_filter=varTimeFilter,
                     )
                 elif modeTri == "New":
                     posts = reddit.search(
                         userSearch,
                         sort="new",
                         limit=self.amount,
-                        time_filter=varTimeFilter
                     )
             
                 for post in posts:
@@ -552,6 +553,9 @@ class Redditor(OWTextableBaseWidget):
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
 
+        # TODO: add these annotations:
+        # author, created_utc (ou created ?) et score
+
         text = Input(post.selftext)
 
         self.segments.append(
@@ -573,6 +577,9 @@ class Redditor(OWTextableBaseWidget):
             annotations = dict()
             annotations["Title"] = post.title
             annotations["Id"] = comment.id
+
+            # TODO: add these annotations:
+            # author, created_utc (ou created ?) et score
 
             parentId= comment.parent_id.split("_")
             annotations["Parent"] = parentId[1]
