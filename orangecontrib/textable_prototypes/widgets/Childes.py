@@ -341,8 +341,11 @@ class Childes(OWTextableBaseWidget):
        
         # Clear created Inputs and initialize progress bar...
         self.clearCreatedInputs()
+        numberOfSteps = 1
+        numberOfSteps += 1 if self.outputUtterances else 0
+        numberOfSteps += 3 if self.outputWords else 0        
         self.infoBox.setText(
-            "Retrieving data, please wait...", 
+            "(1/%i) Retrieving data, please wait..." % numberOfSteps, 
             "warning",
         )     
         self.controlArea.setDisabled(True)
@@ -439,6 +442,21 @@ class Childes(OWTextableBaseWidget):
                     if "age" in participant.annotations:
                         targetChildData[-1]["target_child_age"] =   \
                             participant.annotations["age"]
+                        age_parse = re.search(
+                            r"(\d+)Y(\d+)M(\d+)D",
+                            participant.annotations["age"],
+                        )
+                        if age_parse:
+                            targetChildData[-1]["target_child_years"] =     \
+                                age_parse.group(1)
+                            months = int(age_parse.group(2))   \
+                                + 12 * int(age_parse.group(1))
+                            targetChildData[-1]["target_child_months"] =     \
+                            '%02d' % months
+                            days = int(age_parse.group(3))   \
+                                + 30 * months
+                            targetChildData[-1]["target_child_days"] =     \
+                            '%02d' % days
                     if "id" in participant.annotations:
                         targetChildData[-1]["target_child_id"] =   \
                             participant.annotations["id"]
@@ -477,7 +495,8 @@ class Childes(OWTextableBaseWidget):
         # Build utterance segmentation if needed...
         if self.outputUtterances:
             self.infoBox.setText(
-                "Building utterance segmentation, please wait...", 
+                "(2/%i) Building utterance segmentation, please wait..."    \
+                    % numberOfSteps, 
                 "warning",
             )     
             progressBar = ProgressBar(
@@ -501,7 +520,8 @@ class Childes(OWTextableBaseWidget):
         # Build word segmentation if needed...
         if self.outputWords:
             self.infoBox.setText(
-                "Building word segmentation, please wait...", 
+                "(%i/%i) Building word segmentation, please wait..."    \
+                    % (2 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar = ProgressBar(
@@ -519,7 +539,8 @@ class Childes(OWTextableBaseWidget):
                 progress_callback=progressBar.advance,
             )
             self.infoBox.setText(
-                "Handling word replacements, please wait...", 
+                "(%i/%i) Handling word replacements, please wait..."    \
+                    % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar.finish()
@@ -540,7 +561,8 @@ class Childes(OWTextableBaseWidget):
             
             # Analyze words to extract annotations...
             self.infoBox.setText(
-                "Extracting word annotations, please wait...", 
+                "(%i/%i) Extracting word annotations, please wait..."    \
+                    % (4 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar.finish()
@@ -590,7 +612,7 @@ class Childes(OWTextableBaseWidget):
 
     def extractWordAnnotations(self, mw):
         """Extract annotations from a word's mor tag in CHILDES XML format and 
-        return an annotated segment.
+        return a dict of annotations.
         """
         root = ET.fromstring(
             "<mw>" + mw.get_content() + "</mw>"
