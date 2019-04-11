@@ -314,18 +314,7 @@ class Redditor(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
         )
 
-        """
-        self.includeBox = gui.comboBox( # PETIT ESSAI INCLUDE !
-            widget=infoBox,
-            master=self, 
-            value='include', 
-            label="Title:", "Content", "Comments",
-            callback=self.mode_changed,
-            orientation='horizontal',
-            sendSelectedValue=True,
-            items=["Title", "Content", "Comment"],
-        )
-		"""
+       
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
         # Send button...
