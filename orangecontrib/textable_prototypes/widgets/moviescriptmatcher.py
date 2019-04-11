@@ -10,4 +10,4 @@ testdict = {
 }
 
 #The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user
-print(process.extractBests("Die Hard", testdict, limit=2, score_cutoff=70))
+print(process.extractBests("Die Hard", testdict, limit=3, score_cutoff=70))
