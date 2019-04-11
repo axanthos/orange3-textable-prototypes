@@ -51,6 +51,12 @@ def export_scripts(title_to_href):
 
 export_scripts(title_to_href)
 
+#This is what will get the actual script of a single movie 
+page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=five-minutes-of-heaven"
+page = urllib.request.urlopen(page_url)
+soup = BeautifulSoup(page, 'html.parser')
+script = soup.find("div", {"class":"movie_script"})
+print (script.text)
 
 
 ############################
