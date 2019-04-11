@@ -5,8 +5,9 @@ from fuzzywuzzy import process
 testdict = {
 	"Die Hard (1988)": "die-hard",
 	"Watchmen (2009)": "watchmen",
-	"Back to the Future (1985)": "back-to-the-future"
+	"Back to the Future (1985)": "back-to-the-future",
+	"Die Hard 2": "die-hard-2",
 }
 
 #The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user
-print(process.extract("Die Hard", testdict, limit=2))
+print(process.extractBests("Die Hard", testdict, limit=2, score_cutoff=70))
