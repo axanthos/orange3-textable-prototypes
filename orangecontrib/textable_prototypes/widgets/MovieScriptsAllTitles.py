@@ -6,6 +6,8 @@ from urllib import parse
 from bs4 import BeautifulSoup
 import re
 import pickle
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 php_query_string = '/movie_script.php?movie='
 http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
@@ -31,7 +33,7 @@ for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L
 		print(page_num)
 		page_num += 1
 
-print(title_to_href)
+print(title_to_href['99 Homes (2014)'])
 
 
 
@@ -49,45 +51,46 @@ def export_scripts(title_to_href):
 
 	return
 
-export_scripts(title_to_href)
-
-#This is what will get the actual script of a single movie 
-page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=five-minutes-of-heaven"
-page = urllib.request.urlopen(page_url)
-soup = BeautifulSoup(page, 'html.parser')
-script = soup.find("div", {"class":"movie_script"})
-print (script.text)
-
-
-############################
-
-# for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
-#     links[link.text] = link.get('href')
-#     # links.append(link.get('.text'))
- 
-# print(links)
-# # print(links.values())
-
-
-###to go in the page wich containes the script###
-
-# script_list = []
-
-# movie_script_url = 'https://www.springfieldspringfield.co.uk' + list(links.values())[0]
-# print(movie_script_url)
-# page_movie_script = urllib.request.urlopen(movie_script_url)
-# soup_movie_script = BeautifulSoup(page_movie_script, 'html.parser')
-
-# for script in soup.find_all('div', attrs={'class': re.compile('scrolling-script')}):
-# 	script.append(script.get('scrolling-script-container'))
-# print(script_list)
+# export_scripts(title_to_href)
 
 
 
+def view_script():
+#This is what will get the actual script of a single movie
+	movie_names_row = input('\033[31m Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : \033[0m')
+#The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user	
+	movie_names = process.extractBests(movie_names_row, title_to_href.keys(), limit=1, score_cutoff=70)
+	titles = [movie_name[0] for movie_name in movie_names]
+	title = titles[0]
 
-# https://www.springfieldspringfield.co.uk/movie_scripts.php?order=A&page=1
-# https://www.springfieldspringfield.co.uk/movie_scripts.php?order=B&page=1
-# https://www.springfieldspringfield.co.uk/movie_script.php?movie=a-2nd-hand-lover
+	print(title)
+	if input('\033[31m Entrez "yes" pour continuer : \033[0m') == 'yes':
+
+		if title in title_to_href:
+			print(title_to_href[title])
+		else:
+			print('Aucun résultat')
+
+		page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + title_to_href[title]
+		page = urllib.request.urlopen(page_url)
+		soup = BeautifulSoup(page, 'html.parser')
+		script = soup.find("div", {"class":"movie_script"})
+		print (script.text)
+	else:
+		pass
+
+view_script()
+
+# #This is what will get the actual script of a single movie
+# movie_name_row = input('Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : ')
+# #The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user	
+# movie_names = process.extractBests(movie_name_row, title_to_href.keys(), limit=3, score_cutoff=70)
+
+# titles = [movie_name[0] for movie_name in movie_names]
+
+# print(titles)
+
+
 
 
 
