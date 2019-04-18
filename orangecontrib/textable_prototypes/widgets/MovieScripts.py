@@ -97,6 +97,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.mytitleLabels = list()
         # stock all the inputs (songs) in a list
         self.createdInputs = list()
+        self.sendData =
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -213,15 +214,16 @@ class MovieScripts(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
 
-    # Search function which contacts the Genius API
+    # Search function which contacts the IMSBD RSS feeds
     def searchFunction(self):
         """Search from website IMSDB.com"""
         #Instead of searching for a title from the website, have a cache of all title which widget will access
-        quote_page = 'http://www.imsdb.com/feeds/fromtitle.php?title=' + movie_title
+        quote_page = 'https://www.imsdb.com/all%20scripts/'
         page = urllib.urlopen(quote_page)
         soup = BeautifulSoup(page, 'html.parser')
         for link in soup.find_all('a'):
-            print(link.get('href'))
+            MovieScripts.sendButton.sendData(link.get('href'))
+
 
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
@@ -230,7 +232,7 @@ class MovieScripts(OWTextableBaseWidget):
             changed = title != self.captionTitle
             super().setCaption(title)
             if changed:
-                self.sendButton.settingsChanged()
+                self.SendButton.settingsChanged()
         else:
             super().setCaption(title)
 
