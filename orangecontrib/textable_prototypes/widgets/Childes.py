@@ -31,10 +31,13 @@ import re
 import pickle
 import inspect
 import zipfile
+import shutil
 import xml.etree.ElementTree as ET
 
 import requests
 from bs4 import BeautifulSoup
+
+import AnyQt
 
 from Orange.widgets import widget, gui, settings
 
@@ -132,32 +135,34 @@ class Childes(OWTextableBaseWidget):
             addSpace=False,
         )
 
+        self.currentFolderLabel = gui.label(
+            widget=browseBox,
+            master=self,
+            label="Current folder: /",
+            tooltip="This is the currently displayed folder.",
+        )
+
+        gui.separator(widget=browseBox, height=3)
+
         upwardNavBox = gui.widgetBox(
             widget=browseBox,
             box=False,
             orientation="horizontal",
         )
+        
         self.homeRefreshButton = gui.button(
             widget=upwardNavBox,
             master=self,
             label="Home",
             callback=self.homeRefreshPressed,
         )
+        
         self.backButton = gui.button(
             widget=upwardNavBox,
             master=self,
             label="Back",
             callback=self.backPressed,
             tooltip="View parent folder.",
-        )
-
-        gui.separator(widget=browseBox, height=3)
-
-        self.currentFolderLabel = gui.label(
-            widget=browseBox,
-            master=self,
-            label="Current folder: /",
-            tooltip="This is the currently displayed folder.",
         )
 
         gui.separator(widget=browseBox, height=3)
@@ -176,13 +181,12 @@ class Childes(OWTextableBaseWidget):
             self.displayedFoldersDoubleClicked
         )
 
-        gui.separator(widget=browseBox, height=3)
-
         downwardNavBox = gui.widgetBox(
             widget=browseBox,
             box=False,
             orientation="horizontal",
         )
+        
         self.openButton = gui.button(
             widget=downwardNavBox,
             master=self,
@@ -190,6 +194,7 @@ class Childes(OWTextableBaseWidget):
             callback=self.openPressed,
             tooltip="View selected folder's contents.",
         )
+        
         self.addButton = gui.button(
             widget=downwardNavBox,
             master=self,
@@ -226,7 +231,6 @@ class Childes(OWTextableBaseWidget):
             box=False,
             orientation="horizontal",
         )
-        # Remove songs button
         self.removeButton = gui.button(
             widget=removalBox,
             master=self,
@@ -235,7 +239,6 @@ class Childes(OWTextableBaseWidget):
             tooltip="Remove the selected corpus.",
         )
 
-        # Delete all confirmed songs button
         self.clearButton = gui.button(
             widget=removalBox,
             master=self,
@@ -263,6 +266,8 @@ class Childes(OWTextableBaseWidget):
             tooltip=u"Toggle emission of utterance segmentation on or off.",
         )
 
+        gui.separator(widget=optionsBox, height=1)
+
         gui.checkBox(
             widget=optionsBox,
             master=self,
@@ -271,6 +276,8 @@ class Childes(OWTextableBaseWidget):
             callback=self.toggleWordOptions,
             tooltip=u"Toggle emission of word segmentation on or off.",
         )
+
+        gui.separator(widget=optionsBox, height=1)
 
         self.wordOptionsBox = gui.indentedBox(
             widget=optionsBox,
@@ -281,34 +288,32 @@ class Childes(OWTextableBaseWidget):
         gui.label(
             widget=self.wordOptionsBox,
             master=self,
-            labelWidth=120,
+            labelWidth=135,
             label="Word stem includes: ",
-            tooltip="TODO.",
+            tooltip="Select the elements that will be added to the stem.",
         )
 
         gui.checkBox(
             widget=self.wordOptionsBox,
             master=self,
-            labelWidth=70,
+            labelWidth=85,
             value='includePOSTag',
             label=u'POS-tag',
             callback=self.sendButton.settingsChanged,
-            tooltip=u"TODO.",
+            tooltip=u"Add the part-of-speech tag (e.g. door => N|door).",
         )
 
         gui.checkBox(
             widget=self.wordOptionsBox,
             master=self,
-            labelWidth=70,
+            labelWidth=85,
             value='includePrefixes',
             label=u'prefixes',
             callback=self.sendButton.settingsChanged,
-            tooltip=u"TODO.",
+            tooltip=u"Include the prefix (e.g. write => re#write).",
         )
 
-        gui.rubber(self.wordOptionsBox)
-        
-        gui.separator(widget=optionsBox, height=3)
+        gui.separator(widget=self.controlArea, height=3)
 
         gui.rubber(self.controlArea)
         
@@ -332,7 +337,7 @@ class Childes(OWTextableBaseWidget):
         """Compute result of widget processing and send to output"""
         if not self.importedCorpora:
             self.infoBox.setText(
-                "Please select a corpus to import.",
+                "Please add a corpus to the selection.",
                 "warning"
             )
             self.send("Files", None, self)
@@ -735,6 +740,18 @@ class Childes(OWTextableBaseWidget):
 
     def refreshDatabaseCache(self):
         """Refresh the database cache"""
+        basepath = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe()))
+        )
+        cacheFoldername = self.__class__.cachedFoldername
+        if os.path.exists(cacheFoldername) and list(os.walk('.'))[0]:
+            dialog = AnyQt.QtGui.QMessageBox()
+            response = dialog.question(
+                self,
+                "CHILDES", 
+                "Keep previously saved files?", 
+                dialog.Yes | dialog.No
+            )
         self.infoBox.setText(
             "Scraping CHILDES website, please wait...", 
             "warning",
@@ -774,7 +791,13 @@ class Childes(OWTextableBaseWidget):
             )
             self.send("Files", None, self)
             self.send("Utterances", None, self)
-              
+        
+        # Remove saved files if required...
+        try:
+            if response == dialog.No:
+                shutil.rmtree(cacheFoldername)
+        except UnboundLocalError:
+            pass
         progressBar.advance()
         progressBar.finish()
         self.currentFolder = self.__class__.baseUrl
