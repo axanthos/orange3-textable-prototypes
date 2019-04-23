@@ -96,6 +96,7 @@ class Redditor(OWTextableBaseWidget):
         # User interface...
         self.infoBox = InfoBox(
             widget=self.controlArea,
+
         )
 
         sourceBox = gui.widgetBox(
@@ -292,6 +293,10 @@ class Redditor(OWTextableBaseWidget):
             label=u'Comments',
             callback=self.mode_changed,
         )
+
+        gui.rubber(self.controlArea)
+
+
         """
         self.fetchButton = gui.button(
             widget=sourceBox,
@@ -524,6 +529,9 @@ class Redditor(OWTextableBaseWidget):
         #annotations["Title"] = post.title
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
+        annotations["Username"] = post.username
+        annotations["Score"] = post.score
+        annotations["Date"] = post.date 
         text = Input(post.title)
 
         self.segments.append(
@@ -535,12 +543,16 @@ class Redditor(OWTextableBaseWidget):
             )
         )
         return
-    
+   
+
     def create_content_segment(self, post):
         annotations = dict()
         annotations["Title"] = post.title
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
+        annotations["Username"] = post.username
+        annotations["Score"] = post.score
+        annotations["Date"] = post.date 
 
         # TODO: add these annotations:
         # author, created_utc (ou created ?) et score
@@ -566,6 +578,9 @@ class Redditor(OWTextableBaseWidget):
             annotations = dict()
             annotations["Title"] = post.title
             annotations["Id"] = comment.id
+            annotations["Username"] = post.username
+            annotations["Score"] = post.score
+            annotations["Date"] = post.date 
 
             # TODO: add these annotations:
             # author, created_utc (ou created ?) et score
