@@ -36,7 +36,8 @@ def get_all_titles(title_to_href):
 			print(page_num)
 			page_num += 1
 
-	print(title_to_href['99 Homes (2014)'])
+	# print(title_to_href['99 Homes (2014)'])
+	print(title_to_href)
 
 
 
@@ -85,14 +86,6 @@ def view_script(title_to_href):
 get_all_titles(title_to_href)
 view_script(title_to_href)
 
-# #This is what will get the actual script of a single movie
-# movie_name_row = input('Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : ')
-# #The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user	
-# movie_names = process.extractBests(movie_name_row, title_to_href.keys(), limit=3, score_cutoff=70)
-
-# titles = [movie_name[0] for movie_name in movie_names]
-
-# print(titles)
 
 
 

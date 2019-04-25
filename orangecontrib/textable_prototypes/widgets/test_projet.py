@@ -158,10 +158,10 @@ class MovieScripts(OWTextableBaseWidget):
         	widget=queryBox,
         	master=self,
         	label='search',
-        	callback=self.sendData,
+        	callback=self.get_all_titles,
         	tooltip='Search for the movie',
         	)
-        self.searchButton.setDisabled(True)
+        self.searchButton.setDisabled(False)
 
         # Reasearch button
         # Uses "searchFunction" attribut
@@ -220,11 +220,11 @@ class MovieScripts(OWTextableBaseWidget):
 
 
     # Get all movie titles from www.springfieldspringfield.co.uk
-    def get_all_titles(title_to_href):
+    def get_all_titles(self):
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
-        # title_to_href = dict()
+        title_to_href = dict()
 
 
         for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -246,6 +246,9 @@ class MovieScripts(OWTextableBaseWidget):
                 page_num += 1
 
         # print(title_to_href)
+
+        '''ne fonctionne pas --> à voir pq...'''
+        self.titleLabels.append(title_to_href) 
 
 
     # Export file with all titles in a list
@@ -269,23 +272,6 @@ class MovieScripts(OWTextableBaseWidget):
     # Creat the final output with the script
     def sendData(self, title_to_href):
         """Send data from website springfieldspringfield"""
-
-        titles = {}
-        query_string = self.newQuery
-
-        if query_string != "":
-            page = 1
-            page_max = int(self.nbr_results)/10
-            result_id = 0
-            result_artist = []
-
-            self.controlArea.setDisabled(True)
-
-            # Initialize progress bar.
-            progressBar = ProgressBar(
-                self,
-                iterations=page_max
-            )
 
         #This is what will get the actual script of a single movie
         movie_names_row = input('\033[31m Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : \033[0m')
@@ -311,6 +297,64 @@ class MovieScripts(OWTextableBaseWidget):
             pass
 
         self.searchButton.setDisabled(False)
+
+    # def searchFunction(self):
+    #     result_list = {"1": "a", "1": "a", "1": "a", "1": "a",}
+    #     query_string = self.newQuery
+
+    #     if query_string != "":
+    #         page = 1
+    #         page_max = int(self.nbr_results)/10
+    #         result_id = 0
+    #         result_artist = []
+
+    #         self.controlArea.setDisabled(True)
+
+    #         # Initialize progress bar.
+    #         progressBar = ProgressBar(
+    #             self,
+    #             iterations=page_max
+    #         )
+
+    #         # Each result is stored in a dictionnary with its title,
+    #         # artist's name, artist's ID and URL path
+    #         for result in body:
+    #             result_id += 1
+    #             title = result["result"]["title"]
+    #             artist = result["result"]["primary_artist"]["name"]
+    #             artist_id = result["result"]["primary_artist"]["id"]
+    #             path = result["result"]["path"]
+    #             result_list[result_id] = {'artist': artist,
+    #                                           'artist_id':artist_id,
+    #                                           'path':path, 'title':title}
+    #             page += 1
+
+    #             # 1 tick on the progress bar of the widget
+    #             progressBar.advance()
+    #         # Stored the results list in the "result_list" variable
+    #         self.searchResults = result_list
+
+    #         # Reset and clear the visible widget list
+    #         del self.titleLabels[:]
+
+    #         # Update the results list with the search results
+    #         # in order to display them
+    #         for idx in self.searchResults:
+    #             result_string = self.searchResults[idx]["title"] + " - " + \
+    #                             self.searchResults[idx]["artist"]
+    #             self.titleLabels.append(result_string)
+
+    #         self.titleLabels = self.titleLabels
+    #         self.clearButton.setDisabled(False)
+    #         self.addButton.setDisabled(self.selectedTitles == list())
+
+
+    #         # Clear progress bar.
+    #         progressBar.finish()
+    #         self.controlArea.setDisabled(False)
+
+    #     else:
+    #         self.infoBox.setText("You didn't search anything", "warning")
 
 
 	# The following method needs to be copied verbatim in
