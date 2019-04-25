@@ -98,7 +98,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.mytitleLabels = list()
         # stock all the inputs (songs) in a list
         self.createdInputs = list()
-        self.sendData =
+        # self.sendData = ''
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -154,13 +154,7 @@ class MovieScripts(OWTextableBaseWidget):
 
         # Reasearch button
         # Uses "searchFunction" attribut
-        self.searchButton = gui.button(
-            widget=queryBox,
-            master=self,
-            label="Search",
-            callback=self.searchFunction,
-            tooltip="Search for a script",
-        )
+ 
         self.titleListbox = gui.listBox(
             widget=queryBox,
             master=self,
@@ -207,7 +201,7 @@ class MovieScripts(OWTextableBaseWidget):
 
         # Draw Info box and Send button
         self.sendButton.draw()
-        self.searchButton.setDefault(True)
+        # self.searchButton.setDefault(True)
         self.infoBox.draw()
 
 
@@ -216,14 +210,14 @@ class MovieScripts(OWTextableBaseWidget):
 
 
     # Search function which contacts the IMSBD RSS feeds
-    def searchFunction(self):
-        """Search from website IMSDB.com"""
-        #Instead of searching for a title from the website, have a cache of all title which widget will access
-        quote_page = 'https://www.imsdb.com/all%20scripts/'
-        page = urllib.urlopen(quote_page)
-        soup = BeautifulSoup(page, 'html.parser')
-        for link in soup.find_all('a'):
-            MovieScripts.sendButton.sendData(link.get('href'))
+    # def searchFunction(self):
+    #     """Search from website IMSDB.com"""
+    #     #Instead of searching for a title from the website, have a cache of all title which widget will access
+    #     quote_page = 'https://www.imsdb.com/all%20scripts/'
+    #     page = urllib.urlopen(quote_page)
+    #     soup = BeautifulSoup(page, 'html.parser')
+    #     for link in soup.find_all('a'):
+    #         MovieScripts.sendButton.sendData()
 
 
     # The following method needs to be copied verbatim in
@@ -239,31 +233,35 @@ class MovieScripts(OWTextableBaseWidget):
 
     ######################################################
 
-    php_query_string = '/movie_script.php?movie='
-    http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
-
+    '''variable globale à déplacer'''
     title_to_href = dict()
 
+    def get_all_titles(title_to_href):
+        php_query_string = '/movie_script.php?movie='
+        http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
-    for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-               #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
-        page_num = 1
-        while True:
-            page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
-            page = urllib.request.urlopen(page_url)
-            soup = BeautifulSoup(page, 'html.parser')
-            script_links = soup.findAll('a', attrs={'class': re.compile("^script-list-item")})
-            if not script_links:
-                break
-            links = dict()
-            for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
-                links[link.text] = link.get('href')[len(php_query_string):]
-            title_to_href.update(links)
+        # title_to_href = dict()
 
-            print(page_num)
-            page_num += 1
 
-    print(title_to_href)
+        for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                   #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+            page_num = 1
+            while True:
+                page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
+                page = urllib.request.urlopen(page_url)
+                soup = BeautifulSoup(page, 'html.parser')
+                script_links = soup.findAll('a', attrs={'class': re.compile("^script-list-item")})
+                if not script_links:
+                    break
+                links = dict()
+                for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
+                    links[link.text] = link.get('href')[len(php_query_string):]
+                title_to_href.update(links)
+
+                print(page_num)
+                page_num += 1
+
+        # print(title_to_href)
 
 
 
@@ -281,17 +279,32 @@ class MovieScripts(OWTextableBaseWidget):
 
         return
 
-    export_scripts(title_to_href)
+    # export_scripts(title_to_href)
 
 
-    def sendData(self):
-            """Compute result of widget processing and send to output"""
-            #This is what will get the actual script of a single movie 
-            page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=five-minutes-of-heaven"
+    def sendData(self, title_to_href):
+    #This is what will get the actual script of a single movie
+        movie_names_row = input('\033[31m Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : \033[0m')
+    #The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user    
+        movie_names = process.extractBests(movie_names_row, title_to_href.keys(), limit=1, score_cutoff=70)
+        titles = [movie_name[0] for movie_name in movie_names]
+        title = titles[0]
+
+        print(title)
+        if input('\033[31m Entrez "yes" pour continuer : \033[0m') == 'yes':
+
+            if title in title_to_href:
+                print(title_to_href[title])
+            else:
+                print('Aucun résultat')
+
+            page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + title_to_href[title]
             page = urllib.request.urlopen(page_url)
             soup = BeautifulSoup(page, 'html.parser')
             script = soup.find("div", {"class":"movie_script"})
-            self.Outputs.sample.send(self.script)
+            print (script.text)
+        else:
+            pass
 
 ##################################################
 

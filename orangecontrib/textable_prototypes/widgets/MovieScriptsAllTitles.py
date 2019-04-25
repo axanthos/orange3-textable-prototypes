@@ -9,31 +9,34 @@ import pickle
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
-php_query_string = '/movie_script.php?movie='
-http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
-
 title_to_href = dict()
 
+def get_all_titles(title_to_href):
+	php_query_string = '/movie_script.php?movie='
+	http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
-for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-			   #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
-	page_num = 1
-	while True:
-		page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
-		page = urllib.request.urlopen(page_url)
-		soup = BeautifulSoup(page, 'html.parser')
-		script_links = soup.findAll('a', attrs={'class': re.compile("^script-list-item")})
-		if not script_links:
-			break
-		links = dict()
-		for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
-			links[link.text] = link.get('href')[len(php_query_string):]
-		title_to_href.update(links)
+	# title_to_href = dict()
 
-		print(page_num)
-		page_num += 1
 
-print(title_to_href['99 Homes (2014)'])
+	for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+				   #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+		page_num = 1
+		while True:
+			page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
+			page = urllib.request.urlopen(page_url)
+			soup = BeautifulSoup(page, 'html.parser')
+			script_links = soup.findAll('a', attrs={'class': re.compile("^script-list-item")})
+			if not script_links:
+				break
+			links = dict()
+			for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
+				links[link.text] = link.get('href')[len(php_query_string):]
+			title_to_href.update(links)
+
+			print(page_num)
+			page_num += 1
+
+	print(title_to_href['99 Homes (2014)'])
 
 
 
@@ -55,7 +58,7 @@ def export_scripts(title_to_href):
 
 
 
-def view_script():
+def view_script(title_to_href):
 #This is what will get the actual script of a single movie
 	movie_names_row = input('\033[31m Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : \033[0m')
 #The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user	
@@ -79,7 +82,8 @@ def view_script():
 	else:
 		pass
 
-view_script()
+get_all_titles(title_to_href)
+view_script(title_to_href)
 
 # #This is what will get the actual script of a single movie
 # movie_name_row = input('Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : ')
