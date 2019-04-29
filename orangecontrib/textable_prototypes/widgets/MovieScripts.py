@@ -291,6 +291,9 @@ class MovieScripts(OWTextableBaseWidget):
             self.segmentation = self.createdInputs[0]
             print(self.createdInputs[0])
             del self.path_storage[:]
+            self.infoBox.setText(
+                "Script downloaded!",
+            )
         except:
             self.infoBox.setText(
                 "Couldn't download data from SpringfieldSpringfield website.",
