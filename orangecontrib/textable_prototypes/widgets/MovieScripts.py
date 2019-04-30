@@ -15,8 +15,7 @@ import urllib.parse
 import json
 import pickle
 import requests
-from urllib import request
-from urllib import parse
+from urllib import request, parse
 from bs4 import BeautifulSoup
 import re
 from fuzzywuzzy import fuzz
@@ -26,7 +25,7 @@ from fuzzywuzzy import process
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton,
+    InfoBox, SendButton, ProgressBar,
 )
 
 class MovieScripts(OWTextableBaseWidget):
@@ -208,18 +207,14 @@ class MovieScripts(OWTextableBaseWidget):
 
 
 
-    def searchFunction(self, testdict):
+    title_to_href = dict()
+
+    def searchFunction(self, title_to_href):
         #Search from the springfieldspringfield.co.uk
 
-		
-        result_list = {}
+        result_list = dict()
         query_string = self.newQuery
-        testdict = {
-            "Die Hard (1988)": "die-hard",
-            "Watchmen (2009)": "watchmen",
-            "Back to the Future (1985)": "back-to-the-future",
-            "Die Hard 2 (1990)": "die-hard-2",
-        }
+        testdict = MovieScripts.get_all_titles(title_to_href)
         # Reset and clear the visible widget list
         del self.titleLabels[:]
 		
@@ -237,6 +232,8 @@ class MovieScripts(OWTextableBaseWidget):
         else:
             self.infoBox.setText("You didn't search anything", "warning")
 
+        progressBar.finish()
+
     def clearResults(self):
         """Clear the results list"""
         del self.titleLabels[:]
@@ -245,15 +242,20 @@ class MovieScripts(OWTextableBaseWidget):
     
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(title_to_href):
+        title_to_href = dict()
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
-        # title_to_href = dict()
-
-
-        for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+        for lettre in ['0']:#, 'A']:, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                    #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
             page_num = 1
+
+            # Initialize progress bar.
+            progressBar = ProgressBar(
+                self,
+                iterations=page_num,
+            )
+
             while True:
                 page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
                 page = urllib.request.urlopen(page_url)
@@ -269,7 +271,11 @@ class MovieScripts(OWTextableBaseWidget):
                 print(page_num)
                 page_num += 1
 
-        # print(title_to_href)
+                progressBar.advance()
+
+        # print(title_to_href['99 Homes (2014)'])
+        return(title_to_href)
+        print(title_to_href)
 
     # Create the final output with the script
     def sendData(self):
