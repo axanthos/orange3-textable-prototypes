@@ -306,6 +306,7 @@ class MovieScripts(OWTextableBaseWidget):
                 "error"
             )
         self.controlArea.setDisabled(False)
+        self.send("Movie Scripts importation", self.segmentation, self)
 
 
 
