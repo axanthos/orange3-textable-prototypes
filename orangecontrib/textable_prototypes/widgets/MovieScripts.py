@@ -15,6 +15,8 @@ import urllib.parse
 import json
 import pickle
 import requests
+import inspect
+import os
 from urllib import request, parse
 from bs4 import BeautifulSoup
 import re
@@ -65,7 +67,7 @@ class MovieScripts(OWTextableBaseWidget):
 
     # Other class variables...
 
-    cachFilename = "cache_springfield"
+    cacheFilename = "cache_springfield"
 
     def __init__(self):
         """Widget creator."""
@@ -255,30 +257,66 @@ class MovieScripts(OWTextableBaseWidget):
     
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
+        basepath = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe()))
+            )
+        cachedFilename = self.__class__.cacheFilename
+        if os.path.exists(cachedFilename) and list(os.walk('.'))[0]:
+            dialog = AnyQt.QtGui.QMessageBox()
+            response = dialog.question(
+                self,
+                "springfieldspringfield", 
+                "Keep previously saved files?", 
+                dialog.Yes | dialog.No
+            )
+        self.infoBox.setText(
+            "Scraping springfieldspringfield website, please wait...", 
+            "warning",
+        )     
+        
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
-        for lettre in ['0']:#, 'A']:, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                   #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
-            page_num = 1
+        try:
+            for lettre in ['0']:#, 'A']:, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                       #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+                page_num = 1
 
 
 
-            while True:
-                page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
-                page = urllib.request.urlopen(page_url)
-                soup = BeautifulSoup(page, 'html.parser')
-                script_links = soup.findAll('a', attrs={'class': re.compile("^script-list-item")})
-                if not script_links:
-                    break
-                links = dict()
-                for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
-                    links[link.text] = link.get('href')[len(php_query_string):]
-                self.title_to_href.update(links)
+                while True:
+                    page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
+                    page = urllib.request.urlopen(page_url)
+                    soup = BeautifulSoup(page, 'html.parser')
+                    script_links = soup.findAll('a', attrs={'class': re.compile("^script-list-item")})
+                    if not script_links:
+                        break
+                    links = dict()
+                    for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
+                        links[link.text] = link.get('href')[len(php_query_string):]
+                    self.title_to_href.update(links)
 
-                print(page_num)
-                page_num += 1
+                    print(page_num)
+                    page_num += 1
 
+            try:
+                file = open(
+                    os.path.join(path, self.__class__.cacheFilename),
+                    "wb",
+                )
+                pickle.dump(self.database, file)
+                file.close()
+            except IOError:
+                self.infoBox.setText(
+                    "Couldn't save database to disk.", 
+                    "warning",
+                )
+
+        except:
+            self.infoBox.setText(
+                "Couldn't download data from springfieldspringfield website.", 
+                "error"
+            )
 
 
         # print(title_to_href['99 Homes (2014)'])
