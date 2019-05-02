@@ -597,8 +597,6 @@ class Redditor(OWTextableBaseWidget):
         annotations["Author"] = post.author
         annotations["Posted"] = post.created_utc 
         annotations["Score"] = post.score
-        annotations["Upvotes"] = post.ups
-        annotations["Downvotes"] = post.downs
         text = Input(post.title)
 
         self.segments.append(
@@ -620,8 +618,6 @@ class Redditor(OWTextableBaseWidget):
         annotations["author"] = post.author
         annotations["Pasted"] = post.created_utc
         annotations["Score"] = post.score
-        annotations["Upvotes"] = post.ups
-        annotations["Downvotes"] = post.downs
 
         # TODO: add these annotations:
         # author, created_utc (ou created ?) et score
@@ -647,11 +643,9 @@ class Redditor(OWTextableBaseWidget):
             annotations = dict()
             annotations["Title"] = post.title
             annotations["Id"] = comment.id
-            annotations["author"] = post.author
-            annotations["Posted"] = post.created_utc 
-            annotations["Score"] = post.score
-            annotations["Upvotes"] = post.ups
-            annotations["Downvotes"] = post.downs
+            annotations["author"] = comment.author
+            annotations["Posted"] = comment.created_utc 
+            annotations["Score"] = comment.score
 
             # TODO: add these annotations:
             # author, created_utc (ou created ?) et score
@@ -779,7 +773,7 @@ class Redditor(OWTextableBaseWidget):
             for _ in segmentation:
                 final_amount += 1
         self.infoBox.setText("{} segments sent to output !".format(final_amount))
-        self.send("Segmentation", self.segmentations)
+        self.send("Segmentation", Segmenter.concatenate(self.segmentations))
     
     """
     def send_data(self):
