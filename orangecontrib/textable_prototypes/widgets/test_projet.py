@@ -1,3 +1,19 @@
+
+# import pickle
+# import requests
+# import urllib
+# from urllib import request
+# from urllib import parse
+# from bs4 import BeautifulSoup
+
+# all_titles_page = 'https://www.imsdb.com/all%20scripts/'
+# page = urllib.request.urlopen(all_titles_page)
+# soup = BeautifulSoup(page, 'html.parser')
+# for link in soup.find_all('a'):
+#     print(link.get('href'))
+
+##############################################################
+
 __version__ = u"0.0.2"
 __author__ = "David Fluhmann, Leonardo Cavaliere, Kirill Melnikov"
 __maintainer__ = "Aris Xanthos"
@@ -15,17 +31,14 @@ import urllib.parse
 import json
 import pickle
 import requests
-from urllib import request, parse
+from urllib import request
+from urllib import parse
 from bs4 import BeautifulSoup
 import re
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
-
-
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton, 
+    InfoBox, SendButton, ProgressBar,
 )
 
 class MovieScripts(OWTextableBaseWidget):
@@ -63,10 +76,6 @@ class MovieScripts(OWTextableBaseWidget):
     autoSend = settings.Setting(True)
     myBasket = settings.Setting([])
 
-    # Other class variables...
-
-    cachFilename = "cache_springfield"
-
     def __init__(self):
         """Widget creator."""
 
@@ -85,25 +94,22 @@ class MovieScripts(OWTextableBaseWidget):
         # selections box attributs
         self.myTitles = list()
         self.mytitleLabels = list()
-        # stock all the inputs (scripts) in a list
+        # stock all the inputs (songs) in a list
         self.createdInputs = list()
-        self.path_storage = list()
-        # stock all the movies titles
-        self.title_to_href = dict()
-        
+        self.sendData = ''
+        self.newQuery = ''
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
         self.infoBox = InfoBox(widget=self.controlArea)
-        #self.sendButton = SendButton(
-        #   widget=self.controlArea,
-        #    master=self,
-        #    callback=self.sendData,
-        #    infoBoxAttribute="infoBox",
-        #)
-		
-
+        self.sendButton = SendButton(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute="infoBox",
+        )
+    
     # User interface...
         # Create the working area
         queryBox = gui.widgetBox(
@@ -113,7 +119,7 @@ class MovieScripts(OWTextableBaseWidget):
         )
 
         # Allows to enter specific text to the research
-        #  Uses "newQuery" attribute
+        #  Uses "newQuery" attribut
         gui.lineEdit(
             widget=queryBox,
             master=self,
@@ -124,27 +130,18 @@ class MovieScripts(OWTextableBaseWidget):
             tooltip=("Enter a string"),
         )
 
-        # Button that refresh all movie titles from the website
-        self.refreshButton = gui.button(
-            widget = queryBox,
-            master = self,
-            label = "Refresh DataBase",
-            callback = self.get_all_titles,
-            tooltip = "update SpringfieldSpringfield DataBase"
-            )
-
         # Allows to choose the wanted results numberp (10 by 10)
         queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
             value="nbr_results",
             items=[
-                5,
-                10,
-                20,
-                30,
-                40,
-                50,
+                "5",
+                "10",
+                "20",
+                "30",
+                "40",
+                "50",
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -156,25 +153,26 @@ class MovieScripts(OWTextableBaseWidget):
         )
 
         # Research button 
-        # Use "searchFunction" attibute
+        # Use "sendData" attibute
         self.searchButton = gui.button(
         	widget=queryBox,
         	master=self,
-        	label='Search',
-        	callback=self.searchFunction,
+        	label='search',
+        	callback=self.get_all_titles,
         	tooltip='Search for the movie',
         	)
+        self.searchButton.setDisabled(False)
 
         # Reasearch button
-        # Uses "searchFunction" attribute
+        # Uses "searchFunction" attribut
         self.titleListbox = gui.listBox(
             widget=queryBox,
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
-            callback=lambda: self.selectButton.setDisabled(
+            callback=lambda: self.addButton.setDisabled(
                 self.selectedTitles == list()),
-            tooltip="Select the movie you want to get the script of",
+            tooltip="The list of titles whose content will be imported",
         )
         self.titleListbox.setMinimumHeight(120)
         self.titleListbox.setSelectionMode(3)
@@ -191,7 +189,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=boxbutton,
             master=self,
             label="Select",
-            callback=self.sendData,
+            # callback=self.clearResults,
             tooltip="Select",
         )
         self.selectButton.setDisabled(True)
@@ -202,7 +200,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=boxbutton,
             master=self,
             label="Clear results",
-            callback=self.clearResults,
+            # callback=self.clearResults,
             tooltip="Clear results",
         )
         self.clearButton.setDisabled(True)
@@ -221,52 +219,17 @@ class MovieScripts(OWTextableBaseWidget):
         # self.sendButton.sendIf()
 
 
-
-    #title_to_href = dict()
-
-    def searchFunction(self):
-        #Search from the springfieldspringfield.co.uk
-
-        result_list = dict()
-        query_string = self.newQuery
-        testdict = MovieScripts.get_all_titles(self)
-        # Reset and clear the visible widget list
-        del self.titleLabels[:]
-		
-        if query_string != "":
-            searchResults = process.extractBests(query_string, testdict, limit=5, score_cutoff=70)
-            for key,score,val in searchResults:
-                self.titleLabels.append(val)
-                self.path_storage.append(key)
-		
-            self.titleLabels = self.titleLabels
-            self.clearButton.setDisabled(False)
-            self.controlArea.setDisabled(False)
-            self.infoBox.setText("Search complete")
-
-        else:
-            self.infoBox.setText("You didn't search anything", "warning")
-
-
-
-    def clearResults(self):
-        """Clear the results list"""
-        del self.titleLabels[:]
-        self.titleLabels = self.titleLabels
-        self.clearButton.setDisabled(True)
-    
-	# Get all movie titles from www.springfieldspringfield.co.uk
+    # Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
-        #title_to_href = dict()
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
-        for lettre in ['0']:#, 'A']:, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+        title_to_href = dict()
+
+
+        for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                    #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
             page_num = 1
-
-
-
             while True:
                 page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
                 page = urllib.request.urlopen(page_url)
@@ -277,53 +240,121 @@ class MovieScripts(OWTextableBaseWidget):
                 links = dict()
                 for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
                     links[link.text] = link.get('href')[len(php_query_string):]
-                self.title_to_href.update(links)
+                title_to_href.update(links)
 
                 print(page_num)
                 page_num += 1
 
+        # print(title_to_href)
+
+        '''ne fonctionne pas --> à voir pq...'''
+        self.titleLabels.append(title_to_href) 
 
 
-        # print(title_to_href['99 Homes (2014)'])
-        return(self.title_to_href)
-        print(self.title_to_href)
+    # Export file with all titles in a list
+    def export_scripts(title_to_href):
+        try:
+            name_file = input('Entrez le nom du fichier à exporter: ')
+            exported_file = open(name_file, 'w', encoding='utf8')
+            exported_file.write(str(title_to_href))
+            exported_file.close()
 
-    # Create the final output with the script
-    def sendData(self):
+            '{:*^20}'.format('title_to_href')
+
+        except IOError:
+            print('Impossible de lire le fichier')
+
+        return
+
+    # export_scripts(title_to_href)
+
+
+    # Creat the final output with the script
+    def sendData(self, title_to_href):
         """Send data from website springfieldspringfield"""
 
-        #link_title = process.extractBests(self.selectedTitles, testdict, limit=1)
-        # Clear created Inputs.
-        self.clearCreatedInputs()
-        link_end = self.path_storage[self.selectedTitles[0]]
+        #This is what will get the actual script of a single movie
+        movie_names_row = gui.lineEdit(value) #input('\033[31m Entrez le nom du film et l\'année entre parenthèses, ex : 99 Homes (2014) : \033[0m')
+        #The first attribute of extract will be user's input, second is the list of all movie scripts, third is number of results determined by user    
+        movie_names = process.extractBests(movie_names_row, title_to_href.keys(), limit=1, score_cutoff=70)
+        titles = [movie_name[0] for movie_name in movie_names]
+        title = titles[0]
 
-        self.controlArea.setDisabled(True)
-        try:
-            page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + link_end
+        print(title)
+        if input('\033[31m Entrez "yes" pour continuer : \033[0m') == 'yes':
+
+            if title in title_to_href:
+                print(title_to_href[title])
+            else:
+                print('Aucun résultat')
+
+            page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + title_to_href[title]
             page = urllib.request.urlopen(page_url)
             soup = BeautifulSoup(page, 'html.parser')
             script = soup.find("div", {"class":"movie_script"})
-            new_input = Input(script.text)
-            self.createdInputs.append(new_input)
-            self.segmentation = self.createdInputs[0]
-            print(self.createdInputs[0])
-            del self.path_storage[:]
-            self.infoBox.setText(
-                "Script downloaded!",
-            )
-        except:
-            self.infoBox.setText(
-                "Couldn't download data from SpringfieldSpringfield website.",
-                "error"
-            )
-        self.controlArea.setDisabled(False)
-        self.send("Movie Scripts importation", self.segmentation, self)
+            print (script.text)
+        else:
+            pass
+
+        self.searchButton.setDisabled(False)
+
+    # def searchFunction(self):
+    #     result_list = {"1": "a", "1": "a", "1": "a", "1": "a",}
+    #     query_string = self.newQuery
+
+    #     if query_string != "":
+    #         page = 1
+    #         page_max = int(self.nbr_results)/10
+    #         result_id = 0
+    #         result_artist = []
+
+    #         self.controlArea.setDisabled(True)
+
+    #         # Initialize progress bar.
+    #         progressBar = ProgressBar(
+    #             self,
+    #             iterations=page_max
+    #         )
+
+    #         # Each result is stored in a dictionnary with its title,
+    #         # artist's name, artist's ID and URL path
+    #         for result in body:
+    #             result_id += 1
+    #             title = result["result"]["title"]
+    #             artist = result["result"]["primary_artist"]["name"]
+    #             artist_id = result["result"]["primary_artist"]["id"]
+    #             path = result["result"]["path"]
+    #             result_list[result_id] = {'artist': artist,
+    #                                           'artist_id':artist_id,
+    #                                           'path':path, 'title':title}
+    #             page += 1
+
+    #             # 1 tick on the progress bar of the widget
+    #             progressBar.advance()
+    #         # Stored the results list in the "result_list" variable
+    #         self.searchResults = result_list
+
+    #         # Reset and clear the visible widget list
+    #         del self.titleLabels[:]
+
+    #         # Update the results list with the search results
+    #         # in order to display them
+    #         for idx in self.searchResults:
+    #             result_string = self.searchResults[idx]["title"] + " - " + \
+    #                             self.searchResults[idx]["artist"]
+    #             self.titleLabels.append(result_string)
+
+    #         self.titleLabels = self.titleLabels
+    #         self.clearButton.setDisabled(False)
+    #         self.addButton.setDisabled(self.selectedTitles == list())
 
 
+    #         # Clear progress bar.
+    #         progressBar.finish()
+    #         self.controlArea.setDisabled(False)
 
-    def clearCreatedInputs(self):
-        """Delete all Input objects that have been created."""
-        del self.createdInputs[:]
+    #     else:
+    #         self.infoBox.setText("You didn't search anything", "warning")
 
 
 	# The following method needs to be copied verbatim in
