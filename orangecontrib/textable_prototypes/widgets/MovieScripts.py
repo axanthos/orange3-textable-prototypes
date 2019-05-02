@@ -222,8 +222,6 @@ class MovieScripts(OWTextableBaseWidget):
 
 
 
-    #title_to_href = dict()
-
     def searchFunction(self):
         #Search from the springfieldspringfield.co.uk
 
@@ -257,7 +255,6 @@ class MovieScripts(OWTextableBaseWidget):
     
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
-        #title_to_href = dict()
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
