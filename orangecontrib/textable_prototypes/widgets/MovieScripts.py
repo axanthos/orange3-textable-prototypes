@@ -124,12 +124,12 @@ class MovieScripts(OWTextableBaseWidget):
             master=self,
             value="nbr_results",
             items=[
-                "5",
-                "10",
-                "20",
-                "30",
-                "40",
-                "50",
+                5,
+                10,
+                20,
+                30,
+                40,
+                50,
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -288,7 +288,7 @@ class MovieScripts(OWTextableBaseWidget):
             page = urllib.request.urlopen(page_url)
             soup = BeautifulSoup(page, 'html.parser')
             script = soup.find("div", {"class":"movie_script"})
-            new_input = script.text
+            new_input = Input(script.text)
             self.createdInputs.append(new_input)
             self.segmentation = self.createdInputs[0]
             print(self.createdInputs[0])
