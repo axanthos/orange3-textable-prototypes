@@ -25,7 +25,7 @@ from fuzzywuzzy import process
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton, ProgressBar,
+    InfoBox, SendButton, 
 )
 
 class MovieScripts(OWTextableBaseWidget):
@@ -232,7 +232,7 @@ class MovieScripts(OWTextableBaseWidget):
         else:
             self.infoBox.setText("You didn't search anything", "warning")
 
-        progressBar.finish()
+
 
     def clearResults(self):
         """Clear the results list"""
@@ -250,11 +250,7 @@ class MovieScripts(OWTextableBaseWidget):
                    #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
             page_num = 1
 
-            # Initialize progress bar.
-            progressBar = ProgressBar(
-                self,
-                iterations=page_num,
-            )
+
 
             while True:
                 page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
@@ -271,7 +267,7 @@ class MovieScripts(OWTextableBaseWidget):
                 print(page_num)
                 page_num += 1
 
-                progressBar.advance()
+
 
         # print(title_to_href['99 Homes (2014)'])
         return(title_to_href)
