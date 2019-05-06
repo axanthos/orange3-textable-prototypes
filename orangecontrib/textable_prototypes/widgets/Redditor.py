@@ -49,7 +49,7 @@ class Redditor(OWTextableBaseWidget):
 
     name = "Redditor"
     description = "Scrap on Reddit"
-    icon = "icons/mywidget.svg"
+    icon = "icons/Reddit-alien.png"
     priority = 20
 
     #----------------------------------------------------------------------
@@ -76,6 +76,7 @@ class Redditor(OWTextableBaseWidget):
     includeTitle = Setting(True)
     includeContent = Setting(True)
     includeComments = Setting(True)
+    includeImage = Setting(False)
     labelsPanier = Setting(list())
     segmentations = Setting(list())
 
@@ -103,12 +104,55 @@ class Redditor(OWTextableBaseWidget):
 
         )
 
+
         sourceBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
             addSpace=False,
         )
+
+        self.filterBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Filters',
+            orientation='vertical',
+            addSpace=False,
+        )
+
+        self.includeOuterBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Include',
+            orientation='vertical',
+            addSpace=False,
+        )
+
+        panierBox = gui.widgetBox(
+            widget=self.controlArea,
+            orientation='vertical',
+            box=u'Selection',
+            addSpace=False,
+        )
+
+
+        
+        """
+        Send button
+        """
+
+        self.sendBox = gui.widgetBox(
+            widget=self.controlArea,
+            orientation='vertical',
+            addSpace=False,
+        )
+
+
+        self.sendButton = SendButton(
+            widget=self.sendBox,
+            master=self,
+            callback=self.send_data,
+            infoBoxAttribute='infoBox',
+        )
+
 
         self.choiceBox = gui.comboBox(
             widget=sourceBox,
@@ -152,6 +196,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='URL',
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             label=u'Search with URL:',
             labelWidth=120,
         )
@@ -167,6 +212,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='subreddit',
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             label=u'reddit.com/r/...:',
             labelWidth=120,
         
@@ -182,6 +228,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='fullText',
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             label=u'Search on reddit:',
             labelWidth=120,
         )
@@ -189,13 +236,6 @@ class Redditor(OWTextableBaseWidget):
         """
         Filter box
         """
-
-        self.filterBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Filters',
-            orientation='vertical',
-            addSpace=False,
-        )
 
         self.subredditFilter = gui.widgetBox(
             widget=self.filterBox,
@@ -248,6 +288,7 @@ class Redditor(OWTextableBaseWidget):
             label=u'Time:',
             tooltip= "Choose mode to sort your posts",
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             sendSelectedValue=True,
             items=["All", "Past day", "Past hour", "Past month", "Past year"],
             labelWidth=120,
@@ -262,6 +303,7 @@ class Redditor(OWTextableBaseWidget):
             label="Amount of posts:",
             labelWidth=120,
             orientation="horizontal",
+            callback=self.sendButton.settingsChanged,
             tooltip="Select the amount of posts that you want",
         )
 
@@ -269,12 +311,13 @@ class Redditor(OWTextableBaseWidget):
         Include Box
         '''
 
+
         self.includeBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Include',
+            widget=self.includeOuterBox,
             orientation='horizontal',
             addSpace=False,
         )
+
 
         # TODO: replace checkboxes
 
@@ -293,7 +336,15 @@ class Redditor(OWTextableBaseWidget):
             label=u'Content',
             callback=self.mode_changed,
         )
-        
+
+        gui.checkBox(
+            widget=self.includeBox,
+            master=self,
+            value='includeImage',
+            label=u'Image',
+            callback=self.mode_changed,
+        )
+
         gui.checkBox(
             widget=self.includeBox,
             master=self,
@@ -302,6 +353,14 @@ class Redditor(OWTextableBaseWidget):
             callback=self.mode_changed,
         )
 
+        self.fetchButton = gui.button(
+            widget=self.includeOuterBox,
+            master=self,
+            label=u'Add Request',
+            callback=self.get_content,
+        )
+
+
         gui.rubber(self.controlArea)
 
 
@@ -309,13 +368,6 @@ class Redditor(OWTextableBaseWidget):
         '''
         Panier
         '''
-
-        panierBox = gui.widgetBox(
-            widget=self.controlArea,
-            orientation='vertical',
-            box=u'Selection',
-            addSpace=False,
-        )
 
         panier = gui.listBox(
             widget=panierBox,
@@ -358,29 +410,7 @@ class Redditor(OWTextableBaseWidget):
             tooltip="Remove all corpora from selection.",
         )
 
-        self.fetchButton = gui.button(
-            widget=self.includeBox,
-            master=self,
-            label=u'Get content',
-            callback=self.get_content,
-        )
 
-        """
-        Send button
-        """
-
-        self.sendBox = gui.widgetBox(
-            widget=self.controlArea,
-            orientation='vertical',
-            addSpace=False,
-        )
-
-        self.sendButton = SendButton(
-            widget=self.sendBox,
-            master=self,
-            callback=self.send_data,
-            infoBoxAttribute='infoBox',
-        )
 
        
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
@@ -446,6 +476,7 @@ class Redditor(OWTextableBaseWidget):
     """
 
     def get_content(self):
+        self.controlArea.setDisabled(True)
         if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
             (self.mode == "URL" and len(self.URL) > 0) or
             (self.mode == "Full text" and len(self.fullText) > 0)):
@@ -462,6 +493,7 @@ class Redditor(OWTextableBaseWidget):
                 varTimeFilter = "month"
             elif tmp == "Past year":
                 varTimeFilter = "year"
+
             # Differenciate method depending of user selection
             if self.mode == "Subreddit":
                 # Get the subreddit based on subreddit name
@@ -560,20 +592,22 @@ class Redditor(OWTextableBaseWidget):
                 self.segmentations.append(Segmentation(self.segments))
                 self.add_to_list(Segmentation(self.segments))
                 self.segments = []
-                return
             else:
                 self.infoBox.setText(
                     "There is nothing! Maybe you should include at least one item",
                     "warning"
                 )
                 # self.send("Segmentation", Segmentation(self.segments))
-                return
+
         else:
             self.infoBox.setText(
                 "Please fill in the input box.",
                 "warning"
             )
-            return
+
+        self.controlArea.setDisabled(False)
+
+        return
 
     def create_post_segments(self, post):
         # Si "Title" est coché, on crée le segment correspondant
@@ -597,6 +631,7 @@ class Redditor(OWTextableBaseWidget):
         annotations["Author"] = post.author
         annotations["Posted"] = post.created_utc 
         annotations["Score"] = post.score
+        annotations["Content"] = post.selftext
         text = Input(post.title)
 
         self.segments.append(
@@ -615,7 +650,7 @@ class Redditor(OWTextableBaseWidget):
         annotations["Title"] = post.title
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
-        annotations["author"] = post.author
+        annotations["Author"] = post.author
         annotations["Pasted"] = post.created_utc
         annotations["Score"] = post.score
 
@@ -643,9 +678,10 @@ class Redditor(OWTextableBaseWidget):
             annotations = dict()
             annotations["Title"] = post.title
             annotations["Id"] = comment.id
-            annotations["author"] = comment.author
+            annotations["Author"] = comment.author
             annotations["Posted"] = comment.created_utc 
             annotations["Score"] = comment.score
+            annotations["Content"] = post.selftext
 
             # TODO: add these annotations:
             # author, created_utc (ou created ?) et score
@@ -767,6 +803,7 @@ class Redditor(OWTextableBaseWidget):
         self.removeButton.setDisabled(False)
     
     def send_data(self):
+        self.controlArea.setDisabled(True)
         print(self.segmentations)
         final_amount = 0
         for segmentation in self.segmentations:
@@ -774,11 +811,17 @@ class Redditor(OWTextableBaseWidget):
                 final_amount += 1
         self.infoBox.setText("{} segments sent to output !".format(final_amount))
         self.send("Segmentation", Segmenter.concatenate(self.segmentations))
+
+        self.controlArea.setDisabled(False)
+
+        # self.sendButton.resetSettingsChangedFlag()
     
     """
     def send_data(self):
         self.label.setText("Envoyé! Mode is: {}".format(self.mode))
     """
+
+
 
 
  
