@@ -401,6 +401,8 @@ class Redditor(OWTextableBaseWidget):
         )
 
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
+        gui.separator(widget=self.controlArea, height=3) #spacer
+
         gui.rubber(self.controlArea)
         # Send button...
         # self.sendButton.draw()
