@@ -80,7 +80,10 @@ class Redditor(OWTextableBaseWidget):
     includeComments = Setting(True)
     includeImage = Setting(False)
     labelsPanier = Setting(list())
-    segmentations = Setting(list())
+    # segmentations = Setting(list())
+
+    queryList = Setting(list())
+    annotList = Setting(list())
 
     # Praw instance
     reddit = praw.Reddit(
@@ -92,7 +95,9 @@ class Redditor(OWTextableBaseWidget):
     )
 
     # Segment list
-    segments = list()
+    createdInputs = list()
+    listeTempAnnot = list()
+    listeTempPosts = list()
 
     def __init__(self):
         super().__init__()
@@ -105,7 +110,6 @@ class Redditor(OWTextableBaseWidget):
             widget=self.controlArea,
 
         )
-
 
         sourceBox = gui.widgetBox(
             widget=self.controlArea,
@@ -396,9 +400,6 @@ class Redditor(OWTextableBaseWidget):
             tooltip="Remove all corpora from selection.",
         )
 
-
-
-       
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
         # Send button...
@@ -411,6 +412,7 @@ class Redditor(OWTextableBaseWidget):
         self.mode_changed()
 
     def mode_changed(self):
+        self.sendButton.settingsChanged()
         """Reimplemented from OWWidget."""
         if self.mode == "Subreddit": # 0 = subreddit selected
             # cacher URL et Full text
@@ -462,6 +464,7 @@ class Redditor(OWTextableBaseWidget):
     """
 
     def get_content(self):
+        self.sendButton.settingsChanged()
         self.controlArea.setDisabled(True)
         if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
             (self.mode == "URL" and len(self.URL) > 0) or
@@ -572,18 +575,20 @@ class Redditor(OWTextableBaseWidget):
                     # On crée les segments appropriés
                     self.create_post_segments(post)
 
-            if len(self.segments) > 0:
-                # self.send("Segmentation", Segmentation(self.segments))
-                # self.infoBox.setText("{} segments sent to output !".format(len(self.segments)))
-                self.segmentations.append(Segmentation(self.segments))
-                self.add_to_list(Segmentation(self.segments))
-                self.segments = []
+            if len(self.listeTempPosts) > 0:
+                # self.send("Segmentation", Segmentation(self.createdInputs))
+                # self.infoBox.setText("{} segments sent to output !".format(len(self.createdInputs)))
+                self.queryList.append(self.listeTempPosts)
+                self.annotList.append(self.listeTempAnnot)
+                self.add_to_list()
+                self.listeTempPosts = list()
+                self.listeTempAnnot = list()
             else:
                 self.infoBox.setText(
-                    "The post found only contains images. Try to include images or comments.",
+                    "The posts found only contained images. Try to include images or comments.",
                     "warning"
                 )
-                # self.send("Segmentation", Segmentation(self.segments))
+                # self.send("Segmentation", Segmentation(self.createdInputs))
 
         else:
             self.infoBox.setText(
@@ -624,17 +629,11 @@ class Redditor(OWTextableBaseWidget):
         content = post.selftext
         if content == "":
             content = "[image]"
-        text = Input(content)
 
         if not (self.includeImage == False and content == "[image]"):
-            self.segments.append(
-                Segment(
-                    str_index=text[0].str_index,
-                    start=text[0].start,
-                    end=text[0].end,
-                    annotations=annotations
-                )
-            )
+            self.listeTempPosts.append(content)
+            self.listeTempAnnot.append(annotations)
+        
         return
 
     def create_comments_segments(self, post):
@@ -663,19 +662,12 @@ class Redditor(OWTextableBaseWidget):
             annotations["Parent"] = parentId[1]
             annotations["Parent_type"] = parentId[0][1]
 
-            text = Input(comment.body)
-
-            self.segments.append(
-                Segment(
-                    str_index=text[0].str_index,
-                    start=text[0].start,
-                    end=text[0].end,
-                    annotations=annotations
-                )
-            )
+            self.listeTempPosts.append(comment.body)
+            self.listeTempAnnot.append(annotations)
         return
     
     def checkSubredditSortMode(self):
+        self.sendButton.settingsChanged()
         if self.sortBy == "Hot":
             self.timeBox.setDisabled(True)
         elif self.sortBy == "New":
@@ -688,6 +680,7 @@ class Redditor(OWTextableBaseWidget):
             self.timeBox.setDisabled(True)
     
     def checkSearchSortMode(self):
+        self.sendButton.settingsChanged()
         if self.sortByFT == "Relevance":
             self.timeBox.setDisabled(False)
         elif self.sortByFT == "New":
@@ -703,16 +696,20 @@ class Redditor(OWTextableBaseWidget):
 
         for idx in sorted(self.indicesPanier, reverse=True):
             del labelsPanier[idx]
-            del self.segmentations[idx]
+            del self.queryList[idx]
+            del self.annotList[idx]
         
         self.labelsPanier = labelsPanier
+        self.sendButton.settingsChanged()
             
     
     def clearPressed(self):
         self.labelsPanier = list()
-        self.segmentations = list()
+        self.queryList = list()
+        self.annotList = list()
+        self.sendButton.settingsChanged()
     
-    def add_to_list(self, segmentation):
+    def add_to_list(self):
         labelsPanier = self.labelsPanier
 
         if self.mode == "Subreddit":
@@ -752,7 +749,7 @@ class Redditor(OWTextableBaseWidget):
                 amount,
                 image,
                 comments,
-                len(self.segments)
+                len(self.queryList)
             )
         )
 
@@ -773,27 +770,58 @@ class Redditor(OWTextableBaseWidget):
     
     def send_data(self):
         self.controlArea.setDisabled(True)
-        print(self.segmentations)
-        final_amount = 0
-        for segmentation in self.segmentations:
-            for _ in segmentation:
-                final_amount += 1
-        self.infoBox.setText("{} segments sent to output !".format(final_amount))
-        self.send("Segmentation", Segmenter.concatenate(self.segmentations))
-        for s in self.segmentations:
-            print(s)
-            for c in s:
-                print(c)
-                print(c.to_string())
+        self.clearCreatedInputs()
+        segmentation = None
+
+        for query in self.queryList:
+            for text in query:
+                newInput = Input(text)
+                self.createdInputs.append(newInput)
+
+        if len(self.createdInputs) == 1:
+            segmentation = self.createdInputs[0]
+
+        # Otherwise the widget's output is a concatenation...
+        else:
+            segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                import_labels_as=None,
+            )
+
+        # Annotate segments...
+        annotations = list()
+        for elem in self.annotList:
+            for dic in elem:
+                annotations.append(dic)
+        
+        for idx, segment in enumerate(segmentation):
+            segment.annotations.update(annotations[idx])
+            segmentation[idx] = segment
+
+        num_chars = 0
+        for segment in segmentation:
+            num_chars += len(Segmentation.get_data(segment.str_index))
+        self.infoBox.setText("{} segments sent to output ({} characters)".format(
+            len(segmentation),
+            num_chars,
+            )
+        )
+        
+        self.send("Segmentation", segmentation)
+
         self.controlArea.setDisabled(False)
 
-        # self.sendButton.resetSettingsChangedFlag()
+        self.sendButton.resetSettingsChangedFlag()
     
-    """
-    def send_data(self):
-        self.label.setText("Envoyé! Mode is: {}".format(self.mode))
-    """
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
 
+    def onDeleteWidget(self):
+        """Free memory when widget is deleted (overriden method)"""
+        self.clearCreatedInputs()
 
 
 
