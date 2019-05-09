@@ -62,24 +62,69 @@ key                        example value
 =====================      =====
 
 Optionally, the output may also include two more segmentations, into utterances
-and into words. TODO FROM HERE ON
+and into words. Both inherit the annotations above. The utterance segmentation
+adds two extra annotations:
 
-Basic interface
-~~~~~~~~~~~~~~~
+==========  ===============
+key              example value
+==========  ===============
+*uID*            *u0*
+*who*            *CHI*
+==========  ===============
 
-In its basic version (see :ref:`figure 1 <theatre_classique_fig1>` below), the
-**Theatre Classique** widget simply lets the user select one or more plays
-in the catalogue of more than 800 entries downloadable from the
-`theatre-classique <http://www.theatre-classique.fr>`_ website. To select
-multiple files use either control/command-click or shift-click.
+The word segmentation inherits all previous annotations, and adds a variable 
+number of annotations (depending on the information available in the data), 
+namely at most:
 
-.. _theatre_classique_fig1:
+===========   =========
+key           example value
+===========   =========
+*pos*         *part*
+*prefixes*    *dé*
+*stem*        *faire*
+*suffixes*    *PP&m*
+===========   =========
 
-.. figure:: figures/theatre_classique_basic_interface.png
+
+Interface
+~~~~~~~~~
+
+User controls are divided into three main sections (see :ref:`figure 1 
+<childes_fig1>` below): **Browse database**, **Selection**, and **Options**.
+
+.. _childes_fig1:
+
+.. figure:: figures/childes_interface.png
     :align: center
-    :alt: Basic interface of the Theatre Classique widget
+    :alt: Interface of the CHILDES widget
 
-    Figure 1: **Theatre Classique** widget (basic interface).
+    Figure 1: **CHILDES** widget interface.
+
+The **Browse database** section allows the user to navigate the XML section of
+the CHILDES database (`<https://childes.talkbank.org/data-xml/>`_) and select
+the desired corpora. It is organized like a file tree, starting from a root 
+folder (denoted as "/"), and each folder may contain any number of subfolders
+and/or zipped archives.
+
+To view the contents of a folder, either double-click it or select it and
+click **Open**. Button **Back** brings you back to the parent folder, and 
+**Home** to the root folder.
+
+**Add to selection** adds the highlighted archive(s) to your selection. If a 
+folder is highlighted, clicking **Add to selection** results in adding *all* the
+archives contained in this folder and, recursively, in contained subfolders (so
+possibly a lot of archives), to your selection. Note that multiple 
+archives/folders may be highlighted (using control/command-click or shift-click)
+and added at once to your selection.
+
+When the current folder is the root folder ("/"), the **Home** button is 
+replaced with **Refresh**. Clicking **Refresh** instructs the widget to connect
+to the CHILDES website and update its own configuration to take into account
+possible changes (usually additions) to the database. This operation may take
+a few minutes and is only useful when the online database has changed; it has 
+the additional consequence that it cancels previous selections.
+
+TODO FROM HERE ON...
 
 The **Options** section allows the user to define the label of the output
 segmentation (**Output segmentation label**).

@@ -753,7 +753,7 @@ class Childes(OWTextableBaseWidget):
                 dialog.Yes | dialog.No
             )
         self.infoBox.setText(
-            "Scraping CHILDES website, please wait...", 
+            "Connecting to CHILDES website, please wait...", 
             "warning",
         )     
         progressBar = ProgressBar(self, iterations=1)
