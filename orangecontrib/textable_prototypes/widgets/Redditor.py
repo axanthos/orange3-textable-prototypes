@@ -780,7 +780,11 @@ class Redditor(OWTextableBaseWidget):
                 final_amount += 1
         self.infoBox.setText("{} segments sent to output !".format(final_amount))
         self.send("Segmentation", Segmenter.concatenate(self.segmentations))
-
+        for s in self.segmentations:
+            print(s)
+            for c in s:
+                print(c)
+                print(c.to_string())
         self.controlArea.setDisabled(False)
 
         # self.sendButton.resetSettingsChangedFlag()
