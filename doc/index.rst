@@ -31,9 +31,10 @@ Widgets
 .. toctree::
     :maxdepth: 1
 
+    Lyrics Genius <widgets/lyrics_genius>
+    CHILDES <widgets/CHILDES>
     Theatre Classique <widgets/theatre_classique>
     18th Century Poetry <widgets/18th_century_poetry>
-    Lyrics Genius <widgets/lyrics_genius>
     Topic Models <widgets/topic_models>
     Linguistica <widgets/linguistica>
     Lexical Hunter <widgets/lexical_hunter>

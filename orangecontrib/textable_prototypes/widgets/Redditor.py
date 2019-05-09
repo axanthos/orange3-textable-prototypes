@@ -41,6 +41,8 @@ import LTTL.Segmenter as Segmenter
 from LTTL.Segment import Segment
 from LTTL.Input import Input
 
+from datetime import datetime
+
 class Redditor(OWTextableBaseWidget):
     """An Orange widget to scrape Reddit"""
 
@@ -49,7 +51,7 @@ class Redditor(OWTextableBaseWidget):
 
     name = "Redditor"
     description = "Scrap on Reddit"
-    icon = "icons/mywidget.svg"
+    icon = "icons/Reddit-alien.png"
     priority = 20
 
     #----------------------------------------------------------------------
@@ -76,6 +78,12 @@ class Redditor(OWTextableBaseWidget):
     includeTitle = Setting(True)
     includeContent = Setting(True)
     includeComments = Setting(True)
+    includeImage = Setting(False)
+    labelsPanier = Setting(list())
+    # segmentations = Setting(list())
+
+    queryList = Setting(list())
+    annotList = Setting(list())
 
     # Praw instance
     reddit = praw.Reddit(
@@ -87,15 +95,20 @@ class Redditor(OWTextableBaseWidget):
     )
 
     # Segment list
-    segments = list()
+    createdInputs = list()
+    listeTempAnnot = list()
+    listeTempPosts = list()
 
     def __init__(self):
         super().__init__()
+
+        self.indicesPanier = list()
 
         #----------------------------------------------------------------------
         # User interface...
         self.infoBox = InfoBox(
             widget=self.controlArea,
+
         )
 
         sourceBox = gui.widgetBox(
@@ -104,6 +117,48 @@ class Redditor(OWTextableBaseWidget):
             orientation='vertical',
             addSpace=False,
         )
+
+        self.filterBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Filters',
+            orientation='vertical',
+            addSpace=False,
+        )
+
+        self.includeOuterBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Include',
+            orientation='vertical',
+            addSpace=False,
+        )
+
+        panierBox = gui.widgetBox(
+            widget=self.controlArea,
+            orientation='vertical',
+            box=u'Selection',
+            addSpace=False,
+        )
+
+
+        
+        """
+        Send button
+        """
+
+        self.sendBox = gui.widgetBox(
+            widget=self.controlArea,
+            orientation='vertical',
+            addSpace=False,
+        )
+
+
+        self.sendButton = SendButton(
+            widget=self.sendBox,
+            master=self,
+            callback=self.send_data,
+            infoBoxAttribute='infoBox',
+        )
+
 
         self.choiceBox = gui.comboBox(
             widget=sourceBox,
@@ -115,6 +170,7 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             sendSelectedValue=True,
             items=["Subreddit", "URL", "Full text"],
+            labelWidth=120,
         )
 
         self.modeBox = gui.widgetBox(
@@ -146,8 +202,9 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='URL',
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             label=u'Search with URL:',
-            labelWidth=110
+            labelWidth=120,
         )
 
         self.subredditBox = gui.widgetBox(
@@ -161,8 +218,9 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='subreddit',
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             label=u'reddit.com/r/...:',
-            labelWidth=110
+            labelWidth=120,
         
         )
         self.fullTextBox = gui.widgetBox(
@@ -176,20 +234,14 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value='fullText',
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             label=u'Search on reddit:',
-            labelWidth=110
+            labelWidth=120,
         )
 
         """
         Filter box
         """
-
-        self.filterBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Filters',
-            orientation='vertical',
-            addSpace=False,
-        )
 
         self.subredditFilter = gui.widgetBox(
             widget=self.filterBox,
@@ -207,6 +259,7 @@ class Redditor(OWTextableBaseWidget):
             sendSelectedValue=True,
             callback=self.checkSubredditSortMode,
             items=["Hot", "New", "Controversial", "Top", "Rising"],
+            labelWidth=120,
         )
 
         self.fullTextFilter = gui.widgetBox(
@@ -225,6 +278,7 @@ class Redditor(OWTextableBaseWidget):
             sendSelectedValue=True,
             callback=self.checkSearchSortMode,
             items=["Relevance", "Top", "New", "Comments"],
+            labelWidth=120,
         )
 
         self.timeBox = gui.widgetBox(
@@ -240,8 +294,10 @@ class Redditor(OWTextableBaseWidget):
             label=u'Time:',
             tooltip= "Choose mode to sort your posts",
             orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
             sendSelectedValue=True,
             items=["All", "Past day", "Past hour", "Past month", "Past year"],
+            labelWidth=120,
         )
 
         gui.spin(
@@ -251,8 +307,9 @@ class Redditor(OWTextableBaseWidget):
             minv=1,
             maxv=200,
             label="Amount of posts:",
-            labelWidth=110,
+            labelWidth=120,
             orientation="horizontal",
+            callback=self.sendButton.settingsChanged,
             tooltip="Select the amount of posts that you want",
         )
 
@@ -260,61 +317,89 @@ class Redditor(OWTextableBaseWidget):
         Include Box
         '''
 
+
         self.includeBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Include',
+            widget=self.includeOuterBox,
             orientation='horizontal',
             addSpace=False,
         )
+
 
         # TODO: replace checkboxes
 
         gui.checkBox(
             widget=self.includeBox,
             master=self,
-            value='includeTitle',
-            label=u'Title',
-            callback=self.mode_changed,  
-        )
-
-        gui.checkBox(
-            widget=self.includeBox,
-            master=self,
-            value='includeContent',
-            label=u'Content',
+            value='includeImage',
+            label=u'Include images',
             callback=self.mode_changed,
         )
-        
+
         gui.checkBox(
             widget=self.includeBox,
             master=self,
             value='includeComments',
-            label=u'Comments',
+            label=u'Include comments',
             callback=self.mode_changed,
         )
-        """
+
         self.fetchButton = gui.button(
-            widget=sourceBox,
+            widget=self.includeOuterBox,
             master=self,
-            label=u'Get content',
+            label=u'Add Request',
             callback=self.get_content,
         )
 
-        """
-        self.sendBox = gui.widgetBox(
-            widget=self.controlArea,
-            orientation='vertical',
-            addSpace=False,
-        )
 
-        self.sendButton = SendButton(
-            widget=self.sendBox,
-            master=self,
-            callback=self.get_content,
-            infoBoxAttribute='infoBox',
-        )
+        gui.rubber(self.controlArea)
+
 
        
+        '''
+        Panier
+        '''
+
+        panier = gui.listBox(
+            widget=panierBox,
+            master=self,
+            value="indicesPanier", 
+            labels="labelsPanier",
+            callback=lambda: self.removeButton.setDisabled(
+                self.indicesPanier == list()
+            ),
+            tooltip="List of imported corpora.",
+        )
+        panier.setMinimumHeight(120)
+        panier.setSelectionMode(3)
+
+        self.update_list(self.labelsPanier)
+
+        removalBox = gui.widgetBox(
+            widget=panierBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+        
+        # Remove listing button
+        self.removeButton = gui.button(
+            widget=removalBox,
+            master=self,
+            label="Remove from selection",
+            callback=self.removePressed,
+            tooltip="Remove the selected corpus.",
+        )
+
+        self.removeButton.setDisabled(True)
+
+        # Delete all corpus button
+        self.clearButton = gui.button(
+            widget=removalBox,
+            master=self,
+            label="Clear selection",
+            callback=self.clearPressed,
+            tooltip="Remove all corpora from selection.",
+        )
+
         # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
 
         # Send button...
@@ -327,6 +412,7 @@ class Redditor(OWTextableBaseWidget):
         self.mode_changed()
 
     def mode_changed(self):
+        self.sendButton.settingsChanged()
         """Reimplemented from OWWidget."""
         if self.mode == "Subreddit": # 0 = subreddit selected
             # cacher URL et Full text
@@ -378,6 +464,8 @@ class Redditor(OWTextableBaseWidget):
     """
 
     def get_content(self):
+        self.sendButton.settingsChanged()
+        self.controlArea.setDisabled(True)
         if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
             (self.mode == "URL" and len(self.URL) > 0) or
             (self.mode == "Full text" and len(self.fullText) > 0)):
@@ -394,6 +482,7 @@ class Redditor(OWTextableBaseWidget):
                 varTimeFilter = "month"
             elif tmp == "Past year":
                 varTimeFilter = "year"
+
             # Differenciate method depending of user selection
             if self.mode == "Subreddit":
                 # Get the subreddit based on subreddit name
@@ -486,77 +575,67 @@ class Redditor(OWTextableBaseWidget):
                     # On crée les segments appropriés
                     self.create_post_segments(post)
 
-            if len(self.segments) > 0:
-                self.send("Segmentation", Segmentation(self.segments))
-                self.infoBox.setText("{} segments sent to output !".format(len(self.segments)))
-                self.segments = []
-                return
+            if len(self.listeTempPosts) > 0:
+                # self.send("Segmentation", Segmentation(self.createdInputs))
+                # self.infoBox.setText("{} segments sent to output !".format(len(self.createdInputs)))
+                self.queryList.append(self.listeTempPosts)
+                self.annotList.append(self.listeTempAnnot)
+                self.add_to_list()
+                self.listeTempPosts = list()
+                self.listeTempAnnot = list()
             else:
                 self.infoBox.setText(
-                    "There is nothing! Maybe you should include at least one item",
+                    "The posts found only contained images. Try to include images or comments.",
                     "warning"
                 )
-                # self.send("Segmentation", Segmentation(self.segments))
-                return
+                # self.send("Segmentation", Segmentation(self.createdInputs))
+
         else:
             self.infoBox.setText(
                 "Please fill in the input box.",
                 "warning"
             )
-            return
+
+        self.controlArea.setDisabled(False)
+
+        return
 
     def create_post_segments(self, post):
-        # Si "Title" est coché, on crée le segment correspondant
-        if self.includeTitle is True:
-            self.create_title_segment(post)
-        # Si "Content" est coché ou si aucune case ne l'est, on crée le segment correspondant
-        # et vérifie que "Content" est bien coché
-        if self.includeContent is True or (self.includeTitle is not True and self.includeComments is not True):
-            self.includeContent = True
-            self.create_content_segment(post)
+        # TODO: comments
+        self.create_content_segment(post)
         # Si "Comments" est coché, on crée les segments correspondants
         if self.includeComments is True:
             self.create_comments_segments(post)
             return
-        
-    def create_title_segment(self, post):
-        annotations = dict()
-        #annotations["Title"] = post.title
-        annotations["Id"] = post.id
-        annotations["Parent"] = post.id
-        text = Input(post.title)
 
-        self.segments.append(
-            Segment(
-                str_index=text[0].str_index,
-                start=text[0].start,
-                end=text[0].end,
-                annotations=annotations
-            )
-        )
-        return
-    
     def create_content_segment(self, post):
         annotations = dict()
         annotations["Title"] = post.title
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
+        annotations["Author"] = post.author
+        annotations["Score"] = post.score
+        annotations["Parent_type"] = "0"
+
+        # Time annotations
+        time = post.created_utc
+        ts = int(time)
+        date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        annotations["Posted_Unix"] = time
+        annotations["Posted_at"] = date
 
         # TODO: add these annotations:
         # author, created_utc (ou created ?) et score
+        content = post.selftext
+        if content == "":
+            content = "[image]"
 
-        text = Input(post.selftext)
-
-        self.segments.append(
-            Segment(
-                str_index=text[0].str_index,
-                start=text[0].start,
-                end=text[0].end,
-                annotations=annotations
-            )
-        )
+        if not (self.includeImage == False and content == "[image]"):
+            self.listeTempPosts.append(content)
+            self.listeTempAnnot.append(annotations)
+        
         return
-    
+
     def create_comments_segments(self, post):
         post.comments.replace_more(limit=0)
         comments = post.comments.list()
@@ -566,6 +645,15 @@ class Redditor(OWTextableBaseWidget):
             annotations = dict()
             annotations["Title"] = post.title
             annotations["Id"] = comment.id
+            annotations["Author"] = comment.author
+            annotations["Score"] = comment.score
+
+            # Time annotations
+            time = comment.created_utc
+            ts = int(time)
+            date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            annotations["Posted_Unix"] = time
+            annotations["Posted_at"] = date
 
             # TODO: add these annotations:
             # author, created_utc (ou created ?) et score
@@ -574,19 +662,12 @@ class Redditor(OWTextableBaseWidget):
             annotations["Parent"] = parentId[1]
             annotations["Parent_type"] = parentId[0][1]
 
-            text = Input(comment.body)
-
-            self.segments.append(
-                Segment(
-                    str_index=text[0].str_index,
-                    start=text[0].start,
-                    end=text[0].end,
-                    annotations=annotations
-                )
-            )
+            self.listeTempPosts.append(comment.body)
+            self.listeTempAnnot.append(annotations)
         return
     
     def checkSubredditSortMode(self):
+        self.sendButton.settingsChanged()
         if self.sortBy == "Hot":
             self.timeBox.setDisabled(True)
         elif self.sortBy == "New":
@@ -599,6 +680,7 @@ class Redditor(OWTextableBaseWidget):
             self.timeBox.setDisabled(True)
     
     def checkSearchSortMode(self):
+        self.sendButton.settingsChanged()
         if self.sortByFT == "Relevance":
             self.timeBox.setDisabled(False)
         elif self.sortByFT == "New":
@@ -608,10 +690,139 @@ class Redditor(OWTextableBaseWidget):
         elif self.sortByFT == "Comments":
             self.timeBox.setDisabled(False)
 
-    """
+    def removePressed(self):
+        labelsPanier = self.labelsPanier
+        # labelsPanierRemove = list()
+
+        for idx in sorted(self.indicesPanier, reverse=True):
+            del labelsPanier[idx]
+            del self.queryList[idx]
+            del self.annotList[idx]
+        
+        self.labelsPanier = labelsPanier
+        self.sendButton.settingsChanged()
+            
+    
+    def clearPressed(self):
+        self.labelsPanier = list()
+        self.queryList = list()
+        self.annotList = list()
+        self.sendButton.settingsChanged()
+    
+    def add_to_list(self):
+        labelsPanier = self.labelsPanier
+
+        if self.mode == "Subreddit":
+            valeur = self.subreddit
+            sortBy = self.sortBy
+            if sortBy == "Top" or sortBy == "Controversial":
+                time = self.postedAt
+            else:
+                time = "[not specified]"
+            amount = self.amount
+        elif self.mode == "URL":
+            valeur = self.URL
+            sortBy = "[not specified]"
+            time = "[not specified]"
+            amount = 1
+        elif self.mode == "Full text":
+            valeur = self.fullText
+            sortBy = self.sortByFT
+            time = self.postedAt
+            amount = self.amount
+        
+        if self.includeImage:
+            image = "True"
+        else:
+            image = "False"
+
+        if self.includeComments:
+            comments = "True"
+        else:
+            comments = "False"
+    
+        labelsPanier.append("* Mode: {}; Value: {}; Settings: {}, {}, {}; Include image: {}; Include comments: {}; Segments: {}".format(
+                self.mode,
+                valeur,
+                sortBy,
+                time,
+                amount,
+                image,
+                comments,
+                len(self.queryList)
+            )
+        )
+
+        self.update_list(labelsPanier)
+ 
+    def update_list(self, listOfLabels):
+        try:
+            self.labelsPanier = listOfLabels
+        except TypeError:
+            self.infoBox.setText(
+                "Error !",
+                "error"
+            )
+            return
+
+    def change_button(self):
+        self.removeButton.setDisabled(False)
+    
     def send_data(self):
-        self.label.setText("Envoyé! Mode is: {}".format(self.mode))
-    """
+        self.controlArea.setDisabled(True)
+        self.clearCreatedInputs()
+        segmentation = None
+
+        for query in self.queryList:
+            for text in query:
+                newInput = Input(text)
+                self.createdInputs.append(newInput)
+
+        if len(self.createdInputs) == 1:
+            segmentation = self.createdInputs[0]
+
+        # Otherwise the widget's output is a concatenation...
+        else:
+            segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                import_labels_as=None,
+            )
+
+        # Annotate segments...
+        annotations = list()
+        for elem in self.annotList:
+            for dic in elem:
+                annotations.append(dic)
+        
+        for idx, segment in enumerate(segmentation):
+            segment.annotations.update(annotations[idx])
+            segmentation[idx] = segment
+
+        num_chars = 0
+        for segment in segmentation:
+            num_chars += len(Segmentation.get_data(segment.str_index))
+        self.infoBox.setText("{} segments sent to output ({} characters)".format(
+            len(segmentation),
+            num_chars,
+            )
+        )
+        
+        self.send("Segmentation", segmentation)
+
+        self.controlArea.setDisabled(False)
+
+        self.sendButton.resetSettingsChangedFlag()
+    
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
+    def onDeleteWidget(self):
+        """Free memory when widget is deleted (overriden method)"""
+        self.clearCreatedInputs()
+
 
 
  
