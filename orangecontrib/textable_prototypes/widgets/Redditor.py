@@ -324,24 +324,8 @@ class Redditor(OWTextableBaseWidget):
         gui.checkBox(
             widget=self.includeBox,
             master=self,
-            value='includeTitle',
-            label=u'Title',
-            callback=self.mode_changed,  
-        )
-
-        gui.checkBox(
-            widget=self.includeBox,
-            master=self,
-            value='includeContent',
-            label=u'Content',
-            callback=self.mode_changed,
-        )
-
-        gui.checkBox(
-            widget=self.includeBox,
-            master=self,
             value='includeImage',
-            label=u'Image',
+            label=u'Include images',
             callback=self.mode_changed,
         )
 
@@ -349,7 +333,7 @@ class Redditor(OWTextableBaseWidget):
             widget=self.includeBox,
             master=self,
             value='includeComments',
-            label=u'Comments',
+            label=u'Include comments',
             callback=self.mode_changed,
         )
 
@@ -594,7 +578,7 @@ class Redditor(OWTextableBaseWidget):
                 self.segments = []
             else:
                 self.infoBox.setText(
-                    "There is nothing! Maybe you should include at least one item",
+                    "The post found only contains images. Try to include images or comments.",
                     "warning"
                 )
                 # self.send("Segmentation", Segmentation(self.segments))
@@ -610,40 +594,12 @@ class Redditor(OWTextableBaseWidget):
         return
 
     def create_post_segments(self, post):
-        # Si "Title" est coché, on crée le segment correspondant
-        if self.includeTitle is True:
-            self.create_title_segment(post)
-        # Si "Content" est coché ou si aucune case ne l'est, on crée le segment correspondant
-        # et vérifie que "Content" est bien coché
-        if self.includeContent is True or (self.includeTitle is not True and self.includeComments is not True):
-            self.includeContent = True
-            self.create_content_segment(post)
+        # TODO: comments
+        self.create_content_segment(post)
         # Si "Comments" est coché, on crée les segments correspondants
         if self.includeComments is True:
             self.create_comments_segments(post)
             return
-        
-    def create_title_segment(self, post):
-        annotations = dict()
-        #annotations["Title"] = post.title
-        annotations["Id"] = post.id
-        annotations["Parent"] = post.id
-        annotations["Author"] = post.author
-        annotations["Posted"] = post.created_utc 
-        annotations["Score"] = post.score
-        annotations["Content"] = post.selftext
-        text = Input(post.title)
-
-        self.segments.append(
-            Segment(
-                str_index=text[0].str_index,
-                start=text[0].start,
-                end=text[0].end,
-                annotations=annotations
-            )
-        )
-        return
-   
 
     def create_content_segment(self, post):
         annotations = dict()
@@ -651,24 +607,28 @@ class Redditor(OWTextableBaseWidget):
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
         annotations["Author"] = post.author
-        annotations["Pasted"] = post.created_utc
+        annotations["Posted"] = post.created_utc
         annotations["Score"] = post.score
+        annotations["Parent_type"] = "0"
 
         # TODO: add these annotations:
         # author, created_utc (ou created ?) et score
+        content = post.selftext
+        if content == "":
+            content = "[image]"
+        text = Input(content)
 
-        text = Input(post.selftext)
-
-        self.segments.append(
-            Segment(
-                str_index=text[0].str_index,
-                start=text[0].start,
-                end=text[0].end,
-                annotations=annotations
+        if not (self.includeImage == False and content == "[image]"):
+            self.segments.append(
+                Segment(
+                    str_index=text[0].str_index,
+                    start=text[0].start,
+                    end=text[0].end,
+                    annotations=annotations
+                )
             )
-        )
         return
-    
+
     def create_comments_segments(self, post):
         post.comments.replace_more(limit=0)
         comments = post.comments.list()
@@ -761,27 +721,23 @@ class Redditor(OWTextableBaseWidget):
             time = self.postedAt
             amount = self.amount
         
-        if self.includeTitle:
-            title = "Title|"
+        if self.includeImage:
+            image = "True"
         else:
-            title = ""
-        if self.includeContent:
-            content = "Content|"
-        else:
-            content = ""
+            image = "False"
+
         if self.includeComments:
-            comments = "Comments"
+            comments = "True"
         else:
-            comments = ""
+            comments = "False"
     
-        labelsPanier.append("* Mode: {}; Value: {}; Settings: {}, {}, {}; Includes: {}{}{}; Segments: {}".format(
+        labelsPanier.append("* Mode: {}; Value: {}; Settings: {}, {}, {}; Include image: {}; Include comments: {}; Segments: {}".format(
                 self.mode,
                 valeur,
                 sortBy,
                 time,
                 amount,
-                title,
-                content,
+                image,
                 comments,
                 len(self.segments)
             )
