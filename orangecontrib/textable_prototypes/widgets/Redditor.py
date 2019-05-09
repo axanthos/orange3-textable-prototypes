@@ -41,6 +41,8 @@ import LTTL.Segmenter as Segmenter
 from LTTL.Segment import Segment
 from LTTL.Input import Input
 
+from datetime import datetime
+
 class Redditor(OWTextableBaseWidget):
     """An Orange widget to scrape Reddit"""
 
@@ -607,9 +609,15 @@ class Redditor(OWTextableBaseWidget):
         annotations["Id"] = post.id
         annotations["Parent"] = post.id
         annotations["Author"] = post.author
-        annotations["Posted"] = post.created_utc
         annotations["Score"] = post.score
         annotations["Parent_type"] = "0"
+
+        # Time annotations
+        time = post.created_utc
+        ts = int(time)
+        date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        annotations["Posted_Unix"] = time
+        annotations["Posted_at"] = date
 
         # TODO: add these annotations:
         # author, created_utc (ou created ?) et score
@@ -639,9 +647,14 @@ class Redditor(OWTextableBaseWidget):
             annotations["Title"] = post.title
             annotations["Id"] = comment.id
             annotations["Author"] = comment.author
-            annotations["Posted"] = comment.created_utc 
             annotations["Score"] = comment.score
-            annotations["Content"] = post.selftext
+
+            # Time annotations
+            time = comment.created_utc
+            ts = int(time)
+            date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            annotations["Posted_Unix"] = time
+            annotations["Posted_at"] = date
 
             # TODO: add these annotations:
             # author, created_utc (ou created ?) et score
