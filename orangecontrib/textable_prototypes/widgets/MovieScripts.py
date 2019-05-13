@@ -247,7 +247,7 @@ class MovieScripts(OWTextableBaseWidget):
         )
         try:
             file = open(os.path.join(path, self.__class__.cacheFilename),"rb")
-            self.database = pickle.load(file)
+            self.title_to_href = pickle.load(file)
             file.close()
 
         # Else try to rebuild cache from SpringfieldSpringfield website...
