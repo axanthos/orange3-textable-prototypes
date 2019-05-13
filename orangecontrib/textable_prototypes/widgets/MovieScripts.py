@@ -98,12 +98,12 @@ class MovieScripts(OWTextableBaseWidget):
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
         self.infoBox = InfoBox(widget=self.controlArea)
-        #self.sendButton = SendButton(
-        #   widget=self.controlArea,
-        #    master=self,
-        #    callback=self.sendData,
-        #    infoBoxAttribute="infoBox",
-        #)
+        self.sendButton = SendButton(
+           widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute="infoBox",
+        )
 		
 
     # User interface...
@@ -166,13 +166,13 @@ class MovieScripts(OWTextableBaseWidget):
             orientation='horizontal',
         )
 
-        # select button
-        # Uses "select" function
+        # Add button
+        # Uses "Add" function
         self.selectButton = gui.button(
             widget=boxbutton,
             master=self,
-            label="Select",
-            callback=self.sendData,
+            label="Add",
+            callback=None,
             tooltip="Select",
         )
         self.selectButton.setDisabled(True)
@@ -189,12 +189,57 @@ class MovieScripts(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
+        # Area where confirmed movies are moved and stocked
+        mytitleBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Corpus",
+            orientation="vertical",
+        )
+
+        self.mytitleListbox = gui.listBox(
+            widget=mytitleBox,
+            master=self,
+            value="myTitles",
+            labels="mytitleLabels",
+            callback=lambda: self.removeButton.setDisabled(
+                self.myTitles == list()),
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.mytitleListbox.setMinimumHeight(150)
+        self.mytitleListbox.setSelectionMode(3)
+
+        boxbutton2 = gui.widgetBox(
+            widget=mytitleBox,
+            box=False,
+            orientation='horizontal',
+        )
+        # Remove movies button
+        self.removeButton = gui.button(
+            widget=boxbutton2,
+            master=self,
+            label=u'Remove',
+            callback=None,
+            tooltip="Remove the selected song from your corpus.",
+        )
+        self.removeButton.setDisabled(True)
+
+        # Delete all confirmed movies button
+        self.clearmyBasket = gui.button(
+            widget=boxbutton2,
+            master=self,
+            label=u'Clear corpus',
+            callback=None,
+            tooltip=
+                "Remove all movies from your corpus.",
+        )
+        self.clearmyBasket.setDisabled(True)
+
         gui.rubber(self.controlArea)
 
     #----------------------------------------------------------------------
 
         # Draw Info box and Send button
-        # self.sendButton.draw()
+        self.sendButton.draw()
         # self.searchButton.setDefault(True)
         self.infoBox.draw()
 		
@@ -227,7 +272,7 @@ class MovieScripts(OWTextableBaseWidget):
             self.clearButton.setDisabled(False)
             self.controlArea.setDisabled(False)
             self.infoBox.setText("Search complete")
-
+            self.searchResults = result_list
         else:
             self.infoBox.setText("You didn't search anything", "warning")
 
