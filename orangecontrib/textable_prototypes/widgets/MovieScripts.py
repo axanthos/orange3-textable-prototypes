@@ -80,7 +80,6 @@ class MovieScripts(OWTextableBaseWidget):
         self.inputSeg = None
         # newQuery = attribut box lineEdit (search something)
         self.newQuery = ''
-        self.nbr_results = 10
         # Results box attributs
         self.titleLabels = list()
         self.selectedTitles = list()
@@ -92,7 +91,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.path_storage = list()
         # stock all the movies titles
         self.title_to_href = dict()
-        
+
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -135,27 +134,6 @@ class MovieScripts(OWTextableBaseWidget):
             tooltip = "update SpringfieldSpringfield DataBase"
             )
 
-        # Allows to choose the wanted results numberp (10 by 10)
-        queryNbr = gui.comboBox(
-            widget=queryBox,
-            master=self,
-            value="nbr_results",
-            items=[
-                5,
-                10,
-                20,
-                30,
-                40,
-                50,
-            ],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Number of results: ",
-            labelWidth=120,
-            tooltip=(
-                "Please select the desired search.\n"
-            ),
-        )
 
         # Research button 
         # Use "searchFunction" attibute
@@ -218,6 +196,11 @@ class MovieScripts(OWTextableBaseWidget):
         # self.sendButton.draw()
         # self.searchButton.setDefault(True)
         self.infoBox.draw()
+		
+        # This initialization step needs to be done after infoBox has been
+        # drawn (because we may need to display an error message).
+        #self.loadDatabaseCache()
+
 
         # Send data if autoSend.
         # self.sendButton.sendIf()
@@ -234,7 +217,7 @@ class MovieScripts(OWTextableBaseWidget):
         del self.titleLabels[:]
 		
         if query_string != "":
-            searchResults = process.extractBests(query_string, testdict, limit=5, score_cutoff=70)
+            searchResults = process.extractBests(query_string, testdict, limit=50, score_cutoff=70)
             for key,score,val in searchResults:
                 self.titleLabels.append(val)
                 self.path_storage.append(key)
@@ -257,6 +240,7 @@ class MovieScripts(OWTextableBaseWidget):
     
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
+        """Refresh the database cache"""
         basepath = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
             )
@@ -269,6 +253,7 @@ class MovieScripts(OWTextableBaseWidget):
                 "Keep previously saved files?", 
                 dialog.Yes | dialog.No
             )
+            print("YES!")
         self.infoBox.setText(
             "Scraping springfieldspringfield website, please wait...", 
             "warning",
@@ -330,6 +315,7 @@ class MovieScripts(OWTextableBaseWidget):
         #link_title = process.extractBests(self.selectedTitles, testdict, limit=1)
         # Clear created Inputs.
         self.clearCreatedInputs()
+
         link_end = self.path_storage[self.selectedTitles[0]]
 
         self.controlArea.setDisabled(True)
@@ -342,7 +328,6 @@ class MovieScripts(OWTextableBaseWidget):
             self.createdInputs.append(new_input)
             self.segmentation = self.createdInputs[0]
             print(self.createdInputs[0])
-            del self.path_storage[:]
             self.infoBox.setText(
                 "Script downloaded!",
             )
@@ -359,7 +344,6 @@ class MovieScripts(OWTextableBaseWidget):
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
         del self.createdInputs[:]
-
 
 	# The following method needs to be copied verbatim in
 	# every Textable widget that sends a segmentation...
