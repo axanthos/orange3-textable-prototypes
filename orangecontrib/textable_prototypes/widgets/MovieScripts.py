@@ -88,8 +88,11 @@ class MovieScripts(OWTextableBaseWidget):
         self.mytitleLabels = list()
         # stock all the inputs (scripts) in a list
         self.createdInputs = list()
+        # stock the part of dictionary that will be used to access script's page
         self.path_storage = list()
-        # stock all the movies titles
+        # stock titles of movies
+        self.movie_titles = list()
+        # stock all the movies titles and link parts
         self.title_to_href = dict()
 
 
@@ -172,7 +175,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=boxbutton,
             master=self,
             label="Add",
-            callback=None,
+            callback=self.Add,
             tooltip="Select",
         )
         self.selectButton.setDisabled(True)
@@ -218,7 +221,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=boxbutton2,
             master=self,
             label=u'Remove',
-            callback=None,
+            callback=self.Remove,
             tooltip="Remove the selected song from your corpus.",
         )
         self.removeButton.setDisabled(True)
@@ -228,7 +231,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=boxbutton2,
             master=self,
             label=u'Clear corpus',
-            callback=None,
+            callback=self.ClearmyCorpus,
             tooltip=
                 "Remove all movies from your corpus.",
         )
@@ -263,16 +266,17 @@ class MovieScripts(OWTextableBaseWidget):
         del self.titleLabels[:]
 		
         if query_string != "":
-            searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
-            for key,score,val in searchResults:
+            self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
+            for key,score,val in self.searchResults:
                 self.titleLabels.append(val)
+                self.movie_titles.append(val)
                 self.path_storage.append(key)
 		
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
             self.controlArea.setDisabled(False)
             self.infoBox.setText("Search complete")
-            self.searchResults = result_list
+
         else:
             self.infoBox.setText("You didn't search anything", "warning")
 
@@ -376,6 +380,29 @@ class MovieScripts(OWTextableBaseWidget):
                 "error"
             )
         return(self.title_to_href)
+
+    # Add Movies function
+    def Add(self):
+        """Add movies in your selection """
+        movie_title = self.movie_titles[self.selectedTitles[0]]
+        self.myBasket.append(movie_title)
+        self.mytitleLabels.append(movie_title)
+        self.mytitleLabels = self.mytitleLabels
+        self.clearmyBasket.setDisabled(False)
+		
+    def Remove(self):
+        """Remove an item from your selection """
+        movie_title = self.movie_titles[self.selectedTitles[0]]
+        self.myBasket.remove(movie_title)
+        self.mytitleLabels.remove(movie_title)
+        self.mytitleLabels = self.mytitleLabels
+		
+    def ClearmyCorpus(self):
+        """Clears your selection """
+        del self.mytitleLabels[:]
+        self.mytitleLabels = self.mytitleLabels
+        self.clearmyBasket.setDisabled(True)
+
 
 
     # Create the final output with the script
