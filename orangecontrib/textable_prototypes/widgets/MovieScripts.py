@@ -93,6 +93,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.title_to_href = dict()
 
 
+
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -130,7 +131,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget = queryBox,
             master = self,
             label = "Refresh DataBase",
-            callback = self.get_all_titles,
+            callback = self.refreshTitles,
             tooltip = "update SpringfieldSpringfield DataBase"
             )
 
@@ -199,7 +200,7 @@ class MovieScripts(OWTextableBaseWidget):
 		
         # This initialization step needs to be done after infoBox has been
         # drawn (because we may need to display an error message).
-        #self.loadDatabaseCache()
+        self.loadDatabaseCache()
 
 
         # Send data if autoSend.
@@ -212,12 +213,12 @@ class MovieScripts(OWTextableBaseWidget):
 
         result_list = dict()
         query_string = self.newQuery
-        testdict = MovieScripts.get_all_titles(self)
+        testdict = self.title_to_href
         # Reset and clear the visible widget list
         del self.titleLabels[:]
 		
         if query_string != "":
-            searchResults = process.extractBests(query_string, testdict, limit=50, score_cutoff=70)
+            searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
             for key,score,val in searchResults:
                 self.titleLabels.append(val)
                 self.path_storage.append(key)
@@ -237,9 +238,24 @@ class MovieScripts(OWTextableBaseWidget):
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
+		
+    def loadDatabaseCache(self):
+        """Load the cached database"""
+        # Try to open saved file in this module"s directory...
+        path = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe()))
+        )
+        try:
+            file = open(os.path.join(path, self.__class__.cacheFilename),"rb")
+            self.database = pickle.load(file)
+            file.close()
+
+        # Else try to rebuild cache from SpringfieldSpringfield website...
+        except IOError:
+            self.refreshTitles()
+			
     
-	# Get all movie titles from www.springfieldspringfield.co.uk
-    def get_all_titles(self):
+    def refreshTitles(self):
         """Refresh the database cache"""
         basepath = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
@@ -253,12 +269,39 @@ class MovieScripts(OWTextableBaseWidget):
                 "Keep previously saved files?", 
                 dialog.Yes | dialog.No
             )
-            print("YES!")
+
         self.infoBox.setText(
             "Scraping springfieldspringfield website, please wait...", 
             "warning",
         )     
-        
+        try:
+            self.get_all_titles()
+            try:
+                path = os.path.dirname(
+                os.path.abspath(inspect.getfile(inspect.currentframe()))
+                )
+                file = open(
+                    os.path.join(path, self.__class__.cacheFilename),
+                    "wb",
+                )
+                pickle.dump(self.title_to_href, file)
+                file.close()
+                self.infoBox.setText(
+                    "Database successfully updated", 
+                )
+            except IOError:
+                self.infoBox.setText(
+                    "Couldn't save database to disk.", 
+                    "warning",
+                )
+        except requests.exceptions.ConnectionError:
+            self.infoBox.setText(
+                "Error while attempting to scrape the SpringfieldSpringfield website.", 
+                "error",)
+
+
+	# Get all movie titles from www.springfieldspringfield.co.uk
+    def get_all_titles(self):
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
@@ -266,8 +309,6 @@ class MovieScripts(OWTextableBaseWidget):
             for lettre in ['0']:#, 'A']:, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                        #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
                 page_num = 1
-
-
 
                 while True:
                     page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
@@ -284,29 +325,13 @@ class MovieScripts(OWTextableBaseWidget):
                     print(page_num)
                     page_num += 1
 
-            try:
-                file = open(
-                    os.path.join(path, self.__class__.cacheFilename),
-                    "wb",
-                )
-                pickle.dump(self.database, file)
-                file.close()
-            except IOError:
-                self.infoBox.setText(
-                    "Couldn't save database to disk.", 
-                    "warning",
-                )
-
         except:
             self.infoBox.setText(
                 "Couldn't download data from springfieldspringfield website.", 
                 "error"
             )
-
-
-        # print(title_to_href['99 Homes (2014)'])
         return(self.title_to_href)
-        print(self.title_to_href)
+
 
     # Create the final output with the script
     def sendData(self):
