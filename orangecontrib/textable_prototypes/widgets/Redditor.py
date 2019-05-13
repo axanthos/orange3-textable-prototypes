@@ -66,26 +66,38 @@ class Redditor(OWTextableBaseWidget):
     want_main_area = False
     resizing_enabled = True
 
-    # Settings
+    #----------------------------------------------------------------------
+    # Query settings...
+
     mode = Setting("Subreddit")
     subreddit = Setting(u'')
     URL = Setting(u'')
     fullText = Setting(u'')
+
+    # Filters settings...
+
     sortBy = Setting("Hot")
     sortByFT = Setting("Relevance")
     postedAt = Setting("All")
     amount = Setting(1)
-    includeTitle = Setting(True)
-    includeContent = Setting(True)
+
+    # Include settings...
+
     includeComments = Setting(True)
     includeImage = Setting(False)
+
+    # resultBox settings...
+
     labelsPanier = Setting(list())
-    # segmentations = Setting(list())
+
+    # Data settings...
 
     queryList = Setting(list())
     annotList = Setting(list())
 
+    #----------------------------------------------------------------------
     # Praw instance
+
     reddit = praw.Reddit(
         client_id="aHeP3Ub7aILvsg",
         client_secret=None,
@@ -94,22 +106,31 @@ class Redditor(OWTextableBaseWidget):
         user_agent="Redditor by /u/RedditorApp"
     )
 
-    # Segment list
+    #----------------------------------------------------------------------
+    # Temporary inputs and data lists
+
     createdInputs = list()
     listeTempAnnot = list()
     listeTempPosts = list()
 
     def __init__(self):
+        """Init of the module: UI and variables definition"""
         super().__init__()
 
+        # queryBox indexes
         self.indicesPanier = list()
 
         #----------------------------------------------------------------------
         # User interface...
+
         self.infoBox = InfoBox(
             widget=self.controlArea,
 
         )
+
+        #-------------------------#
+        #    Main widget boxes    #
+        #-------------------------#
 
         sourceBox = gui.widgetBox(
             widget=self.controlArea,
@@ -139,11 +160,9 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
-
-        
-        """
-        Send button
-        """
+        #-------------------#
+        #    Send button    #
+        #-------------------#
 
         self.sendBox = gui.widgetBox(
             widget=self.controlArea,
@@ -159,6 +178,9 @@ class Redditor(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
         )
 
+        #------------------------#
+        #   Query box elements   #
+        #------------------------#
 
         self.choiceBox = gui.comboBox(
             widget=sourceBox,
@@ -178,18 +200,6 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             addSpace=False,
         )
-
-        """
-        modeRadio = gui.radioButtons(
-            widget=self.modeBox,
-            master=self,
-            value='mode',
-            label="Mode",
-            orientation='horizontal',
-            callback=self.mode_changed,
-            btnLabels=["SubReddit", "Post"],
-        )
-        """
 
         self.urlBox = gui.widgetBox(
             widget=sourceBox,
@@ -239,9 +249,9 @@ class Redditor(OWTextableBaseWidget):
             labelWidth=120,
         )
 
-        """
-        Filter box
-        """
+        #----------------------------#
+        #    Filters box elements    #
+        #----------------------------#
 
         self.subredditFilter = gui.widgetBox(
             widget=self.filterBox,
@@ -313,19 +323,15 @@ class Redditor(OWTextableBaseWidget):
             tooltip="Select the amount of posts that you want",
         )
 
-        '''
-        Include Box
-        '''
-
+        #-------------------------#
+        #   Inclue box elements   #
+        #-------------------------#
 
         self.includeBox = gui.widgetBox(
             widget=self.includeOuterBox,
             orientation='horizontal',
             addSpace=False,
         )
-
-
-        # TODO: replace checkboxes
 
         gui.checkBox(
             widget=self.includeBox,
@@ -350,14 +356,9 @@ class Redditor(OWTextableBaseWidget):
             callback=self.get_content,
         )
 
-
-        gui.rubber(self.controlArea)
-
-
-       
-        '''
-        Panier
-        '''
+        #--------------------------#
+        #   results box elements   #
+        #--------------------------#
 
         panier = gui.listBox(
             widget=panierBox,
@@ -380,7 +381,6 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
         
-        # Remove listing button
         self.removeButton = gui.button(
             widget=removalBox,
             master=self,
@@ -391,7 +391,6 @@ class Redditor(OWTextableBaseWidget):
 
         self.removeButton.setDisabled(True)
 
-        # Delete all corpus button
         self.clearButton = gui.button(
             widget=removalBox,
             master=self,
@@ -400,14 +399,15 @@ class Redditor(OWTextableBaseWidget):
             tooltip="Remove all corpora from selection.",
         )
 
-        # self.label = gui.widgetLabel(self.controlArea, "Chose a mode")
-        gui.separator(widget=self.controlArea, height=3) #spacer
+        #------------------------#
+        #   End of definitions   #
+        #------------------------#
 
+        gui.separator(widget=self.controlArea, height=3) #spacer
         gui.rubber(self.controlArea)
-        # Send button...
-        # self.sendButton.draw()
 
         # Info box...
+        
         self.infoBox.draw()
         self.sendButton.draw()
 
