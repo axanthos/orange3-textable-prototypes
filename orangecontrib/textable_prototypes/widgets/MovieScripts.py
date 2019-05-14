@@ -67,7 +67,7 @@ class MovieScripts(OWTextableBaseWidget):
 
     # Other class variables...
 
-    cacheFilename = "cache_springfield"
+    cacheFilename = "cache_movie_scripts"
 
     def __init__(self):
         """Widget creator."""
@@ -135,7 +135,7 @@ class MovieScripts(OWTextableBaseWidget):
             master = self,
             label = "Refresh DataBase",
             callback = self.refreshTitles,
-            tooltip = "update SpringfieldSpringfield DataBase"
+            tooltip = "Update SpringfieldSpringfield DataBase"
             )
 
 
@@ -176,7 +176,7 @@ class MovieScripts(OWTextableBaseWidget):
             master=self,
             label="Add",
             callback=self.Add,
-            tooltip="Select",
+            tooltip="Add selected movie to the corpus",
         )
         self.selectButton.setDisabled(True)
 
@@ -222,7 +222,7 @@ class MovieScripts(OWTextableBaseWidget):
             master=self,
             label=u'Remove',
             callback=self.Remove,
-            tooltip="Remove the selected song from your corpus.",
+            tooltip="Remove the selected movie from your corpus.",
         )
         self.removeButton.setDisabled(True)
 
@@ -264,6 +264,9 @@ class MovieScripts(OWTextableBaseWidget):
         testdict = self.title_to_href
         # Reset and clear the visible widget list
         del self.titleLabels[:]
+        self.titleLabels = self.titleLabels
+        del self.movie_titles[:]
+        self.movie_titles = self.movie_titles
 		
         if query_string != "":
             self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
@@ -286,6 +289,8 @@ class MovieScripts(OWTextableBaseWidget):
         """Clear the results list"""
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
+        del self.movie_titles[:]
+        self.movie_titles = self.movie_titles
         self.clearButton.setDisabled(True)
 		
     def loadDatabaseCache(self):
@@ -320,7 +325,7 @@ class MovieScripts(OWTextableBaseWidget):
             )
 
         self.infoBox.setText(
-            "Scraping springfieldspringfield website, please wait...", 
+            "Scraping SpringfieldSpringfield website, please wait...", 
             "warning",
         )     
         try:
@@ -355,8 +360,8 @@ class MovieScripts(OWTextableBaseWidget):
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
         try:
-            for lettre in ['0']:#, 'A']:, 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                       #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+            for lettre in ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                       'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
                 page_num = 1
 
                 while True:
@@ -386,22 +391,28 @@ class MovieScripts(OWTextableBaseWidget):
         """Add movies in your selection """
         movie_title = self.movie_titles[self.selectedTitles[0]]
         self.myBasket.append(movie_title)
+        print(movie_title)
         self.mytitleLabels.append(movie_title)
         self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(False)
+        self.sendButton.settingsChanged()
 		
     def Remove(self):
         """Remove an item from your selection """
         movie_title = self.movie_titles[self.selectedTitles[0]]
+        print(movie_title)
         self.myBasket.remove(movie_title)
         self.mytitleLabels.remove(movie_title)
         self.mytitleLabels = self.mytitleLabels
-		
+        self.sendButton.settingsChanged()
+
     def ClearmyCorpus(self):
         """Clears your selection """
         del self.mytitleLabels[:]
+        del self.myBasket[:]
         self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(True)
+        self.sendButton.settingsChanged()
 
 
 
