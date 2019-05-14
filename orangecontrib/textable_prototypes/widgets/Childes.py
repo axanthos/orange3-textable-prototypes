@@ -414,6 +414,16 @@ class Childes(OWTextableBaseWidget):
             
             # Create Input for each zipped file and store annotations...
             for file in myZip.infolist():
+                file_content = myZip.read(file).decode('utf-8')
+
+                # TODO: TEST THIS!
+                # If word segmentation is requested, implement replacements...
+                if self.outputWords:
+                    file_content = re.sub(
+                        r"<w.+?(<replacement.+</replacement>).*?</w>", 
+                        r"<1",
+                        file_content
+
                 newInput = Input(
                     myZip.read(file).decode('utf-8'), 
                     self.captionTitle + "_files"
@@ -533,33 +543,37 @@ class Childes(OWTextableBaseWidget):
                 self, 
                 iterations=2*len(self.fileSegmentation)
             )
+            try:
+                baseSegmentation = self.utteranceSegmentation
+            except:
+                baseSegmentation = self.fileSegmentation            
             wordSegmentation = Segmenter.import_xml(
-                self.fileSegmentation,
+                baseSegmentation,
                 "w",
                 progress_callback=progressBar.advance,
             )
-            replSegmentation = Segmenter.import_xml(
-                self.fileSegmentation,
-                "replacement",
-                progress_callback=progressBar.advance,
-            )
-            self.infoBox.setText(
-                "(%i/%i) Handling word replacements, please wait..."    \
-                    % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
-                "warning",
-            )     
-            progressBar.finish()
-            progressBar = ProgressBar(
-                self, 
-                iterations=len(self.fileSegmentation) + len(replSegmentation)
-            )
-            replWordSegmentation = Segmenter.import_xml(
-                replSegmentation,
-                "w",
-                progress_callback=progressBar.advance,
-            )
+            # replSegmentation = Segmenter.import_xml(
+                # baseSegmentation,
+                # "replacement",
+                # progress_callback=progressBar.advance,
+            # )
+            # self.infoBox.setText(
+                # "(%i/%i) Handling word replacements, please wait..."    \
+                    # % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
+                # "warning",
+            # )     
+            # progressBar.finish()
+            # progressBar = ProgressBar(
+                # self, 
+                # iterations=len(baseSegmentation) + len(replSegmentation)
+            # )
+            # replWordSegmentation = Segmenter.import_xml(
+                # replSegmentation,
+                # "w",
+                # progress_callback=progressBar.advance,
+            # )
             mwSegmentation = Segmenter.import_xml(
-                self.fileSegmentation,
+                baseSegmentation,
                 "mw",
                 progress_callback=progressBar.advance,
             )
@@ -567,7 +581,7 @@ class Childes(OWTextableBaseWidget):
             # Analyze words to extract annotations...
             self.infoBox.setText(
                 "(%i/%i) Extracting word annotations, please wait..."    \
-                    % (4 + (1 if self.outputUtterances else 0), numberOfSteps), 
+                    % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar.finish()
@@ -577,21 +591,25 @@ class Childes(OWTextableBaseWidget):
             )
             wordSegments = list()
             for word in wordSegmentation:
-                replacements = word.get_contained_segments(replWordSegmentation)
-                wordsOrReplacements = replacements if replacements else [word]
-                for wordOrRepl in wordsOrReplacements:
-                    mws = wordOrRepl.get_contained_segments(
-                        mwSegmentation
-                    )
-                    if mws:
-                        for mw in mws:
-                            wordSegment = wordOrRepl.deepcopy()
-                            wordSegment.annotations.update(
-                                self.extractWordAnnotations(mw)
-                            )
-                            wordSegments.append(wordSegment) 
-                    else:
-                        wordSegments.append(wordOrRepl)
+                # TODO: TEST THIS!
+                # replacements = word.get_contained_segments(replWordSegmentation)
+                # wordsOrReplacements = replacements if replacements else [word]
+                # for wordOrRepl in wordsOrReplacements:
+                    # mws = wordOrRepl.get_contained_segments(
+                mws = word.get_contained_segments(
+                    mwSegmentation
+                )
+                if mws:
+                    for mw in mws:
+                        # wordSegment = wordOrRepl.deepcopy()
+                        wordSegment = word.deepcopy()
+                        wordSegment.annotations.update(
+                            self.extractWordAnnotations(mw)
+                        )
+                        wordSegments.append(wordSegment) 
+                else:
+                    # wordSegments.append(wordOrRepl)
+                    wordSegments.append(word)
                 progressBar.advance()
                                                     
             self.wordSegmentation = Segmentation(
@@ -619,6 +637,7 @@ class Childes(OWTextableBaseWidget):
         """Extract annotations from a word's mor tag in CHILDES XML format and 
         return a dict of annotations.
         """
+        # TODO: GRA
         root = ET.fromstring(
             "<mw>" + mw.get_content() + "</mw>"
         )
