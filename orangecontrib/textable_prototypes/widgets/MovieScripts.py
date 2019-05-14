@@ -399,7 +399,7 @@ class MovieScripts(OWTextableBaseWidget):
 		
     def Remove(self):
         """Remove an item from your selection """
-        movie_title = self.movie_titles[self.selectedTitles[0]]
+        movie_title = self.movie_titles[self.myTitles[0]]
         print(movie_title)
         self.myBasket.remove(movie_title)
         self.mytitleLabels.remove(movie_title)
