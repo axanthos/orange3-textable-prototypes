@@ -104,8 +104,10 @@ class Redditor(OWTextableBaseWidget):
         self.infoBox = InfoBox(
             widget=self.controlArea,
 
-        )
-
+       )
+        #griser quand upload - REVOIR  -FAIRE UN if 
+        
+        self.controlArea.setDisabled(True)
 
         sourceBox = gui.widgetBox(
             widget=self.controlArea,
@@ -525,7 +527,7 @@ class Redditor(OWTextableBaseWidget):
                     self.create_post_segments(post)
                 except prawcore.exceptions.NotFound:
                     self.infoBox.setText(
-                        "No match forURL.",
+                        "No match for URL.",
                         "error"
                     )
                     return
