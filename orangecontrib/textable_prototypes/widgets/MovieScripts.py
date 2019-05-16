@@ -23,8 +23,6 @@ import re
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import AnyQt
-
-# from Orange.widgets.utils.progressbar import ProgressBarMixin
 from AnyQt.QtWidgets import (
     QWidget, QDialog, QVBoxLayout, QSizePolicy, QApplication, QStyle,
     QShortcut, QSplitter, QSplitterHandle, QPushButton, QStatusBar,
@@ -297,15 +295,12 @@ class MovieScripts(OWTextableBaseWidget):
                 self.titleLabels.append(val)
                 self.movie_titles.append(val)
                 self.path_storage.append(key)
-                progressBar.advance()
-                
                 # 1 tick on the progress bar of the widget
-                # progressBar.advance()
+                progressBar.advance()
 		
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
             self.controlArea.setDisabled(False)
-
 
             # Clear progress bar.
             progressBar.finish()
@@ -362,7 +357,7 @@ class MovieScripts(OWTextableBaseWidget):
         response = dialog.question(
             self,
             "springfieldspringfield", 
-            "Are you sure you want to refresh the Database?", 
+            "Are you sure you want to refresh the Database?\nIt will take several minutes", 
             dialog.Yes | dialog.No
         )
 
@@ -433,7 +428,7 @@ class MovieScripts(OWTextableBaseWidget):
                     page_num += 1
 
                     # 1 tick on the progress bar of the widget
-                    progressBar.advance(100)
+                    progressBar.advance(100^2)
 
             # Clear progress bar.
             progressBar.finish()
