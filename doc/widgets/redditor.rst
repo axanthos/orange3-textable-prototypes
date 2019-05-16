@@ -12,7 +12,7 @@ Redditor
     :align: center 
     :height: 100px
     :width: 200 px
-    :scale: 50 %
+    
 
 Authors
 --------
@@ -78,8 +78,6 @@ Users can also choose the amount of posts they want to upload to the widget.
 
 .. figure:: figures/subreddit_fig2.png
     :align: center
-    :height: 100px
-    :width: 200 px
     :scale: 50 %
     
     
