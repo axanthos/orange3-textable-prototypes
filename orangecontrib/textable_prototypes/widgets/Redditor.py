@@ -165,15 +165,8 @@ class Redditor(OWTextableBaseWidget):
         #    Send button    #
         #-------------------#
 
-        self.sendBox = gui.widgetBox(
-            widget=self.controlArea,
-            orientation='vertical',
-            addSpace=False,
-        )
-
-
         self.sendButton = SendButton(
-            widget=self.sendBox,
+            widget=self.controlArea,
             master=self,
             callback=self.send_data,
             infoBoxAttribute='infoBox',
@@ -426,8 +419,8 @@ class Redditor(OWTextableBaseWidget):
 
         # Info box...
         
-        self.infoBox.draw()
         self.sendButton.draw()
+        self.infoBox.draw()
 
         self.mode_changed()
 
