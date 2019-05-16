@@ -267,6 +267,9 @@ class MovieScripts(OWTextableBaseWidget):
 
 
     def searchFunction(self):
+
+        self.controlArea.setDisabled(True)
+        
         #Search from the springfieldspringfield.co.uk
         result_list = dict()
         query_string = self.newQuery
@@ -280,19 +283,20 @@ class MovieScripts(OWTextableBaseWidget):
 		
         if query_string != "":
             # Initialize progress bar.
-            progressBar = ProgressBar(
-                                        self,
-                                        iterations=100,
-                                    )
+            progressBar = ProgressBar(self, iterations=1)
+            
 
             self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
-            while self.searchResults:
-                progressBar.advance()
+            
+            progressBar.finish() 
+
+            progressBar = ProgressBar(self, iterations=len(self.searchResults))
 
             for key,score,val in self.searchResults:
                 self.titleLabels.append(val)
                 self.movie_titles.append(val)
                 self.path_storage.append(key)
+                progressBar.advance()
                 
                 # 1 tick on the progress bar of the widget
                 # progressBar.advance()
@@ -300,6 +304,7 @@ class MovieScripts(OWTextableBaseWidget):
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
             self.controlArea.setDisabled(False)
+
 
             # Clear progress bar.
             progressBar.finish()
