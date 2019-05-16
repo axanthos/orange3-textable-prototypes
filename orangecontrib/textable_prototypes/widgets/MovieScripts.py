@@ -280,17 +280,20 @@ class MovieScripts(OWTextableBaseWidget):
             # Initialize progress bar.
             progressBar = ProgressBar(
                                         self,
-                                        iterations=self.movie_titles,
+                                        iterations=100,
                                     )
 
             self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
+            while self.searchResults:
+                progressBar.advance()
+
             for key,score,val in self.searchResults:
                 self.titleLabels.append(val)
                 self.movie_titles.append(val)
                 self.path_storage.append(key)
-
+                
                 # 1 tick on the progress bar of the widget
-                progressBar.advance()
+                # progressBar.advance()
 		
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
@@ -340,9 +343,6 @@ class MovieScripts(OWTextableBaseWidget):
     
     def refreshTitles(self):
         """Refresh the database cache"""
-        # progress = Orange.widgets.gui.ProgressBar(self, self.get_all_titles(page_num))
-        # progressBarInit(self)
-        # progressBarSet(self, 0)
 
         basepath = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
@@ -360,7 +360,8 @@ class MovieScripts(OWTextableBaseWidget):
         self.infoBox.setText(
             "Scraping SpringfieldSpringfield website, please wait...", 
             "warning",
-        )     
+        )    
+        self.warning("Warinig : it will take several minutes") 
         try:
             self.get_all_titles()
             try:
@@ -386,8 +387,6 @@ class MovieScripts(OWTextableBaseWidget):
                 "Error while attempting to scrape the SpringfieldSpringfield website.", 
                 "error",)
 
-        # progressBarFinished(self)
-
 
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
@@ -403,8 +402,9 @@ class MovieScripts(OWTextableBaseWidget):
             # Initialize progress bar.
             progressBar = ProgressBar(
                                         self,
-                                        iterations=page_num,
+                                        iterations=100,
                                     )
+
             for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                        #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
                 page_num = 1
