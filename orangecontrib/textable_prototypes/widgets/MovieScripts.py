@@ -121,21 +121,35 @@ class MovieScripts(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search movie",
             orientation="vertical",
+        )
+
+        searchBox = gui.widgetBox(
+            widget=queryBox,
+            box="Search movie",
+            orientation="horizontal",
         )
 
         # Allows to enter specific text to the research
         #  Uses "newQuery" attribute
         gui.lineEdit(
-            widget=queryBox,
+            widget=searchBox,
             master=self,
             value='newQuery',
             orientation='horizontal',
-            label=u"Movie title: ",
             labelWidth=100,
             tooltip=("Enter a string"),
         )
+
+        # Research button 
+        # Use "searchFunction" attibute
+        self.searchButton = gui.button(
+            widget=searchBox,
+            master=self,
+            label='Search',
+            callback=self.searchFunction,
+            tooltip='Search for the movie',
+            )
 
         # Button that refresh all movie titles from the website
         self.refreshButton = gui.button(
@@ -146,19 +160,7 @@ class MovieScripts(OWTextableBaseWidget):
             tooltip = "Update SpringfieldSpringfield DataBase"
             )
 
-
-        # Research button 
-        # Use "searchFunction" attibute
-        self.searchButton = gui.button(
-        	widget=queryBox,
-        	master=self,
-        	label='Search',
-        	callback=self.searchFunction,
-        	tooltip='Search for the movie',
-        	)
-
-        # Reasearch button
-        # Uses "searchFunction" attribute
+        # Box that displays search results
         self.titleListbox = gui.listBox(
             widget=queryBox,
             master=self,
@@ -251,7 +253,7 @@ class MovieScripts(OWTextableBaseWidget):
 
         # Draw Info box and Send button
         self.sendButton.draw()
-        # self.searchButton.setDefault(True)
+        self.searchButton.setDefault(True)
         self.infoBox.draw()
 		
         # This initialization step needs to be done after infoBox has been
@@ -305,7 +307,7 @@ class MovieScripts(OWTextableBaseWidget):
             self.infoBox.setText("Search complete")
 
         else:
-            self.infoBox.setText("You didn't search anything", "warning")
+            self.infoBox.setText("Please, enter a query in a search bar", "warning")
 
 
 
