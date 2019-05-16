@@ -3,7 +3,7 @@ __author__ = "David Fluhmann, Leonardo Cavaliere, Kirill Melnikov"
 __maintainer__ = "Aris Xanthos"
 __email__ = "david.fluhmann@unil.ch, leonardo.cavaliere@unil.ch, kirill.melnikov@unil.ch"
 
-from Orange.widgets import widget, gui, settings
+from Orange.widgets import Orange, widget, gui, settings
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
@@ -22,6 +22,14 @@ from bs4 import BeautifulSoup
 import re
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
+
+# from Orange.widgets.utils.progressbar import ProgressBarMixin
+from AnyQt.QtWidgets import (
+    QWidget, QDialog, QVBoxLayout, QSizePolicy, QApplication, QStyle,
+    QShortcut, QSplitter, QSplitterHandle, QPushButton, QStatusBar,
+    QProgressBar, QAction, QFrame, QStyleOption, QWIDGETSIZE_MAX
+)
+from _textable.widgets.TextableUtils import ProgressBar
 
 
 
@@ -258,10 +266,10 @@ class MovieScripts(OWTextableBaseWidget):
 
     def searchFunction(self):
         #Search from the springfieldspringfield.co.uk
-
         result_list = dict()
         query_string = self.newQuery
         testdict = self.title_to_href
+
         # Reset and clear the visible widget list
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
@@ -269,15 +277,28 @@ class MovieScripts(OWTextableBaseWidget):
         self.movie_titles = self.movie_titles
 		
         if query_string != "":
+            # Initialize progress bar.
+            progressBar = ProgressBar(
+                                        self,
+                                        iterations=self.movie_titles,
+                                    )
+
             self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
             for key,score,val in self.searchResults:
                 self.titleLabels.append(val)
                 self.movie_titles.append(val)
                 self.path_storage.append(key)
+
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
 		
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
             self.controlArea.setDisabled(False)
+
+            # Clear progress bar.
+            progressBar.finish()
+
             self.infoBox.setText("Search complete")
 
         else:
@@ -296,6 +317,14 @@ class MovieScripts(OWTextableBaseWidget):
     def loadDatabaseCache(self):
         """Load the cached database"""
         # Try to open saved file in this module"s directory...
+
+        # self.warning('Are you sure ? It will take several minutes.', shown=True)
+        UserAdviceMessages = [
+                                widget.Message("Clicking on cells or in headers outputs the "
+                                "corresponding data instances",
+                                "click_cell")
+                             ]
+
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
@@ -311,18 +340,22 @@ class MovieScripts(OWTextableBaseWidget):
     
     def refreshTitles(self):
         """Refresh the database cache"""
+        # progress = Orange.widgets.gui.ProgressBar(self, self.get_all_titles(page_num))
+        # progressBarInit(self)
+        # progressBarSet(self, 0)
+
         basepath = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
             )
         cachedFilename = self.__class__.cacheFilename
-        if os.path.exists(cachedFilename) and list(os.walk('.'))[0]:
-            dialog = AnyQt.QtGui.QMessageBox()
-            response = dialog.question(
-                self,
-                "springfieldspringfield", 
-                "Keep previously saved files?", 
-                dialog.Yes | dialog.No
-            )
+        # if os.path.exists(cachedFilename) and list(os.walk('.'))[0]:
+        #     dialog = AnyQt.QtGui.QMessageBox()
+        #     response = dialog.question(
+        #         self,
+        #         "springfieldspringfield", 
+        #         "Keep previously saved files?", 
+        #         dialog.Yes | dialog.No
+        #     )
 
         self.infoBox.setText(
             "Scraping SpringfieldSpringfield website, please wait...", 
@@ -353,6 +386,8 @@ class MovieScripts(OWTextableBaseWidget):
                 "Error while attempting to scrape the SpringfieldSpringfield website.", 
                 "error",)
 
+        # progressBarFinished(self)
+
 
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
@@ -360,8 +395,18 @@ class MovieScripts(OWTextableBaseWidget):
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
         try:
-            for lettre in ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                       'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+            UserAdviceMessages = [
+                                widget.Message("Clicking on cells or in headers outputs the "
+                                "corresponding data instances",
+                                "click_cell")
+                            ]
+            # Initialize progress bar.
+            progressBar = ProgressBar(
+                                        self,
+                                        iterations=page_num,
+                                    )
+            for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                       #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
                 page_num = 1
 
                 while True:
@@ -378,6 +423,12 @@ class MovieScripts(OWTextableBaseWidget):
 
                     print(page_num)
                     page_num += 1
+
+                    # 1 tick on the progress bar of the widget
+                    progressBar.advance()
+
+            # Clear progress bar.
+            progressBar.finish()
 
         except:
             self.infoBox.setText(
