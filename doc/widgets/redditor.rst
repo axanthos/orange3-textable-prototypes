@@ -43,20 +43,20 @@ Segments in this segmentation have a number of annotations :
    :header: KEY, EXAMPLE VALUE
    :widths: 30, 30
 
-   « *Author* »,   *cosmisnebula257*
-      « *Id* »,  *bp1ze4*
-      « *Parent* »,  *bp1ze4*
-      « *Parent_type* »,  *0*
-      « *Posted_Unix* »,  *1557946951.0*
-      « *Posted_at* »,   *2009-5-15  19:02:31*
-      « *Score* »,   *1*
-      « *Title* »,   *Random invites while AFK in the menu*
+   *Author*,     *cosmicnebula257*
+      *Id*,      *bp1ze4*
+      *Parent*,  *bp1ze4*
+      *Parent_type*,  *0*
+      *Posted_Unix*,  *1557946951.0*
+      *Posted_at*,   *2009-5-15  19:02:31*
+      *Score*,   *1*
+      *Title*,   *Random invites while AFK in the menu*
 
 
 Interface
 ----------
 
-In its final version, the **Redditor** widget lets the user select one or more posts or subreddits 
+The **Redditor** widget lets the user select one or more posts or subreddits 
 from the Reddit website`<https://www.reddit.com/>`. 
 
 
@@ -75,6 +75,7 @@ Users can also choose the amount of posts they want to upload to the widget.
 
 .. figure:: figures/subreddit_fig2.png
     :align: center
+    :scale: 50
     
 
 The **Full Text** mode allows the user to upload/scrap from all of Reddit and not just specifically from a subreddit or a url.
@@ -88,6 +89,7 @@ The **Full Text** mode has three filters.
 
 .. figure:: figures/fullText_fig3.png
     :align: center
+    :scale: 50
 
 
 The **URL** mode allows the user to search data by directly using the URL of a post or subreddit.
@@ -96,6 +98,7 @@ The **URL** mode allows the user to search data by directly using the URL of a p
 
 .. figure:: figures/url_fig4.png
     :align: center
+    :scale: 50
 
 The widget also has options available for all three modes.
 
@@ -107,6 +110,7 @@ The **Include Comments** option allows the user to choose wether or not he wants
 
 .. figure:: figures/include_fig5.png
     :align: center
+    :scale: 50
 
 The **Add Request** button allows users to add multiple posts and/or subreddits to the basket in the **Selection** box. To select multiple files use the **Selection** box to add them to the basket.
 
