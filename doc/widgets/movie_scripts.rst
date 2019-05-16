@@ -1,7 +1,7 @@
 Movie Scripts
 =====
 
-.. image:: figures/Movie_Scripts_principal_version.png
+.. image:: figures/Movie_Scripts.png
 
 Make a corpus of movie scripts
 
