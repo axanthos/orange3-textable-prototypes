@@ -43,6 +43,8 @@ from LTTL.Input import Input
 
 from datetime import datetime
 
+import re
+
 class Redditor(OWTextableBaseWidget):
     """An Orange widget to scrape Reddit"""
 
@@ -125,6 +127,7 @@ class Redditor(OWTextableBaseWidget):
 
         self.infoBox = InfoBox(
             widget=self.controlArea,
+        )
 
         #-------------------------#
         #    Main widget boxes    #
@@ -347,11 +350,28 @@ class Redditor(OWTextableBaseWidget):
             callback=self.mode_changed,
         )
 
-        self.fetchButton = gui.button(
+        self.requestsBox = gui.widgetBox(
             widget=self.includeOuterBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        self.refreshButton = gui.button(
+            widget=self.requestsBox,
+            master=self,
+            label=u'Refresh the Data',
+            callback=self.refresh_content,
+        )
+
+        if len(self.labelsPanier) == 0:
+            self.refreshButton.setDisabled(True)
+        
+
+        self.fetchButton = gui.button(
+            widget=self.requestsBox,
             master=self,
             label=u'Add Request',
-            callback=self.get_content,
+            callback=self.confirm_settings,
         )
 
         #--------------------------#
@@ -463,49 +483,47 @@ class Redditor(OWTextableBaseWidget):
             self.sendButton.setDisabled(True)
     """
 
-    def get_content(self):
+    def get_content(self, m, pA, sI, uI, ftI, sTF, ftTF, iI, iC, a):
         self.sendButton.settingsChanged()
         self.controlArea.setDisabled(True)
-        if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
-            (self.mode == "URL" and len(self.URL) > 0) or
-            (self.mode == "Full text" and len(self.fullText) > 0)):
-            tmp = self.postedAt
-            if tmp == "All":
+        if ((m == "Subreddit" and len(sI) > 0) or
+            (m == "URL" and len(uI) > 0) or
+            (m == "Full text" and len(ftI) > 0)):
+            if pA == "All":
                 varTimeFilter = "all"
-            elif tmp == "Past day":
+            elif pA == "Past day":
                 varTimeFilter = "day"
-            elif tmp == "Past hour":
+            elif pA == "Past hour":
                 varTimeFilter = "hour"
-            elif tmp == "Past week":
+            elif pA == "Past week":
                 varTimeFilter = "week"
-            elif tmp == "Past month":
+            elif pA == "Past month":
                 varTimeFilter = "month"
-            elif tmp == "Past year":
+            elif pA == "Past year":
                 varTimeFilter = "year"
 
             # Differenciate method depending of user selection
             if self.mode == "Subreddit":
                 # Get the subreddit based on subreddit name
                 try:
-                    subreddit = self.reddit.subreddit(self.subreddit)
+                    subreddit = self.reddit.subreddit(sI)
                     # Set list of posts "posts" according to filter
                     # Initiate lists without time filters applicable first
-                    modeTri = self.sortBy
-                    if modeTri == "Hot":
-                        posts = subreddit.hot(limit=self.amount)
-                    elif modeTri == "New":
-                        posts = subreddit.new(limit=self.amount)
-                    elif modeTri == "Rising":
-                        posts = subreddit.rising(limit=self.amount)
+                    if sTF == "Hot":
+                        posts = subreddit.hot(limit=a)
+                    elif sTF == "New":
+                        posts = subreddit.new(limit=a)
+                    elif sTF == "Rising":
+                        posts = subreddit.rising(limit=a)
                     # Initiate lists with time filters
-                    elif modeTri == "Controversial":
-                        posts = subreddit.controversial(limit=self.amount, time_filter=varTimeFilter)
-                    elif modeTri == "Top":
-                        posts = subreddit.top(limit=self.amount, time_filter=varTimeFilter)
+                    elif sTF == "Controversial":
+                        posts = subreddit.controversial(limit=a, time_filter=varTimeFilter)
+                    elif sTF == "Top":
+                        posts = subreddit.top(limit=a, time_filter=varTimeFilter)
                     # Loop on the posts found
                     for post in posts:
                 		# On crée les segments appropriés
-                        self.create_post_segments(post)
+                        self.create_post_segments(post, iI, iC)
                 except prawcore.exceptions.Redirect:
                     self.infoBox.setText(
                         "Error in redirect, please make sure the subreddit name is correct.",
@@ -523,9 +541,9 @@ class Redditor(OWTextableBaseWidget):
                 try:
                     # Set list of posts "posts" according to filter
                     # Initiate lists without time filters applicable first
-                    post = self.reddit.submission(url=self.URL)
+                    post = self.reddit.submission(url=uI)
                 	# On crée les segments appropriés
-                    self.create_post_segments(post)
+                    self.create_post_segments(post, iI, iC)
                 except prawcore.exceptions.NotFound:
                     self.infoBox.setText(
                         "No match for URL.",
@@ -539,48 +557,59 @@ class Redditor(OWTextableBaseWidget):
                     )
                     return
             elif self.mode == "Full text":
-                userSearch = self.fullText
+                userSearch = ftI
                 reddit = self.reddit.subreddit("all")
 
-                modeTri = self.sortByFT
-                if modeTri == "Relevance":
+                if ftTF == "Relevance":
                     posts = reddit.search(
                         userSearch,
                         sort="relevance",
-                        limit=self.amount,
+                        limit=a,
                         time_filter=varTimeFilter,
                     )
-                elif modeTri == "Top":
+                elif ftTF == "Top":
                     posts = reddit.search(
                         userSearch,
                         sort="top",
-                        limit=self.amount,
+                        limit=a,
                         time_filter=varTimeFilter,
                     )
-                elif modeTri == "Comments":
+                elif ftTF == "Comments":
                     posts = reddit.search(
                         userSearch,
                         sort="comments",
-                        limit=self.amount,
+                        limit=a,
                         time_filter=varTimeFilter,
                     )
-                elif modeTri == "New":
+                elif ftTF == "New":
                     posts = reddit.search(
                         userSearch,
                         sort="new",
-                        limit=self.amount,
+                        limit=a,
                     )
             
                 for post in posts:
                     # On crée les segments appropriés
-                    self.create_post_segments(post)
+                    self.create_post_segments(post, iI, iC)
 
             if len(self.listeTempPosts) > 0:
                 # self.send("Segmentation", Segmentation(self.createdInputs))
                 # self.infoBox.setText("{} segments sent to output !".format(len(self.createdInputs)))
                 self.queryList.append(self.listeTempPosts)
                 self.annotList.append(self.listeTempAnnot)
-                self.add_to_list()
+                self.add_to_list(
+                    m = m,
+                    pA = pA,
+                    sI = sI,
+                    uI = uI,
+                    ftI = ftI,
+                    sTF = sTF,
+                    ftTF = ftTF,
+                    iI = iI,
+                    iC = iC,
+                    a = a
+                )
+                self.refreshButton.setDisabled(False)
                 self.listeTempPosts = list()
                 self.listeTempAnnot = list()
             else:
@@ -597,18 +626,81 @@ class Redditor(OWTextableBaseWidget):
             )
 
         self.controlArea.setDisabled(False)
-
         return
 
-    def create_post_segments(self, post):
+    def refresh_content(self):
+        modeReg = re.compile(r"(?<=Mode: ).+?(?=; Value)")
+        valueReg = re.compile(r"(?<=Value: ).+?(?=; Settings)")
+        settingsReg = re.compile(r"(?<=Settings: ).+?(?=; Include)")
+        includeImageReg = re.compile(r"(?<=Include image: )\w+(?=; Include)")
+        includeCommentsReg = re.compile(r"(?<=Include comments: )\w+(?=; Segments)")
+        labels = self.labelsPanier
+        self.clearPressed()
+        for label in labels:
+            mode = re.search(modeReg, label).group(0)
+            value = re.search(valueReg, label).group(0)
+            settings = re.search(settingsReg, label).group(0).split(", ")
+            incIma = re.search(includeImageReg, label).group(0)
+            incCom = re.search(includeCommentsReg, label).group(0)
+            subIn = ""
+            urlIn = ""
+            ftxtIn = ""
+            if mode == "Subreddit":
+                subIn = value
+            elif mode == "URL":
+                urlIn = value
+            elif mode == "Full text":
+                ftxtIn = value
+
+            if settings[1] == "[not specified]":
+                settings[1] = "All"
+            
+            self.get_content(
+                m = mode,
+                pA = settings[1],
+                sI = subIn,
+                uI = urlIn,
+                ftI = ftxtIn,
+                sTF = settings[0],
+                ftTF = settings[0],
+                iI = incIma,
+                iC = incCom,
+                a = int(settings[2])
+            )
+            
+    def confirm_settings(self):
+        mode = self.mode
+        timeFilt = self.postedAt
+        subInput = self.subreddit
+        urlInput = self.URL
+        ftInput = self.fullText
+        subTimeFilter = self.sortBy
+        ftTimeFiler = self.sortByFT
+        image = self.includeImage
+        comments = self.includeComments
+        amount = self.amount
+        self.get_content(
+            m = mode,
+            pA = timeFilt,
+            sI = subInput,
+            uI = urlInput,
+            ftI = ftInput,
+            sTF = subTimeFilter,
+            ftTF = ftTimeFiler,
+            iI = image,
+            iC = comments,
+            a = amount
+        )
+
+    def create_post_segments(self, post, includeImage, includeComments):
         # TODO: comments
-        self.create_content_segment(post)
+        self.create_content_segment(post, includeImage)
         # Si "Comments" est coché, on crée les segments correspondants
-        if self.includeComments is True:
+        if includeComments:
             self.create_comments_segments(post)
             return
 
-    def create_content_segment(self, post):
+    def create_content_segment(self, post, includeImage):
         annotations = dict()
         annotations["Title"] = post.title
         annotations["Id"] = post.id
@@ -630,7 +722,7 @@ class Redditor(OWTextableBaseWidget):
         if content == "":
             content = "[image]"
 
-        if not (self.includeImage == False and content == "[image]"):
+        if not (includeImage == False and content == "[image]"):
             self.listeTempPosts.append(content)
             self.listeTempAnnot.append(annotations)
         
@@ -692,7 +784,6 @@ class Redditor(OWTextableBaseWidget):
 
     def removePressed(self):
         labelsPanier = self.labelsPanier
-        # labelsPanierRemove = list()
 
         for idx in sorted(self.indicesPanier, reverse=True):
             del labelsPanier[idx]
@@ -708,48 +799,49 @@ class Redditor(OWTextableBaseWidget):
         self.queryList = list()
         self.annotList = list()
         self.sendButton.settingsChanged()
+        self.refreshButton.setDisabled(True)
     
-    def add_to_list(self):
+    def add_to_list(self, m, pA, sI, uI, ftI, sTF, ftTF, iI, iC, a):
         labelsPanier = self.labelsPanier
 
-        if self.mode == "Subreddit":
-            valeur = self.subreddit
-            sortBy = self.sortBy
+        if m == "Subreddit":
+            valeur = sI
+            sortBy = sTF
             if sortBy == "Top" or sortBy == "Controversial":
-                time = self.postedAt
+                time = pA
             else:
                 time = "[not specified]"
-            amount = self.amount
-        elif self.mode == "URL":
-            valeur = self.URL
+            amount = a
+        elif m == "URL":
+            valeur = uI
             sortBy = "[not specified]"
             time = "[not specified]"
             amount = 1
-        elif self.mode == "Full text":
-            valeur = self.fullText
-            sortBy = self.sortByFT
-            time = self.postedAt
-            amount = self.amount
+        elif m == "Full text":
+            valeur = ftI
+            sortBy = ftTF
+            time = pA
+            amount = a
         
-        if self.includeImage:
+        if iI:
             image = "True"
         else:
             image = "False"
 
-        if self.includeComments:
+        if iC:
             comments = "True"
         else:
             comments = "False"
     
-        labelsPanier.append("* Mode: {}; Value: {}; Settings: {}, {}, {}; Include image: {}; Include comments: {}; Segments: {}".format(
-                self.mode,
+        labelsPanier.append("* Mode: {}; Value: {}; Settings: {}, {}, {}; Include image: {}; Include comments: {}; Segments: {}".format(
+                m,
                 valeur,
                 sortBy,
                 time,
                 amount,
                 image,
                 comments,
-                len(self.queryList)
+                len(self.queryList[len(self.queryList)-1])
             )
         )
 
@@ -837,5 +929,4 @@ if __name__ == "__main__":
     my_widget.raise_()
     my_app.exec_()
     my_widget.saveSettings()
-
 
