@@ -7,7 +7,7 @@
 Redditor
 =================
 
-.. figure:: icon = "icons/Reddit-alien.png"
+.. image:: figures/redditor_fig1.png
     :alt: First look at Redditor widget
     :align: center 
 
@@ -40,7 +40,7 @@ Segments in this segmentation have a number of annotations :
 
 
 .. csv-table:: 
-   :header: « KEY », « EXAMPLE VALUE »
+   :header: KEY, EXAMPLE VALUE
    :widths: 30, 30
 
    « *Author* »,   *cosmisnebula257*
@@ -70,8 +70,12 @@ The **Subreddit** mode allows the user to scrap the data of an entire subreddit.
 - *Rising*
 
 Users can also choose the amount of posts they want to upload to the widget.
-(see :ref:`figure 2<subreddit_fig2>`)
 
+.. _subreddit_fig2:
+
+.. figure:: figures/subreddit_fig2.png
+    :align: center
+    
 
 The **Full Text** mode allows the user to upload/scrap from all of Reddit and not just specifically from a subreddit or a url.
 The **Full Text** mode has three filters. 
@@ -80,20 +84,29 @@ The **Full Text** mode has three filters.
 2. The **Time** filter : *All*, *Past day*, *Past hour*, *Past month*, *Past hour*.
 3. The **Amount of posts** filter, just like in the **Subreddit** mode.
 
-(see :ref:`figure 3<fullText_fig3>`)
+.. _fullText_fig3:
+
+.. figure:: figures/fullText_fig3.png
+    :align: center
 
 
 The **URL** mode allows the user to search data by directly using the URL of a post or subreddit.
-(see :ref:`figure 4<url_fig4>`)
 
+.. _url_fig4:
 
+.. figure:: figures/url_fig4.png
+    :align: center
 
 The widget also has options available for all three modes.
 
 The **Include Images** option allows the user to choose wether or not he wants to include the images of certain posts and/or subreddits.
 
 The **Include Comments** option allows the user to choose wether or not he wants to include comments in his output.
-(see :ref:`figure 5<include_fig5>`)
+
+.. _include_fig5:
+
+.. figure:: figures/include_fig5.png
+    :align: center
 
 The **Add Request** button allows users to add multiple posts and/or subreddits to the basket in the **Selection** box. To select multiple files use the **Selection** box to add them to the basket.
 
