@@ -78,7 +78,7 @@ Users can also choose the amount of posts they want to upload to the widget.
 .. figure:: figures/subreddit_fig2.png
     :align: center
     :width: 400
-    :height: 400
+    
     
 
 The **Full Text** mode allows the user to upload/scrap from all of Reddit and not just specifically from a subreddit or a url.
