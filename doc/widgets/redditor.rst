@@ -10,8 +10,8 @@ Redditor
 .. image:: figures/redditor_fig1.png
     :alt: First look at Redditor widget
     :align: center 
-    :width: 5
-    :height: 5
+    :width: 400
+    :height: 400
 
 Authors
 --------
@@ -77,8 +77,8 @@ Users can also choose the amount of posts they want to upload to the widget.
 
 .. figure:: figures/subreddit_fig2.png
     :align: center
-    :width: 20
-    :height: 20
+    :width: 400
+    :height: 400
     
 
 The **Full Text** mode allows the user to upload/scrap from all of Reddit and not just specifically from a subreddit or a url.
@@ -92,8 +92,8 @@ The **Full Text** mode has three filters.
 
 .. figure:: figures/fullText_fig3.png
     :align: center
-    :width: 20
-    :height: 20
+    :width: 400
+    :height: 400
 
 
 The **URL** mode allows the user to search data by directly using the URL of a post or subreddit.
@@ -102,7 +102,8 @@ The **URL** mode allows the user to search data by directly using the URL of a p
 
 .. figure:: figures/url_fig4.png
     :align: center
-    :scale: 50
+    :width: 400
+    :height: 400
 
 The widget also has options available for all three modes.
 
@@ -114,8 +115,8 @@ The **Include Comments** option allows the user to choose wether or not he wants
 
 .. figure:: figures/include_fig5.png
     :align: center
-    :width: 20
-    :height: 20
+    :width: 400
+    :height: 400
 
 The **Add Request** button allows users to add multiple posts and/or subreddits to the basket in the **Selection** box. To select multiple files use the **Selection** box to add them to the basket.
 
