@@ -22,6 +22,7 @@ from bs4 import BeautifulSoup
 import re
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
+import AnyQt
 
 # from Orange.widgets.utils.progressbar import ProgressBarMixin
 from AnyQt.QtWidgets import (
@@ -70,7 +71,7 @@ class MovieScripts(OWTextableBaseWidget):
     )
 
     # Saved settings
-    autoSend = settings.Setting(True)
+    autoSend = settings.Setting(False)
     myBasket = settings.Setting([])
 
     # Other class variables...
@@ -155,7 +156,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.refreshButton = gui.button(
             widget = queryBox,
             master = self,
-            label = "Refresh DataBase",
+            label = "Refresh Database",
             callback = self.refreshTitles,
             tooltip = "Update SpringfieldSpringfield DataBase"
             )
@@ -355,44 +356,48 @@ class MovieScripts(OWTextableBaseWidget):
             os.path.abspath(inspect.getfile(inspect.currentframe()))
             )
         cachedFilename = self.__class__.cacheFilename
-        # if os.path.exists(cachedFilename) and list(os.walk('.'))[0]:
-        #     dialog = AnyQt.QtGui.QMessageBox()
-        #     response = dialog.question(
-        #         self,
-        #         "springfieldspringfield", 
-        #         "Keep previously saved files?", 
-        #         dialog.Yes | dialog.No
-        #     )
+        
+
+        dialog = AnyQt.QtGui.QMessageBox()
+        response = dialog.question(
+            self,
+            "springfieldspringfield", 
+            "Are you sure you want to refresh the Database?", 
+            dialog.Yes | dialog.No
+        )
 
         self.infoBox.setText(
             "Scraping SpringfieldSpringfield website, please wait...", 
             "warning",
         )    
-        self.warning("Warinig : it will take several minutes") 
-        try:
-            self.get_all_titles()
+        self.warning("Warning : it will take several minutes") 
+        if response == dialog.No:
+            return
+        else:
             try:
-                path = os.path.dirname(
-                os.path.abspath(inspect.getfile(inspect.currentframe()))
-                )
-                file = open(
-                    os.path.join(path, self.__class__.cacheFilename),
-                    "wb",
-                )
-                pickle.dump(self.title_to_href, file)
-                file.close()
+                self.get_all_titles()
+                try:
+                    path = os.path.dirname(
+                    os.path.abspath(inspect.getfile(inspect.currentframe()))
+                    )
+                    file = open(
+                        os.path.join(path, self.__class__.cacheFilename),
+                        "wb",
+                    )
+                    pickle.dump(self.title_to_href, file)
+                    file.close()
+                    self.infoBox.setText(
+                        "Database successfully updated", 
+                    )
+                except IOError:
+                    self.infoBox.setText(
+                        "Couldn't save database to disk.", 
+                        "warning",
+                    )
+            except requests.exceptions.ConnectionError:
                 self.infoBox.setText(
-                    "Database successfully updated", 
-                )
-            except IOError:
-                self.infoBox.setText(
-                    "Couldn't save database to disk.", 
-                    "warning",
-                )
-        except requests.exceptions.ConnectionError:
-            self.infoBox.setText(
-                "Error while attempting to scrape the SpringfieldSpringfield website.", 
-                "error",)
+                    "Error while attempting to scrape the SpringfieldSpringfield website.", 
+                    "error",)
 
 
 	# Get all movie titles from www.springfieldspringfield.co.uk
