@@ -452,14 +452,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.sendButton.settingsChanged()
 		
     def Remove(self):
-        """Remove an item from your selection """
-        # movie_title = self.movie_titles[self.myTitles[0]]
-        # print(movie_title)
-        # self.myBasket.remove(movie_title)
-        # self.mytitleLabels.remove(movie_title)
-        # self.mytitleLabels = self.mytitleLabels
-        # self.sendButton.settingsChanged()
-        movie_title = self.movie_titles[self.myTitles[0]]
+        movie_title = self.mytitleLabels[self.myTitles[0]]
         self.myBasket.remove(movie_title)
         print(movie_title)
         self.mytitleLabels.remove(movie_title)
@@ -473,7 +466,6 @@ class MovieScripts(OWTextableBaseWidget):
         self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(True)
         self.sendButton.settingsChanged()
-
 
 
     # Create the final output with the script
