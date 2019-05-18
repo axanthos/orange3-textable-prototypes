@@ -169,6 +169,7 @@ class MovieScripts(OWTextableBaseWidget):
                 self.selectedTitles == list()),
             tooltip="Select the movie you want to get the script of",
         )
+        self.titleListbox.doubleClicked.connect(self.Add)
         self.titleListbox.setMinimumHeight(120)
         self.titleListbox.setSelectionMode(3)
 
@@ -217,6 +218,7 @@ class MovieScripts(OWTextableBaseWidget):
                 self.myTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
+        self.mytitleListbox.doubleClicked.connect(self.Remove)
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
 
@@ -285,7 +287,7 @@ class MovieScripts(OWTextableBaseWidget):
             progressBar = ProgressBar(self, iterations=1)
             
 
-            self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=70)
+            self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=80)
             
             progressBar.finish() 
 
@@ -323,8 +325,6 @@ class MovieScripts(OWTextableBaseWidget):
     def loadDatabaseCache(self):
         """Load the cached database"""
         # Try to open saved file in this module"s directory...
-
-        # self.warning('Are you sure ? It will take several minutes.', shown=True)
         UserAdviceMessages = [
                                 widget.Message("Clicking on cells or in headers outputs the "
                                 "corresponding data instances",
@@ -443,20 +443,20 @@ class MovieScripts(OWTextableBaseWidget):
     # Add Movies function
     def Add(self):
         """Add movies in your selection """
-        movie_title = self.movie_titles[self.selectedTitles[0]]
-        self.myBasket.append(movie_title)
-        print(movie_title)
-        self.mytitleLabels.append(movie_title)
-        self.mytitleLabels = self.mytitleLabels
+        for selectedTitle in self.selectedTitles:
+            movie_title = self.titleLabels[selectedTitle]
+            self.myBasket.append(movie_title)
+            self.mytitleLabels.append(movie_title)
+            self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(False)
         self.sendButton.settingsChanged()
 		
     def Remove(self):
-        movie_title = self.mytitleLabels[self.myTitles[0]]
-        self.myBasket.remove(movie_title)
-        print(movie_title)
-        self.mytitleLabels.remove(movie_title)
-        self.mytitleLabels = self.mytitleLabels
+        for Title in self.myTitles:
+            movie_title = self.mytitleLabels[Title]
+            self.myBasket.remove(movie_title)
+            self.mytitleLabels.remove(movie_title)
+            self.mytitleLabels = self.mytitleLabels
         self.sendButton.settingsChanged()
 
     def ClearmyCorpus(self):
@@ -472,7 +472,6 @@ class MovieScripts(OWTextableBaseWidget):
     def sendData(self):
         """Send data from website springfieldspringfield"""
 
-        #link_title = process.extractBests(self.selectedTitles, testdict, limit=1)
         # Clear created Inputs.
         self.clearCreatedInputs()
 
