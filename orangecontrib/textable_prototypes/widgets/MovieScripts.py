@@ -450,14 +450,17 @@ class MovieScripts(OWTextableBaseWidget):
             self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(False)
         self.sendButton.settingsChanged()
-		
+
+    # Remove movies function		
     def Remove(self):
-        for Title in self.myTitles:
-            movie_title = self.mytitleLabels[Title]
-            self.myBasket.remove(movie_title)
-            self.mytitleLabels.remove(movie_title)
-            self.mytitleLabels = self.mytitleLabels
+        """Remove the selected songs in your selection """
+        self.myBasket = [
+            movie for idx, movie in enumerate(self.myBasket)
+            if idx not in self.myTitles
+        ]
+        self.updateMytitleLabels()
         self.sendButton.settingsChanged()
+
 
     def ClearmyCorpus(self):
         """Clears your selection """
@@ -466,6 +469,16 @@ class MovieScripts(OWTextableBaseWidget):
         self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(True)
         self.sendButton.settingsChanged()
+
+    # Update selections function
+    def updateMytitleLabels(self):
+        self.mytitleLabels = list()
+        for movie in self.myBasket:
+            self.mytitleLabels.append(movie)
+        self.mytitleLabels = self.mytitleLabels
+
+        self.clearmyBasket.setDisabled(self.myBasket == list())
+        self.removeButton.setDisabled(self.myTitles == list())
 
 
     # Create the final output with the script
