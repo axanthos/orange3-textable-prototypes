@@ -685,15 +685,17 @@ class Redditor(OWTextableBaseWidget):
             a = amount
         )
 
+
+    # création des segments des posts et commentaires en option
     def create_post_segments(self, post, includeImage, includeComments):
-        # TODO: comments
         self.create_content_segment(post, includeImage)
         # Si "Comments" est coché, on crée les segments correspondants
         if includeComments:
             self.create_comments_segments(post)
             return
 
-    def create_content_segment(self, post, includeImage):
+    # création des segments pour les posts
+    def create_content_segment(self, post, includeImage = False):
         annotations = dict()
         annotations["Title"] = post.title
         annotations["Id"] = post.id
