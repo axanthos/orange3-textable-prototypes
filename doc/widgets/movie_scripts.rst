@@ -36,6 +36,8 @@ Figure 1: **Movie Scripts** widget interface
 
 The **Movie Scripts** widget simply lets the user make a search on the `SpringfieldSpringfield <https://www.springfieldspringfield.co.uk/>`_ website.
 
+The **Search** button searches the database for entries matching user's input.
+
 The **Refresh Database** button downloads the newest collection of all the movie titles available on the website and stores them in cache. 
 
 The **Corpus** section is a container where the User's Scripts are stored. The User can add or remove scripts to and from their corpus or clear the corpus entirely.
@@ -65,19 +67,19 @@ Warnings
     emission to proceed.
 
 *Please, enter a query in the search bar*
-    The user want to make a search with no text in the query box.
+    The user attempted to make a search with no text in the query box.
 
 *Your corpus is empty, please add some movies first*
-    The corpus is empty, so the user have to add some movies before sending.
+    The corpus is empty, no movies have been selected for downloading.
 
 Errors
 ~~~~~~
 
 *Couldn't download data from SpringfieldSpringfield website.*
-    An error has prevented the widget to download the data from the
-    Genius website (most likely related to a connection problem).
+    An error has prevented the widget from downloading the data from the
+    SpringfieldSpringfield website (most likely related to a connection problem).
 
 *Couldn't save database on disk*
     An error has prevented the widget from saving the downloaded database on
-    the User's hard drive.
+    the tser's hard drive.
 
