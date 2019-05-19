@@ -17,6 +17,7 @@ import pickle
 import requests
 import inspect
 import os
+import copy
 from urllib import request, parse
 from bs4 import BeautifulSoup
 import re
@@ -46,7 +47,7 @@ class MovieScripts(OWTextableBaseWidget):
     # Widget's metadata...
 
     name = "Movie Scripts"
-    description = "Movie Script Importation"
+    description = "Movie Scripts Importation"
     icon = "icons/Movie_Scripts.png"
     priority = 11
 
@@ -96,7 +97,7 @@ class MovieScripts(OWTextableBaseWidget):
         # stock all the inputs (scripts) in a list
         self.createdInputs = list()
         # stock the part of dictionary that will be used to access script's page
-        self.path_storage = list()
+        self.path_storage = dict()
         # stock titles of movies
         self.movie_titles = list()
         # stock all the movies titles and link parts
@@ -184,7 +185,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.selectButton = gui.button(
             widget=boxbutton,
             master=self,
-            label="Add",
+            label="Add to corpus",
             callback=self.Add,
             tooltip="Add selected movie to the corpus",
         )
@@ -231,7 +232,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.removeButton = gui.button(
             widget=boxbutton2,
             master=self,
-            label=u'Remove',
+            label=u'Remove from corpus',
             callback=self.Remove,
             tooltip="Remove the selected movie from your corpus.",
         )
@@ -261,9 +262,11 @@ class MovieScripts(OWTextableBaseWidget):
         # drawn (because we may need to display an error message).
         self.loadDatabaseCache()
 
+        # Make sure that whatever was in the corpus last time is deleted
+        self.ClearmyCorpus()
 
         # Send data if autoSend.
-        # self.sendButton.sendIf()
+        self.sendButton.sendIf()
 
 
 
@@ -272,7 +275,6 @@ class MovieScripts(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
         
         #Search from the springfieldspringfield.co.uk
-        result_list = dict()
         query_string = self.newQuery
         testdict = self.title_to_href
 
@@ -296,7 +298,7 @@ class MovieScripts(OWTextableBaseWidget):
             for key,score,val in self.searchResults:
                 self.titleLabels.append(val)
                 self.movie_titles.append(val)
-                self.path_storage.append(key)
+                self.path_storage[val]=key
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
 		
@@ -445,9 +447,10 @@ class MovieScripts(OWTextableBaseWidget):
         """Add movies in your selection """
         for selectedTitle in self.selectedTitles:
             movie_title = self.titleLabels[selectedTitle]
-            self.myBasket.append(movie_title)
-            self.mytitleLabels.append(movie_title)
-            self.mytitleLabels = self.mytitleLabels
+            if movie_title not in self.myBasket:
+                self.myBasket.append(movie_title)
+                self.mytitleLabels.append(movie_title)
+                self.mytitleLabels = self.mytitleLabels
         self.clearmyBasket.setDisabled(False)
         self.sendButton.settingsChanged()
 
@@ -484,32 +487,95 @@ class MovieScripts(OWTextableBaseWidget):
     # Create the final output with the script
     def sendData(self):
         """Send data from website springfieldspringfield"""
+		
+        # Skip if title list is empty:
+        if self.myBasket == list():
+            self.infoBox.setText(
+                "Your corpus is empty, please add some movies first",
+                "warning"
+            )
+            return
 
         # Clear created Inputs.
         self.clearCreatedInputs()
 
-        link_end = self.path_storage[self.selectedTitles[0]]
-
+        annotations = list()
+        script_list = list()       
+        annotations_dict = dict()
         self.controlArea.setDisabled(True)
+
+        # Initialize progress bar.
+        progressBar = ProgressBar(
+            self,
+            iterations=len(self.myBasket)
+        )
+
         try:
-            page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + link_end
-            page = urllib.request.urlopen(page_url)
-            soup = BeautifulSoup(page, 'html.parser')
-            script = soup.find("div", {"class":"movie_script"})
-            new_input = Input(script.text)
-            self.createdInputs.append(new_input)
-            self.segmentation = self.createdInputs[0]
-            print(self.createdInputs[0])
-            self.infoBox.setText(
-                "Script downloaded!",
-            )
+            for movie in self.myBasket:
+                b=copy.copy(movie)
+                annotations_dict["Movie Title"] = b
+                link_end = self.path_storage[movie]
+                page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + link_end
+                page = urllib.request.urlopen(page_url)
+                soup = BeautifulSoup(page, 'html.parser')
+				
+                # This is what grabs the movie script
+                script = soup.find("div", {"class":"movie_script"})
+				
+                script_list.append(script.text)
+                annotations.append(annotations_dict)
+
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
+
         except:
             self.infoBox.setText(
                 "Couldn't download data from SpringfieldSpringfield website.",
                 "error"
             )
+            self.controlArea.setDisabled(False)
+            return
+			
+        # Store downloaded script strings in input objects...
+        for script in script_list:
+            newInput = Input(script, self.captionTitle)
+            self.createdInputs.append(newInput)
+			
+       # If there"s only one play, the widget"s output is the created Input.
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget"s output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                self.captionTitle,
+                import_labels_as=None,
+            )
+			
+        # Annotate segments...
+        for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations[idx])
+            self.segmentation[idx] = segment
+
+        # Clear progress bar.
+        progressBar.finish()
+			
         self.controlArea.setDisabled(False)
+		
+        # Set status to OK and report data size...
+        message = "%i segment@p sent to output " % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
+        numChars = 0
+        for segment in self.segmentation:
+            segmentLength = len(Segmentation.get_data(segment.str_index))
+            numChars += segmentLength
+        message += "(%i character@p)." % numChars
+        message = pluralize(message, numChars)
+        self.infoBox.setText(message)
+
         self.send("Movie Scripts importation", self.segmentation, self)
+        self.sendButton.resetSettingsChangedFlag()
 
 
 
