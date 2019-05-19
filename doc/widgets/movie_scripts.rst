@@ -30,7 +30,7 @@ segmentation containing a segment for each imported movie.
 Interface
 ~~~~~~~~~
 
-.. image:: figures/Movie_Scripts_Search.png
+.. image:: figures/movie_scripts_search.png
 
 Figure 1: **Movie Scripts** widget interface
 
