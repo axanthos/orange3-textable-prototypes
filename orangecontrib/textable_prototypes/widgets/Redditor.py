@@ -728,7 +728,7 @@ class Redditor(OWTextableBaseWidget):
         return
 
     def create_comments_segments(self, post):
-        post.comments.replace_more(limit=0)
+        post.comments.replace_more(limit=None)
         comments = post.comments.list()
 
         # Creation of a segment for each comment
