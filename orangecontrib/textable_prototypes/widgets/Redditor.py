@@ -318,7 +318,7 @@ class Redditor(OWTextableBaseWidget):
         )
 
         #-------------------------#
-        #   Inclue box elements   #
+        #   Include box elements   #
         #-------------------------#
 
         self.includeBox = gui.widgetBox(
@@ -368,7 +368,7 @@ class Redditor(OWTextableBaseWidget):
         )
 
         #--------------------------#
-        #   results box elements   #
+        #   Results box elements   #
         #--------------------------#
 
         panier = gui.listBox(
@@ -414,7 +414,7 @@ class Redditor(OWTextableBaseWidget):
         #   End of definitions   #
         #------------------------#
 
-        gui.separator(widget=self.controlArea, height=3) #spacer
+        gui.separator(widget=self.controlArea, height=3) # Spacer
         gui.rubber(self.controlArea)
 
         # Info box...
@@ -426,57 +426,60 @@ class Redditor(OWTextableBaseWidget):
 
     def mode_changed(self):
         self.sendButton.settingsChanged()
-        """Reimplemented from OWWidget."""
+        """Allows to update the interface depeding on query mode"""
         if self.mode == "Subreddit": # 0 = subreddit selected
-            # cacher URL et Full text
+            # Hide URL and full text
             self.urlBox.setVisible(False)
             self.fullTextBox.setVisible(False)
             self.fullTextFilter.setVisible(False)
 
-            # montrer subreddit
+            # Show subreddit
             self.subredditBox.setVisible(True)
             self.filterBox.setVisible(True)
             self.subredditFilter.setVisible(True)
 
             self.checkSubredditSortMode()
         elif self.mode == "URL": # self.mode ==1 => post selected
-            # cacher subreddit et Full text
+            # Hide subreddit and full text
             self.subredditBox.setVisible(False)
             self.fullTextBox.setVisible(False)
             self.filterBox.setVisible(False)
 
-            # montrer URL
+            # Show URL
             self.urlBox.setVisible(True)
         elif self.mode == "Full text":
-            # cacher subreddit
+            # Hide subreddit
             self.subredditBox.setVisible(False)
             self.urlBox.setVisible(False)
             self.subredditFilter.setVisible(False)
 
-            # montrer Full text
+            # Show full text
             self.fullTextBox.setVisible(True)
             self.filterBox.setVisible(True)
             self.fullTextFilter.setVisible(True)
 
             self.checkSearchSortMode()
 
-        # Clear the channel by sending None.
-        # TODO: pas sûr que ce soit utile. Je pense qu'un return suffit
-        # self.send("Segmentation", None)
         return
 
-    """
-    def update_send_button(self):
-        # self.mode == 0 => subreddit selected, self.mode == 1 => post selected
-        if ((self.mode == "Subreddit" and len(self.subreddit) > 0) or
-            (self.mode == "URL" and len(self.URL) > 0) or
-            (self.mode == "Full text" and len(self.URL) > 0)):
-            self.sendButton.setDisabled(False)
-        else:
-            self.sendButton.setDisabled(True)
-    """
-
+ 
     def get_content(self, m, pA, sI, uI, ftI, sTF, ftTF, iI, iC, a):
+        """Fetches the content on Reddit based on the filters selected by the user
+        
+        
+        Parameters:
+        m (string): Stands for 'method', defines which method the query will use
+        pA (string): Stands for 'posted at', defines the time scale of the query
+        sI (string): Stands for 'SubReddit input', defines the SubReddit name that will be queried
+        uI (string): Stands for 'URL input', defines the URL of the SubReddit post that will be queried
+        ftI (string): Stands for 'full text input', defines the query parameter for a full text query
+        sTF (string): Stands for 'SubReddit time filters', defines the manner of filters for a SubReddit query in 'sort by'
+        ftTF (string): Stands for 'full text time filters', defines the manner of filters for a full text query
+        iI (string): Stands for 'include image', defines if the images should be included
+        iC (string): Stands for 'include comments', defines if comments should be included
+        a (int): Stands for 'amount', amount of posts to be fetched
+
+        """
         self.sendButton.settingsChanged()
         self.controlArea.setDisabled(True)
         if ((m == "Subreddit" and len(sI) > 0) or
@@ -515,7 +518,7 @@ class Redditor(OWTextableBaseWidget):
                         posts = subreddit.top(limit=a, time_filter=varTimeFilter)
                     # Loop on the posts found
                     for post in posts:
-                		# On crée les segments appropriés
+                		# Creation of corresponding segments
                         self.create_post_segments(post, iI, iC)
                 except prawcore.exceptions.Redirect:
                     self.infoBox.setText(
@@ -535,7 +538,7 @@ class Redditor(OWTextableBaseWidget):
                     # Set list of posts "posts" according to filter
                     # Initiate lists without time filters applicable first
                     post = self.reddit.submission(url=uI)
-                	# On crée les segments appropriés
+                	# Creation of corresponding segment
                     self.create_post_segments(post, iI, iC)
                 except prawcore.exceptions.NotFound:
                     self.infoBox.setText(
@@ -582,7 +585,7 @@ class Redditor(OWTextableBaseWidget):
                     )
             
                 for post in posts:
-                    # On crée les segments appropriés
+                    # Creation of corresponding segment
                     self.create_post_segments(post, iI, iC)
 
             if len(self.listeTempPosts) > 0:
@@ -660,8 +663,9 @@ class Redditor(OWTextableBaseWidget):
                 iC = incCom,
                 a = int(settings[2])
             )
-            
+     
     def confirm_settings(self):
+        """sets all the values for filters entered by user"""
         mode = self.mode
         timeFilt = self.postedAt
         subInput = self.subreddit
@@ -686,15 +690,15 @@ class Redditor(OWTextableBaseWidget):
         )
 
 
-    # création des segments des posts et commentaires en option
+    # creation of segments from posts
     def create_post_segments(self, post, includeImage, includeComments):
         self.create_content_segment(post, includeImage)
-        # Si "Comments" est coché, on crée les segments correspondants
+        # if "Comments" is checked, we create the corresponding segments
         if includeComments:
             self.create_comments_segments(post)
             return
 
-    # création des segments pour les posts
+    # creation of segments for posts
     def create_content_segment(self, post, includeImage = False):
         annotations = dict()
         annotations["Title"] = post.title
@@ -727,7 +731,7 @@ class Redditor(OWTextableBaseWidget):
         post.comments.replace_more(limit=0)
         comments = post.comments.list()
 
-        # On crée un segment pour chaque commentaire
+        # Creation of a segment for each comment
         for comment in comments:
             annotations = dict()
             annotations["Title"] = post.title
