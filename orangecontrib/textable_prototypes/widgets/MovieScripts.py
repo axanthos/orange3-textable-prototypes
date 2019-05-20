@@ -414,6 +414,8 @@ class MovieScripts(OWTextableBaseWidget):
             for lettre in ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                        'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
                 page_num = 1
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
 
                 while True:
                     page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
@@ -426,25 +428,19 @@ class MovieScripts(OWTextableBaseWidget):
                     for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
                         links[link.text] = link.get('href')[len(php_query_string):]
                     self.title_to_href.update(links)
-
-                    print(page_num)
                     page_num += 1
 
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
 
-            # Clear progress bar.
-            progressBar.finish()
-            self.controlArea.setDisabled(False)
+
 
         except:
             self.infoBox.setText(
                 "Couldn't download data from springfieldspringfield website.", 
                 "error"
             )
-            # Clear progress bar.
-            progressBar.finish()
-            self.controlArea.setDisabled(False)
+        # Clear progress bar.
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
         return(self.title_to_href)
 
     # Add Movies function
