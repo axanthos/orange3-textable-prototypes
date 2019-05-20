@@ -468,7 +468,7 @@ class Redditor(OWTextableBaseWidget):
         
         
         Parameters:
-        m (string): Stands for 'method', defines which method the query will use
+        m (string): Stands for 'mode', defines which mode the query will use
         pA (string): Stands for 'posted at', defines the time scale of the query
         sI (string): Stands for 'SubReddit input', defines the SubReddit name that will be queried
         uI (string): Stands for 'URL input', defines the URL of the SubReddit post that will be queried
@@ -625,6 +625,7 @@ class Redditor(OWTextableBaseWidget):
         return
 
     def refresh_content(self):
+        """Refreshes all the queries in the list of queries to update the corpus"""
         modeReg = re.compile(r"(?<=Mode: ).+?(?=; Value)")
         valueReg = re.compile(r"(?<=Value: ).+?(?=; Settings)")
         settingsReg = re.compile(r"(?<=Settings: ).+?(?=; Include)")
@@ -665,7 +666,7 @@ class Redditor(OWTextableBaseWidget):
             )
      
     def confirm_settings(self):
-        """sets all the values for filters entered by user"""
+        """Sets all the values for filters entered by user"""
         mode = self.mode
         timeFilt = self.postedAt
         subInput = self.subreddit
@@ -690,16 +691,16 @@ class Redditor(OWTextableBaseWidget):
         )
 
 
-    # creation of segments from posts
     def create_post_segments(self, post, includeImage, includeComments):
+        """ Creation of segments from posts"""
         self.create_content_segment(post, includeImage)
-        # if "Comments" is checked, we create the corresponding segments
+        # If "Comments" is checked, we create the corresponding segments
         if includeComments:
             self.create_comments_segments(post)
             return
 
-    # creation of segments for posts
     def create_content_segment(self, post, includeImage = False):
+        """ Creation of segments for posts"""
         annotations = dict()
         annotations["Title"] = post.title
         annotations["Id"] = post.id
@@ -715,7 +716,6 @@ class Redditor(OWTextableBaseWidget):
         annotations["Posted_Unix"] = time
         annotations["Posted_at"] = date
 
-        # TODO: add these annotations:
         # author, created_utc (ou created ?) et score
         content = post.selftext
         if content == "":
@@ -728,6 +728,7 @@ class Redditor(OWTextableBaseWidget):
         return
 
     def create_comments_segments(self, post):
+        """ Creation of segments for each comment in the post"""
         post.comments.replace_more(limit=None)
         comments = post.comments.list()
 
@@ -746,9 +747,7 @@ class Redditor(OWTextableBaseWidget):
             annotations["Posted_Unix"] = time
             annotations["Posted_at"] = date
 
-            # TODO: add these annotations:
             # author, created_utc (ou created ?) et score
-
             parentId= comment.parent_id.split("_")
             annotations["Parent"] = parentId[1]
             annotations["Parent_type"] = parentId[0][1]
@@ -758,6 +757,7 @@ class Redditor(OWTextableBaseWidget):
         return
     
     def checkSubredditSortMode(self):
+        """Change available settings to the user based on the SubReddit mode"""
         self.sendButton.settingsChanged()
         if self.sortBy == "Hot":
             self.timeBox.setDisabled(True)
@@ -771,6 +771,7 @@ class Redditor(OWTextableBaseWidget):
             self.timeBox.setDisabled(True)
     
     def checkSearchSortMode(self):
+        """Change available settings to the user based on the full text mode"""
         self.sendButton.settingsChanged()
         if self.sortByFT == "Relevance":
             self.timeBox.setDisabled(False)
@@ -782,6 +783,7 @@ class Redditor(OWTextableBaseWidget):
             self.timeBox.setDisabled(False)
 
     def removePressed(self):
+        """Remove the selected queries from basket"""
         labelsPanier = self.labelsPanier
 
         for idx in sorted(self.indicesPanier, reverse=True):
@@ -794,6 +796,7 @@ class Redditor(OWTextableBaseWidget):
             
     
     def clearPressed(self):
+        """Remove all the queries from basket"""
         self.labelsPanier = list()
         self.queryList = list()
         self.annotList = list()
@@ -801,6 +804,21 @@ class Redditor(OWTextableBaseWidget):
         self.refreshButton.setDisabled(True)
     
     def add_to_list(self, m, pA, sI, uI, ftI, sTF, ftTF, iI, iC, a):
+        """Add a label to the list created with the fonction get_content
+
+
+        Parameters:
+        m (string): Stands for 'mode', defines which mode the query will use
+        pA (string): Stands for 'posted at', defines the time scale of the query
+        sI (string): Stands for 'SubReddit input', defines the SubReddit name that will be queried
+        uI (string): Stands for 'URL input', defines the URL of the SubReddit post that will be queried
+        ftI (string): Stands for 'full text input', defines the query parameter for a full text query
+        sTF (string): Stands for 'SubReddit time filters', defines the manner of filters for a SubReddit query in 'sort by'
+        ftTF (string): Stands for 'full text time filters', defines the manner of filters for a full text query
+        iI (string): Stands for 'include image', defines if the images should be included
+        iC (string): Stands for 'include comments', defines if comments should be included
+        a (int): Stands for 'amount', amount of posts to be fetched
+        """
         labelsPanier = self.labelsPanier
 
         if m == "Subreddit":
@@ -847,6 +865,7 @@ class Redditor(OWTextableBaseWidget):
         self.update_list(labelsPanier)
  
     def update_list(self, listOfLabels):
+        """TODO Updates the list of queries in basket LORIS CHECK CA STP"""
         try:
             self.labelsPanier = listOfLabels
         except TypeError:
@@ -857,9 +876,11 @@ class Redditor(OWTextableBaseWidget):
             return
 
     def change_button(self):
+        """Deactivates the 'remove' button if nothing is selected in basket"""
         self.removeButton.setDisabled(False)
     
     def send_data(self):
+        """Creates the inputs based on the fetched data"""
         self.controlArea.setDisabled(True)
         self.clearCreatedInputs()
         segmentation = None
@@ -905,7 +926,7 @@ class Redditor(OWTextableBaseWidget):
         self.sendButton.resetSettingsChangedFlag()
     
     def clearCreatedInputs(self):
-        """Delete all Input objects that have been created."""
+        """Delete all Input objects that have been created"""
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
