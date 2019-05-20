@@ -402,19 +402,20 @@ class MovieScripts(OWTextableBaseWidget):
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
 
+        # Initialize progress bar.
+        progressBar = ProgressBar(
+            self,
+            # The number of iterations corresponds to the number of letters in the alphabet + 1 for the "number" category
+            iterations=27
+        )
+        self.controlArea.setDisabled(True)
+        
         try:
-            UserAdviceMessages = [
-                                widget.Message("Clicking on cells or in headers outputs the "
-                                "corresponding data instances",
-                                "click_cell")
-                            ]
-
-            for lettre in ['0']:#, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                       #'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+            for lettre in ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                       'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
                 page_num = 1
 
                 while True:
-                    progressBar = ProgressBar(self, iterations=page_num*100)
                     page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
                     page = urllib.request.urlopen(page_url)
                     soup = BeautifulSoup(page, 'html.parser')
@@ -429,17 +430,21 @@ class MovieScripts(OWTextableBaseWidget):
                     print(page_num)
                     page_num += 1
 
-                    # 1 tick on the progress bar of the widget
-                    progressBar.advance(100^2)
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
 
             # Clear progress bar.
             progressBar.finish()
+            self.controlArea.setDisabled(False)
 
         except:
             self.infoBox.setText(
                 "Couldn't download data from springfieldspringfield website.", 
                 "error"
             )
+            # Clear progress bar.
+            progressBar.finish()
+            self.controlArea.setDisabled(False)
         return(self.title_to_href)
 
     # Add Movies function
