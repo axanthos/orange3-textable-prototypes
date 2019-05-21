@@ -401,18 +401,24 @@ class MovieScripts(OWTextableBaseWidget):
     def get_all_titles(self):
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
+        alphabet = ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                    'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
         # Initialize progress bar.
         progressBar = ProgressBar(
             self,
-            # The number of iterations corresponds to the number of letters in the alphabet + 1 for the "number" category
-            iterations=27
+            iterations=len(alphabet)
         )
         self.controlArea.setDisabled(True)
         
         try:
-            for lettre in ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                       'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
+            UserAdviceMessages = [
+                                widget.Message("Clicking on cells or in headers outputs the "
+                                "corresponding data instances",
+                                "click_cell")
+                            ]
+
+            for lettre in alphabet:
                 page_num = 1
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -430,12 +436,9 @@ class MovieScripts(OWTextableBaseWidget):
                     self.title_to_href.update(links)
                     page_num += 1
 
-
-
-
         except:
             self.infoBox.setText(
-                "Couldn't download data from springfieldspringfield website.", 
+                "Couldn't download data from springfieldspringfield website.",
                 "error"
             )
         # Clear progress bar.
@@ -506,10 +509,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
 
         # Initialize progress bar.
-        progressBar = ProgressBar(
-            self,
-            iterations=len(self.myBasket)
-        )
+        progressBar = ProgressBar(self, iterations=len(self.myBasket))
 
         try:
             for movie in self.myBasket:
