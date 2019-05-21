@@ -423,6 +423,10 @@ class Redditor(OWTextableBaseWidget):
         self.infoBox.draw()
 
         self.mode_changed()
+        self.sendButton.settingsChanged()
+
+        # Send data if autoSend...
+        self.sendButton.sendIf()
 
     def mode_changed(self):
         self.sendButton.settingsChanged()
@@ -480,7 +484,6 @@ class Redditor(OWTextableBaseWidget):
         a (int): Stands for 'amount', amount of posts to be fetched
 
         """
-        self.sendButton.settingsChanged()
         self.controlArea.setDisabled(True)
         if ((m == "Subreddit" and len(sI) > 0) or
             (m == "URL" and len(uI) > 0) or
@@ -608,6 +611,7 @@ class Redditor(OWTextableBaseWidget):
                 self.refreshButton.setDisabled(False)
                 self.listeTempPosts = list()
                 self.listeTempAnnot = list()
+                self.sendButton.settingsChanged()
             else:
                 self.infoBox.setText(
                     "The posts found only contained images. Try to include images or comments.",
@@ -925,10 +929,13 @@ class Redditor(OWTextableBaseWidget):
             self.sendButton.resetSettingsChangedFlag()
         else:
             self.infoBox.setText(
-                "There are {} segments to send to output. Please fill the query basket and click 'send' again",
+                "There are {} segments to send to output. Please fill the query basket and click 'send' again".format(
+                    len(segmentation)
+                ),
                 "warning"
             )
             self.sendButton.resetSettingsChangedFlag()
+            self.controlArea.setDisabled(False)
     
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created"""
