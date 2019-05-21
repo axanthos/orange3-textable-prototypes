@@ -309,7 +309,10 @@ class MovieScripts(OWTextableBaseWidget):
             # Clear progress bar.
             progressBar.finish()
 
-            self.infoBox.setText("Search complete")
+            if self.searchResults:
+                self.infoBox.setText("Search complete")
+            elif self.searchResults == []:
+                self.infoBox.setText("No result please try again", 'warning')
 
         else:
             self.infoBox.setText("Please, enter a query in a search bar", "warning")
