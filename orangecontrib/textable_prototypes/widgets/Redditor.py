@@ -310,7 +310,7 @@ class Redditor(OWTextableBaseWidget):
             value="amount",
             minv=1,
             maxv=200,
-            label="Amount of posts:",
+            label="Number of posts:",
             labelWidth=120,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
@@ -617,7 +617,7 @@ class Redditor(OWTextableBaseWidget):
 
         else:
             self.infoBox.setText(
-                "Please fill in the input box.",
+                "Please type a query.",
                 "warning"
             )
 
@@ -913,17 +913,22 @@ class Redditor(OWTextableBaseWidget):
         num_chars = 0
         for segment in segmentation:
             num_chars += len(Segmentation.get_data(segment.str_index))
-        self.infoBox.setText("{} segments sent to output ({} characters)".format(
-            len(segmentation),
-            num_chars,
-            )
-        )
         
-        self.send("Segmentation", segmentation)
-
-        self.controlArea.setDisabled(False)
-
-        self.sendButton.resetSettingsChangedFlag()
+        if len(segmentation) != 0:
+            self.infoBox.setText("{} segments sent to output ({} characters)".format(
+                len(segmentation),
+                num_chars,
+                )
+            )
+            self.send("Segmentation", segmentation)
+            self.controlArea.setDisabled(False)
+            self.sendButton.resetSettingsChangedFlag()
+        else:
+            self.infoBox.setText(
+                "There are {} segments to send to output. Please fill the query basket and click 'send' again",
+                "warning"
+            )
+            self.sendButton.resetSettingsChangedFlag()
     
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created"""
