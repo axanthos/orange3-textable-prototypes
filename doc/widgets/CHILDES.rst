@@ -5,8 +5,8 @@
 
 .. _Theatre Classique:
 
-Theatre Classique
-=================
+CHILDES
+=======
 
 .. image:: figures/CHILDES.png
 
@@ -45,7 +45,11 @@ in Orange Canvas. The corpora are retrieved from
 `<https://childes.talkbank.org/data-xml/>`_ and richly encoded in XML format. 
 The widget outputs at least one segmentation containing a segment for each file 
 in  each imported corpus. Segments in this segmentation have a number of 
-annotations (depending on what is available for each corpus):
+annotations (depending on what is available for each corpus):[1]_
+
+.. [1] The user is reffered to the `CHAT transcription format documentation
+<https://talkbank.org/manuals/CHAT.html>`_ for the meaning and possible values
+of the numerous annotations extracted by the widget.
 
 =====================      =====
 key                        example value
