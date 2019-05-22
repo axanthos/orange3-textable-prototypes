@@ -318,7 +318,7 @@ class Redditor(OWTextableBaseWidget):
         )
 
         #-------------------------#
-        #   Include box elements   #
+        #   Include box elements  #
         #-------------------------#
 
         self.includeBox = gui.widgetBox(
