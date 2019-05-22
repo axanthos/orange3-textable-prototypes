@@ -29,11 +29,11 @@ Outputs:
 
   Segmentation with a segment for each file in imported corpora
 
-* ``Utterances``
+* ``Utterances`` (optional)
 
   Segmentation with a segment for each utterance in imported corpora
 
-* ``Words``
+* ``Words`` (optional)
 
   Segmentation with a segment for each word in imported corpora
 
@@ -74,13 +74,16 @@ key              example value
 
 The word segmentation inherits all previous annotations, and adds a variable 
 number of annotations (depending on the information available in the data), 
-namely at most:
+namely at most: 
 
 ===========   =========
 key           example value
 ===========   =========
+*head*        *1*
+*index*       *0*
 *pos*         *part*
 *prefixes*    *dé*
+*relation*    *OBJ*
 *stem*        *faire*
 *suffixes*    *PP&m*
 ===========   =========
@@ -110,12 +113,12 @@ To view the contents of a folder, either double-click it or select it and
 click **Open**. Button **Back** brings you back to the parent folder, and 
 **Home** to the root folder.
 
-**Add to selection** adds the highlighted archive(s) to your selection. If a 
-folder is highlighted, clicking **Add to selection** results in adding *all* the
-archives contained in this folder and, recursively, in contained subfolders (so
-possibly a lot of archives), to your selection. Note that multiple 
-archives/folders may be highlighted (using control/command-click or shift-click)
-and added at once to your selection.
+**Add to selection** adds the highlighted archive(s) to your selection, and so 
+does double-clicking an archive. If a folder is highlighted, clicking **Add to 
+selection** results in adding *all* the archives contained in this folder and, 
+recursively, in contained subfolders (so possibly a lot of archives), to your 
+selection. Note that multiple archives/folders may be highlighted (using 
+control/command-click or shift-click) and added at once to your selection.
 
 When the current folder is the root folder ("/"), the **Home** button is 
 replaced with **Refresh**. Clicking **Refresh** instructs the widget to connect

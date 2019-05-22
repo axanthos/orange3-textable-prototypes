@@ -647,7 +647,6 @@ class Childes(OWTextableBaseWidget):
         """Extract annotations from a word's mor tag in CHILDES XML format and 
         return a dict of annotations.
         """
-        # TODO: GRA
         root = ET.fromstring(
             "<mw>" + mw.get_content() + "</mw>"
         )
