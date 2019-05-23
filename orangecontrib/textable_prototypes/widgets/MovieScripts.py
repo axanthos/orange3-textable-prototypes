@@ -32,11 +32,12 @@ from _textable.widgets.TextableUtils import (
 )
 
 # waring searching                          --> pas possible
-# année = annotation dans display
-# send quand y a rien = None dans display
-# function clearCreatedInput
-# quelles sections modifier pour rajouter d'autres bases de données --> commenter
-# ajouter tuto
+# année = annotation dans display           
+# send quand y a rien = None dans display   --> ok
+# function clearCreatedInput                --> ok
+# quelles sections modifier pour rajouter
+#   d'autres bases de données --> commenter --> 
+# ajouter tuto                              --> ok
 
 class MovieScripts(OWTextableBaseWidget):
     """Textable widget for importing movie scripts from the website springfieldspringfield.co.uk
@@ -314,7 +315,7 @@ class MovieScripts(OWTextableBaseWidget):
 
         else:
             self.infoBox.setText("Please, enter a query in a search bar", "warning")
-	    self.controlArea.setDisabled(False)
+            self.controlArea.setDisabled(False)
 
 
 
@@ -579,8 +580,6 @@ class MovieScripts(OWTextableBaseWidget):
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
-        for i in self.createdInputs:
-            Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
 
 	# The following method needs to be copied verbatim in
