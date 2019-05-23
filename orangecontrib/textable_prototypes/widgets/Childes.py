@@ -415,7 +415,6 @@ class Childes(OWTextableBaseWidget):
             for file in myZip.infolist():
                 file_content = myZip.read(file).decode('utf-8')
 
-                # TODO: TEST THIS!
                 # If word segmentation is requested...
                 if self.outputWords:
                     # Implement replacements.
@@ -562,26 +561,6 @@ class Childes(OWTextableBaseWidget):
                 "w",
                 progress_callback=progressBar.advance,
             )
-            # replSegmentation = Segmenter.import_xml(
-                # baseSegmentation,
-                # "replacement",
-                # progress_callback=progressBar.advance,
-            # )
-            # self.infoBox.setText(
-                # "(%i/%i) Handling word replacements, please wait..."    \
-                    # % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
-                # "warning",
-            # )     
-            # progressBar.finish()
-            # progressBar = ProgressBar(
-                # self, 
-                # iterations=len(baseSegmentation)
-            # )
-            # replWordSegmentation = Segmenter.import_xml(
-                # replSegmentation,
-                # "w",
-                # progress_callback=progressBar.advance,
-            # )
             mwSegmentation = Segmenter.import_xml(
                 baseSegmentation,
                 "mw",
@@ -601,24 +580,17 @@ class Childes(OWTextableBaseWidget):
             )
             wordSegments = list()
             for word in wordSegmentation:
-                # TODO: TEST THIS!
-                # replacements = word.get_contained_segments(replWordSegmentation)
-                # wordsOrReplacements = replacements if replacements else [word]
-                # for wordOrRepl in wordsOrReplacements:
-                    # mws = wordOrRepl.get_contained_segments(
                 mws = word.get_contained_segments(
                     mwSegmentation
                 )
                 if mws:
                     for mw in mws:
-                        # wordSegment = wordOrRepl.deepcopy()
                         wordSegment = word.deepcopy()
                         wordSegment.annotations.update(
                             self.extractWordAnnotations(mw)
                         )
                         wordSegments.append(wordSegment) 
                 else:
-                    # wordSegments.append(wordOrRepl)
                     wordSegments.append(word)
                 progressBar.advance()
                                                     
@@ -672,7 +644,6 @@ class Childes(OWTextableBaseWidget):
                     suffixes.append("-" + child.text)
                 elif child.attrib["type"] == "mc":
                     suffixes.append(":" + child.text)
-            # TODO: TEST THIS!
             elif child.tag == "gra":
                 for key in ["index", "head", "relation"]:
                     annotations[key] = child.attrib[key]
@@ -918,7 +889,7 @@ class Childes(OWTextableBaseWidget):
     def updateBrowseBoxButtons(self):
         """Refresh state of Browse box buttons"""
         currentFolder = self.currentFolder[len(self.__class__.baseUrl)-1:]
-        if currentFolder == "/": # TODO change tooltip
+        if currentFolder == "/": 
             self.homeRefreshButton.setText("Refresh")
             self.homeRefreshButton.setToolTip(
                 "Connect to CHILDES website and refresh corpus list."

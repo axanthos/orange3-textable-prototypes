@@ -45,7 +45,7 @@ in Orange Canvas. The corpora are retrieved from
 `<https://childes.talkbank.org/data-xml/>`_ and richly encoded in XML format. 
 The widget outputs at least one segmentation containing a segment for each file 
 in  each imported corpus. Segments in this segmentation have a variable number 
-of annotations (depending on what is available for each corpus):[1]_
+of annotations (depending on what is available for each corpus): [1]_
 
 =====================      =====
 key                        example value
@@ -177,11 +177,11 @@ follows:
    
 Word attribute extraction operates as follows:
 
-#. if available, syntactic category and subcategories are joined with colons (*:*) to form the value of annotation *pos* 
-#. if available, prefixes (*<mpfx>*) are joined with sharp (*#*) to form the value of annotation *prefixes* 
-#. if available, suffixes (*<mk>*) are joined with *&*, *-* or *:* to form the value of annotation *suffixes* 
-#. if available, *stem* attribute forms the value of annotation *stem* (possibly including *pos* and *prefixes*, depending on selected options)
-#. if available, *index*, *head* and *relation* attributes of *<gra>* elements are extracted to form corresponding annotations.
+- if available, syntactic category and subcategories are joined with colons (*:*) to form the value of annotation *pos* 
+- if available, prefixes (*<mpfx>*) are joined with sharp (*#*) to form the value of annotation *prefixes* 
+- if available, suffixes (*<mk>*) are joined with *&*, *-* or *:* to form the value of annotation *suffixes* 
+- if available, *stem* attribute forms the value of annotation *stem* (possibly including *pos* and *prefixes*, depending on selected options)
+- if available, *index*, *head* and *relation* attributes of *<gra>* elements are extracted to form corresponding annotations.
  
 
 Messages
