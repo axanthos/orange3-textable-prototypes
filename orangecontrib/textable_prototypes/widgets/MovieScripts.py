@@ -495,7 +495,7 @@ class MovieScripts(OWTextableBaseWidget):
                 "warning"
             )
             self.segmentation = None
-            return
+            self.send("Movie Scripts importation", self.segmentation, self)
 
         # Clear created Inputs.
         self.clearCreatedInputs()
