@@ -316,6 +316,7 @@ class MovieScripts(OWTextableBaseWidget):
 
         else:
             self.infoBox.setText("Please, enter a query in a search bar", "warning")
+	    self.controlArea.setDisabled(False)
 
 
 
