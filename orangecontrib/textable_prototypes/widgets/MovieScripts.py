@@ -579,6 +579,8 @@ class MovieScripts(OWTextableBaseWidget):
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
 
 	# The following method needs to be copied verbatim in
