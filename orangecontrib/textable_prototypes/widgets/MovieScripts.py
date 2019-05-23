@@ -4,15 +4,12 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "david.fluhmann@unil.ch, leonardo.cavaliere@unil.ch, kirill.melnikov@unil.ch"
 
 from Orange.widgets import Orange, widget, gui, settings
-
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
-
 import urllib
 import urllib.request
 import urllib.parse
-import json
 import pickle
 import requests
 import inspect
@@ -21,8 +18,7 @@ import copy
 from urllib import request, parse
 from bs4 import BeautifulSoup
 import re
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+from fuzzywuzzy import fuzz, process
 import AnyQt
 from AnyQt.QtWidgets import (
     QWidget, QDialog, QVBoxLayout, QSizePolicy, QApplication, QStyle,
@@ -30,17 +26,21 @@ from AnyQt.QtWidgets import (
     QProgressBar, QAction, QFrame, QStyleOption, QWIDGETSIZE_MAX
 )
 from _textable.widgets.TextableUtils import ProgressBar
-
-
-
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton, 
+    InfoBox, SendButton,
 )
 
+# waring searching                          --> pas possible
+# année = annotation dans display
+# send quand y a rien = None dans display
+# function clearCreatedInput
+# quelles sections modifier pour rajouter d'autres bases de données --> commenter
+# ajouter tuto
+
 class MovieScripts(OWTextableBaseWidget):
-    """Textable widget for importing movie scripts from the website IMSDB.com
-    (https://www.imsdb.com)
+    """Textable widget for importing movie scripts from the website springfieldspringfield.co.uk
+    (https://www.springfieldspringfield.co.uk)
     """
 
     #----------------------------------------------------------------------
@@ -122,13 +122,13 @@ class MovieScripts(OWTextableBaseWidget):
         queryBox = gui.widgetBox(
             widget=self.controlArea,
             orientation="vertical",
-        )
+            )
 
         searchBox = gui.widgetBox(
             widget=queryBox,
             box="Search movie",
             orientation="horizontal",
-        )
+            )
 
         # Allows to enter specific text to the research
         #  Uses "newQuery" attribute
@@ -138,8 +138,8 @@ class MovieScripts(OWTextableBaseWidget):
             value='newQuery',
             orientation='horizontal',
             labelWidth=100,
-            tooltip=("Enter a string"),
-        )
+            tooltip=("Enter a movie title"),
+            )
 
         # Research button 
         # Use "searchFunction" attibute
@@ -169,7 +169,7 @@ class MovieScripts(OWTextableBaseWidget):
             callback=lambda: self.selectButton.setDisabled(
                 self.selectedTitles == list()),
             tooltip="Select the movie you want to get the script of",
-        )
+            )
         self.titleListbox.doubleClicked.connect(self.Add)
         self.titleListbox.setMinimumHeight(120)
         self.titleListbox.setSelectionMode(3)
@@ -178,7 +178,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=queryBox,
             box=False,
             orientation='horizontal',
-        )
+            )
 
         # Add button
         # Uses "Add" function
@@ -188,7 +188,7 @@ class MovieScripts(OWTextableBaseWidget):
             label="Add to corpus",
             callback=self.Add,
             tooltip="Add selected movie to the corpus",
-        )
+            )
         self.selectButton.setDisabled(True)
 
         # Clear button
@@ -199,7 +199,7 @@ class MovieScripts(OWTextableBaseWidget):
             label="Clear results",
             callback=self.clearResults,
             tooltip="Clear results",
-        )
+            )
         self.clearButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
@@ -208,7 +208,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=self.controlArea,
             box="Corpus",
             orientation="vertical",
-        )
+            )
 
         self.mytitleListbox = gui.listBox(
             widget=mytitleBox,
@@ -218,7 +218,7 @@ class MovieScripts(OWTextableBaseWidget):
             callback=lambda: self.removeButton.setDisabled(
                 self.myTitles == list()),
             tooltip="The list of titles whose content will be imported",
-        )
+            )
         self.mytitleListbox.doubleClicked.connect(self.Remove)
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
@@ -227,7 +227,7 @@ class MovieScripts(OWTextableBaseWidget):
             widget=mytitleBox,
             box=False,
             orientation='horizontal',
-        )
+            )
         # Remove movies button
         self.removeButton = gui.button(
             widget=boxbutton2,
@@ -235,7 +235,7 @@ class MovieScripts(OWTextableBaseWidget):
             label=u'Remove from corpus',
             callback=self.Remove,
             tooltip="Remove the selected movie from your corpus.",
-        )
+            )
         self.removeButton.setDisabled(True)
 
         # Delete all confirmed movies button
@@ -246,7 +246,7 @@ class MovieScripts(OWTextableBaseWidget):
             callback=self.ClearmyCorpus,
             tooltip=
                 "Remove all movies from your corpus.",
-        )
+            )
         self.clearmyBasket.setDisabled(True)
 
         gui.rubber(self.controlArea)
@@ -271,9 +271,8 @@ class MovieScripts(OWTextableBaseWidget):
 
 
     def searchFunction(self):
-
         self.controlArea.setDisabled(True)
-        
+
         #Search from the springfieldspringfield.co.uk
         query_string = self.newQuery
         testdict = self.title_to_href
@@ -287,7 +286,6 @@ class MovieScripts(OWTextableBaseWidget):
         if query_string != "":
             # Initialize progress bar.
             progressBar = ProgressBar(self, iterations=1)
-            
 
             self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=80)
             
@@ -414,14 +412,8 @@ class MovieScripts(OWTextableBaseWidget):
             iterations=len(alphabet)
         )
         self.controlArea.setDisabled(True)
-        
-        try:
-            UserAdviceMessages = [
-                                widget.Message("Clicking on cells or in headers outputs the "
-                                "corresponding data instances",
-                                "click_cell")
-                            ]
 
+        try:
             for lettre in alphabet:
                 page_num = 1
                 # 1 tick on the progress bar of the widget
@@ -547,7 +539,7 @@ class MovieScripts(OWTextableBaseWidget):
             newInput = Input(script, self.captionTitle)
             self.createdInputs.append(newInput)
 			
-       # If there"s only one play, the widget"s output is the created Input.
+       # If there's only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
 
