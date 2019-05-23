@@ -170,10 +170,18 @@ follows:
 #. substitute replacements (if any) for words, e.g. *lemme [: let me]*
 #. move *<gra>* elements inside adjacent non-compound words (*<mc>*)
 #. extract all words (*<w>*)
-#. for each non-compound word (*<mw>*) in each word:
+#. for each non-compound word (*<mw>*) in each (possibly compound) word:
 
    #. create a new word segment
    #. extract this non-compound word's attributes and assign them as annotations to the new word segment
+   
+Word attribute extraction operates as follows:
+
+#. if available, syntactic category and subcategories are joined with colons (*:*) to form the value of annotation *pos* 
+#. if available, prefixes (*<mpfx>*) are joined with sharp (*#*) to form the value of annotation *prefixes* 
+#. if available, suffixes (*<mk>*) are joined with *&*, *-* or *:* to form the value of annotation *suffixes* 
+#. if available, *stem* attribute forms the value of annotation *stem* (possibly including *pos* and *prefixes*, depending on selected options)
+#. if available, *index*, *head* and *relation* attributes of *<gra>* elements are extracted to form corresponding annotations.
  
 
 Messages
