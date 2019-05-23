@@ -502,6 +502,7 @@ class MovieScripts(OWTextableBaseWidget):
                 "Your corpus is empty, please add some movies first",
                 "warning"
             )
+            self.segmentation = None
             return
 
         # Clear created Inputs.
