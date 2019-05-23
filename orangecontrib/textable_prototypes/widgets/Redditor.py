@@ -309,7 +309,7 @@ class Redditor(OWTextableBaseWidget):
             master=self,
             value="amount",
             minv=1,
-            maxv=200,
+            maxv=10000,
             label="Number of posts:",
             labelWidth=120,
             orientation="horizontal",
@@ -485,6 +485,8 @@ class Redditor(OWTextableBaseWidget):
 
         """
         self.controlArea.setDisabled(True)
+
+        # Check if anything was put in the input
         if ((m == "Subreddit" and len(sI) > 0) or
             (m == "URL" and len(uI) > 0) or
             (m == "Full text" and len(ftI) > 0)):
@@ -523,6 +525,7 @@ class Redditor(OWTextableBaseWidget):
                     for post in posts:
                 		# Creation of corresponding segments
                         self.create_post_segments(post, iI, iC)
+                # Handle exceptions
                 except prawcore.exceptions.Redirect:
                     self.infoBox.setText(
                         "Error in redirect, please make sure the subreddit name is correct.",
@@ -543,6 +546,7 @@ class Redditor(OWTextableBaseWidget):
                     post = self.reddit.submission(url=uI)
                 	# Creation of corresponding segment
                     self.create_post_segments(post, iI, iC)
+                # Handle exceptions
                 except prawcore.exceptions.NotFound:
                     self.infoBox.setText(
                         "No match for URL.",
@@ -556,9 +560,11 @@ class Redditor(OWTextableBaseWidget):
                     )
                     return
             elif self.mode == "Full text":
+                # Get posts based on a full text research
                 userSearch = ftI
                 reddit = self.reddit.subreddit("all")
 
+                # Get posts based on the filter chosen by the user
                 if ftTF == "Relevance":
                     posts = reddit.search(
                         userSearch,
@@ -592,8 +598,8 @@ class Redditor(OWTextableBaseWidget):
                     self.create_post_segments(post, iI, iC)
 
             if len(self.listeTempPosts) > 0:
-                # self.send("Segmentation", Segmentation(self.createdInputs))
-                # self.infoBox.setText("{} segments sent to output !".format(len(self.createdInputs)))
+                # If content was gathered, add the data to the 
+                # Settings' data list and label list 
                 self.queryList.append(self.listeTempPosts)
                 self.annotList.append(self.listeTempAnnot)
                 self.add_to_list(
@@ -608,18 +614,19 @@ class Redditor(OWTextableBaseWidget):
                     iC = iC,
                     a = a
                 )
+                # Empty temporary lists and signal a change in the settings
                 self.refreshButton.setDisabled(False)
                 self.listeTempPosts = list()
                 self.listeTempAnnot = list()
                 self.sendButton.settingsChanged()
             else:
+                # If no centent is found, explain why to the user
                 self.infoBox.setText(
                     "The posts found only contained images. Try to include images or comments.",
                     "warning"
                 )
-                # self.send("Segmentation", Segmentation(self.createdInputs))
-
         else:
+            # If no input is registered, signal it to the user
             self.infoBox.setText(
                 "Please type a query.",
                 "warning"
@@ -630,14 +637,18 @@ class Redditor(OWTextableBaseWidget):
 
     def refresh_content(self):
         """Refreshes all the queries in the list of queries to update the corpus"""
+        # Set a list of regex to get the information necessary
         modeReg = re.compile(r"(?<=Mode: ).+?(?=; Value)")
         valueReg = re.compile(r"(?<=Value: ).+?(?=; Settings)")
         settingsReg = re.compile(r"(?<=Settings: ).+?(?=; Include)")
         includeImageReg = re.compile(r"(?<=Include image: )\w+(?=; Include)")
         includeCommentsReg = re.compile(r"(?<=Include comments: )\w+(?=; Segments)")
+        # Get labels
         labels = self.labelsPanier
+        # Clear labels
         self.clearPressed()
         for label in labels:
+            # For each labels, get data using the regex
             mode = re.search(modeReg, label).group(0)
             value = re.search(valueReg, label).group(0)
             settings = re.search(settingsReg, label).group(0).split(", ")
@@ -656,6 +667,7 @@ class Redditor(OWTextableBaseWidget):
             if settings[1] == "[not specified]":
                 settings[1] = "All"
             
+            # Call the get_content method with the information gathered
             self.get_content(
                 m = mode,
                 pA = settings[1],
@@ -681,6 +693,7 @@ class Redditor(OWTextableBaseWidget):
         image = self.includeImage
         comments = self.includeComments
         amount = self.amount
+        # Call the get_content method with the information gathered
         self.get_content(
             m = mode,
             pA = timeFilt,
@@ -705,6 +718,7 @@ class Redditor(OWTextableBaseWidget):
 
     def create_content_segment(self, post, includeImage = False):
         """ Creation of segments for posts"""
+        # Create annotations
         annotations = dict()
         annotations["Title"] = post.title
         annotations["Id"] = post.id
@@ -726,6 +740,8 @@ class Redditor(OWTextableBaseWidget):
             content = "[image]"
 
         if not (includeImage == False and content == "[image]"):
+            # Create a segment is the user wishes to have a segment
+            # When there is only an image
             self.listeTempPosts.append(content)
             self.listeTempAnnot.append(annotations)
         
@@ -733,6 +749,7 @@ class Redditor(OWTextableBaseWidget):
 
     def create_comments_segments(self, post):
         """ Creation of segments for each comment in the post"""
+        # Get the totality of the comments under a post
         post.comments.replace_more(limit=None)
         comments = post.comments.list()
 
@@ -790,6 +807,7 @@ class Redditor(OWTextableBaseWidget):
         """Remove the selected queries from basket"""
         labelsPanier = self.labelsPanier
 
+        # Delete the corret element from both the label list and the data list
         for idx in sorted(self.indicesPanier, reverse=True):
             del labelsPanier[idx]
             del self.queryList[idx]
@@ -800,7 +818,7 @@ class Redditor(OWTextableBaseWidget):
             
     
     def clearPressed(self):
-        """Remove all the queries from basket"""
+        """Empty all the queries in the data list and all of labels in the label list"""
         self.labelsPanier = list()
         self.queryList = list()
         self.annotList = list()
@@ -808,8 +826,7 @@ class Redditor(OWTextableBaseWidget):
         self.refreshButton.setDisabled(True)
     
     def add_to_list(self, m, pA, sI, uI, ftI, sTF, ftTF, iI, iC, a):
-        """Add a label to the list created with the fonction get_content
-
+        """Add a label to the basket created with the fonction information from get_content
 
         Parameters:
         m (string): Stands for 'mode', defines which mode the query will use
@@ -825,6 +842,7 @@ class Redditor(OWTextableBaseWidget):
         """
         labelsPanier = self.labelsPanier
 
+        # Some gathering of data...
         if m == "Subreddit":
             valeur = sI
             sortBy = sTF
@@ -854,6 +872,7 @@ class Redditor(OWTextableBaseWidget):
         else:
             comments = "False"
     
+        # Append the label to the temporary label list
         labelsPanier.append("* Mode: {}; Value: {}; Settings: {}, {}, {}; Include image: {}; Include comments: {}; Segments: {}".format(
                 m,
                 valeur,
@@ -866,10 +885,11 @@ class Redditor(OWTextableBaseWidget):
             )
         )
 
+        # Update the labels list
         self.update_list(labelsPanier)
  
     def update_list(self, listOfLabels):
-        """TODO Updates the list of queries in basket LORIS CHECK CA STP"""
+        """Updates the list of labels in basket"""
         try:
             self.labelsPanier = listOfLabels
         except TypeError:
@@ -889,11 +909,14 @@ class Redditor(OWTextableBaseWidget):
         self.clearCreatedInputs()
         segmentation = None
 
+        # Goes over each queries in the data list
         for query in self.queryList:
             for text in query:
+                # Create inputs 
                 newInput = Input(text)
                 self.createdInputs.append(newInput)
 
+        # If there is only one input, create a segmentation...
         if len(self.createdInputs) == 1:
             segmentation = self.createdInputs[0]
 
@@ -914,20 +937,25 @@ class Redditor(OWTextableBaseWidget):
             segment.annotations.update(annotations[idx])
             segmentation[idx] = segment
 
+        # Calculate number of characters...
         num_chars = 0
         for segment in segmentation:
             num_chars += len(Segmentation.get_data(segment.str_index))
         
+        # If there is data...
         if len(segmentation) != 0:
+            # Inform the user of the number of segments and the number of characters...
             self.infoBox.setText("{} segments sent to output ({} characters)".format(
                 len(segmentation),
                 num_chars,
                 )
             )
+            # Send the segments
             self.send("Segmentation", segmentation)
             self.controlArea.setDisabled(False)
             self.sendButton.resetSettingsChangedFlag()
         else:
+            # Else, signal the user that no data is sendable...
             self.infoBox.setText(
                 "There are {} segments to send to output. Please fill the query basket and click 'send' again".format(
                     len(segmentation)
