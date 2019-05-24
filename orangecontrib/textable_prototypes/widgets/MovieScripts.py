@@ -33,11 +33,7 @@ from _textable.widgets.TextableUtils import (
 
 # waring searching                          --> pas possible
 # année = annotation dans display           
-# send quand y a rien = None dans display   --> ok
-# function clearCreatedInput                --> ok
-# quelles sections modifier pour rajouter
-#   d'autres bases de données --> commenter --> 
-# ajouter tuto                              --> ok
+
 
 class MovieScripts(OWTextableBaseWidget):
     """Textable widget for importing movie scripts from the website springfieldspringfield.co.uk
