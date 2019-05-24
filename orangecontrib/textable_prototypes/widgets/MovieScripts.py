@@ -32,8 +32,12 @@ from _textable.widgets.TextableUtils import (
 )
 
 # waring searching                          --> pas possible
-# année = annotation dans display           
-
+# année = annotation dans display
+# send quand y a rien = None dans display   --> ok
+# function clearCreatedInput                --> ok
+# quelles sections modifier pour rajouter
+#   d'autres bases de données --> commenter -->
+# ajouter tuto                              --> ok
 
 class MovieScripts(OWTextableBaseWidget):
     """Textable widget for importing movie scripts from the website springfieldspringfield.co.uk
@@ -112,7 +116,7 @@ class MovieScripts(OWTextableBaseWidget):
             callback=self.sendData,
             infoBoxAttribute="infoBox",
         )
-		
+
 
     # User interface...
         # Create the working area
@@ -138,7 +142,7 @@ class MovieScripts(OWTextableBaseWidget):
             tooltip=("Enter a movie title"),
             )
 
-        # Research button 
+        # Research button
         # Use "searchFunction" attibute
         self.searchButton = gui.button(
             widget=searchBox,
@@ -254,7 +258,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.sendButton.draw()
         self.searchButton.setDefault(True)
         self.infoBox.draw()
-		
+
         # This initialization step needs to be done after infoBox has been
         # drawn (because we may need to display an error message).
         self.loadDatabaseCache()
@@ -279,14 +283,14 @@ class MovieScripts(OWTextableBaseWidget):
         self.titleLabels = self.titleLabels
         del self.movie_titles[:]
         self.movie_titles = self.movie_titles
-		
+
         if query_string != "":
             # Initialize progress bar.
             progressBar = ProgressBar(self, iterations=1)
 
             self.searchResults = process.extractBests(query_string, testdict, limit = 100000, score_cutoff=80)
-            
-            progressBar.finish() 
+
+            progressBar.finish()
 
             progressBar = ProgressBar(self, iterations=len(self.searchResults))
 
@@ -296,7 +300,7 @@ class MovieScripts(OWTextableBaseWidget):
                 self.path_storage[val]=key
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
-		
+
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
             self.controlArea.setDisabled(False)
@@ -322,7 +326,7 @@ class MovieScripts(OWTextableBaseWidget):
         del self.movie_titles[:]
         self.movie_titles = self.movie_titles
         self.clearButton.setDisabled(True)
-		
+
     def loadDatabaseCache(self):
         """Load the cached database"""
         # Try to open saved file in this module"s directory...
@@ -343,8 +347,8 @@ class MovieScripts(OWTextableBaseWidget):
         # Else try to rebuild cache from SpringfieldSpringfield website...
         except IOError:
             self.refreshTitles()
-			
-    
+
+
     def refreshTitles(self):
         """Refresh the database cache"""
 
@@ -352,21 +356,21 @@ class MovieScripts(OWTextableBaseWidget):
             os.path.abspath(inspect.getfile(inspect.currentframe()))
             )
         cachedFilename = self.__class__.cacheFilename
-        
+
 
         dialog = AnyQt.QtGui.QMessageBox()
         response = dialog.question(
             self,
-            "springfieldspringfield", 
-            "Are you sure you want to refresh the Database?\nIt will take several minutes", 
+            "springfieldspringfield",
+            "Are you sure you want to refresh the Database?\nIt will take several minutes",
             dialog.Yes | dialog.No
         )
 
         self.infoBox.setText(
-            "Scraping SpringfieldSpringfield website, please wait...", 
+            "Scraping SpringfieldSpringfield website, please wait...",
             "warning",
-        )    
-        self.warning("Warning : it will take several minutes") 
+        )
+        self.warning("Warning : it will take several minutes")
         if response == dialog.No:
             return
         else:
@@ -383,21 +387,22 @@ class MovieScripts(OWTextableBaseWidget):
                     pickle.dump(self.title_to_href, file)
                     file.close()
                     self.infoBox.setText(
-                        "Database successfully updated", 
+                        "Database successfully updated",
                     )
                 except IOError:
                     self.infoBox.setText(
-                        "Couldn't save database to disk.", 
+                        "Couldn't save database to disk.",
                         "warning",
                     )
             except requests.exceptions.ConnectionError:
                 self.infoBox.setText(
-                    "Error while attempting to scrape the SpringfieldSpringfield website.", 
+                    "Error while attempting to scrape the SpringfieldSpringfield website.",
                     "error",)
 
 
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
+        # php_query_string and http_query_string are the variable that will need to be changed if different database is used or if current database's structure undergoes changes
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
         alphabet = ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -416,10 +421,12 @@ class MovieScripts(OWTextableBaseWidget):
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
 
+                # This part of code is what gets all the movie titles from each page of the database
                 while True:
                     page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
                     page = urllib.request.urlopen(page_url)
                     soup = BeautifulSoup(page, 'html.parser')
+                    # script_links is a variable that may need to be changed if another database is used or current database undergoes change
                     script_links = soup.findAll('a', attrs={'class': re.compile("^script-list-item")})
                     if not script_links:
                         break
@@ -451,7 +458,7 @@ class MovieScripts(OWTextableBaseWidget):
         self.clearmyBasket.setDisabled(False)
         self.sendButton.settingsChanged()
 
-    # Remove movies function		
+    # Remove movies function
     def Remove(self):
         """Remove the selected songs in your selection """
         self.myBasket = [
@@ -484,7 +491,7 @@ class MovieScripts(OWTextableBaseWidget):
     # Create the final output with the script
     def sendData(self):
         """Send data from website springfieldspringfield"""
-		
+
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
@@ -498,27 +505,39 @@ class MovieScripts(OWTextableBaseWidget):
         self.clearCreatedInputs()
 
         annotations = list()
-        script_list = list()       
+        script_list = list()
         annotations_dict = dict()
         self.controlArea.setDisabled(True)
 
         # Initialize progress bar.
         progressBar = ProgressBar(self, iterations=len(self.myBasket))
 
+        # This part of code is what fetches the actual script
         try:
             for movie in self.myBasket:
+                # Each movie that is in the corpus is split into title and year (rsplit makes sure to only split last occurence) which will become annotations
                 b=copy.copy(movie)
-                annotations_dict["Movie Title"] = b
+                future_annotation=b.rsplit('(',1)
+                movie_title=future_annotation[0]
+                movie_year=future_annotation[-1]
+                movie_year=movie_year[:-1]
+                annotations_dict["Movie Title"] = movie_title
+                annotations_dict["Year of release"] = movie_year
+                # It is important to make a copy of dictionary, otherwise each iteration will replace every element of the annotations list
+                annotations.append(annotations_dict.copy())
+                # link_end and page_url are the two variables that will have to be changed in case scripts need to be taken from elsewhere
                 link_end = self.path_storage[movie]
                 page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + link_end
                 page = urllib.request.urlopen(page_url)
                 soup = BeautifulSoup(page, 'html.parser')
-				
+
                 # This is what grabs the movie script
                 script = soup.find("div", {"class":"movie_script"})
-				
+
                 script_list.append(script.text)
-                annotations.append(annotations_dict)
+
+
+
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -530,12 +549,12 @@ class MovieScripts(OWTextableBaseWidget):
             )
             self.controlArea.setDisabled(False)
             return
-			
+
         # Store downloaded script strings in input objects...
         for script in script_list:
             newInput = Input(script, self.captionTitle)
             self.createdInputs.append(newInput)
-			
+
        # If there's only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
@@ -547,7 +566,7 @@ class MovieScripts(OWTextableBaseWidget):
                 self.captionTitle,
                 import_labels_as=None,
             )
-			
+
         # Annotate segments...
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
@@ -555,9 +574,9 @@ class MovieScripts(OWTextableBaseWidget):
 
         # Clear progress bar.
         progressBar.finish()
-			
+
         self.controlArea.setDisabled(False)
-		
+
         # Set status to OK and report data size...
         message = "%i segment@p sent to output " % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
