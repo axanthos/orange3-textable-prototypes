@@ -126,6 +126,8 @@ The **Add Request** button allows users to add multiple posts and/or subreddits 
 
 The **Send** button is used to send data to output.
 
+When the widget gets closed and re-opened, the content of it is saved. To delete this saved content, the user has to reset the widget settings.
+
 
 Messages
 ---------
