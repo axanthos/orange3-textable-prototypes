@@ -117,3 +117,7 @@ orangecontrib/.DS_Store
 .DS_Store
 
 orangecontrib/textable_prototypes/widgets/MovieScripts.py
+
+orangecontrib/textable_prototypes/widgets/cache_movie_scripts
+
+orangecontrib/textable_prototypes/tutorials/.DS_Store
