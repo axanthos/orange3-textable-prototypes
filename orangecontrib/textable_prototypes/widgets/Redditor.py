@@ -1003,7 +1003,8 @@ class Redditor(OWTextableBaseWidget):
         """Free memory when widget is deleted (overriden method)"""
         self.clearCreatedInputs()
  
-# The following code lets you execute the code outside of Orange (to view the
+
+# The following code lets you execute the code (to view the
 # resulting interface)...
 if __name__ == "__main__":
     from PyQt4.QtGui import QApplication
@@ -1014,4 +1015,3 @@ if __name__ == "__main__":
     my_widget.raise_()
     my_app.exec_()
     my_widget.saveSettings()
-
