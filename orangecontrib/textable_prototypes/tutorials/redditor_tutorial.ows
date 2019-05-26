@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<scheme description="" title="" version="2.0">
+<scheme description="" title="Importing data from Reddit" version="2.0">
 	<nodes>
 		<node id="0" name="Redditor" position="(313.0, 298.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.Redditor.Redditor" title="Redditor" version="" />
 		<node id="1" name="Display" position="(492.0, 298.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />

@@ -154,6 +154,12 @@ class Redditor(OWTextableBaseWidget):
             addSpace=False,
         )
 
+        self.requestsBox = gui.widgetBox(
+            widget=self.controlArea,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
         panierBox = gui.widgetBox(
             widget=self.controlArea,
             orientation='vertical',
@@ -186,7 +192,7 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             sendSelectedValue=True,
             items=["Subreddit", "URL", "Full text"],
-            labelWidth=120,
+            labelWidth=135,
         )
 
         self.modeBox = gui.widgetBox(
@@ -208,7 +214,7 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             callback=self.sendButton.settingsChanged,
             label=u'Search with URL:',
-            labelWidth=120,
+            labelWidth=135,
         )
 
         self.subredditBox = gui.widgetBox(
@@ -224,7 +230,7 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             callback=self.sendButton.settingsChanged,
             label=u'reddit.com/r/...:',
-            labelWidth=120,
+            labelWidth=135,
         
         )
         self.fullTextBox = gui.widgetBox(
@@ -240,7 +246,7 @@ class Redditor(OWTextableBaseWidget):
             orientation='horizontal',
             callback=self.sendButton.settingsChanged,
             label=u'Search on reddit:',
-            labelWidth=120,
+            labelWidth=135,
         )
 
         #----------------------------#
@@ -263,7 +269,7 @@ class Redditor(OWTextableBaseWidget):
             sendSelectedValue=True,
             callback=self.checkSubredditSortMode,
             items=["Hot", "New", "Controversial", "Top", "Rising"],
-            labelWidth=120,
+            labelWidth=135,
         )
 
         self.fullTextFilter = gui.widgetBox(
@@ -282,7 +288,7 @@ class Redditor(OWTextableBaseWidget):
             sendSelectedValue=True,
             callback=self.checkSearchSortMode,
             items=["Relevance", "Top", "New", "Comments"],
-            labelWidth=120,
+            labelWidth=135,
         )
 
         self.timeBox = gui.widgetBox(
@@ -301,7 +307,7 @@ class Redditor(OWTextableBaseWidget):
             callback=self.sendButton.settingsChanged,
             sendSelectedValue=True,
             items=["All", "Past day", "Past hour", "Past month", "Past year"],
-            labelWidth=120,
+            labelWidth=135,
         )
 
         gui.spin(
@@ -310,16 +316,16 @@ class Redditor(OWTextableBaseWidget):
             value="amount",
             minv=1,
             maxv=10000,
-            label="Number of posts:",
-            labelWidth=120,
+            label="Max amount of posts:",
+            labelWidth=135,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
             tooltip="Select the amount of posts that you want",
         )
 
-        #-------------------------#
-        #   Include box elements  #
-        #-------------------------#
+        #--------------------------#
+        #   Include box elements   #
+        #--------------------------#
 
         self.includeBox = gui.widgetBox(
             widget=self.includeOuterBox,
@@ -343,11 +349,9 @@ class Redditor(OWTextableBaseWidget):
             callback=self.mode_changed,
         )
 
-        self.requestsBox = gui.widgetBox(
-            widget=self.includeOuterBox,
-            orientation='horizontal',
-            addSpace=False,
-        )
+        #--------------------------#
+        #   Request box elements   #
+        #--------------------------#
 
         self.refreshButton = gui.button(
             widget=self.requestsBox,
@@ -409,6 +413,9 @@ class Redditor(OWTextableBaseWidget):
             callback=self.clearPressed,
             tooltip="Remove all corpora from selection.",
         )
+
+        if len(self.labelsPanier) == 0:
+            self.clearButton.setDisabled(True)
 
         #------------------------#
         #   End of definitions   #
@@ -485,6 +492,10 @@ class Redditor(OWTextableBaseWidget):
 
         """
         self.controlArea.setDisabled(True)
+        self.infoBox.setText(
+            "Processing query, please wait.",
+            "warning"
+        )
 
         # Check if anything was put in the input
         if ((m == "Subreddit" and len(sI) > 0) or
@@ -616,6 +627,7 @@ class Redditor(OWTextableBaseWidget):
                 )
                 # Empty temporary lists and signal a change in the settings
                 self.refreshButton.setDisabled(False)
+                self.clearButton.setDisabled(False)
                 self.listeTempPosts = list()
                 self.listeTempAnnot = list()
                 self.sendButton.settingsChanged()
@@ -718,6 +730,11 @@ class Redditor(OWTextableBaseWidget):
 
     def create_content_segment(self, post, includeImage = False):
         """ Creation of segments for posts"""
+        progressBar = ProgressBar(self, iterations=1)
+        self.infoBox.setText(
+            "Processing post content, please wait.",
+            "warning"
+        )
         # Create annotations
         annotations = dict()
         annotations["Title"] = post.title
@@ -742,8 +759,10 @@ class Redditor(OWTextableBaseWidget):
         if not (includeImage == False and content == "[image]"):
             # Create a segment is the user wishes to have a segment
             # When there is only an image
+            progressBar.advance()
             self.listeTempPosts.append(content)
             self.listeTempAnnot.append(annotations)
+            progressBar.finish()
         
         return
 
@@ -752,6 +771,12 @@ class Redditor(OWTextableBaseWidget):
         # Get the totality of the comments under a post
         post.comments.replace_more(limit=None)
         comments = post.comments.list()
+
+        progressBar = ProgressBar(self, iterations=len(comments))
+        self.infoBox.setText(
+            "Processing comments, this can take a while, please wait.",
+            "warning"
+        )
 
         # Creation of a segment for each comment
         for comment in comments:
@@ -775,6 +800,8 @@ class Redditor(OWTextableBaseWidget):
 
             self.listeTempPosts.append(comment.body)
             self.listeTempAnnot.append(annotations)
+            progressBar.advance()
+        progressBar.finish()
         return
     
     def checkSubredditSortMode(self):
@@ -824,6 +851,7 @@ class Redditor(OWTextableBaseWidget):
         self.annotList = list()
         self.sendButton.settingsChanged()
         self.refreshButton.setDisabled(True)
+        self.clearButton.setDisabled(True)
     
     def add_to_list(self, m, pA, sI, uI, ftI, sTF, ftTF, iI, iC, a):
         """Add a label to the basket created with the fonction information from get_content
@@ -974,9 +1002,6 @@ class Redditor(OWTextableBaseWidget):
     def onDeleteWidget(self):
         """Free memory when widget is deleted (overriden method)"""
         self.clearCreatedInputs()
-
-
-
  
 # The following code lets you execute the code outside of Orange (to view the
 # resulting interface)...
