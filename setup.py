@@ -94,6 +94,8 @@ INSTALL_REQUIRES = (
     'Orange3-Textable >= 3.1.0b3',
     'gensim',
     'lxa5crab',
+    'bs4',
+    'requests',
 ),
 
 EXTRAS_REQUIRE = {

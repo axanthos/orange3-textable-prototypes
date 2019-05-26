@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="A workflow illustrating the use of the CHILDES widget to import acquisition corpora into Orange." title="CHILDES widget tutorial" version="2.0">
+	<nodes>
+		<node id="0" name="CHILDES" position="(147.0, 279.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.Childes.Childes" title="CHILDES" version="" />
+		<node id="1" name="Length" position="(297.0, 279.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableLength.OWTextableLength" title="mean number of words per utterance" version="" />
+		<node id="2" name="Data Table" position="(597.0, 279.0)" project_name="Orange3" qualified_name="Orange.widgets.data.owtable.OWDataTable" title="Data Table" version="" />
+		<node id="3" name="Convert" position="(447.0, 279.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableConvert.OWTextableConvert" title="Sort by age in months" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Files" source_node_id="0" />
+		<link enabled="true" id="1" sink_channel="Segmentation" sink_node_id="1" source_channel="Utterances" source_node_id="0" />
+		<link enabled="true" id="2" sink_channel="Segmentation" sink_node_id="1" source_channel="Words" source_node_id="0" />
+		<link enabled="true" id="3" sink_channel="Textable table" sink_node_id="3" source_channel="Textable table" source_node_id="1" />
+		<link enabled="true" id="4" sink_channel="Data" sink_node_id="2" source_channel="Orange table" source_node_id="3" />
+	</links>
+	<annotations>
+		<arrow end="(147.00000000000003, 243.0)" fill="#C1272D" id="0" start="(146.0, 197.0)" />
+		<text font-family="Helvetica" font-size="16" id="1" rect="(111.0, 126.0, 150.0, 69.0)" type="text/plain">Import CHILDES corpora in XML format</text>
+		<arrow end="(215.00000000000003, 303.0)" fill="#C1272D" id="2" start="(214.0, 368.0)" />
+		<text font-family="Helvetica" font-size="16" id="3" rect="(160.0, 373.0, 150.0, 126.0)" type="text/plain">3 possible levels of segmentation of the data:
+- into files
+- into utterances
+- into words</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties format="literal" node_id="0">{'autoSend': False, 'controlAreaVisible': True, 'importedCorpora': ['https://childes.talkbank.org/data-xml/French/Geneva.zip'], 'includePOSTag': False, 'includePrefixes': False, 'outputUtterances': True, 'outputWords': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x02\x91\x00\x00\x01\x12\x00\x00\x03\xfe\x00\x00\x03\xbf\x00\x00\x02\x99\x00\x00\x011\x00\x00\x03\xf6\x00\x00\x03\xb7\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'uuid': 'b4fabdfa-fa45-4f2a-9d26-08886cfcd125', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties format="pickle" node_id="1">gAN9cQAoWAgAAABhdXRvU2VuZHEBiFgOAAAAY29tcHV0ZUF2ZXJhZ2VxAohYDAAAAGNvbXB1dGVT
+dGRldnEDiVgSAAAAY29udHJvbEFyZWFWaXNpYmxlcQSIWA0AAABtZXJnZUNvbnRleHRzcQWJWBMA
+AABzYXZlZFdpZGdldEdlb21ldHJ5cQZDMgHZ0MsAAgAAAAADOgAAAX8AAAS4AAADNwAAA0IAAAGe
+AAAEsAAAAy8AAAAAAAAAAAaQcQdYBAAAAHV1aWRxCFgkAAAAZTA0ZjI2ODgtYzBjZC00MDkyLWE1
+NzQtNTkwZmJlY2ZmMTI2cQlYCwAAAF9fdmVyc2lvbl9fcQpLAVgQAAAAY29udGV4dF9zZXR0aW5n
+c3ELXXEMKGNPcmFuZ2Uud2lkZ2V0cy5zZXR0aW5ncwpDb250ZXh0CnENKYFxDn1xDyhYBAAAAHRp
+bWVxEEdB1zmQDBZMTFgGAAAAdmFsdWVzcRF9cRIoWAkAAABfY29udGV4dHNxE0sAWBUAAABhdmVy
+YWdpbmdTZWdtZW50YXRpb25xFEsBWBQAAABjb250ZXh0QW5ub3RhdGlvbktleXEVWBMAAAB0YXJn
+ZXRfY2hpbGRfbW9udGhzcRZYBAAAAG1vZGVxF1gXAAAAQ29udGFpbmluZyBzZWdtZW50YXRpb25x
+GFgFAAAAdW5pdHNxGUsCWA0AAABzZWdtZW50YXRpb25zcRpdcRsoWA0AAABDSElMREVTX2ZpbGVz
+cRwoWAYAAABjb3JwdXNxHVgJAAAAZmlsZV9wYXRocR5YBAAAAGxhbmdxH1gDAAAAcGlkcSBYEAAA
+AHRhcmdldF9jaGlsZF9hZ2VxIVgRAAAAdGFyZ2V0X2NoaWxkX2RheXNxIlgPAAAAdGFyZ2V0X2No
+aWxkX2lkcSNYEwAAAHRhcmdldF9jaGlsZF9tb250aHNxJFgSAAAAdGFyZ2V0X2NoaWxkX3llYXJz
+cSV0cSZYJAAAAGI0ZmFiZGZhLWZhNDUtNGYyYS05ZDI2LTA4ODg2Y2ZjZDEyNXEnh3EoWBIAAABD
+SElMREVTX3V0dGVyYW5jZXNxKShoHWgeaB9oIGghaCJoI2gkaCVYAwAAAHVJRHEqWAMAAAB3aG9x
+K3RxLGgnh3EtWA0AAABDSElMREVTX3dvcmRzcS4oaB1oHlgIAAAAZm9ybVR5cGVxL2gfaCBYAwAA
+AHBvc3EwWAgAAABwcmVmaXhlc3ExWAQAAABzdGVtcTJYCAAAAHN1ZmZpeGVzcTNoIWgiaCNoJGgl
+WAQAAAB0eXBlcTRoKlgNAAAAdW50cmFuc2NyaWJlZHE1aCt0cTZoJ4dxN2VoCksBdVgHAAAAZW5j
+b2RlZHE4aAloG4ZxOXViaA0pgXE6fXE7KGgQR0HXOZAJx4aXaBF9cTwoaBNK/////2gUSwBoFVgG
+AAAAKG5vbmUpcT1oF1gKAAAATm8gY29udGV4dHE+aBlLAGgaXXE/aBwoaB1oHmgfaCBoIWgiaCNo
+JGgldHFAaCeHcUFhaApLAXVoOGgJaD+GcUJ1YmVYIQAAAF9UZXh0YWJsZVV0aWxzX3NldHRpbmdz
+X3ZlcnNpb25fX3FDSwBLDoZxRHUu
+</properties>
+		<properties format="pickle" node_id="2">gAN9cQAoWAsAAABhdXRvX2NvbW1pdHEBiFgOAAAAY29sb3JfYnlfY2xhc3NxAohYEgAAAGNvbnRy
+b2xBcmVhVmlzaWJsZXEDiFgOAAAAZGlzdF9jb2xvcl9SR0JxBChL3EvcS9xL/3RxBVgTAAAAc2F2
+ZWRXaWRnZXRHZW9tZXRyeXEGQzIB2dDLAAIAAAAAANkAAACoAAAFiAAAAsIAAADhAAAAxwAABYAA
+AAK6AAAAAAAAAAAGkHEHWAsAAABzZWxlY3Rfcm93c3EIiFgNAAAAc2VsZWN0ZWRfY29sc3EJXXEK
+WA0AAABzZWxlY3RlZF9yb3dzcQtdcQxYFQAAAHNob3dfYXR0cmlidXRlX2xhYmVsc3ENiFgSAAAA
+c2hvd19kaXN0cmlidXRpb25zcQ6JWAsAAABfX3ZlcnNpb25fX3EPSwFYEAAAAGNvbnRleHRfc2V0
+dGluZ3NxEF1xEWNPcmFuZ2Uud2lkZ2V0cy5zZXR0aW5ncwpDb250ZXh0CnESKYFxE31xFChYBAAA
+AHRpbWVxFUdB1zmQG7uUWlgGAAAAdmFsdWVzcRZ9cRdoD0sBc1gKAAAAYXR0cmlidXRlc3EYfXEZ
+KFgSAAAAX19sZW5ndGhfYXZlcmFnZV9fcRpLAlgQAAAAX19sZW5ndGhfY291bnRfX3EbSwJ1WAUA
+AABtZXRhc3EcfXEdWAsAAABfX2NvbnRleHRfX3EeSwNzdWJhdS4=
+</properties>
+		<properties format="literal" node_id="3">{'associationBias': 'none', 'autoSend': True, 'colDelimiter_idx': 0, 'controlAreaVisible': True, 'conversionType': 'association matrix', 'convert': False, 'displayAdvancedSettings': True, 'exportEncoding': 'utf8', 'includeOrangeHeaders': False, 'lastLocation': '.', 'normalize': False, 'normalizeMode': 'columns', 'normalizeType': 'l1', 'reformat': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03\xf5\x00\x00\x01D\x00\x00\x05\xed\x00\x00\x03\x83\x00\x00\x03\xfd\x00\x00\x01c\x00\x00\x05\xe5\x00\x00\x03{\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90', 'sortCols': False, 'sortColsReverse': False, 'sortRows': True, 'sortRowsReverse': False, 'transpose': False, 'unweighted': False, 'uuid': 'da0ad4b9-9f1f-44cc-bbb4-6f4b77f898f2', '__version__': 1, '_TextableUtils_settings_version__': (0, 19)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

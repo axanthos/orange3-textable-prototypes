@@ -346,9 +346,8 @@ class Childes(OWTextableBaseWidget):
        
         # Clear created Inputs and initialize progress bar...
         self.clearCreatedInputs()
-        numberOfSteps = 1
-        numberOfSteps += 1 if self.outputUtterances else 0
-        numberOfSteps += 3 if self.outputWords else 0        
+        numberOfSteps = 2 if self.outputUtterances else 1
+        numberOfSteps += 2 if self.outputWords else 0        
         self.infoBox.setText(
             "(1/%i) Retrieving data, please wait..." % numberOfSteps, 
             "warning",
@@ -414,10 +413,30 @@ class Childes(OWTextableBaseWidget):
             
             # Create Input for each zipped file and store annotations...
             for file in myZip.infolist():
-                newInput = Input(
-                    myZip.read(file).decode('utf-8'), 
-                    self.captionTitle + "_files"
-                )
+                file_content = myZip.read(file).decode('utf-8')
+
+                # If word segmentation is requested...
+                if self.outputWords:
+                    # Implement replacements.
+                    file_content = re.sub(
+                        r"<w.+?(<replacement.+</replacement>).*?</w>", 
+                        r"\1",
+                        file_content,
+                    )
+                    # Prepend pre-clitics.
+                    file_content, n = re.subn(
+                        r"(<mor .+?)(<mor-pre>.+</mor-pre>)", 
+                        r"\2\1",
+                        file_content,
+                    )
+                    # Move <gra> into <mw>.
+                    file_content, n = re.subn(
+                        r"(</mw>)(<gra.+?/>)", 
+                        r"\2\1",
+                        file_content,
+                    )
+                    
+                newInput = Input(file_content, self.captionTitle + "_files")
                 self.createdInputs.append(newInput)
                 chatSeg = Segmenter.import_xml(newInput, "CHAT")
                 annotations.append(dict())
@@ -529,37 +548,21 @@ class Childes(OWTextableBaseWidget):
                     % (2 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
+            try:
+                baseSegmentation = self.utteranceSegmentation
+            except:
+                baseSegmentation = self.fileSegmentation            
             progressBar = ProgressBar(
                 self, 
-                iterations=2*len(self.fileSegmentation)
+                iterations=2*len(baseSegmentation)
             )
             wordSegmentation = Segmenter.import_xml(
-                self.fileSegmentation,
-                "w",
-                progress_callback=progressBar.advance,
-            )
-            replSegmentation = Segmenter.import_xml(
-                self.fileSegmentation,
-                "replacement",
-                progress_callback=progressBar.advance,
-            )
-            self.infoBox.setText(
-                "(%i/%i) Handling word replacements, please wait..."    \
-                    % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
-                "warning",
-            )     
-            progressBar.finish()
-            progressBar = ProgressBar(
-                self, 
-                iterations=len(self.fileSegmentation) + len(replSegmentation)
-            )
-            replWordSegmentation = Segmenter.import_xml(
-                replSegmentation,
+                baseSegmentation,
                 "w",
                 progress_callback=progressBar.advance,
             )
             mwSegmentation = Segmenter.import_xml(
-                self.fileSegmentation,
+                baseSegmentation,
                 "mw",
                 progress_callback=progressBar.advance,
             )
@@ -567,7 +570,7 @@ class Childes(OWTextableBaseWidget):
             # Analyze words to extract annotations...
             self.infoBox.setText(
                 "(%i/%i) Extracting word annotations, please wait..."    \
-                    % (4 + (1 if self.outputUtterances else 0), numberOfSteps), 
+                    % (3 + (1 if self.outputUtterances else 0), numberOfSteps), 
                 "warning",
             )     
             progressBar.finish()
@@ -577,21 +580,18 @@ class Childes(OWTextableBaseWidget):
             )
             wordSegments = list()
             for word in wordSegmentation:
-                replacements = word.get_contained_segments(replWordSegmentation)
-                wordsOrReplacements = replacements if replacements else [word]
-                for wordOrRepl in wordsOrReplacements:
-                    mws = wordOrRepl.get_contained_segments(
-                        mwSegmentation
-                    )
-                    if mws:
-                        for mw in mws:
-                            wordSegment = wordOrRepl.deepcopy()
-                            wordSegment.annotations.update(
-                                self.extractWordAnnotations(mw)
-                            )
-                            wordSegments.append(wordSegment) 
-                    else:
-                        wordSegments.append(wordOrRepl)
+                mws = word.get_contained_segments(
+                    mwSegmentation
+                )
+                if mws:
+                    for mw in mws:
+                        wordSegment = word.deepcopy()
+                        wordSegment.annotations.update(
+                            self.extractWordAnnotations(mw)
+                        )
+                        wordSegments.append(wordSegment) 
+                else:
+                    wordSegments.append(word)
                 progressBar.advance()
                                                     
             self.wordSegmentation = Segmentation(
@@ -644,6 +644,9 @@ class Childes(OWTextableBaseWidget):
                     suffixes.append("-" + child.text)
                 elif child.attrib["type"] == "mc":
                     suffixes.append(":" + child.text)
+            elif child.tag == "gra":
+                for key in ["index", "head", "relation"]:
+                    annotations[key] = child.attrib[key]
         annotations["pos"] = ":".join(pos_items)
         if prefixes:
             annotations["prefixes"] = "#".join(prefixes)               
@@ -753,7 +756,7 @@ class Childes(OWTextableBaseWidget):
                 dialog.Yes | dialog.No
             )
         self.infoBox.setText(
-            "Scraping CHILDES website, please wait...", 
+            "Connecting to CHILDES website, please wait...", 
             "warning",
         )     
         progressBar = ProgressBar(self, iterations=1)
@@ -886,7 +889,7 @@ class Childes(OWTextableBaseWidget):
     def updateBrowseBoxButtons(self):
         """Refresh state of Browse box buttons"""
         currentFolder = self.currentFolder[len(self.__class__.baseUrl)-1:]
-        if currentFolder == "/": # TODO change tooltip
+        if currentFolder == "/": 
             self.homeRefreshButton.setText("Refresh")
             self.homeRefreshButton.setToolTip(
                 "Connect to CHILDES website and refresh corpus list."
