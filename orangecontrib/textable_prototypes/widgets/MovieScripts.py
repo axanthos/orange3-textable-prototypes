@@ -387,8 +387,8 @@ class MovieScripts(OWTextableBaseWidget):
 
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
-        # php_query_string and http_query_string are the variable that will need to be changed
-        # if different database is used or if current database's structure undergoes changes
+        '''php_query_string and http_query_string are the variable that will need to be changed
+        if different database is used or if current database's structure undergoes changes'''
         php_query_string = '/movie_script.php?movie='
         http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
         alphabet = ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -465,8 +465,9 @@ class MovieScripts(OWTextableBaseWidget):
         self.clearmyBasket.setDisabled(True)
         self.sendButton.settingsChanged()
 
-    # Update selections function
+
     def updateMytitleLabels(self):
+        """Update selections function"""
         self.mytitleLabels = list()
         for movie in self.myBasket:
             self.mytitleLabels.append(movie)
@@ -588,9 +589,10 @@ class MovieScripts(OWTextableBaseWidget):
         """Delete all Input objects that have been created."""
         del self.createdInputs[:]
 
-	# The following method needs to be copied verbatim in
-	# every Textable widget that sends a segmentation...
+
     def setCaption(self, title):
+        """The following method needs to be copied verbatim in
+        every Textable widget that sends a segmentation"""
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
             super().setCaption(title)
