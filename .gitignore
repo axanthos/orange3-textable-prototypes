@@ -115,9 +115,9 @@ release.bat
 orangecontrib/textable_prototypes/widgets/cached_title_list_ecp
 orangecontrib/.DS_Store
 .DS_Store
-
+orangecontrib/textable_prototypes/widgets/cached_childes_corpora/*
 orangecontrib/textable_prototypes/widgets/MovieScripts.py
-
 orangecontrib/textable_prototypes/widgets/cache_movie_scripts
-
 orangecontrib/textable_prototypes/tutorials/.DS_Store
+
+

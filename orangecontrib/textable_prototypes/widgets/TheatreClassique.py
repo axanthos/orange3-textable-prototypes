@@ -50,7 +50,7 @@ class TheatreClassique(OWTextableBaseWidget):
     """
 
     #----------------------------------------------------------------------
-    # Widget"s metadata...
+    # Widget's metadata...
 
     name = "Theatre Classique"
     description = "Import XML-TEI data from theatre-classique website"
@@ -269,11 +269,11 @@ class TheatreClassique(OWTextableBaseWidget):
             newInput = Input(xml_contents[xml_content_idx], self.captionTitle)
             self.createdInputs.append(newInput)
 
-        # If there"s only one play, the widget"s output is the created Input.
+        # If there's only one play, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
 
-        # Otherwise the widget"s output is a concatenation...
+        # Otherwise the widget's output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
@@ -314,7 +314,7 @@ class TheatreClassique(OWTextableBaseWidget):
     def getTitleSeg(self):
         """Get title segmentation, either saved locally or online"""
 
-        # Try to open saved file in this module"s directory...
+        # Try to open saved file in this module's directory...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
@@ -436,7 +436,7 @@ class TheatreClassique(OWTextableBaseWidget):
             merge_duplicates=True,
         )
 
-        # Try to save list in this module"s directory for future reference...
+        # Try to save list in this module's directory for future reference...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
