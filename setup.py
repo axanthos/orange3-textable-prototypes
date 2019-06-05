@@ -95,6 +95,7 @@ INSTALL_REQUIRES = (
     'gensim',
     'lxa5crab',
     'bs4',
+    'fuzzywuzzy',
     'requests',
 ),
 

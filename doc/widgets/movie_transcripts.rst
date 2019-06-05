@@ -1,9 +1,9 @@
-Movie Scripts
+Movie Transcripts
 =====
 
-.. image:: figures/Movie_Scripts.png
+.. image:: figures/Movie_Transcripts.png
 
-Make a corpus of movie scripts
+Make a corpus of movie transcripts
 
 Authors
 ----
@@ -18,29 +18,29 @@ Outputs:
 
 * ``Text data``
 
-    A segmentation with the scripts of the selected movies.
+    A segmentation with the transcripts of the selected movies.
 
 Description
 -----------
 
-This widget is designed to import one or more movie scripts in Orange Canvas.
-The scripts are retrieved from `<https://www.springfieldspringfield.co.uk/>`_. The output is a
+This widget is designed to import one or more movie transcripts in Orange Canvas.
+The transcripts are retrieved from `<https://www.springfieldspringfield.co.uk/>`_. The output is a
 segmentation containing a segment for each imported movie.
 
 Interface
 ~~~~~~~~~
 
-.. image:: figures/movie_scripts_search.png
+.. image:: figures/movie_transcripts_search.png
 
-Figure 1: **Movie Scripts** widget interface
+Figure 1: **Movie transcripts** widget interface
 
-The **Movie Scripts** widget simply lets the user make a search on the `SpringfieldSpringfield <https://www.springfieldspringfield.co.uk/>`_ website.
+The **Movie transcripts** widget simply lets the user make a search on the `SpringfieldSpringfield <https://www.springfieldspringfield.co.uk/>`_ website.
 
 The **Search** button searches the database for entries matching user's input.
 
-The **Refresh Database** button downloads the newest collection of all the movie titles available on the website and stores them in cache. 
+The **Refresh database** button downloads the newest collection of all the movie titles available on the website and stores them in cache. 
 
-The **Corpus** section is a container where the User's Scripts are stored. The User can add or remove scripts to and from their corpus or clear the corpus entirely.
+The **Corpus** section is a container where the user's transcripts are stored. The user can add or remove transcripts to and from their corpus or clear the corpus entirely.
 
 The **Send** button triggers the emission of a segmentation to the output connection(s). When selected, the Send automatically checkbox disables the button and the widget attempts to automatically emit a segmentation at every modification of its interface.
 

@@ -1,7 +1,28 @@
-__version__ = u"0.0.2"
+"""
+Class Childes
+Copyright 2019 University of Lausanne
+-----------------------------------------------------------------------------
+This file is part of the Orange3-Textable-Prototypes package.
+
+Orange3-Textable-Prototypes is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Orange3-Textable-Prototypes is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Orange-Textable-Prototypes. If not, see
+<http://www.gnu.org/licenses/>.
+"""
+
+__version__ = "0.0.2"
 __author__ = "David Fluhmann, Leonardo Cavaliere, Kirill Melnikov"
 __maintainer__ = "Aris Xanthos"
-__email__ = "david.fluhmann@unil.ch, leonardo.cavaliere@unil.ch, kirill.melnikov@unil.ch"
+__email__ = "aris.xanthos@unil.ch"
 
 import os
 import re
@@ -18,35 +39,31 @@ from urllib import request, parse
 from LTTL.Segmentation import Segmentation
 from Orange.widgets import Orange, widget, gui, settings
 from fuzzywuzzy import fuzz, process
-from AnyQt.QtWidgets import (
-    QWidget, QDialog, QVBoxLayout, QSizePolicy, QApplication, QStyle,
-    QShortcut, QSplitter, QSplitterHandle, QPushButton, QStatusBar,
-    QProgressBar, QAction, QFrame, QStyleOption, QWIDGETSIZE_MAX
-)
 from _textable.widgets.TextableUtils import ProgressBar
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton,
 )
 
-class MovieScripts(OWTextableBaseWidget):
-    """Textable widget for importing movie scripts from the website springfieldspringfield.co.uk
+class MovieTranscripts(OWTextableBaseWidget):
+    """Textable widget for importing movie scripts from the 
+    springfieldspringfield.co.uk website 
     (https://www.springfieldspringfield.co.uk)
     """
 
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Movie Scripts"
-    description = "Movie Scripts Importation"
-    icon = "icons/Movie_Scripts.png"
+    name = "Movie Transcripts"
+    description = "Import movie transcripts from www.springfieldspringfield.co.uk"
+    icon = "icons/Movie_Transcripts.png"
     priority = 11
 
     #----------------------------------------------------------------------
     # Channel definitions...
 
     inputs = []
-    outputs = [("Movie Scripts importation", Segmentation)]
+    outputs = [("Movie transcripts", Segmentation)]
 
     #----------------------------------------------------------------------
     # Layout parameters...
@@ -66,7 +83,7 @@ class MovieScripts(OWTextableBaseWidget):
 
     # Other class variables...
 
-    cacheFilename = "cache_movie_scripts"
+    cacheFilename = "cache_movie_transcripts"
 
     def __init__(self):
         """Widget creator."""
@@ -94,8 +111,6 @@ class MovieScripts(OWTextableBaseWidget):
         # stock all the movies titles and link parts
         self.title_to_href = dict()
 
-
-
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -107,17 +122,16 @@ class MovieScripts(OWTextableBaseWidget):
             infoBoxAttribute="infoBox",
             )
 
-
-    # User interface...
+        # User interface...
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
+            box="Search movie",
             orientation="vertical",
             )
 
         searchBox = gui.widgetBox(
             widget=queryBox,
-            box="Search movie",
             orientation="horizontal",
             )
 
@@ -141,14 +155,15 @@ class MovieScripts(OWTextableBaseWidget):
             callback=self.searchFunction,
             tooltip='Search for the movie',
             )
+        gui.separator(widget=queryBox, height=3)
 
         # Button that refresh all movie titles from the website
         self.refreshButton = gui.button(
             widget=queryBox,
             master=self,
-            label="Refresh Database",
+            label="Refresh database",
             callback=self.refreshTitles,
-            tooltip="Update SpringfieldSpringfield DataBase"
+            tooltip="Update SpringfieldSpringfield database"
             )
 
         # Box that displays search results
@@ -159,7 +174,7 @@ class MovieScripts(OWTextableBaseWidget):
             labels="titleLabels",      # setting (list)
             callback=lambda: self.selectButton.setDisabled(
                 self.selectedTitles == list()),
-            tooltip="Select the movie you want to get the script of",
+            tooltip="Select the movie transcript you want to import",
             )
         self.titleListbox.doubleClicked.connect(self.Add)
         self.titleListbox.setMinimumHeight(120)
@@ -192,7 +207,6 @@ class MovieScripts(OWTextableBaseWidget):
             tooltip="Clear results",
             )
         self.clearButton.setDisabled(True)
-        gui.separator(widget=queryBox, height=3)
 
         # Area where confirmed movies are moved and stocked
         mytitleBox = gui.widgetBox(
@@ -258,12 +272,10 @@ class MovieScripts(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
-
-
     def searchFunction(self):
         self.controlArea.setDisabled(True)
 
-        #Search from the springfieldspringfield.co.uk
+        # Search from the springfieldspringfield.co.uk
         query_string = self.newQuery
         testdict = self.title_to_href
 
@@ -277,8 +289,12 @@ class MovieScripts(OWTextableBaseWidget):
             # Initialize progress bar.
             progressBar = ProgressBar(self, iterations=1)
 
-            self.searchResults = process.extractBests(query_string, testdict,
-                                                      limit=100000, score_cutoff=80)
+            self.searchResults = process.extractBests(
+                query_string, 
+                testdict,
+                limit=100000,
+                score_cutoff=80
+            )
 
             progressBar.finish()
 
@@ -304,10 +320,11 @@ class MovieScripts(OWTextableBaseWidget):
                 self.infoBox.setText("No result please try again", 'warning')
 
         else:
-            self.infoBox.setText("Please, enter a query in a search bar", "warning")
+            self.infoBox.setText(
+                "Please, enter a query in a search bar", 
+                "warning"
+            )
             self.controlArea.setDisabled(False)
-
-
 
     def clearResults(self):
         """Clear the results list"""
@@ -319,7 +336,7 @@ class MovieScripts(OWTextableBaseWidget):
 
     def loadDatabaseCache(self):
         """Load the cached database"""
-        # Try to open saved file in this module"s directory...
+        # Try to open saved file in this module's directory...
 
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
@@ -333,7 +350,6 @@ class MovieScripts(OWTextableBaseWidget):
         except IOError:
             self.refreshTitles()
 
-
     def refreshTitles(self):
         """Refresh the database cache"""
 
@@ -342,12 +358,12 @@ class MovieScripts(OWTextableBaseWidget):
             )
         cachedFilename = self.__class__.cacheFilename
 
-
         dialog = AnyQt.QtGui.QMessageBox()
         response = dialog.question(
             self,
             "springfieldspringfield",
-            "Are you sure you want to refresh the Database?\nIt will take several minutes",
+            "Are you sure you want to refresh the database?\n"
+            + "It will take several minutes",
             dialog.Yes | dialog.No
         )
 
@@ -381,8 +397,10 @@ class MovieScripts(OWTextableBaseWidget):
                     )
             except requests.exceptions.ConnectionError:
                 self.infoBox.setText(
-                    "Error while attempting to scrape the SpringfieldSpringfield website.",
-                    "error",)
+                    "Error while attempting to scrape the "
+                    + "SpringfieldSpringfield website.",
+                    "error",
+                )
 
 
 	# Get all movie titles from www.springfieldspringfield.co.uk
@@ -390,9 +408,11 @@ class MovieScripts(OWTextableBaseWidget):
         '''php_query_string and http_query_string are the variable that will need to be changed
         if different database is used or if current database's structure undergoes changes'''
         php_query_string = '/movie_script.php?movie='
-        http_query_string = 'https://www.springfieldspringfield.co.uk/movie_scripts.php?order='
-        alphabet = ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                    'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        http_query_string = 'https://www.springfieldspringfield.co.uk/' +   \
+                            'movie_scripts.php?order='
+        alphabet = ['0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 
+                    'K', 'L', 'M', 'N', 'O', 'P', 'K', 'R', 'S', 'T', 'U', 
+                    'V', 'W', 'X', 'Y', 'Z']
 
         # Initialize progress bar.
         progressBar = ProgressBar(
@@ -407,20 +427,28 @@ class MovieScripts(OWTextableBaseWidget):
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
 
-                # This part of code is what gets all the movie titles from each page of the database
+                # This part of code is what gets all the movie titles from each
+                # page of the database
                 while True:
-                    page_url = http_query_string + '%s&page=%i' % (lettre, page_num)
+                    page_url = http_query_string + '%s&page=%i' % (
+                        lettre, 
+                        page_num,
+                    )
                     page = urllib.request.urlopen(page_url)
                     soup = BeautifulSoup(page, 'html.parser')
-                    # script_links is a variable that may need to be changed if another
-                    # database is used or current database undergoes change
+                    # script_links is a variable that may need to be changed if 
+                    # another database is used or current database undergoes 
+                    # change
                     script_links = soup.findAll('a', attrs={'class':
                         re.compile("^script-list-item")})
                     if not script_links:
                         break
                     links = dict()
-                    for link in soup.findAll('a', attrs={'class': re.compile("^script-list-item")}):
-                        links[link.text] = link.get('href')[len(php_query_string):]
+                    for link in soup.findAll(
+                        'a', attrs={'class': re.compile("^script-list-item")}
+                    ):
+                        links[link.text] =  \
+                            link.get('href')[len(php_query_string):]
                     self.title_to_href.update(links)
                     page_num += 1
 
@@ -480,7 +508,6 @@ class MovieScripts(OWTextableBaseWidget):
     # Create the final output with the script
     def sendData(self):
         """Send data from website springfieldspringfield"""
-
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
@@ -488,7 +515,8 @@ class MovieScripts(OWTextableBaseWidget):
                 "warning"
             )
             self.segmentation = None
-            self.send("Movie Scripts importation", self.segmentation, self)
+            self.send("Movie transcripts", self.segmentation, self)
+            return
 
         # Clear created Inputs.
         self.clearCreatedInputs()
@@ -505,7 +533,8 @@ class MovieScripts(OWTextableBaseWidget):
         try:
             for movie in self.myBasket:
                 # Each movie that is in the corpus is split into title and year
-                # (rsplit makes sure to only split last occurence) which will become annotations
+                # (rsplit makes sure to only split last occurence) which will 
+                # become annotations
                 b = copy.copy(movie)
                 future_annotation = b.rsplit('(', 1)
                 movie_title = future_annotation[0]
@@ -513,13 +542,14 @@ class MovieScripts(OWTextableBaseWidget):
                 movie_year = movie_year[:-1]
                 annotations_dict["Movie Title"] = movie_title
                 annotations_dict["Year of release"] = movie_year
-                # It is important to make a copy of dictionary, otherwise each iteration
-                # will replace every element of the annotations list
+                # It is important to make a copy of dictionary, otherwise each 
+                # iteration will replace every element of the annotations list
                 annotations.append(annotations_dict.copy())
-                # link_end and page_url are the two variables that will have to be changed
-                # in case scripts need to be taken from elsewhere
+                # link_end and page_url are the two variables that will have to
+                # be changed in case scripts need to be taken from elsewhere
                 link_end = self.path_storage[movie]
-                page_url = "https://www.springfieldspringfield.co.uk/movie_script.php?movie=" + link_end
+                page_url = "https://www.springfieldspringfield.co.uk/" +   \
+                    "movie_script.php?movie=" + link_end
                 page = urllib.request.urlopen(page_url)
                 soup = BeautifulSoup(page, 'html.parser')
 
@@ -527,9 +557,6 @@ class MovieScripts(OWTextableBaseWidget):
                 script = soup.find("div", {"class":"movie_script"})
 
                 script_list.append(script.text)
-
-
-
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -580,7 +607,7 @@ class MovieScripts(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Movie Scripts importation", self.segmentation, self)
+        self.send("Movie transcripts", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
@@ -605,9 +632,9 @@ class MovieScripts(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     myApplication = QApplication(sys.argv)
-    myWidget = MovieScripts()
+    myWidget = MovieTranscripts()
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
