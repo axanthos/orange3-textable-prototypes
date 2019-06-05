@@ -1,17 +1,17 @@
 Movie Transcripts
-=====
+=================
 
 .. image:: figures/Movie_Transcripts.png
 
 Make a corpus of movie transcripts
 
 Authors
-----
+-------
 Leonardo Cavaliere, David Flühmann, Kirill Melnikov
 
 
 Signals
-----
+-------
 Input: None
 
 Outputs:
