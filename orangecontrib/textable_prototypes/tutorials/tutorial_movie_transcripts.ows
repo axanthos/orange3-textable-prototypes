@@ -1,17 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
-<scheme description="Simply create a corpus of movies using the Movie Scipts widget and connect it to any widget that accepts text as input." title="Importing Movie Scripts" version="2.0">
+<scheme description="Simply create a corpus of movies using the Movie Transcripts widget and connect it to any widget that accepts text as input." title="Importing Movie Transcripts" version="2.0">
 	<nodes>
-		<node id="0" name="Movie Scripts" position="(225.0, 243.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.MovieScripts.MovieScripts" title="Movie Scripts" version="" />
+		<node id="0" name="Movie Transcripts" position="(225.0, 243.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.MovieTranscripts.MovieTranscripts" title="Movie Transcripts" version="" />
 		<node id="1" name="Display" position="(444.0, 254.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
 	</nodes>
 	<links>
-		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Movie Scripts importation" source_node_id="0" />
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Movie transcripts" source_node_id="0" />
 	</links>
 	<annotations>
 		<arrow end="(203.0, 314.0)" fill="#1F9CDF" id="0" start="(156.0, 396.0)" />
 		<text font-family="Helvetica" font-size="16" id="1" rect="(88.0, 416.0, 150.0, 88.0)" type="text/plain">Search for movies, add them to your corpus and click "Send"</text>
 		<arrow end="(448.0000000000001, 308.0)" fill="#39B54A" id="2" start="(463.0000000000001, 393.0)" />
-		<text font-family="Helvetica" font-size="16" id="3" rect="(414.0, 415.0, 150.0, 69.0)" type="text/plain">View the scripts of the movies you selected</text>
+		<text font-family="Helvetica" font-size="16" id="3" rect="(414.0, 415.0, 150.0, 69.0)" type="text/plain">View the transcripts of the movies you selected</text>
 	</annotations>
 	<thumbnail />
 	<node_properties>

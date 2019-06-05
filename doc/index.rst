@@ -32,9 +32,11 @@ Widgets
     :maxdepth: 1
 
     Lyrics Genius <widgets/lyrics_genius>
-    CHILDES <widgets/CHILDES>
+    Movie Transcripts <widgets/movie_transcripts>
     Theatre Classique <widgets/theatre_classique>
     18th Century Poetry <widgets/18th_century_poetry>
+    Redditor <widgets/redditor>
+    CHILDES <widgets/CHILDES>
     Topic Models <widgets/topic_models>
     Linguistica <widgets/linguistica>
     Lexical Hunter <widgets/lexical_hunter>

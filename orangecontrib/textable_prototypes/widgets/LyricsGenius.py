@@ -1,6 +1,6 @@
 """
 Class LyricsGenius
-Copyright 2018 University of Lausanne
+Copyright 2018-2019 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,11 +19,10 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
 __maintainer__ = "Aris Xanthos"
-__email__ = "cyrille.gay-crosier@unil.ch, rafael.brunibaschino@unil.ch," \
-            "basile.maillard@unil.ch, aris.xanthos@unil.ch"
+__email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
 
@@ -535,7 +534,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     myApplication = QApplication(sys.argv)
     myWidget = LyricsGenius()
     myWidget.show()

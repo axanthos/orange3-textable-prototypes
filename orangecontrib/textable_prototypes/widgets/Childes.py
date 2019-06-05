@@ -63,7 +63,7 @@ class Childes(OWTextableBaseWidget):
     name = "CHILDES"
     description = "Import XML data from the CHILDES database"
     icon = "icons/CHILDES.svg"
-    priority = 12
+    priority = 15
 
     #----------------------------------------------------------------------
     # Channel definitions (NB: no input in this case)...
@@ -944,7 +944,7 @@ class Childes(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     myApplication = QApplication(sys.argv)
     myWidget = Childes()
     myWidget.show()

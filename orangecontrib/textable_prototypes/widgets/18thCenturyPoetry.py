@@ -1,6 +1,6 @@
 """
 Class ECP
-Copyright 2017 University of Lausanne
+Copyright 2017-2019 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Frank Dattai Pham & Adriano Matos Barbosa"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -55,7 +55,7 @@ class ECP(OWTextableBaseWidget):
     name = "18th Century Poetry"
     description = "Import XML-TEI data from ECP website"
     icon = "icons/18th_century_poetry.svg"
-    priority = 11 
+    priority = 13 
 
     #----------------------------------------------------------------------
     # Channel definitions (NB: no input in this case)...
@@ -599,7 +599,7 @@ class ECP(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     myApplication = QApplication(sys.argv)
     myWidget = ECP()
     myWidget.show()

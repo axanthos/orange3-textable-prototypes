@@ -1,6 +1,6 @@
 """
 Class Linguistica
-Copyright 2018 University of Lausanne
+Copyright 2018-2019 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.5"
+__version__ = u"0.0.6"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -582,7 +582,7 @@ class Linguistica(OWTextableBaseWidget):
             
 if __name__ == "__main__":
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     myApplication = QApplication(sys.argv)
     myWidget = Linguistica()
     myWidget.show()

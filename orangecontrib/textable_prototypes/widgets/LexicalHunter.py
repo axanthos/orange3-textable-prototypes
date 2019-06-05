@@ -1,6 +1,6 @@
 """
 Class LexicalHunter
-Copyright 2018 University of Lausanne
+Copyright 2018-2019 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -35,9 +35,9 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton
 )
 
-from PyQt4.QtGui import QPlainTextEdit, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QPlainTextEdit, QFileDialog, QMessageBox
 
-import PyQt4.QtCore as QtCore
+import PyQt5.QtCore as QtCore
 
 import os
 import codecs
@@ -874,7 +874,7 @@ class WidgetEditList(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     myApplication = QApplication(sys.argv)
     myWidget = LexicalHunter()
     myWidget.show()

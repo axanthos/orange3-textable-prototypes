@@ -19,10 +19,10 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Nahuel Degonda, Olivia Edelman, Loris Rimaz"
-__maintainer__ = "Nahuel Degonda, Olivia Edelman, Loris Rimaz"
-__email__ = "nahuel.degonda@unil.ch, olivia.edelman@unil.ch, loris.rimaz@unil.ch"
+__maintainer__ = "Aris Xanthos"
+__email__ = "aris.xanthos@unil.ch"
 
 # Standard imports...
 import praw
@@ -54,7 +54,7 @@ class Redditor(OWTextableBaseWidget):
     name = "Redditor"
     description = "Scrap on Reddit"
     icon = "icons/Reddit-alien.png"
-    priority = 20
+    priority = 14
 
     #----------------------------------------------------------------------
     # Channel definitions...
@@ -992,6 +992,8 @@ class Redditor(OWTextableBaseWidget):
             )
             self.sendButton.resetSettingsChangedFlag()
             self.controlArea.setDisabled(False)
+            self.send("Segmentation", None)
+
     
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created"""
@@ -1007,7 +1009,7 @@ class Redditor(OWTextableBaseWidget):
 # The following code lets you execute the code (to view the
 # resulting interface)...
 if __name__ == "__main__":
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     import sys
     my_app = QApplication(list(sys.argv))
     my_widget = Redditor()

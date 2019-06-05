@@ -27,7 +27,7 @@ __email__ = "aris.xanthos@unil.ch"
 import os
 import re
 import copy
-import AnyQt
+import PyQt5
 import urllib
 import pickle
 import inspect
@@ -358,7 +358,7 @@ class MovieTranscripts(OWTextableBaseWidget):
             )
         cachedFilename = self.__class__.cacheFilename
 
-        dialog = AnyQt.QtGui.QMessageBox()
+        dialog = PyQt5.QtWidgets.QMessageBox()
         response = dialog.question(
             self,
             "springfieldspringfield",
