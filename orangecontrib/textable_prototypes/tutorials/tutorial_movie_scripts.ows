@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="Simply create a corpus of movies using the Movie Scipts widget and connect it to any widget that accepts text as input." title="Importing Movie Scripts" version="2.0">
+	<nodes>
+		<node id="0" name="Movie Scripts" position="(225.0, 243.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.MovieScripts.MovieScripts" title="Movie Scripts" version="" />
+		<node id="1" name="Display" position="(444.0, 254.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Movie Scripts importation" source_node_id="0" />
+	</links>
+	<annotations>
+		<arrow end="(203.0, 314.0)" fill="#1F9CDF" id="0" start="(156.0, 396.0)" />
+		<text font-family="Helvetica" font-size="16" id="1" rect="(88.0, 416.0, 150.0, 88.0)" type="text/plain">Search for movies, add them to your corpus and click "Send"</text>
+		<arrow end="(448.0000000000001, 308.0)" fill="#39B54A" id="2" start="(463.0000000000001, 393.0)" />
+		<text font-family="Helvetica" font-size="16" id="3" rect="(414.0, 415.0, 150.0, 69.0)" type="text/plain">View the scripts of the movies you selected</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties format="literal" node_id="0">{'autoSend': False, 'controlAreaVisible': True, 'myBasket': ['...And Justice for All (1979)'], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x04\xf1\x00\x00\x00\xd2\x00\x00\x05\xec\x00\x00\x03V\x00\x00\x04\xf5\x00\x00\x00\xe9\x00\x00\x05\xe8\x00\x00\x03R\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'uuid': '872c0f7b-1a07-4e7c-abca-7ddc5f78d8ec', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties format="literal" node_id="1">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03/\x00\x00\x01\r\x00\x00\x05\xa4\x00\x00\x02\xeb\x00\x00\x033\x00\x00\x01$\x00\x00\x05\xa0\x00\x00\x02\xe7\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'segmentDelimiter': '\\n', 'uuid': '7a599c17-e3ae-4069-b5f7-92b4b24b87d8', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
