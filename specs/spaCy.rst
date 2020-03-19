@@ -53,7 +53,7 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'appliquer les algori
 2.2 Fonctionnalités minimales
 =============================
 
-.. image:: images/spaCy_basic.png
+.. image:: images/spaCy_minimal.png
 
 * Permettre la sélection d'un modèle parmi un ensemble de modèles pré-installés.
 
