@@ -51,11 +51,9 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 
 * Orange Textable 3.1.5
 
-* `pdfminer.six 20200124
-<https://pypi.org/project/pdfminer.six/>`_
+* `pdfminer.six 20200124 <https://pypi.org/project/pdfminer.six/>`_
 
-* `pytesseract 0.3.3
-<https://pypi.org/project/pytesseract/>`_
+* `pytesseract 0.3.3 <https://pypi.org/project/pytesseract/>`_
 
 2.2 Fonctionnalités minimales
 =============================
