@@ -53,7 +53,9 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 
 * `pdfminer.six 20200124 <https://pypi.org/project/pdfminer.six/>`_
 
-* `pytesseract 0.3.3 <https://pypi.org/project/pytesseract/>`_
+* `pytesseract 0.3.3 <https://pypi.org/project/pytesseract/>`_ + * `tesseract-ocr <https://github.com/tesseract-ocr/tesseract>`_
+
+* `Wand <https://pypi.org/project/Wand/>`_ + `ImageMagick <https://imagemagick.org/index.php>`_
 
 2.2 Fonctionnalités minimales
 =============================
@@ -64,12 +66,12 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 ===============================
 
 * Permettre l'import de tous fichiers PDF ou images.
-* Effectuer une reconnaissance optique des caractères
+* Effectuer une reconnaissance optique des caractères d'une image ou d'un PDF après sa conversion en image.
 
 2.4 Fonctionnalités optionnelles
 ================================
 
-* Permettre l'import de .doc, .docx ou .odt
+* Permettre l'import de .doc, .docx, .odt ou .rtf
 
 2.5 Tests
 =========
