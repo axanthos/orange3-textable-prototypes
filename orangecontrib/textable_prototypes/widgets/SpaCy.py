@@ -31,7 +31,7 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout
 
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
+from LTTL.Segment import Segment
 import LTTL.Segmenter
 
 from _textable.widgets.TextableUtils import (
@@ -42,6 +42,13 @@ from _textable.widgets.TextableUtils import (
 import spacy
 
 # Global variables...
+RELEVANT_KEYS = [
+   'dep_', 'ent_iob_', 'ent_type_', 'head', 'is_alpha', 'is_bracket', 
+   'is_digit', 'is_left_punct', 'is_lower', 'is_oov', 'is_punct', 'is_quote', 
+   'is_right_punct', 'is_sent_start', 'is_space', 'is_stop', 'is_title', 
+   'is_upper', 'lang_', 'lemma_', 'like_email', 'like_num', 'like_url', 
+   'lower_', 'norm_', 'pos_', 'sentiment', 'shape_', 'tag_', 'whitespace_',
+]
 AVAILABLE_MODELS = [
     "en_core_web_sm",
     "fr_core_news_sm",
@@ -191,26 +198,50 @@ class SpaCy(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=len(self.inputSeg))       
         
-        # Basic NLP analysis for dev purposes...
-        analyzedSegments = list()
+        tokenizedSegments = list()
+
+        # Process each input segment...
         for segment in self.inputSeg:
-            analyzedString = ""
-            doc = self.nlp(segment.get_content())
+        
+            # Input segment attributes...
+            inputContent = segment.get_content()
+            inputAnnotations = segment.annotations
+            inputString = segment.str_index
+            inputStart = segment.start or 0
+            inputEnd = segment.end or len(inputContent)
+
+            # NLP analysis...
+            doc = self.nlp(inputContent)
+
+            # Process each token in input segment...
             for token in doc:
-                analyzedString += "%s\t%s\n" % (token.text, token.pos_)
-            analyzedSegments.append(Input(analyzedString))
+                tokenAnnotations = inputAnnotations.copy()
+                tokenAnnotations.update(
+                    {
+                        k: getattr(token, k) for k in RELEVANT_KEYS
+                        if getattr(token, k) is not None
+                    }
+                )
+                tokenStart = inputStart+token.idx
+                tokenizedSegments.append(
+                    Segment(
+                        str_index=inputString,
+                        start=tokenStart,
+                        end=tokenStart+len(token),
+                        annotations=tokenAnnotations,
+                    )
+                )
+
             progressBar.advance()
 
-        outputSeg = LTTL.Segmenter.concatenate(
-            analyzedSegments, 
-            import_labels_as=None,
-            label=self.captionTitle,
-        )
+        outputSeg = Segmentation(tokenizedSegments, self.captionTitle)
                  
         # Set status to OK and report data size...
         message = "%i segment@p sent to output." % len(outputSeg)
         message = pluralize(message, len(outputSeg))
         self.infoBox.setText(message)
+        
+        print(outputSeg.to_string())
         
         # Clear progress bar.
         progressBar.finish()
@@ -235,4 +266,5 @@ class SpaCy(OWTextableBaseWidget):
 
             
 if __name__ == "__main__":
+    from LTTL.Input import Input
     WidgetPreview(SpaCy).run(inputData=Input("a simple example"))
