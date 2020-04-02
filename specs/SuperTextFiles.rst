@@ -69,8 +69,10 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 
 2.4 Fonctionnalités optionnelles
 ================================
+.. image:: images/super_text_files_optional.png
 
 * Permettre l'import de .doc, .docx, .odt ou .rtf
+* Permettre d'importer des PDF protégés par mot de passe.
 
 2.5 Tests
 =========
