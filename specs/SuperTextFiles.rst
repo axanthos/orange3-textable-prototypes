@@ -25,7 +25,7 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 .. _loic.aubrays@unil.ch: mailto:loic.aubrays@unil.ch
 
     - specification
-    - code
+    - code : interface
     - documentation
     - tests
     - GitHub
@@ -35,11 +35,10 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 .. _fabio.torrescabral@unil.ch: mailto:fabio.torrescabral@unil.ch
 
     - specification
-    - interface
-    - code
+    - maquette
+    - code : scripts
     - documentation
     - tests
-
 
 2. Technique
 ************
@@ -53,9 +52,9 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 
 * `pdfminer.six 20200124 <https://pypi.org/project/pdfminer.six/>`_
 
-* `pytesseract 0.3.3 <https://pypi.org/project/pytesseract/>`_ + * `tesseract-ocr <https://github.com/tesseract-ocr/tesseract>`_
+* `Calamari OCR 1.0.5 <https://pypi.org/project/calamari-ocr/>`_
 
-* `Wand <https://pypi.org/project/Wand/>`_ + `ImageMagick <https://imagemagick.org/index.php>`_
+* `python-OpenCV` + `OpenCV <https://opencv.org/>`_
 
 2.2 Fonctionnalités minimales
 =============================
