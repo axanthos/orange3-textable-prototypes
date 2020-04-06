@@ -25,10 +25,12 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 
+import importlib.util
+
 from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout
+from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout, QMessageBox
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
@@ -51,17 +53,19 @@ RELEVANT_KEYS = [
 ]
 AVAILABLE_MODELS = [
     "en_core_web_sm",
+    "en_core_web_md",
+    "en_core_web_lg",
     "fr_core_news_sm",
 ]
-INSTALLED_MODELS = list()   # TODO: determine installed models automatically.
 
-# Temporary code to ensure that 2 models are downloaded for dev purposes...
+# Determine which language models are installed...
+INSTALLED_MODELS = list()
+DOWNLOADABLE_MODELS = list()
 for model in AVAILABLE_MODELS:
-    try:
-        spacy.load(model)
-    except OSError:
-        spacy.cli.download(model, "--user")
-INSTALLED_MODELS = AVAILABLE_MODELS
+    if importlib.util.find_spec(model.replace("-", ".")):
+        INSTALLED_MODELS.append(model)
+    else:
+        DOWNLOADABLE_MODELS.append(model)
 
 
 class SpaCy(OWTextableBaseWidget):
@@ -94,7 +98,10 @@ class SpaCy(OWTextableBaseWidget):
     )
     
     autoSend = settings.Setting(False)
-    model = settings.Setting("fr_core_news_sm")
+    if INSTALLED_MODELS:
+        model = settings.Setting(INSTALLED_MODELS[0])
+    else:
+        model = settings.Setting("")
     
     def __init__(self):
         """Widget creator."""
@@ -104,6 +111,8 @@ class SpaCy(OWTextableBaseWidget):
         # Other attributes...
         self.inputSeg = None
         self.nlp = None
+        self.selectedModels = list()
+        self.downloadableModelLabels = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -137,11 +146,13 @@ class SpaCy(OWTextableBaseWidget):
             value='model',
             label='Model: ',
             tooltip='Select the spaCy language model you want to use.',
-            items=INSTALLED_MODELS,
+            items=INSTALLED_MODELS[:],
             sendSelectedValue=True,
-            callback=self.modelChanged,
+            callback=self.modelComboboxChanged,
         )
         
+        gui.rubber(optionsBox)
+
         OptionsTabBox.addWidget(optionsBox)
         self.optionsTab.setLayout(OptionsTabBox)
 
@@ -150,7 +161,28 @@ class SpaCy(OWTextableBaseWidget):
 
         modelManagerBox = gui.widgetBox(widget=self.modelManagerTab)
         
-        # TODO: Model manager UI
+        # Model manager tab...
+        
+        self.downloadableModelsListbox = gui.listBox(
+            widget=modelManagerBox,
+            master=self,
+            value="selectedModels",
+            labels="downloadableModelLabels",
+            callback=self.downloadableModelsListboxChanged,
+            tooltip="Select language models then click Download.",
+        )
+        self.downloadableModelsListbox.setSelectionMode(3)
+        self.downloadableModelLabels = DOWNLOADABLE_MODELS[:]
+        self.downloadableModelLabels = self.downloadableModelLabels
+        
+        self.downloadButton = gui.button(
+            widget=modelManagerBox,
+            master=self,
+            label="Download",
+            callback=self.installModels,
+            tooltip="Download the selected language models.",
+        )
+        self.downloadButton.setDisabled(True)
         
         modelManagerTabBox.addWidget(modelManagerBox)
         self.modelManagerTab.setLayout(modelManagerTabBox)
@@ -165,21 +197,90 @@ class SpaCy(OWTextableBaseWidget):
         self.infoBox.setText("Widget needs input", "warning")
 
         # Load spaCy language model...
-        self.modelChanged()
-        
-        # Send data if autoSend.
-        self.sendButton.sendIf()
+        if self.model:
+            self.modelComboboxChanged()
+            # Send data if autoSend.
+            self.sendButton.sendIf()
+        else:
+            self.infoBox.setText(
+                "Please download a language model.",
+                "warning",
+            )
 
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSeg = newInput
-        self.infoBox.inputChanged()
-        self.sendButton.sendIf()
+        if self.model:
+            self.infoBox.inputChanged()
+            self.sendButton.sendIf()
+        else:
+            self.infoBox.setText(
+                "Please download a language model.",
+                "warning",
+            )
+            self.tabs.setCurrentIndex(1)
 
-    def modelChanged(self):
-        """Respond to model change in UI."""
+    def modelComboboxChanged(self):
+        """Respond to model change in UI (Options tab)."""
         self.nlp = spacy.load(self.model)
         self.sendButton.settingsChanged()        
+
+    def downloadableModelsListboxChanged(self):
+        """Respond to model change in UI (Model manager tab)."""
+        self.downloadButton.setDisabled(len(self.selectedModels) == 0)        
+
+    def installModels(self):
+        """Respond to Download and install button (Model manager tab)."""
+        global INSTALLED_MODELS
+        
+        # Ask for confirmation...
+        num_models = len(self.selectedModels)
+        message = "This will download %i language model@p, do you want to proceed?" \
+                    % num_models
+        buttonReply = QMessageBox.question(
+            self, 
+            "Textable", 
+            pluralize(message, num_models),
+            QMessageBox.Ok | QMessageBox.Cancel
+        )
+        if buttonReply == QMessageBox.Cancel:
+            return
+            
+        # Download models...
+        self.infoBox.setText(
+            u"Downloading, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=num_models)       
+        for model_idx in reversed(self.selectedModels):
+            model = self.downloadableModelLabels[model_idx]
+            spacy.cli.download(model, False, "--user")
+            INSTALLED_MODELS.append(model)
+            del self.downloadableModelLabels[model_idx]
+            progressBar.advance()
+            
+        # Update GUI...
+        self.downloadableModelLabels = self.downloadableModelLabels
+        self.selectedModels = list()
+        cached_selection = self.model
+        self.modelComboBox.clear()
+        for model in sorted(INSTALLED_MODELS):
+            self.modelComboBox.addItem(model)
+        if cached_selection:
+            self.model = cached_selection
+        else:
+            self.model = INSTALLED_MODELS[0]
+        self.modelComboboxChanged()
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
+        QMessageBox.information(
+            None,
+            "Textable",
+            "Downloaded %i language models." % num_models,
+            QMessageBox.Ok
+        )
+        self.sendButton.settingsChanged()
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
@@ -190,6 +291,14 @@ class SpaCy(OWTextableBaseWidget):
             self.send("Linguistically analyzed data", None, self)
             return
 
+        # Check that there's a model...
+        if not self.model:
+            self.infoBox.setText(
+                "Please download a language model first.",
+                "warning",
+            )
+            return
+            
         # Initialize progress bar.
         self.infoBox.setText(
             u"Processing, please wait...", 
@@ -219,7 +328,9 @@ class SpaCy(OWTextableBaseWidget):
                 tokenAnnotations.update(
                     {
                         k: getattr(token, k) for k in RELEVANT_KEYS
-                        if getattr(token, k) is not None
+                        if getattr(token, k) is not None 
+                        and getattr(token, k) is not ""
+                        
                     }
                 )
                 tokenStart = inputStart+token.idx
