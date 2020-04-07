@@ -65,7 +65,7 @@ Créer un widget pour Orange Textable (v3.24.1) permettant d’importer divers d
 2.3 Fonctionnalités principales
 ===============================
 
-.. image:: extractCSV_auto.png
+.. image:: images/extractCSV_auto.png
 
 
 * Accès au mode automatique (par défaut) qui convertit en segmentation sans intervention de l'utilisateur.
@@ -74,7 +74,7 @@ Créer un widget pour Orange Textable (v3.24.1) permettant d’importer divers d
 2.4 Fonctionnalités optionnelles
 ================================
 
-.. image:: extractCSV_manual.png
+.. image:: image/extractCSV_manual.png
 
 * Permettre le passage en mode manuel où l'utilisateur pourra personnaliser les headers:
 	
