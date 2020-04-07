@@ -59,7 +59,7 @@ Créer un widget pour Orange Textable (v3.24.1) permettant d’importer divers d
 =============================
 
 
-* Prendre en input un fichier tabulaire (traité avec Sniffer) et le convertir en segmentation Textable.
+* Prendre en input des données en format tabulaire, les traiter avec Sniffer et les convertir ensuite en segmentation Textable.
 
 
 2.3 Fonctionnalités principales
