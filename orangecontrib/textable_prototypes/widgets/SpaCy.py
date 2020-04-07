@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -73,8 +73,8 @@ AVAILABLE_MODELS = {
 # Determine which language models are installed...
 INSTALLED_MODELS = list()
 DOWNLOADABLE_MODELS = list()
-for model in AVAILABLE_MODELS:
-    if importlib.util.find_spec(model.replace("-", ".")):
+for model, package in AVAILABLE_MODELS.items():
+    if importlib.util.find_spec(package.replace("-", ".")):
         INSTALLED_MODELS.append(model)
     else:
         DOWNLOADABLE_MODELS.append(model)
@@ -174,6 +174,8 @@ class SpaCy(OWTextableBaseWidget):
         modelManagerBox = gui.widgetBox(widget=self.modelManagerTab)
         
         # Model manager tab...
+        
+        gui.label(modelManagerBox, self, label="Available models:")
         
         self.downloadableModelsListbox = gui.listBox(
             widget=modelManagerBox,
