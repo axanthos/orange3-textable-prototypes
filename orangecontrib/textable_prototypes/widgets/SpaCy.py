@@ -51,12 +51,24 @@ RELEVANT_KEYS = [
    'is_upper', 'lang_', 'lemma_', 'like_email', 'like_num', 'like_url', 
    'lower_', 'norm_', 'pos_', 'sentiment', 'shape_', 'tag_', 'whitespace_',
 ]
-AVAILABLE_MODELS = [
-    "en_core_web_sm",
-    "en_core_web_md",
-    "en_core_web_lg",
-    "fr_core_news_sm",
-]
+AVAILABLE_MODELS = {
+    "Dutch news (small)": "nl_core_news_sm",
+    "English web (small)": "en_core_web_sm",
+    "English web (medium)": "en_core_web_md",
+    "English web (large)": "en_core_web_lg",
+    "French news (small)": "fr_core_news_sm",
+    "French news (medium)": "fr_core_news_md",
+    "German news (small)": "de_core_news_sm",
+    "German news (medium)": "de_core_news_md",
+    "Greek news (small)": "el_core_news_sm",
+    "Greek news (medium)": "el_core_news_md",
+    "Italian news (small)": "it_core_news_sm",
+    "Lithuanian news (small)": "lt_core_news_sm",
+    "Norwegian news (small)": "nb_core_news_sm",
+    "Portuguese news (small)": "pt_core_news_sm",
+    "Spanish news (small)": "es_core_news_sm",
+    "Spanish news (medium)": "es_core_news_md",
+}
 
 # Determine which language models are installed...
 INSTALLED_MODELS = list()
@@ -179,7 +191,7 @@ class SpaCy(OWTextableBaseWidget):
             widget=modelManagerBox,
             master=self,
             label="Download",
-            callback=self.installModels,
+            callback=self.downloadModels,
             tooltip="Download the selected language models.",
         )
         self.downloadButton.setDisabled(True)
@@ -206,6 +218,7 @@ class SpaCy(OWTextableBaseWidget):
                 "Please download a language model.",
                 "warning",
             )
+            self.tabs.setCurrentIndex(1)
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -222,21 +235,23 @@ class SpaCy(OWTextableBaseWidget):
 
     def modelComboboxChanged(self):
         """Respond to model change in UI (Options tab)."""
-        self.nlp = spacy.load(self.model)
+        self.nlp = spacy.load(AVAILABLE_MODELS[self.model])
         self.sendButton.settingsChanged()        
 
     def downloadableModelsListboxChanged(self):
         """Respond to model change in UI (Model manager tab)."""
         self.downloadButton.setDisabled(len(self.selectedModels) == 0)        
 
-    def installModels(self):
-        """Respond to Download and install button (Model manager tab)."""
+    def downloadModels(self):
+        """Respond to Download button (Model manager tab)."""
         global INSTALLED_MODELS
-        
+
         # Ask for confirmation...
         num_models = len(self.selectedModels)
-        message = "This will download %i language model@p, do you want to proceed?" \
-                    % num_models
+        message = "Your are about to download %i language model@p. " +   \
+                  "This may take up to several minutes depending on your " +  \
+                  "internet connection. Do you want to proceed?"
+        message = message % num_models
         buttonReply = QMessageBox.question(
             self, 
             "Textable", 
@@ -255,7 +270,7 @@ class SpaCy(OWTextableBaseWidget):
         progressBar = ProgressBar(self, iterations=num_models)       
         for model_idx in reversed(self.selectedModels):
             model = self.downloadableModelLabels[model_idx]
-            spacy.cli.download(model, False, "--user")
+            spacy.cli.download(AVAILABLE_MODELS[model], False, "--user")
             INSTALLED_MODELS.append(model)
             del self.downloadableModelLabels[model_idx]
             progressBar.advance()
@@ -285,20 +300,21 @@ class SpaCy(OWTextableBaseWidget):
     def sendData(self):
         """Compute result of widget processing and send to output"""
 
-        # Check that there's an input...
-        if self.inputSeg is None:
-            self.infoBox.setText("Widget needs input", "warning")
-            self.send("Linguistically analyzed data", None, self)
-            return
-
         # Check that there's a model...
         if not self.model:
             self.infoBox.setText(
                 "Please download a language model first.",
                 "warning",
             )
+            self.tabs.setCurrentIndex(1)
             return
             
+        # Check that there's an input...
+        if self.inputSeg is None:
+            self.infoBox.setText("Widget needs input", "warning")
+            self.send("Linguistically analyzed data", None, self)
+            return
+
         # Initialize progress bar.
         self.infoBox.setText(
             u"Processing, please wait...", 
