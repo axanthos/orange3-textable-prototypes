@@ -97,6 +97,10 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # User interface will go here
         
+        # Now Info box and Send button must be drawn...
+        self.sendButton.draw()
+        self.infoBox.draw()
+        self.infoBox.setText("Widget needs input", "warning")
         
         # Send data if autoSend.
         self.sendButton.sendIf()
