@@ -24,8 +24,10 @@ __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
-
 import importlib.util
+import sys
+import os
+import subprocess
 
 from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -69,6 +71,8 @@ AVAILABLE_MODELS = {
     "Spanish news (small)": "es_core_news_sm",
     "Spanish news (medium)": "es_core_news_md",
 }
+MODEL_VERSION_NUM = "2.2.5"
+DOWNLOAD_URL = "https://github.com/explosion/spacy-models/releases/download/"
 
 # Determine which language models are installed...
 INSTALLED_MODELS = list()
@@ -237,7 +241,15 @@ class SpaCy(OWTextableBaseWidget):
 
     def modelComboboxChanged(self):
         """Respond to model change in UI (Options tab)."""
+        self.infoBox.setText(
+            u"Loading language model, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(AVAILABLE_MODELS[self.model])
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
         self.sendButton.settingsChanged()        
 
     def downloadableModelsListboxChanged(self):
@@ -264,40 +276,28 @@ class SpaCy(OWTextableBaseWidget):
             return
             
         # Download models...
-        self.infoBox.setText(
-            u"Downloading, please wait...", 
-            "warning",
-        )
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=num_models)       
         for model_idx in reversed(self.selectedModels):
             model = self.downloadableModelLabels[model_idx]
-            spacy.cli.download(AVAILABLE_MODELS[model], False, "--user")
-            INSTALLED_MODELS.append(model)
+            download_spacy_model(AVAILABLE_MODELS[model])
             del self.downloadableModelLabels[model_idx]
             progressBar.advance()
             
         # Update GUI...
         self.downloadableModelLabels = self.downloadableModelLabels
         self.selectedModels = list()
-        cached_selection = self.model
-        self.modelComboBox.clear()
-        for model in sorted(INSTALLED_MODELS):
-            self.modelComboBox.addItem(model)
-        if cached_selection:
-            self.model = cached_selection
-        else:
-            self.model = INSTALLED_MODELS[0]
-        self.modelComboboxChanged()
         progressBar.finish()
         self.controlArea.setDisabled(False)
+        message = "Downloaded %i language model@p, please restart " +   \
+                  "Orange for changes to take effect."
+        message = message % num_models
         QMessageBox.information(
             None,
             "Textable",
-            "Downloaded %i language models." % num_models,
+            pluralize(message, num_models),
             QMessageBox.Ok
         )
-        self.sendButton.settingsChanged()
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
@@ -392,6 +392,21 @@ class SpaCy(OWTextableBaseWidget):
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
+
+
+# This is really a hack: Orange is normally run with pythonw.exe, but spaCy's
+# functions for downloading a model only work with python.exe (somehow!), so
+# the following function is reimplemented here to use python.exe anyway.
+def download_spacy_model(model):
+    """Reimplemented (and simplified) from spacy.cli.download."""
+    global DOWNLOAD_URL
+    global MODEL_VERSION_NUM
+    dl_tpl = "{m}-{v}/{m}-{v}.tar.gz#egg={m}=={v}"
+    download_url = DOWNLOAD_URL + dl_tpl.format(m=model, v=MODEL_VERSION_NUM)
+    pip_args = ["--no-cache-dir", "--user"]
+    executable = sys.executable.replace("pythonw", "python") # <== hack!
+    cmd = [executable, "-m", "pip", "install"] + pip_args + [download_url]
+    subprocess.run(cmd, env=os.environ.copy())
 
             
 if __name__ == "__main__":
