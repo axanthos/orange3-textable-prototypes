@@ -122,7 +122,6 @@ class ExtractCSV(OWTextableBaseWidget):
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
-            self.send("CSV data", None, self)
             self.send("CSV Segmentation", None, self)
             return
 
@@ -175,7 +174,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
         
         # Send data to output...
-        self.send("CSV Segmentation", outputSeg, self)
+        self.send("CSV Segmentation", Segmentation(outputSeg), self)
         
         self.sendButton.resetSettingsChangedFlag()             
 
