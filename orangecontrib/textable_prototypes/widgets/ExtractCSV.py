@@ -1,5 +1,5 @@
 """
-Class SpaCy
+Class ExtractCSV
 Copyright 2020 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
@@ -39,11 +39,14 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
+import io
 import csv
 
+""" Global variables"""
+sniffer = csv.Sniffer()
 
 class ExtractCSV(OWTextableBaseWidget):
-    """Textable widget for NLP using spaCy."""
+    """Textable widget for to extract CSV usign the CSV module and Sniffer."""
 
     #----------------------------------------------------------------------
     # Widget's metadata...
@@ -56,8 +59,8 @@ class ExtractCSV(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Channel definitions...
 
-    inputs = [("Text data", Segmentation, "inputData")]
-    outputs = [("CSV Data", Segmentation)]
+    inputs = [("CSV Data", Segmentation, "inputData")]
+    outputs = [("CSV Segmentation", Segmentation)]
 
     #----------------------------------------------------------------------
     # Layout parameters...
@@ -81,6 +84,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # Other attributes...
         self.inputSeg = None
+        self.outputSeg = None
         self.dialect = None
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -104,7 +108,7 @@ class ExtractCSV(OWTextableBaseWidget):
         
         # Send data if autoSend.
         self.sendButton.sendIf()
-
+                
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSeg = newInput
@@ -114,11 +118,12 @@ class ExtractCSV(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
-
+        
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
             self.send("CSV data", None, self)
+            self.send("CSV Segmentation", None, self)
             return
 
         # Initialize progress bar.
@@ -127,10 +132,7 @@ class ExtractCSV(OWTextableBaseWidget):
             "warning",
         )
         self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=len(self.inputSeg))       
-        
-        tokenizedSegments = list()
-
+        progressBar = ProgressBar(self, iterations=len(self.inputSeg))
         # Process each input segment...
         for segment in self.inputSeg:
         
@@ -140,9 +142,27 @@ class ExtractCSV(OWTextableBaseWidget):
             inputString = segment.str_index
             inputStart = segment.start or 0
             inputEnd = segment.end or len(inputContent)
-
-
-
+            #Call data processing
+            csv_stream = io.StringIO(inputContent)
+            dialect = sniffer.sniff(csv_stream.readline())
+            csv_stream.seek(0)
+            my_reader = csv.reader(csv_stream, dialect)
+            outputSeg = list()
+            if sniffer.has_header(inputContent) == True:
+                attribute_list = next(my_reader)
+                self.displayData(self, attribute_list)
+                outputSeg.append(
+                                Segment(
+                                # placeholder
+                                str_index = 0
+                                )
+                            )
+            else:
+                outputSeg.append(Segment(
+                                # placeholder
+                                str_index = 0
+                                )
+                            )
             progressBar.advance()
 
                  
@@ -150,14 +170,12 @@ class ExtractCSV(OWTextableBaseWidget):
         message = "Did something"
         self.infoBox.setText(message)
         
-        print(outputSeg.to_string())
-        
         # Clear progress bar.
         progressBar.finish()
         self.controlArea.setDisabled(False)
         
         # Send data to output...
-        self.send("Linguistically analyzed data", outputSeg, self)
+        self.send("CSV Segmentation", outputSeg, self)
         
         self.sendButton.resetSettingsChangedFlag()             
 
@@ -176,4 +194,4 @@ class ExtractCSV(OWTextableBaseWidget):
             
 if __name__ == "__main__":
     from LTTL.Input import Input
-    WidgetPreview(SpaCy).run(inputData=Input("a simple example"))
+    WidgetPreview(ExtractCSV).run(inputData=Input("a simple example"))
