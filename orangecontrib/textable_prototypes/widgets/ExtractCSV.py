@@ -146,22 +146,29 @@ class ExtractCSV(OWTextableBaseWidget):
             dialect = sniffer.sniff(csv_stream.readline())
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
+
             outputSeg = list()
+            # Process each seg in inputContent
+            for seg in inputContent:
+            	segAnnotations = inputAnnotations.copy()
+            		
+
             if sniffer.has_header(inputContent) == True:
-                attribute_list = next(my_reader)
-                self.displayData(self, attribute_list)
-                outputSeg.append(
-                                Segment(
-                                # placeholder
-                                str_index = 0
+                csv_stream.seek(0)
+                dict_keys = next(my_reader)
+                for row in my_reader:
+                    for key in dict_keys:
+                        segAnnotations[key] = row[dict_keys.index(key)]
+                        content = segAnnotations[dict_keys[0]]
+                        outputSeg.append(
+                            Segment(
+                                str_index = 0,
+                                start = 0,
+                                end = len(content),
+                                annotations = segAnnotations
                                 )
                             )
-            else:
-                outputSeg.append(Segment(
-                                # placeholder
-                                str_index = 0
-                                )
-                            )
+
             progressBar.advance()
 
                  
