@@ -32,12 +32,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "0.15"   # file version
+__version__ = "0.16"   # file version
 
 NAME = 'Orange3-Textable-Prototypes'
 DOCUMENTATION_NAME = 'Textable Prototypes'
 
-VERSION = '0.15'  # package version
+VERSION = '0.16'  # package version
 
 DESCRIPTION = 'Additional widgets for the Textable add-on to Orange 3.'
 LONG_DESCRIPTION = open(
@@ -98,6 +98,8 @@ INSTALL_REQUIRES = (
     'fuzzywuzzy',
     'requests',
     'praw',
+    'spacy',
+    'en-core-web-sm'
 ),
 
 EXTRAS_REQUIRE = {
