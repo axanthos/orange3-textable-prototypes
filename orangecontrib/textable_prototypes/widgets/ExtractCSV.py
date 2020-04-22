@@ -53,7 +53,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
     name = "ExtractCSV"
     description = "Extract tabulated data as a Textable Segmentation"
-    icon = "icons/spacy.svg"
+    icon = "icons/extractcsv.png"
     priority = 21   # TODO
 
     #----------------------------------------------------------------------
