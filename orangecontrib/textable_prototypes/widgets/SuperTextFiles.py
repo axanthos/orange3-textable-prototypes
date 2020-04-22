@@ -41,7 +41,7 @@ from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
     addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
