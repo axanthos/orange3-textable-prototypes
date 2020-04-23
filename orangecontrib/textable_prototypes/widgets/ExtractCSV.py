@@ -132,6 +132,8 @@ class ExtractCSV(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=len(self.inputSeg))
+
+        csvSeg = list()
         # Process each input segment...
         for segment in self.inputSeg:
         
@@ -147,7 +149,7 @@ class ExtractCSV(OWTextableBaseWidget):
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
 
-            outputSeg = list()
+            
             # Process each seg in inputContent
             for seg in inputContent:
             	segAnnotations = inputAnnotations.copy()
@@ -160,7 +162,7 @@ class ExtractCSV(OWTextableBaseWidget):
                     for key in dict_keys:
                         segAnnotations[key] = row[dict_keys.index(key)]
                         content = segAnnotations[dict_keys[0]]
-                        outputSeg.append(
+                        csvSeg.append(
                             Segment(
                                 str_index = 0,
                                 start = 0,
@@ -173,6 +175,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
                  
         # Set status to OK and report data size...
+        outputSeg = Segmentation(csvSeg)
         message = "%i segment@p sent to output." % len(outputSeg)
         message = pluralize(message, len(outputSeg))
         self.infoBox.setText(message)
@@ -182,7 +185,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
         
         # Send data to output...
-        self.send("CSV Segmentation", Segmentation(outputSeg), self)
+        self.send("CSV Segmentation", outputSeg, self)
         
         self.sendButton.resetSettingsChangedFlag()             
 
