@@ -173,9 +173,10 @@ class ExtractCSV(OWTextableBaseWidget):
 
                  
         # Set status to OK and report data size...
-        message = "Did something"
+        message = "%i segment@p sent to output." % len(outputSeg)
+        message = pluralize(message, len(outputSeg))
         self.infoBox.setText(message)
-        
+
         # Clear progress bar.
         progressBar.finish()
         self.controlArea.setDisabled(False)
