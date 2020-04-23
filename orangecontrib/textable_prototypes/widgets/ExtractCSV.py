@@ -162,14 +162,14 @@ class ExtractCSV(OWTextableBaseWidget):
                     for key in dict_keys:
                         segAnnotations[key] = row[dict_keys.index(key)]
                         content = segAnnotations[dict_keys[0]]
-                        csvSeg.append(
-                            Segment(
-                                str_index = 0,
-                                start = 0,
-                                end = len(content),
-                                annotations = segAnnotations
-                                )
+                    csvSeg.append(
+                        Segment(
+                            str_index = 0,
+                            start = 0,
+                            end = len(content),
+                            annotations = segAnnotations
                             )
+                        )
 
             progressBar.advance()
 
