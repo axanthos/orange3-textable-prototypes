@@ -66,8 +66,13 @@ class ExtractCSV(OWTextableBaseWidget):
     # Layout parameters...
     
     want_main_area = False
-
+    
     #----------------------------------------------------------------------
+    # Query settings...
+
+    selected_mode = settings.Setting("automatic")
+    #----------------------------------------------------------------------
+    
     # Settings...
 
     settingsHandler = VersionedSettingsHandler(
@@ -99,15 +104,98 @@ class ExtractCSV(OWTextableBaseWidget):
             sendIfPreCallback=None,
         )
 
-        # User interface will go here
+         # User interface...
+
+        #-------------------------#
+        #    Main widget box      #
+        #-------------------------#
+        self.selectBox = gui.widgetBox(
+            widget=self.controlArea,
+            box = "Select",
+            orientation='vertical',
+            addSpace=False,
+        )
         
+        # changing mode combobox 
+        self.modeCombo = gui.comboBox(
+            widget=self.selectBox,
+            master=self, 
+            value='selected_mode',
+            sendSelectedValue=True,
+            items=['automatic', 'manual'],
+            orientation='horizontal',
+            label="Mode:",
+            callback=self.mode_changed,
+            tooltip= "Choose mode",   
+        )
+
+        #-------------------------#
+        #       Manual box        #
+        #-------------------------#
+        # manual box...
+        self.manualBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Click to select a header to modify",
+            orientation="vertical",
+        )
+
+        # List of all the headers (named with numbers if None)
+        self.headerListbox = gui.listBox(
+            widget=self.manualBox,
+            master=self,
+            value=None,
+            labels=None,
+            callback=None,
+            selectionMode=1, # can only choose one item
+            tooltip="List of all the headers you can rename and\
+                change which one is the content",
+        )
+
+        # set "rename" button (must be aside the list)
+        self.renameHeader = gui.button(
+            widget=self.manualBox,
+            master=self,
+            label="rename",
+            callback=None,
+        )
+
+        # set "use as content" button (must be aside the list)
+        self.iscontentHeader = gui.button(
+            widget=self.manualBox,
+            master=self,
+            label="use as content",
+            callback=None,
+        )
+
+        gui.rubber(self.controlArea)
+
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
+
+        self.mode_changed()
+
         self.infoBox.setText("Widget needs input", "warning")
-        
+
         # Send data if autoSend.
         self.sendButton.sendIf()
+
+        # adjust size
+        # self.adjustSizeWithTimer()
+        # QTimer.singleShot(0, self.sendButton.sendIf)
+    
+    def mode_changed(self):
+        self.sendButton.settingsChanged()
+        """Allows to update the interface depending on query mode"""
+        if self.selected_mode == "automatic": # automatic selected
+            # Hide manual options
+            self.manualBox.setVisible(False)
+
+        elif self.selected_mode == "manual": # manual selected
+            # Show manual options
+            self.manualBox.setVisible(True)
+
+        return
                 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -140,7 +228,7 @@ class ExtractCSV(OWTextableBaseWidget):
             # Input segment attributes...
             inputContent = segment.get_content()
             inputAnnotations = segment.annotations
-            inputString = segment.str_index
+            inputStrIdx = segment.str_index
             inputStart = segment.start or 0
             inputEnd = segment.end or len(inputContent)
             #Call data processing
@@ -148,26 +236,41 @@ class ExtractCSV(OWTextableBaseWidget):
             dialect = sniffer.sniff(csv_stream.readline())
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
-
-            
+            # By default, content_column is set to 0. The content retrieved will be from the first column.
+            # TODO: Maybe turn this into a setting?
+            content_column = 0
+            position = 0
             # Process each seg in inputContent
             for seg in inputContent:
             	segAnnotations = inputAnnotations.copy()
             		
-
+            # This  will launch if sniffer detects a header in the content.
             if sniffer.has_header(inputContent) == True:
+                # go back to the start otherwise we're going to start from the second row
                 csv_stream.seek(0)
+                # the header row is defined here.
                 dict_keys = next(my_reader)
+                for key in dict_keys:
+                    position += len(key)
                 for row in my_reader:
+                    # Get old annotations in new dictionary
+                    oldAnnotations = inputAnnotations.copy()
                     segAnnotations = dict()
+                    for key in oldAnnotations.keys():
+                        segAnnotations[key] = oldAnnotations[key]
+                    # This is the main part where we transform our data into annotations.
                     for key in dict_keys:
+                        segAnnotations["length"] = position
+                        segAnnotations["row"] = str(row)
                         segAnnotations[key] = row[dict_keys.index(key)]
-                        content = segAnnotations[dict_keys[0]]
+                        position += len(row[dict_keys.index(key)])
+                        # By default, content_column is set to 0. The content retrieved will be from the first column.
+                        content = segAnnotations[dict_keys[content_column]]
                     csvSeg.append(
                         Segment(
-                            str_index = 0,
-                            start = 0,
-                            end = len(content),
+                            str_index = inputStrIdx,
+                            start = position,
+                            end = position + len(content),
                             annotations = segAnnotations
                             )
                         )
