@@ -28,7 +28,7 @@ __email__ = "aris.xanthos@unil.ch"
 from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout
+from PyQt5.QtCore import QTimer
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
