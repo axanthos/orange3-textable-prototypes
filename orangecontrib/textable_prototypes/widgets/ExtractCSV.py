@@ -159,6 +159,7 @@ class ExtractCSV(OWTextableBaseWidget):
                 csv_stream.seek(0)
                 dict_keys = next(my_reader)
                 for row in my_reader:
+                    segAnnotations = dict()
                     for key in dict_keys:
                         segAnnotations[key] = row[dict_keys.index(key)]
                         content = segAnnotations[dict_keys[0]]
