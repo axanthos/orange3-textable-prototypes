@@ -50,7 +50,7 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 
 * Orange Textable 3.1.5
 
-* `pdfminer.six 20200124 <https://pypi.org/project/pdfminer.six/>`_
+* `pdfplumber 0.5.19 <https://github.com/jsvine/pdfplumber>`_
 
 * `Calamari OCR 1.0.5 <https://pypi.org/project/calamari-ocr/>`_
 
