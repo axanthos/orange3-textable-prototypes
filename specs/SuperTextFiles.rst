@@ -98,3 +98,7 @@ TODO
 =================
 Le projet est disponible sur GitHub à l'adresse `https://github.com/Aubrays/orange3-textable-prototypes
 <https://github.com/Aubrays/orange3-textable-prototypes>`_
+
+5.1 OCR
+==========
+* Compilation de ressources sur l'OCR : `Awesome OCR <https://github.com/kba/awesome-ocr>`_
