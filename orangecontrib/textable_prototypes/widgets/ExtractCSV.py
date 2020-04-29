@@ -251,19 +251,23 @@ class ExtractCSV(OWTextableBaseWidget):
                 # the header row is defined here.
                 dict_keys = next(my_reader)
                 for key in dict_keys:
-                    position += len(key)
+                    # this is first position
+                    position += (len(key) + 1)
                 for row in my_reader:
                     # Get old annotations in new dictionary
                     oldAnnotations = inputAnnotations.copy()
                     segAnnotations = dict()
+                    # preparer next content position
+                    next_position = position
                     for key in oldAnnotations.keys():
                         segAnnotations[key] = oldAnnotations[key]
                     # This is the main part where we transform our data into annotations.
                     for key in dict_keys:
-                        segAnnotations["length"] = position
-                        segAnnotations["row"] = str(row)
+                        # segAnnotations["length"] = position
+                        # segAnnotations["row"] = str(row)
                         segAnnotations[key] = row[dict_keys.index(key)]
-                        position += len(row[dict_keys.index(key)])
+                        # add to next_position len of this content + separators
+                        next_position += len(row[dict_keys.index(key)]) + 1
                         # By default, content_column is set to 0. The content retrieved will be from the first column.
                         content = segAnnotations[dict_keys[content_column]]
                     csvSeg.append(
@@ -274,6 +278,8 @@ class ExtractCSV(OWTextableBaseWidget):
                             annotations = segAnnotations
                             )
                         )
+                    # set next position pour la boucle suivante
+                    position = next_position
 
             progressBar.advance()
 
