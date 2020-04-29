@@ -7,7 +7,8 @@ Specification widget SuperTextFiles
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu textuel de fichiers PDF et d'images. 
+Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu
+textuel de fichiers PDF et d'images. 
 
 
 1.2 Aperçu des etapes
@@ -65,7 +66,8 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu 
 ===============================
 
 * Permettre l'import de tous fichiers PDF ou images.
-* Effectuer une reconnaissance optique des caractères d'une image ou d'un PDF après sa conversion en image.
+* Effectuer une reconnaissance optique des caractères d'une image ou d'un PDF
+après sa conversion en image.
 
 2.4 Fonctionnalités optionnelles
 ================================
@@ -85,13 +87,15 @@ TODO
 3.1 Version alpha
 =================
 * L'interface graphique est complètement construite.
-* Les fonctionnalités minimales sont prises en charge par le logiciel et ont été testées.
+* Les fonctionnalités minimales sont prises en charge par le logiciel et ont été
+testées.
 
 3.2 Remise et présentation
 ==========================
 * Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
-* Les fonctionnalités principales (et, le cas échéant, optionnelles) sont implémentées et ont été testées.
+* Les fonctionnalités principales (et, le cas échéant, optionnelles) sont
+implémentées et ont été testées.
 
 
 4. Infrastructure
