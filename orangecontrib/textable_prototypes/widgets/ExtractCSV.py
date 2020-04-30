@@ -222,6 +222,10 @@ class ExtractCSV(OWTextableBaseWidget):
         progressBar = ProgressBar(self, iterations=len(self.inputSeg))
 
         csvSeg = list()
+
+        # set list of idx of the rows with no content
+        contentIsNone = list()
+
         # Process each input segment...
         for segment in self.inputSeg:
         
@@ -250,12 +254,12 @@ class ExtractCSV(OWTextableBaseWidget):
                 csv_stream.seek(0)
                 # the header row is defined here.
                 dict_keys = next(my_reader)
-
+            
                 for key in dict_keys:
                     # this is position of first content
                     position += (len(key) + 1)
 
-                for row in my_reader:
+                for idx, row in enumerate(my_reader, start=2):
                     # Get old annotations in new dictionary
                     oldAnnotations = inputAnnotations.copy()
                     segAnnotations = dict()
@@ -275,21 +279,32 @@ class ExtractCSV(OWTextableBaseWidget):
                             content = row[dict_keys.index(key)]
                         # else we put value in annotation
                         else:
-                            segAnnotations[key] = row[dict_keys.index(key)]
+                            # only if value is not None
+                            if len(row[dict_keys.index(key)]) != 0 :
+                                segAnnotations[key] = row[dict_keys.index(key)]
                         # add to next_position the len of this content + separators
                         next_position += len(row[dict_keys.index(key)]) + 1
 
-                    csvSeg.append(
-                        Segment(
-                            str_index = inputStrIdx,
-                            start = position,
-                            end = position + len(content),
-                            annotations = segAnnotations
+                    if len(content) != 0:
+                        csvSeg.append(
+                            Segment(
+                                str_index = inputStrIdx,
+                                start = position,
+                                end = position + len(content),
+                                annotations = segAnnotations
+                                )
                             )
-                        )
+                    else :
+                        # if no content, add idx of the row and do not append
+                        contentIsNone.append(idx)
+
                     # set next position for next iteration
                     position = next_position
 
+            # this is not working and is to set numbers as headers
+            # else:
+               # dict_keys = range(0, len(next(my_reader))
+                        
             progressBar.advance()
 
                  
