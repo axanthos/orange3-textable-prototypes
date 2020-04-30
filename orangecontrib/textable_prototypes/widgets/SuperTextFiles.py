@@ -32,6 +32,8 @@ import os
 import re
 import json
 from unicodedata import normalize
+import filetype
+import pdfplumber
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QFont
@@ -582,10 +584,19 @@ class SuperTextFiles(OWTextableBaseWidget):
             encoding = re.sub(r"[ ]\(.+", "", encoding)
             annotation_key = myFile[2]
             annotation_value = myFile[3]
+            type = filetype.guess(myFile[0])
+            # Testing purposes
+            print(type.extension)
 
             # Try to open the file...
             self.error()
             try:
+                if type.extension == "pdf":
+                    with pdfplumber.open(filePath) as fh:
+                        first_page = fh.pages[0]
+                        text = first_page.extract_text()
+                        #Testing purposes
+                        print(text)
                 if encoding == "(auto-detect)":
                     detector = UniversalDetector()
                     fh = open(filePath, 'rb')
