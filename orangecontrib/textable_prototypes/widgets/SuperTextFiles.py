@@ -584,59 +584,60 @@ class SuperTextFiles(OWTextableBaseWidget):
             encoding = re.sub(r"[ ]\(.+", "", encoding)
             annotation_key = myFile[2]
             annotation_value = myFile[3]
-            type = filetype.guess(myFile[0])
-            # Testing purposes
-            print(type.extension)
+            myFiletype = filetype.guess(myFile[0])
 
             # Try to open the file...
             self.error()
             try:
-                if type.extension == "pdf":
+                fileContent = ""
+                if myFiletype.extension == "pdf":
                     with pdfplumber.open(filePath) as fh:
                         first_page = fh.pages[0]
                         text = first_page.extract_text()
                         #Testing purposes
                         print(text)
-                if encoding == "(auto-detect)":
-                    detector = UniversalDetector()
-                    fh = open(filePath, 'rb')
-                    for line in fh:
-                        detector.feed(line)
-                        if detector.done: break
-                    detector.close()
-                    fh.close()
-                    encoding = detector.result['encoding']
-                fh = open(
-                    filePath,
-                    mode='rU',
-                    encoding=encoding,
-                )
-                try:
-                    fileContent = ""
-                    i = 0
-                    chunks = list()
-                    for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
-                        chunks.append('\n'.join(chunk.splitlines()))
-                        i += CHUNK_LENGTH
-                        if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+                        fileContent = text
+                else :
+                    if encoding == "(auto-detect)":
+                        detector = UniversalDetector()
+                        fh = open(filePath, 'rb')
+                        for line in fh:
+                            detector.feed(line)
+                            if detector.done: break
+                        detector.close()
+                        fh.close()
+                        encoding = detector.result['encoding']
+                    fh = open(
+                        filePath,
+                        mode='rU',
+                        encoding=encoding,
+                    )
+                    try:
+                        # fileContent = ""
+                        i = 0
+                        chunks = list()
+                        for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
+                            chunks.append('\n'.join(chunk.splitlines()))
+                            i += CHUNK_LENGTH
+                            if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+                                fileContent += "".join(chunks)
+                                chunks = list()
+                        if len(chunks):
                             fileContent += "".join(chunks)
-                            chunks = list()
-                    if len(chunks):
-                        fileContent += "".join(chunks)
-                    del chunks
-                except UnicodeError:
-                    progressBar.finish()
-                    if len(myFiles) > 1:
-                        message = u"Please select another encoding "    \
-                                  + u"for file %s." % filePath
-                    else:
-                        message = u"Please select another encoding."
-                    self.infoBox.setText(message, 'error')
-                    self.send('Text data', None, self)
-                    self.controlArea.setDisabled(False)
-                    return
-                finally:
-                    fh.close()
+                        del chunks
+                    except UnicodeError:
+                        progressBar.finish()
+                        if len(myFiles) > 1:
+                            message = u"Please select another encoding "    \
+                                    + u"for file %s." % filePath
+                        else:
+                            message = u"Please select another encoding."
+                        self.infoBox.setText(message, 'error')
+                        self.send('Text data', None, self)
+                        self.controlArea.setDisabled(False)
+                        return
+                    finally:
+                        fh.close()
             except IOError:
                 progressBar.finish()
                 if len(myFiles) > 1:
