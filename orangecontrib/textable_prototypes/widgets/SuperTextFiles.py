@@ -590,14 +590,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             self.error()
             try:
                 fileContent = ""
-                if myFiletype.extension == "pdf":
-                    with pdfplumber.open(filePath) as fh:
-                        first_page = fh.pages[0]
-                        text = first_page.extract_text()
-                        #Testing purposes
-                        print(text)
-                        fileContent = text
-                else :
+                if myFiletype is None:
                     if encoding == "(auto-detect)":
                         detector = UniversalDetector()
                         fh = open(filePath, 'rb')
@@ -613,7 +606,6 @@ class SuperTextFiles(OWTextableBaseWidget):
                         encoding=encoding,
                     )
                     try:
-                        # fileContent = ""
                         i = 0
                         chunks = list()
                         for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
@@ -638,6 +630,15 @@ class SuperTextFiles(OWTextableBaseWidget):
                         return
                     finally:
                         fh.close()
+
+                elif myFiletype.extension == "pdf":
+                    with pdfplumber.open(filePath) as fh:
+                        first_page = fh.pages[0]
+                        text = first_page.extract_text()
+                        #Testing purposes
+                        print(text)
+                        fileContent = text
+
             except IOError:
                 progressBar.finish()
                 if len(myFiles) > 1:
