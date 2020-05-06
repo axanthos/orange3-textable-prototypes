@@ -92,6 +92,10 @@ ENV/
 # Pycharms project settings
 .idea
 
+# VSCode project settings
+.vscode
+*.code-workspace
+
 *.pyc
 *.db
 .idea/.name

@@ -2,7 +2,8 @@
 Class SuperTextFiles
 Copyright 2020 University of Lausanne
 -----------------------------------------------------------------------------
-This file is part of the Orange3-Textable-Prototypes package.
+This file is part of the Orange3-Textable-Prototypes package and based on the
+file OWTextableTextFiles of the Orange3-Textable package.
 
 Orange3-Textable-Prototypes is free software: you can redistribute it
 and/or modify it under the terms of the GNU General Public License as published
@@ -19,6 +20,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
+# OWTextableTextFiles version = '0.17.10'
 __version__ = u"0.0.1"
 __author__ = "Loïc Aubrays, Fàbio Torres Cabral"
 __maintainer__ = "Aris Xanthos"
@@ -30,6 +32,8 @@ import os
 import re
 import json
 from unicodedata import normalize
+import filetype
+import pdfplumber
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QFont
@@ -49,32 +53,30 @@ from _textable.widgets.TextableUtils import (
 )
 
 from Orange.widgets import widget, gui, settings
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
 
 
 class SuperTextFiles(OWTextableBaseWidget):
-    """Textable widget to import PDF files and if necessary make an Optical
-    Character Recognition (OCR) based on OWTextableTextFiles."""
+    """Textable widget to import PDF files and if necessary to do an Optical
+    Character Recognition (OCR)"""
 
     #----------------------------------------------------------------------
     # Widget's metadata...
 
     name = "Super Text Files"
     description = "Import data from raw text and PDF files"
-    icon = "icons/supertextfiles.svg"
+    icon = "icons/SuperTextFiles.svg"
     priority = 25 # TODO
 
     #----------------------------------------------------------------------
-    # Channel definitions...
+    # Channel definitions....
 
     inputs = [
         ('Message', JSONMessage, "inputMessage", widget.Single)
     ]
     outputs = [('Text data', Segmentation)]
-
 
     #----------------------------------------------------------------------
     # Layout parameters...
@@ -88,7 +90,6 @@ class SuperTextFiles(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
 
-    # Settings...
     files = settings.Setting([])
     encoding = settings.Setting('(auto-detect)')
     autoNumber = settings.Setting(False)
@@ -101,7 +102,6 @@ class SuperTextFiles(OWTextableBaseWidget):
 
 
     def __init__(self, *args, **kwargs):
-        """Widget creator."""
         super().__init__(*args, **kwargs)
 
         # Other attributes...
@@ -112,11 +112,7 @@ class SuperTextFiles(OWTextableBaseWidget):
         self.newFiles = u''
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
-        self.pdfPassword = u''
-
-        # Next two instructions are helpers from TextableUtils. Corresponding
-        # interface elements are declared here and actually drawn below (at
-        # their position in the UI)..
+        self.pdfPassword = u'' # SuperTextFiles addition
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -125,15 +121,13 @@ class SuperTextFiles(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
-
         self.advancedSettings = AdvancedSettings(
             widget=self.controlArea,
             master=self,
             callback=self.sendButton.settingsChanged,
         )
 
-        #----------------------------------------------------------------------
-        # User interface...
+        # GUI...
 
         # Advanced settings checkbox...
         self.advancedSettings.draw()
@@ -385,9 +379,11 @@ class SuperTextFiles(OWTextableBaseWidget):
                 u"associated with the above annotation key."
             ),
         )
+
+        ### Start SuperTextFiles addition
         gui.separator(widget=addFileBox, width=3)
         # Field for PDF password
-        gui.lineEdit(
+        password_field = gui.lineEdit(
             widget=addFileBox,
             master=self,
             value='pdfPassword',
@@ -400,6 +396,8 @@ class SuperTextFiles(OWTextableBaseWidget):
                 u"if the PDF file needs one."
             ),
         )
+        ### End SuperTextFiles addition
+
         gui.separator(widget=addFileBox, width=3)
         self.addButton = gui.button(
             widget=addFileBox,
@@ -484,15 +482,14 @@ class SuperTextFiles(OWTextableBaseWidget):
 
         gui.rubber(self.controlArea)
 
-        # Now Info box and Send button must be drawn...
+        # Send button...
         self.sendButton.draw()
+
+        # Info box...
         self.infoBox.draw()
 
         self.adjustSizeWithTimer()
         QTimer.singleShot(0, self.sendButton.sendIf)
-
-        # Send data if autoSend.
-        # self.sendButton.sendIf() # TODO compare with code above
 
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
@@ -535,6 +532,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             return
 
     def sendData(self):
+
         """Load files, create and send segmentation"""
 
         # Check that there's something on input...
@@ -572,7 +570,6 @@ class SuperTextFiles(OWTextableBaseWidget):
         else:
             myFiles = [[self.file, self.encoding, u'', u'']]
 
-        # Initialize progress bar.
         self.infoBox.setText(u"Processing, please wait...", "warning")
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(
@@ -587,50 +584,61 @@ class SuperTextFiles(OWTextableBaseWidget):
             encoding = re.sub(r"[ ]\(.+", "", encoding)
             annotation_key = myFile[2]
             annotation_value = myFile[3]
+            myFiletype = filetype.guess(myFile[0])
 
             # Try to open the file...
             self.error()
             try:
-                if encoding == "(auto-detect)":
-                    detector = UniversalDetector()
-                    fh = open(filePath, 'rb')
-                    for line in fh:
-                        detector.feed(line)
-                        if detector.done: break
-                    detector.close()
-                    fh.close()
-                    encoding = detector.result['encoding']
-                fh = open(
-                    filePath,
-                    mode='rU',
-                    encoding=encoding,
-                )
-                try:
-                    fileContent = ""
-                    i = 0
-                    chunks = list()
-                    for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
-                        chunks.append('\n'.join(chunk.splitlines()))
-                        i += CHUNK_LENGTH
-                        if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+                fileContent = ""
+                if myFiletype is None:
+                    if encoding == "(auto-detect)":
+                        detector = UniversalDetector()
+                        fh = open(filePath, 'rb')
+                        for line in fh:
+                            detector.feed(line)
+                            if detector.done: break
+                        detector.close()
+                        fh.close()
+                        encoding = detector.result['encoding']
+                    fh = open(
+                        filePath,
+                        mode='rU',
+                        encoding=encoding,
+                    )
+                    try:
+                        i = 0
+                        chunks = list()
+                        for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
+                            chunks.append('\n'.join(chunk.splitlines()))
+                            i += CHUNK_LENGTH
+                            if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+                                fileContent += "".join(chunks)
+                                chunks = list()
+                        if len(chunks):
                             fileContent += "".join(chunks)
-                            chunks = list()
-                    if len(chunks):
-                        fileContent += "".join(chunks)
-                    del chunks
-                except UnicodeError:
-                    progressBar.finish()
-                    if len(myFiles) > 1:
-                        message = u"Please select another encoding "    \
-                                  + u"for file %s." % filePath
-                    else:
-                        message = u"Please select another encoding."
-                    self.infoBox.setText(message, 'error')
-                    self.send('Text data', None, self)
-                    self.controlArea.setDisabled(False)
-                    return
-                finally:
-                    fh.close()
+                        del chunks
+                    except UnicodeError:
+                        progressBar.finish()
+                        if len(myFiles) > 1:
+                            message = u"Please select another encoding "    \
+                                    + u"for file %s." % filePath
+                        else:
+                            message = u"Please select another encoding."
+                        self.infoBox.setText(message, 'error')
+                        self.send('Text data', None, self)
+                        self.controlArea.setDisabled(False)
+                        return
+                    finally:
+                        fh.close()
+
+                elif myFiletype.extension == "pdf":
+                    with pdfplumber.open(filePath) as fh:
+                        first_page = fh.pages[0]
+                        text = first_page.extract_text()
+                        #Testing purposes
+                        print(text)
+                        fileContent = text
+
             except IOError:
                 progressBar.finish()
                 if len(myFiles) > 1:
@@ -704,8 +712,6 @@ class SuperTextFiles(OWTextableBaseWidget):
         message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
-
-        # Clear progress bar
         progressBar.finish()
         self.controlArea.setDisabled(False)
 
@@ -890,7 +896,6 @@ class SuperTextFiles(OWTextableBaseWidget):
                 encoding,
                 self.newAnnotationKey,
                 self.newAnnotationValue,
-                self.pdfPassword,
             ))
         self.sendButton.settingsChanged()
 
@@ -927,12 +932,8 @@ class SuperTextFiles(OWTextableBaseWidget):
                 self.sendButton.sendIfPreCallback = self.updateGUI
             if self.newFiles:
                 if (
-                    (self.newAnnotationKey
-                    and self.newAnnotationValue
-                    and self.pdfPassword) or
-                    (not self.newAnnotationKey
-                    and not self.newAnnotationValue
-                    and not self.pdfPassword)
+                    (self.newAnnotationKey and self.newAnnotationValue) or
+                    (not self.newAnnotationKey and not self.newAnnotationValue)
                 ):
                     self.addButton.setDisabled(False)
                 else:
@@ -975,8 +976,6 @@ class SuperTextFiles(OWTextableBaseWidget):
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
 
-    # The following method needs to be copied verbatim in
-    # every Textable widget that sends a segmentation...
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
