@@ -57,6 +57,8 @@ textuel de fichiers PDF et d'images.
 
 * `python-OpenCV` + `OpenCV <https://opencv.org/>`_
 
+* `PyMuPDF 1.16.18 <https://pypi.org/project/PyMuPDF/>`
+
 2.2 Fonctionnalités minimales
 =============================
 
