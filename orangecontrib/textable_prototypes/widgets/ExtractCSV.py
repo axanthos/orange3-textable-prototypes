@@ -5,7 +5,7 @@ Copyright 2020 University of Lausanne
 This file is part of the Orange3-Textable-Prototypes package.
 
 Orange3-Textable-Prototypes is free software: you can redistribute it 
-and/or modify it under the terms of the GNU General Public License as published
+and/or modify it under the terms of the GNU General Public License as published 
 by the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
@@ -17,6 +17,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Orange-Textable-Prototypes. If not, see 
 <http://www.gnu.org/licenses/>.
+TODO:
+- handle empty cells OK!
+- loop for no header
+- display headers in interface
+- select a certain column as content
+- rename columns?
+- treat errors if empty cell in content column
 """
 
 __version__ = u"0.0.1"
@@ -240,59 +247,62 @@ class ExtractCSV(OWTextableBaseWidget):
             dialect = sniffer.sniff(csv_stream.readline())
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
-            # By default, content_column is set to 0. The content retrieved
-            # will be from the first column.
+            # By default, content_column is set to 0. The content retrieved will be from the first column.
             # TODO: Maybe turn this into a setting?
             content_column = 0
             position = 0
             # Process each seg in inputContent
             for seg in inputContent:
             	segAnnotations = inputAnnotations.copy()
-            		
+            
+            # This will launch if sniffer does not detect a header in the content.
+            if sniffer.has_header(inputContent) == False:
+                # go back to the start otherwise we're going to start from the second row
+                csv_stream.seek(0)
+                first_row = next(my_reader)
+                n_cols = len(first_row)
+                dict_keys = list()
+                for item in range(0, n_cols):
+                    dict_keys.append(str(item))
+                csv_stream.seek(0)
+
             # This  will launch if sniffer detects a header in the content.
             if sniffer.has_header(inputContent) == True:
-                # go back to the start otherwise we're going to start from the
-                # second row
+                # go back to the start otherwise we're going to start from the second row
                 csv_stream.seek(0)
                 # the header row is defined here.
                 dict_keys = next(my_reader)
-            
+                csv_stream.seek(0)
                 for key in dict_keys:
                     # this is position of first content
-                    # TODO : separator length (if not 1)
-                    position += (len(key) + 1)
+                    try:
+                        position += (len(key) + 1)
+                    except:
+                        position += len(str(key))+1
+            for idx, row in enumerate(my_reader, start=2):
+            # Get old annotations in new dictionary
+                oldAnnotations = inputAnnotations.copy()
+                segAnnotations = dict()
+                # set next content position
+                next_position = position
+                for key in oldAnnotations.keys():
+                    segAnnotations[key] = oldAnnotations[key]
 
-                for idx, row in enumerate(my_reader, start=2):
-                    # Get old annotations in new dictionary
-                    oldAnnotations = inputAnnotations.copy()
-                    segAnnotations = dict()
-                    # initiate next row starting position
-                    next_position = position
-                    for key in oldAnnotations.keys():
-                        segAnnotations[key] = oldAnnotations[key]
+                # This is the main part where we transform our data into annotations.
+                for key in dict_keys:
 
-                    # This is the main part where we transform our data into
-                    # annotations.
-                    for key in dict_keys:
-                        # segAnnotations["length"] = position
-                        # segAnnotations["row"] = str(row)
-
-                        # if column is content (first column (0) by default)
-                        if dict_keys.index(key) == content_column:
-                            # put value as content
-                            content = row[dict_keys.index(key)]
-                        # else we put value in annotation
-                        else:
-                            # only if value is not None
-                            if len(row[dict_keys.index(key)]) != 0 :
-                                segAnnotations[key] = row[dict_keys.index(key)]
-                        # implement position and next_position depending on
-                        # content column
-                        if dict_keys.index(key) < content_column:
-                        	position += len(row[dict_keys.index(key)]) + 1
-                        	next_position += len(row[dict_keys.index(key)]) + 1
-                        if dict_keys.index(key) >= content_column:
-                        	next_position += len(row[dict_keys.index(key)]) + 1
+                    # if column is content (first column (0) by default)
+                    if dict_keys.index(key) == content_column:
+                        # put value as content
+                        content = row[dict_keys.index(key)]
+                    # else we put value in annotation
+                    else:
+                        # only if value is not None
+                        if len(row[dict_keys.index(key)]) != 0 :
+                            segAnnotations[key] = row[dict_keys.index(key)]
+                    # add to next_position the len of this content + separators
+                    next_position += len(row[content_column]) + 1
+                    content = row[content_column]
 
                     if len(content) != 0:
                         csvSeg.append(
@@ -304,12 +314,11 @@ class ExtractCSV(OWTextableBaseWidget):
                                 )
                             )
                     else :
-                        # if no content, add idx of the row and do not append
-                        # TODO : something with contentIsNone
+                        # if no content, add  idx of the row and do not append
                         contentIsNone.append(idx)
 
-                    # initiate new row starting position
-                    position = next_position
+                        # set next position for next iteration
+                        position = next_position
 
             # this is not working and is to set numbers as headers
             # else:
