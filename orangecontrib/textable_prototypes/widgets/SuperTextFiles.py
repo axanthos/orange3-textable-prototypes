@@ -32,8 +32,8 @@ import os
 import re
 import json
 from unicodedata import normalize
-import filetype
-import pdfplumber
+import filetype # SuperTextFiles
+import pdfplumber # SuperTextFiles
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QFont
@@ -589,56 +589,12 @@ class SuperTextFiles(OWTextableBaseWidget):
             # Try to open the file...
             self.error()
             try:
-                fileContent = ""
                 if myFiletype is None:
-                    if encoding == "(auto-detect)":
-                        detector = UniversalDetector()
-                        fh = open(filePath, 'rb')
-                        for line in fh:
-                            detector.feed(line)
-                            if detector.done: break
-                        detector.close()
-                        fh.close()
-                        encoding = detector.result['encoding']
-                    fh = open(
-                        filePath,
-                        mode='rU',
-                        encoding=encoding,
-                    )
-                    try:
-                        i = 0
-                        chunks = list()
-                        for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
-                            chunks.append('\n'.join(chunk.splitlines()))
-                            i += CHUNK_LENGTH
-                            if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
-                                fileContent += "".join(chunks)
-                                chunks = list()
-                        if len(chunks):
-                            fileContent += "".join(chunks)
-                        del chunks
-                    except UnicodeError:
-                        progressBar.finish()
-                        if len(myFiles) > 1:
-                            message = u"Please select another encoding "    \
-                                    + u"for file %s." % filePath
-                        else:
-                            message = u"Please select another encoding."
-                        self.infoBox.setText(message, 'error')
-                        self.send('Text data', None, self)
-                        self.controlArea.setDisabled(False)
-                        return
-                    finally:
-                        fh.close()
+                    fileContent = self.extract_raw_text(filePath, encoding)
 
                 elif myFiletype.extension == "pdf":
-                    with pdfplumber.open(filePath) as fh:
-                        first_page = fh.pages[0]
-                        text = first_page.extract_text()
-                        #Testing purposes
-                        print(text)
-                        fileContent = text
-
+                    fileContent = self.extract_pdf_text(filePath)
+                    
             except IOError:
                 progressBar.finish()
                 if len(myFiles) > 1:
@@ -717,6 +673,57 @@ class SuperTextFiles(OWTextableBaseWidget):
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
+
+    def extract_raw_text(self, filePath, encoding):
+        if encoding == "(auto-detect)":
+            detector = UniversalDetector()
+            fh = open(filePath, 'rb')
+            for line in fh:
+                detector.feed(line)
+                if detector.done: break
+            detector.close()
+            fh.close()
+            encoding = detector.result['encoding']
+        fh = open(
+            filePath,
+            mode='rU',
+            encoding=encoding,
+        )
+        try:
+            i = 0
+            fileContent = ""
+            chunks = list()
+            for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
+                chunks.append('\n'.join(chunk.splitlines()))
+                i += CHUNK_LENGTH
+                if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+                    fileContent += "".join(chunks)
+                    chunks = list()
+            if len(chunks):
+                fileContent += "".join(chunks)
+            del chunks
+            return fileContent
+        except UnicodeError:
+            progressBar.finish()
+            if len(myFiles) > 1:
+                message = u"Please select another encoding "    \
+                        + u"for file %s." % filePath
+            else:
+                message = u"Please select another encoding."
+            self.infoBox.setText(message, 'error')
+            self.send('Text data', None, self)
+            self.controlArea.setDisabled(False)
+            return
+        finally:
+            fh.close()
+
+    def extract_pdf_text(self, filePath):
+        fileContent = ""
+        with pdfplumber.open(filePath) as fh:
+            for page  in fh.pages:
+                fileContent += page.extract_text()
+
+        return fileContent
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
