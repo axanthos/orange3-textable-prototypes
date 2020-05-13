@@ -64,11 +64,7 @@ class ExtractCSV(OWTextableBaseWidget):
     # Layout parameters...
     
     want_main_area = False
-    
-    #----------------------------------------------------------------------
-    # Query settings...
 
-    selected_mode = settings.Setting("automatic")
     #----------------------------------------------------------------------
     
     # Settings...
@@ -104,7 +100,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # User interface...
 
-        # manual box...
+        # main box...
         self.mainBox = gui.widgetBox(
             widget=self.controlArea,
             box="Click to select a header to modify",
