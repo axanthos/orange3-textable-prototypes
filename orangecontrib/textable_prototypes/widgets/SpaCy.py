@@ -32,7 +32,9 @@ import subprocess
 from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout, QMessageBox
+from AnyQt.QtGui import (
+    QTabWidget, QWidget, QHBoxLayout, QMessageBox, QIntValidator
+)
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
@@ -113,6 +115,8 @@ class SpaCy(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     
+    maxLen = settings.Setting(1000000)
+
     autoSend = settings.Setting(False)
     if INSTALLED_MODELS:
         model = settings.Setting(INSTALLED_MODELS[0])
@@ -166,7 +170,26 @@ class SpaCy(OWTextableBaseWidget):
             sendSelectedValue=True,
             callback=self.modelComboboxChanged,
         )
-        
+
+        gui.separator(widget=optionsBox, height=3)
+
+        gui.comboBox(
+            widget=optionsBox,
+            master=self,
+            value='maxLen',
+            items=["1 million"] + ["%i millions" % l for l in range(2, 10)]   \
+                  + ["no limit"],
+            sendSelectedValue=True,
+            label=u'Max number of input characters:',
+            tooltip=(
+                "The spaCy parser and NER models require roughly 1GB of\n"
+                "temporary memory per 100'000 characters in the input.\n"
+                "This means long texts may cause memory allocation errors.\n"
+                "If you're not using the parser or NER, or half lots of \n"
+                "RAM, it's probably safe to increase the default limit of\n"
+                "1 million characters."
+            ),
+        )
         gui.rubber(optionsBox)
 
         OptionsTabBox.addWidget(optionsBox)
@@ -176,9 +199,7 @@ class SpaCy(OWTextableBaseWidget):
         modelManagerTabBox = QHBoxLayout()
 
         modelManagerBox = gui.widgetBox(widget=self.modelManagerTab)
-        
-        # Model manager tab...
-        
+               
         gui.label(modelManagerBox, self, label="Available models:")
         
         self.downloadableModelsListbox = gui.listBox(
@@ -238,7 +259,7 @@ class SpaCy(OWTextableBaseWidget):
                 "warning",
             )
             self.tabs.setCurrentIndex(1)
-
+                  
     def modelComboboxChanged(self):
         """Respond to model change in UI (Options tab)."""
         self.infoBox.setText(
@@ -248,9 +269,10 @@ class SpaCy(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(AVAILABLE_MODELS[self.model])
+        self.nlp.max_length = self.maxLen
         progressBar.finish()
         self.controlArea.setDisabled(False)
-        self.sendButton.settingsChanged()        
+        self.sendButton.settingsChanged()              
 
     def downloadableModelsListboxChanged(self):
         """Respond to model change in UI (Model manager tab)."""
@@ -316,6 +338,21 @@ class SpaCy(OWTextableBaseWidget):
             self.infoBox.setText("Widget needs input", "warning")
             self.send("Linguistically analyzed data", None, self)
             return
+
+        # Check max length and adjust if needed...
+        inputLength = sum(len(s.get_content()) for s in self.inputSeg)
+        if self.maxLen != "no limit":
+            self.nlp.max_length = int(self.maxLen.split()[0]) * 1000000
+            if inputLength > self.nlp.max_length:
+                self.infoBox.setText(
+                    "Input exceeds max number of characters set by user.", 
+                    "warning",
+                )
+                self.send("Linguistically analyzed data", None, self)
+                return
+        else:
+            if inputLength > self.nlp.max_length:
+                self.nlp.max_length = inputLength          
 
         # Initialize progress bar.
         self.infoBox.setText(
