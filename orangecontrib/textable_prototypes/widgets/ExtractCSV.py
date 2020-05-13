@@ -243,7 +243,6 @@ class ExtractCSV(OWTextableBaseWidget):
             # Process each seg in inputContent
             for seg in inputContent:
             	segAnnotations = inputAnnotations.copy()
-            		
             # This  will launch if sniffer detects a header in the content.
             if sniffer.has_header(inputContent) == True:
                 # go back to the start otherwise we're going to start from the second row
@@ -252,20 +251,53 @@ class ExtractCSV(OWTextableBaseWidget):
                 dict_keys = next(my_reader)
                 for key in dict_keys:
                     position += len(key)
-                for row in my_reader:
-                    # Get old annotations in new dictionary
-                    oldAnnotations = inputAnnotations.copy()
-                    segAnnotations = dict()
-                    for key in oldAnnotations.keys():
-                        segAnnotations[key] = oldAnnotations[key]
-                    # This is the main part where we transform our data into annotations.
-                    for key in dict_keys:
-                        segAnnotations["length"] = position
-                        segAnnotations["row"] = str(row)
-                        segAnnotations[key] = row[dict_keys.index(key)]
-                        position += len(row[dict_keys.index(key)])
-                        # By default, content_column is set to 0. The content retrieved will be from the first column.
-                        content = segAnnotations[dict_keys[content_column]]
+
+            # This will launch if sniffer does not detect a header in the content.
+            if sniffer.has_header(inputContent) == False:
+                # go back to the start otherwise we're going to start from the second row
+                # we do this here even though we don't really care about the first row
+                # simply because in general we consider the first row to not have any missing values
+                csv_stream.seek(0)
+                first_row = next(my_reader)
+                n_cols = len(first_row)
+                dict_keys = list()
+                for item in range(0, n_cols):
+                    dict_keys.append(item)
+                csv_stream.seek(0)
+                
+            for idx, row in enumerate(my_reader, start=2):
+                # Get old annotations in new dictionary
+                oldAnnotations = inputAnnotations.copy()
+                segAnnotations = dict()
+                # initiate next row starting position
+                next_position = position
+                for key in oldAnnotations.keys():
+                    segAnnotations[key] = oldAnnotations[key]
+
+                # This is the main part where we transform our data into
+                # annotations.
+                for key in dict_keys:
+                    # segAnnotations["length"] = position
+                    # segAnnotations["row"] = str(row)
+
+                    # if column is content (first column (0) by default)
+                    if dict_keys.index(key) == content_column:
+                        # put value as content
+                        content = row[dict_keys.index(key)]
+                    # else we put value in annotation
+                    else:
+                        # only if value is not None
+                        if len(row[dict_keys.index(key)]) != 0 :
+                            segAnnotations[key] = row[dict_keys.index(key)]
+                    # implement position and next_position depending on
+                    # content column
+                    if dict_keys.index(key) < content_column:
+                        position += len(row[dict_keys.index(key)]) + 1
+                        next_position += len(row[dict_keys.index(key)]) + 1
+                    if dict_keys.index(key) >= content_column:
+                        next_position += len(row[dict_keys.index(key)]) + 1
+
+                if len(content) != 0:
                     csvSeg.append(
                         Segment(
                             str_index = inputStrIdx,
@@ -275,6 +307,14 @@ class ExtractCSV(OWTextableBaseWidget):
                             )
                         )
 
+                else :
+                    # if no content, add idx of the row and do not append
+                    # TODO : something with contentIsNone
+                    contentIsNone.append(idx)
+
+                # initiate new row starting position
+                position = next_position
+                        
             progressBar.advance()
 
                  
