@@ -245,12 +245,16 @@ class ExtractCSV(OWTextableBaseWidget):
             	segAnnotations = inputAnnotations.copy()
             # This  will launch if sniffer detects a header in the content.
             if sniffer.has_header(inputContent) == True:
-                # go back to the start otherwise we're going to start from the second row
+                # go back to the start otherwise we're going to start from the
+                # second row
                 csv_stream.seek(0)
                 # the header row is defined here.
                 dict_keys = next(my_reader)
+            
                 for key in dict_keys:
-                    position += len(key)
+                    # this is position of first content
+                    # TODO : separator length (if not 1)
+                    position += (len(key) + 1)
 
             # This will launch if sniffer does not detect a header in the content.
             if sniffer.has_header(inputContent) == False:
