@@ -102,36 +102,10 @@ class ExtractCSV(OWTextableBaseWidget):
             sendIfPreCallback=None,
         )
 
-         # User interface...
+        # User interface...
 
-        #-------------------------#
-        #    Main widget box      #
-        #-------------------------#
-        self.selectBox = gui.widgetBox(
-            widget=self.controlArea,
-            box = "Select",
-            orientation='vertical',
-            addSpace=False,
-        )
-        
-        # changing mode combobox 
-        self.modeCombo = gui.comboBox(
-            widget=self.selectBox,
-            master=self, 
-            value='selected_mode',
-            sendSelectedValue=True,
-            items=['automatic', 'manual'],
-            orientation='horizontal',
-            label="Mode:",
-            callback=self.mode_changed,
-            tooltip= "Choose mode",   
-        )
-
-        #-------------------------#
-        #       Manual box        #
-        #-------------------------#
         # manual box...
-        self.manualBox = gui.widgetBox(
+        self.mainBox = gui.widgetBox(
             widget=self.controlArea,
             box="Click to select a header to modify",
             orientation="vertical",
@@ -139,7 +113,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # List of all the headers (named with numbers if None)
         self.headerListbox = gui.listBox(
-            widget=self.manualBox,
+            widget=self.mainBox,
             master=self,
             value=None,
             labels=None,
@@ -151,7 +125,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # set "rename" button (must be aside the list)
         self.renameHeader = gui.button(
-            widget=self.manualBox,
+            widget=self.mainBox,
             master=self,
             label="rename",
             callback=None,
@@ -159,7 +133,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # set "use as content" button (must be aside the list)
         self.iscontentHeader = gui.button(
-            widget=self.manualBox,
+            widget=self.mainBox,
             master=self,
             label="use as content",
             callback=None,
@@ -171,25 +145,11 @@ class ExtractCSV(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
 
-        self.mode_changed()
-
         self.infoBox.setText("Widget needs input", "warning")
 
         # Send data if autoSend.
         self.sendButton.sendIf()
-    
-    def mode_changed(self):
-        self.sendButton.settingsChanged()
-        """Allows to update the interface depending on query mode"""
-        if self.selected_mode == "automatic": # automatic selected
-            # Hide manual options
-            self.manualBox.setVisible(False)
 
-        elif self.selected_mode == "manual": # manual selected
-            # Show manual options
-            self.manualBox.setVisible(True)
-
-        return
                 
     def inputData(self, newInput):
         """Process incoming data."""
