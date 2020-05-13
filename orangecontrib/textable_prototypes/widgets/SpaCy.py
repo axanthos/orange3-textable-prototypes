@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -115,9 +115,15 @@ class SpaCy(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     
-    maxLen = settings.Setting(1000000)
-
+    maxLen = settings.Setting("1000000")
+    annotatePOSTags = settings.Setting(False)
+    annotateDependencies = settings.Setting(False)
+    annotateEntities = settings.Setting(False)
+    segmentEntities = settings.Setting(False)
+    segmentChunks = settings.Setting(False)
+    segmentSentences = settings.Setting(False)
     autoSend = settings.Setting(False)
+
     if INSTALLED_MODELS:
         model = settings.Setting(INSTALLED_MODELS[0])
     else:
@@ -133,6 +139,8 @@ class SpaCy(OWTextableBaseWidget):
         self.nlp = None
         self.selectedModels = list()
         self.downloadableModelLabels = list()
+        self.loadedComponents = list()       
+        self.mustLoad = True
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -190,6 +198,42 @@ class SpaCy(OWTextableBaseWidget):
                 "1 million characters."
             ),
         )
+
+        gui.separator(widget=optionsBox, height=3)
+
+        annotationsBox = gui.widgetBox(
+            widget=optionsBox, 
+            box="Additional token annotations:",
+        )
+        
+        gui.checkBox(
+            widget=annotationsBox,
+            master=self,
+            value='annotatePOSTags',
+            label='part-of-speech tags',
+            callback=self.updateDisabledComponents,
+            tooltip=("Annotate output tokens with part-of-speech tags."),
+        )
+
+        gui.checkBox(
+            widget=annotationsBox,
+            master=self,
+            value='annotateDependencies',
+            label='syntactic dependencies',
+            callback=self.updateDisabledComponents,
+            tooltip=("Annotate output tokens with syntactic dependencies."),
+        )
+
+        gui.checkBox(
+            widget=annotationsBox,
+            master=self,
+            value='annotateEntities',
+            label='named entities',
+            callback=self.updateDisabledComponents,
+            tooltip=("Annotate output tokens with named entities."),
+        )
+
+
         gui.rubber(optionsBox)
 
         OptionsTabBox.addWidget(optionsBox)
@@ -235,18 +279,6 @@ class SpaCy(OWTextableBaseWidget):
         self.infoBox.draw()
         self.infoBox.setText("Widget needs input", "warning")
 
-        # Load spaCy language model...
-        if self.model:
-            self.modelComboboxChanged()
-            # Send data if autoSend.
-            self.sendButton.sendIf()
-        else:
-            self.infoBox.setText(
-                "Please download a language model.",
-                "warning",
-            )
-            self.tabs.setCurrentIndex(1)
-
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSeg = newInput
@@ -262,16 +294,7 @@ class SpaCy(OWTextableBaseWidget):
                   
     def modelComboboxChanged(self):
         """Respond to model change in UI (Options tab)."""
-        self.infoBox.setText(
-            u"Loading language model, please wait...", 
-            "warning",
-        )
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=1)       
-        self.nlp = spacy.load(AVAILABLE_MODELS[self.model])
-        self.nlp.max_length = self.maxLen
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
+        self.mustLoad = True
         self.sendButton.settingsChanged()              
 
     def downloadableModelsListboxChanged(self):
@@ -321,8 +344,46 @@ class SpaCy(OWTextableBaseWidget):
             QMessageBox.Ok
         )
 
+    def updateDisabledComponents(self):
+        """Load components if needed."""
+        _, enabled = self.getComponentStatus()
+        self.sendButton.settingsChanged()
+
+    def getComponentStatus(self):
+        """Returns the list of disabled/enabled component based on UI state."""
+        disabledComponents = list()
+        enabledComponents = list()
+        if self.annotatePOSTags:
+            enabledComponents.append("tagger")
+        else:
+            disabledComponents.append("tagger")
+        if self.annotateDependencies:
+            enabledComponents.append("parser")
+        else:
+            disabledComponents.append("parser")
+        if self.annotateEntities:
+            enabledComponents.append("ner")
+        else:
+            disabledComponents.append("ner")
+        return disabledComponents, enabledComponents
+    
+    def loadModel(self):
+        """(Re-)load language model if needed."""
+        # Load spaCy language model...
+        self.infoBox.setText(
+            u"Loading language model, please wait...", 
+            "warning",
+        )
+        disabled, enabled = self.getComponentStatus()
+        self.nlp = spacy.load(
+            AVAILABLE_MODELS[self.model], 
+            disable=disabled,
+        )
+        self.loadedComponents = enabled
+        self.mustLoad = False
+
     def sendData(self):
-        """Compute result of widget processing and send to output"""
+        """Compute result of widget processing and send to output."""
 
         # Check that there's a model...
         if not self.model:
@@ -342,8 +403,8 @@ class SpaCy(OWTextableBaseWidget):
         # Check max length and adjust if needed...
         inputLength = sum(len(s.get_content()) for s in self.inputSeg)
         if self.maxLen != "no limit":
-            self.nlp.max_length = int(self.maxLen.split()[0]) * 1000000
-            if inputLength > self.nlp.max_length:
+            maxNumChar = int(self.maxLen.split()[0]) * 1000000
+            if inputLength > maxNumChar:
                 self.infoBox.setText(
                     "Input exceeds max number of characters set by user.", 
                     "warning",
@@ -352,7 +413,7 @@ class SpaCy(OWTextableBaseWidget):
                 return
         else:
             if inputLength > self.nlp.max_length:
-                self.nlp.max_length = inputLength          
+                maxNumChar = inputLength          
 
         # Initialize progress bar.
         self.infoBox.setText(
@@ -361,6 +422,14 @@ class SpaCy(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=len(self.inputSeg))       
+        
+        # Load components if needed...
+        disabled, enabled = self.getComponentStatus()
+        if self.mustLoad or not(
+            self.nlp and set(enabled) <= set(self.loadedComponents)
+        ):
+            self.loadModel()
+        self.nlp.max_length = maxNumChar
         
         tokenizedSegments = list()
 
@@ -375,7 +444,10 @@ class SpaCy(OWTextableBaseWidget):
             inputEnd = segment.end or len(inputContent)
 
             # NLP analysis...
-            doc = self.nlp(inputContent)
+            disabled, _ = self.getComponentStatus()
+            disabled = [c for c in disabled if c in set(self.loadedComponents)]
+            with self.nlp.disable_pipes(*disabled):
+                doc = self.nlp(inputContent)
 
             # Process each token in input segment...
             for token in doc:
@@ -383,7 +455,8 @@ class SpaCy(OWTextableBaseWidget):
                 tokenAnnotations.update(
                     {
                         k: getattr(token, k) for k in RELEVANT_KEYS
-                        if getattr(token, k) is not None 
+                        if hasattr(token, k)
+                        and getattr(token, k) is not None 
                         and getattr(token, k) is not ""
                         
                     }
@@ -401,13 +474,12 @@ class SpaCy(OWTextableBaseWidget):
             progressBar.advance()
 
         outputSeg = Segmentation(tokenizedSegments, self.captionTitle)
-                 
+        print(outputSeg.to_string())
+        
         # Set status to OK and report data size...
         message = "%i segment@p sent to output." % len(outputSeg)
         message = pluralize(message, len(outputSeg))
         self.infoBox.setText(message)
-        
-        print(outputSeg.to_string())
         
         # Clear progress bar.
         progressBar.finish()
