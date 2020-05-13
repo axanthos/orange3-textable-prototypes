@@ -85,6 +85,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.inputSeg = None
         self.outputSeg = None
         self.dialect = None
+        self.headerList = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -112,7 +113,7 @@ class ExtractCSV(OWTextableBaseWidget):
             widget=self.mainBox,
             master=self,
             value=None,
-            labels=None,
+            labels="headerList",
             callback=None,
             selectionMode=1, # can only choose one item
             tooltip="List of all the headers you can rename and\
@@ -175,6 +176,8 @@ class ExtractCSV(OWTextableBaseWidget):
         # set a list for segments where content is None
         contentIsNone = list()
 
+
+
         # Process each input segment...
         for segment in self.inputSeg:
         
@@ -191,7 +194,7 @@ class ExtractCSV(OWTextableBaseWidget):
             my_reader = csv.reader(csv_stream, dialect)
             # By default, content_column is set to 0. The content retrieved will be from the first column.
             # TODO: Maybe turn this into a setting?
-            content_column = 1
+            content_column = 0
             position = 0
             # Process each seg in inputContent
             for seg in inputContent:
@@ -203,11 +206,18 @@ class ExtractCSV(OWTextableBaseWidget):
                 csv_stream.seek(0)
                 # the header row is defined here.
                 dict_keys = next(my_reader)
+
+                # clear the list before appending
+                del self.headerList[:]
             
                 for key in dict_keys:
                     # this is position of first content
                     # TODO : separator length (if not 1)
                     position += (len(key) + 1)
+
+                    # appends the headers to the gui list
+                    self.headerList.append(key)
+                    self.headerList = self.headerList
 
             # This will launch if sniffer does not detect a header in the content.
             if sniffer.has_header(inputContent) == False:
