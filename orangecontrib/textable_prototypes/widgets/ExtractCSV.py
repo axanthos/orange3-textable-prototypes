@@ -28,8 +28,6 @@ __email__ = "aris.xanthos@unil.ch"
 from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout
-
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
 import LTTL.Segmenter
@@ -179,10 +177,6 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # Send data if autoSend.
         self.sendButton.sendIf()
-
-        # adjust size
-        # self.adjustSizeWithTimer()
-        # QTimer.singleShot(0, self.sendButton.sendIf)
     
     def mode_changed(self):
         self.sendButton.settingsChanged()
@@ -222,6 +216,9 @@ class ExtractCSV(OWTextableBaseWidget):
         progressBar = ProgressBar(self, iterations=len(self.inputSeg))
 
         csvSeg = list()
+        # set a list for segments where content is None
+        contentIsNone = list()
+
         # Process each input segment...
         for segment in self.inputSeg:
         
@@ -238,7 +235,7 @@ class ExtractCSV(OWTextableBaseWidget):
             my_reader = csv.reader(csv_stream, dialect)
             # By default, content_column is set to 0. The content retrieved will be from the first column.
             # TODO: Maybe turn this into a setting?
-            content_column = 0
+            content_column = 1
             position = 0
             # Process each seg in inputContent
             for seg in inputContent:
@@ -324,9 +321,21 @@ class ExtractCSV(OWTextableBaseWidget):
                  
         # Set status to OK and report data size...
         outputSeg = Segmentation(csvSeg)
-        message = "%i segment@p sent to output." % len(outputSeg)
-        message = pluralize(message, len(outputSeg))
-        self.infoBox.setText(message)
+        if len(contentIsNone) == 0 :
+            message = "%i segment@p sent to output." % len(outputSeg)
+            message = pluralize(message, len(outputSeg))
+            self.infoBox.setText(message)
+        # message if one or more segments has no content and has been ignored
+        if len(contentIsNone) == 1 :
+            message = "%i segment@p sent to output. (ignored %i segment with \
+            no content)" % (len(outputSeg), len(contentIsNone))
+            message = pluralize(message, len(outputSeg))
+            self.infoBox.setText(message)
+        else :
+            message = "%i segment@p sent to output. (ignored %i segments with \
+            no content)" % (len(outputSeg), len(contentIsNone))
+            message = pluralize(message, len(outputSeg))
+            self.infoBox.setText(message)
 
         # Clear progress bar.
         progressBar.finish()
