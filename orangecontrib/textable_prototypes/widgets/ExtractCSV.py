@@ -206,18 +206,11 @@ class ExtractCSV(OWTextableBaseWidget):
                 csv_stream.seek(0)
                 # the header row is defined here.
                 dict_keys = next(my_reader)
-
-                # clear the list before appending
-                del self.headerList[:]
-            
                 for key in dict_keys:
                     # this is position of first content
                     # TODO : separator length (if not 1)
                     position += (len(key) + 1)
 
-                    # appends the headers to the gui list
-                    self.headerList.append(key)
-                    self.headerList = self.headerList
 
             # This will launch if sniffer does not detect a header in the content.
             if sniffer.has_header(inputContent) == False:
@@ -231,7 +224,13 @@ class ExtractCSV(OWTextableBaseWidget):
                 for item in range(0, n_cols):
                     dict_keys.append(item)
                 csv_stream.seek(0)
-                
+            # clear the list before appending
+            del self.headerList[:]
+            for key in dict_keys:
+                # appends the headers to the gui list
+                self.headerList.append(str(key))
+                self.headerList = self.headerList
+
             for idx, row in enumerate(my_reader, start=2):
                 # Get old annotations in new dictionary
                 oldAnnotations = inputAnnotations.copy()
