@@ -29,19 +29,19 @@ Créer un widget pour Orange Textable (v3.24.1) permettant d’importer divers d
 
 * Sorcha Walsh
 
-	- idéation du projet
-	- mise en place de l'environnement de programmation
+	- github
+	- code
 
 * Saara Jones
 
-
+	- documentation
+	- code
 
 * Noémie Carette
 
-	- rédaction du cahier de spécification
-	- création des maquettes d'interface
-
-**TODO : responsabilités**
+	- spécifications
+	- maquettes et logo
+	- code
 
 
 2. Technique
