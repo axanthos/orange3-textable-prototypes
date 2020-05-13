@@ -35,6 +35,8 @@ from unicodedata import normalize
 import filetype
 import pdfplumber
 import fitz
+import pytesseract
+from PIL import Image
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QFont
@@ -639,17 +641,25 @@ class SuperTextFiles(OWTextableBaseWidget):
                         #Si tous les characters sont du whitespace, passer à l'OCR
                         if text.isspace() is True:
                             doc = fitz.open(filePath)
+                            #Reset text pour ne pas fausser le compte avec les whitespaces
+                            text = ""
                             for i in range(len(doc)):
                                 for img in doc.getPageImageList(i):
                                     xref = img[0]
                                     pix = fitz.Pixmap(doc, xref)
                                     if pix.n < 5: #GRAY or RGB
-                                        pix.writePNG("p%s-%s.png" % (i,xref))
+                                        # Enregistre les images (pour testing/debugging)
+                                        #pix.writePNG("p%s-%s.png" % (i,xref))
+                                        text += pytesseract.image_to_string(Image.open("p%s-%s.png" % (i,xref)))
                                     else:         #CMYK: convert to RGB first
                                         pix1 = fitz.Pixmap(fitz.csRGB, pix)
-                                        pix1.writePNG("p%s-%s.png" % (i,xref))
+                                        # Enregistre les images (pour testing/debugging)
+                                        #pix1.writePNG("p%s-%s.png" % (i,xref))
+                                        text += pytesseract.image_to_string(Image.open("p%s-%s.png" % (i,xref)))
                                         pix1 = None
                                     pix = None
+                            print(text)
+                            fileContent = text
                         else:
                             print(text)
                             fileContent = text
