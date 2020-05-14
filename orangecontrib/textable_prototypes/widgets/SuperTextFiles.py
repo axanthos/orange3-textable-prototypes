@@ -32,8 +32,11 @@ import os
 import re
 import json
 from unicodedata import normalize
-import filetype # SuperTextFiles
+import filetype # SuperTextFiles 
 import pdfplumber # SuperTextFiles
+import fitz # SuperTextFiles OCR
+import pytesseract # SuperTextFiles OCR
+from PIL import Image # SuperTextFiles OCR
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QFont
@@ -57,6 +60,7 @@ from Orange.widgets import widget, gui, settings
 CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
 
+IMG_FILETYPES = ['jpg', 'png', 'gif', 'bmp', 'webp']
 
 class SuperTextFiles(OWTextableBaseWidget):
     """Textable widget to import PDF files and if necessary to do an Optical
@@ -594,7 +598,10 @@ class SuperTextFiles(OWTextableBaseWidget):
 
                 elif myFiletype.extension == "pdf":
                     fileContent = self.extract_pdf_text(filePath)
-                    
+
+                elif myFiletype.extension in IMG_FILETYPES:
+                    fileContent = self.ocrize_file(filePath)
+
             except IOError:
                 progressBar.finish()
                 if len(myFiles) > 1:
@@ -720,10 +727,39 @@ class SuperTextFiles(OWTextableBaseWidget):
     def extract_pdf_text(self, filePath):
         fileContent = ""
         with pdfplumber.open(filePath) as fh:
-            for page  in fh.pages:
-                fileContent += page.extract_text()
+            
+            first_page = fh.pages[0]
+            text = first_page.extract_text()
+
+            if text.isspace() is True:
+                fh.close()
+                fileContent = ocrize_file(filePath)
+            else:
+                for page  in fh.pages:
+                    fileContent += page.extract_text()
 
         return fileContent
+
+    def ocrize_file():
+        doc = fitz.open(filePath)
+        text = ""
+        for i in range(len(doc)): 
+            for img in doc.getPageImageList(i):
+                xref = img[0]
+                pix = fitz.Pixmap(doc, xref)
+                if pix.n < 5: #GRAY or RGB
+                    # Enregistre les images (pour testing/debugging)
+                    #pix.writePNG("p%s-%s.png" % (i,xref))
+                    text += pytesseract.image_to_string(Image.open("p%s-%s.png" % (i,xref)))
+                else:         #CMYK: convert to RGB first
+                    pix1 = fitz.Pixmap(fitz.csRGB, pix)
+                    # Enregistre les images (pour testing/debugging)
+                    #pix1.writePNG("p%s-%s.png" % (i,xref))
+                    text += pytesseract.image_to_string(Image.open("p%s-%s.png" % (i,xref)))
+                    pix1 = None
+                pix = None
+        print(text)
+        return text
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:

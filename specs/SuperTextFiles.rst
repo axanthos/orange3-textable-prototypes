@@ -53,9 +53,9 @@ textuel de fichiers PDF et d'images.
 
 * `pdfplumber 0.5.19 <https://github.com/jsvine/pdfplumber>`_
 
-* `Calamari OCR 1.0.5 <https://pypi.org/project/calamari-ocr/>`_
+* `Pytesseract <https://pypi.org/project/pytesseract/>`_
 
-* `python-OpenCV` + `OpenCV <https://opencv.org/>`_
+* `PyMuPDF (aka "fitz") 1.16.18 <https://pypi.org/project/PyMuPDF/>`_
 
 2.2 Fonctionnalités minimales
 =============================
