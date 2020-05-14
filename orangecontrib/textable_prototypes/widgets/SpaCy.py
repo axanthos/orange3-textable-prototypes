@@ -181,6 +181,85 @@ class SpaCy(OWTextableBaseWidget):
 
         gui.separator(widget=optionsBox, height=3)
 
+        annotationsBox = gui.widgetBox(
+            widget=optionsBox, 
+            box="Additional token annotations:",
+        )
+        
+        annotationsBoxLine1 = gui.widgetBox(
+            widget=annotationsBox,
+            orientation="horizontal",
+            box=None,
+        )
+        
+        gui.checkBox(
+            widget=annotationsBoxLine1,
+            master=self,
+            value='annotatePOSTags',
+            label='part-of-speech tags',
+            callback=self.updateDisabledComponents,
+            tooltip=("Annotate output tokens with part-of-speech tags."),
+        )
+        
+        self.annotatePOSTagsReloadLabel = gui.label(
+            annotationsBoxLine1,
+            master=self,
+            label="(reload needed)",
+        )
+        self.annotatePOSTagsReloadLabel.setStyleSheet(
+            "font-style: oblique; color: gray"
+        )
+ 
+        annotationsBoxLine2 = gui.widgetBox(
+            widget=annotationsBox,
+            orientation="horizontal",
+            box=None,
+        )
+        
+        gui.checkBox(
+            widget=annotationsBoxLine2,
+            master=self,
+            value='annotateDependencies',
+            label='syntactic dependencies',
+            callback=self.updateDisabledComponents,
+            tooltip=("Annotate output tokens with syntactic dependencies."),
+        )
+
+        self.annotateDependenciesReloadLabel = gui.label(
+            annotationsBoxLine2,
+            master=self,
+            label="(reload needed)",
+        )
+        self.annotateDependenciesReloadLabel.setStyleSheet(
+            "font-style: oblique; color: gray"
+        )
+
+        annotationsBoxLine3 = gui.widgetBox(
+            widget=annotationsBox,
+            orientation="horizontal",
+            box=None,
+        )
+        
+        gui.checkBox(
+            widget=annotationsBoxLine3,
+            master=self,
+            value='annotateEntities',
+            label='named entities',
+            callback=self.updateDisabledComponents,
+            tooltip=("Annotate output tokens with named entities."),
+        )
+
+        self.annotateEntitiesReloadLabel = gui.label(
+            annotationsBoxLine3,
+            master=self,
+            label="(reload needed)",
+        )
+        self.annotateEntitiesReloadLabel.setStyleSheet(
+            "font-style: oblique; color: gray"
+        )
+
+        self.updateReloadNeededLabels()
+
         gui.comboBox(
             widget=optionsBox,
             master=self,
@@ -193,46 +272,11 @@ class SpaCy(OWTextableBaseWidget):
                 "The spaCy parser and NER models require roughly 1GB of\n"
                 "temporary memory per 100'000 characters in the input.\n"
                 "This means long texts may cause memory allocation errors.\n"
-                "If you're not using the parser or NER, or half lots of \n"
+                "If you're not using the parser or NER, or have lots of \n"
                 "RAM, it's probably safe to increase the default limit of\n"
                 "1 million characters."
             ),
         )
-
-        gui.separator(widget=optionsBox, height=3)
-
-        annotationsBox = gui.widgetBox(
-            widget=optionsBox, 
-            box="Additional token annotations:",
-        )
-        
-        gui.checkBox(
-            widget=annotationsBox,
-            master=self,
-            value='annotatePOSTags',
-            label='part-of-speech tags',
-            callback=self.updateDisabledComponents,
-            tooltip=("Annotate output tokens with part-of-speech tags."),
-        )
-
-        gui.checkBox(
-            widget=annotationsBox,
-            master=self,
-            value='annotateDependencies',
-            label='syntactic dependencies',
-            callback=self.updateDisabledComponents,
-            tooltip=("Annotate output tokens with syntactic dependencies."),
-        )
-
-        gui.checkBox(
-            widget=annotationsBox,
-            master=self,
-            value='annotateEntities',
-            label='named entities',
-            callback=self.updateDisabledComponents,
-            tooltip=("Annotate output tokens with named entities."),
-        )
-
 
         gui.rubber(optionsBox)
 
@@ -346,8 +390,20 @@ class SpaCy(OWTextableBaseWidget):
 
     def updateDisabledComponents(self):
         """Load components if needed."""
-        _, enabled = self.getComponentStatus()
+        self.updateReloadNeededLabels()
         self.sendButton.settingsChanged()
+
+    def updateReloadNeededLabels(self):
+        """Update the labels that indicate whether model reload is needed."""
+        self.annotatePOSTagsReloadLabel.setVisible(
+            self.annotatePOSTags and ("tagger" not in self.loadedComponents)
+        )
+        self.annotateDependenciesReloadLabel.setVisible(
+            self.annotateDependencies and ("parser" not in self.loadedComponents)
+        )
+        self.annotateEntitiesReloadLabel.setVisible(
+            self.annotateEntities and ("ner" not in self.loadedComponents)
+        )
 
     def getComponentStatus(self):
         """Returns the list of disabled/enabled component based on UI state."""
@@ -380,6 +436,7 @@ class SpaCy(OWTextableBaseWidget):
             disable=disabled,
         )
         self.loadedComponents = enabled
+        self.updateReloadNeededLabels()
         self.mustLoad = False
 
     def sendData(self):
