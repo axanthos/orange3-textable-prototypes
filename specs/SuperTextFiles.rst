@@ -53,7 +53,7 @@ textuel de fichiers PDF et d'images.
 
 * `pdfplumber 0.5.19 <https://github.com/jsvine/pdfplumber>`_
 
-* `Calamari OCR 1.0.5 <https://pypi.org/project/calamari-ocr/>`_
+* `Tesseract OCR <https://github.com/tesseract-ocr/tesseract>`_ + `pytesseract 0.3.4 <https://pypi.org/project/pytesseract/>`__
 
 * `python-OpenCV` + `OpenCV <https://opencv.org/>`_
 
@@ -103,6 +103,9 @@ implémentées et ont été testées.
 Le projet est disponible sur GitHub à l'adresse `https://github.com/Aubrays/orange3-textable-prototypes
 <https://github.com/Aubrays/orange3-textable-prototypes>`_
 
-5.1 OCR
+4.1 Installation de Tesseract
+==========
+
+4.2 OCR
 ==========
 * Compilation de ressources sur l'OCR : `Awesome OCR <https://github.com/kba/awesome-ocr>`_
