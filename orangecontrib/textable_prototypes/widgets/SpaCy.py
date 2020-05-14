@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -52,8 +52,9 @@ RELEVANT_KEYS = [
    'dep_', 'ent_iob_', 'ent_type_', 'head', 'is_alpha', 'is_bracket', 
    'is_digit', 'is_left_punct', 'is_lower', 'is_oov', 'is_punct', 'is_quote', 
    'is_right_punct', 'is_sent_start', 'is_space', 'is_stop', 'is_title', 
-   'is_upper', 'lang_', 'lemma_', 'like_email', 'like_num', 'like_url', 
-   'lower_', 'norm_', 'pos_', 'sentiment', 'shape_', 'tag_', 'whitespace_',
+   'is_upper', 'label_', 'lang_', 'lemma_', 'like_email', 'like_num', 
+   'like_url', 'lower_', 'norm_', 'pos_', 'sentiment', 'shape_', 
+   'tag_', 'whitespace_',
 ]
 AVAILABLE_MODELS = {
     "Dutch news (small)": "nl_core_news_sm",
@@ -280,7 +281,7 @@ class SpaCy(OWTextableBaseWidget):
             value='segmentEntities',
             label='named entities',
             callback=self.updateDisabledComponents,
-            tooltip=("TODO."),
+            tooltip="Output named entity segmentation on separate channel.",
         )
         
         self.segmentEntitiesReloadLabel = gui.label(
@@ -304,7 +305,7 @@ class SpaCy(OWTextableBaseWidget):
             value='segmentChunks',
             label='noun chunks',
             callback=self.updateDisabledComponents,
-            tooltip=("TODO."),
+            tooltip="Output noun chunk segmentation on separate channel.",
         )
 
         self.segmentChunksReloadLabel = gui.label(
@@ -328,7 +329,7 @@ class SpaCy(OWTextableBaseWidget):
             value='segmentSentences',
             label='sentences',
             callback=self.updateDisabledComponents,
-            tooltip=("TODO."),
+            tooltip="Output sentence segmentation on separate channel.",
         )
 
         self.segmentSentencesReloadLabel = gui.label(
@@ -519,11 +520,13 @@ class SpaCy(OWTextableBaseWidget):
     
     def loadModel(self):
         """(Re-)load language model if needed."""
-        # Load spaCy language model...
+        # Initialize progress bar.
         self.infoBox.setText(
             u"Loading language model, please wait...", 
             "warning",
         )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)       
         disabled, enabled = self.getComponentStatus()
         self.nlp = spacy.load(
             AVAILABLE_MODELS[self.model], 
@@ -532,6 +535,9 @@ class SpaCy(OWTextableBaseWidget):
         self.loadedComponents = enabled
         self.updateReloadNeededLabels()
         self.mustLoad = False
+        progressBar.advance()
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
 
     def sendData(self):
         """Compute result of widget processing and send to output."""
@@ -567,14 +573,6 @@ class SpaCy(OWTextableBaseWidget):
         else:
             if inputLength > self.nlp.max_length:
                 maxNumChar = inputLength          
-
-        # Initialize progress bar.
-        self.infoBox.setText(
-            u"Processing, please wait...", 
-            "warning",
-        )
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=len(self.inputSeg))       
         
         # Load components if needed...
         disabled, enabled = self.getComponentStatus()
@@ -584,78 +582,70 @@ class SpaCy(OWTextableBaseWidget):
             self.loadModel()
         self.nlp.max_length = maxNumChar
         
-        tokenizedSegments = list()
-        chunkedSegments = list()
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Processing, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=len(self.inputSeg))       
 
+        tokenSegments = list()
+        entitySegments = list()
+        chunkSegments = list()
+        sentenceSegments = list()
+        
         # Process each input segment...
         for segment in self.inputSeg:
         
-            # Input segment attributes...
-            inputContent = segment.get_content()
-            inputAnnotations = segment.annotations
-            inputString = segment.str_index
-            inputStart = segment.start or 0
-            inputEnd = segment.end or len(inputContent)
-
             # NLP analysis...
             disabled, _ = self.getComponentStatus()
             disabled = [c for c in disabled if c in set(self.loadedComponents)]
             with self.nlp.disable_pipes(*disabled):
-                doc = self.nlp(inputContent)
+                doc = self.nlp(segment.get_content())
 
-            # Process each token in input segment...
-            for token in doc:
-                tokenAnnotations = inputAnnotations.copy()
-                tokenAnnotations.update(
-                    {
-                        k: getattr(token, k) for k in RELEVANT_KEYS
-                        if hasattr(token, k)
-                        and getattr(token, k) is not None 
-                        and getattr(token, k) is not ""
-                        
-                    }
-                )
-                tokenStart = inputStart+token.idx
-                tokenizedSegments.append(
-                    Segment(
-                        str_index=inputString,
-                        start=tokenStart,
-                        end=tokenStart+len(token),
-                        annotations=tokenAnnotations,
-                    )
-                )
+            # Get token segments...
+            tokenSegments.extend(spacyItemsToSegments(doc, segment))
 
-            # Process each noun chunk in input segment...
+            # Get named entity segments...
+            if self.segmentEntities:
+                entitySegments.extend(spacyItemsToSegments(doc.ents, segment))
+
+            # Get noun chunk segments...
             if self.segmentChunks:
-                for chunk in doc.noun_chunks:
-                    chunkAnnotations = inputAnnotations.copy()
-                    chunkAnnotations.update(
-                        {
-                            k: getattr(chunk, k) for k in RELEVANT_KEYS
-                            if hasattr(chunk, k)
-                            and getattr(chunk, k) is not None 
-                            and getattr(chunk, k) is not ""
-                            
-                        }
-                    )
-                    chunkedSegments.append(
-                        Segment(
-                            str_index=inputString,
-                            start=inputStart+chunk.start_char,
-                            end=inputStart+chunk.end_char,
-                            annotations=chunkAnnotations,
-                        )
-                    )
+                chunkSegments.extend(
+                    spacyItemsToSegments(doc.noun_chunks, segment), 
+                )
+
+            # Get sentences segments...
+            if self.segmentSentences:
+                sentenceSegments.extend(
+                    spacyItemsToSegments(doc.sents, segment), 
+                )
 
             progressBar.advance()
 
-        tokenSeg = Segmentation(tokenizedSegments, self.captionTitle)
-        
-        # Send data to output...
+        # Build segmentations and send them to output...                   
+        tokenSeg = Segmentation(tokenSegments, self.captionTitle + "_tokens")
         self.send("Tokenized text", tokenSeg, self)
         if self.segmentChunks:
-            chunkSeg = Segmentation(chunkedSegments, self.captionTitle)
+            chunkSeg = Segmentation(
+                chunkSegments, 
+                self.captionTitle + "_chunks",
+            )
             self.send("Noun chunks", chunkSeg, self)
+        if self.segmentEntities:
+            entitySeg = Segmentation(
+                entitySegments, 
+                self.captionTitle + "_entities",
+            )
+            self.send("Named entities", entitySeg, self)
+        if self.segmentSentences:
+            sentenceSeg = Segmentation(
+                sentenceSegments, 
+                self.captionTitle + "_sentences",
+            )
+            self.send("Sentences", sentenceSeg, self)
 
         # Set status to OK and report data size...
         message = "%i token@p" % len(tokenSeg)
@@ -663,6 +653,12 @@ class SpaCy(OWTextableBaseWidget):
         if self.segmentChunks:
             message += ", %i chunk@p" % len(chunkSeg)
             message = pluralize(message, len(chunkSeg))
+        if self.segmentEntities:
+            message += ", %i " % len(entitySeg)
+            message += "entity" if len(entitySeg) == 1 else "entities"
+        if self.segmentSentences:
+            message += ", %i sentence@p" % len(sentenceSeg)
+            message = pluralize(message, len(sentenceSeg))
         message += " sent to output."
         last_comma_idx = message.rfind(",")
         if last_comma_idx > -1:
@@ -678,7 +674,6 @@ class SpaCy(OWTextableBaseWidget):
 
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
@@ -688,6 +683,39 @@ class SpaCy(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
+
+def spacyItemsToSegments(items, parentSegment):
+    """Convert spaCy items (tokens or spans) to Textable segments."""
+    parentStrIndex = parentSegment.str_index
+    parentAnnotations = parentSegment.annotations
+    parentStart = parentSegment.start or 0
+    segments = list()
+    for item in items:
+        annotations = parentAnnotations.copy()
+        annotations.update(
+            {
+                k: getattr(item, k) for k in RELEVANT_KEYS
+                if hasattr(item, k)
+                and getattr(item, k) is not None 
+                and getattr(item, k) is not ""
+                
+            }
+        )
+        if str(type(item)).endswith("Token'>"):
+            startPos = parentStart + item.idx
+            endPos = startPos + len(item) 
+        else:
+            startPos = parentStart + item.start_char
+            endPos = parentStart + item.end_char 
+        segments.append(
+            Segment(
+                str_index=parentStrIndex,
+                start=startPos,
+                end=endPos,
+                annotations=annotations,
+            )
+        )
+    return segments
 
 # This is really a hack: Orange is normally run with pythonw.exe, but spaCy's
 # functions for downloading a model only work with python.exe (somehow!), so
