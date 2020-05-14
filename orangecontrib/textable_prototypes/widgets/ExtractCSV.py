@@ -17,6 +17,34 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Orange-Textable-Prototypes. If not, see 
 <http://www.gnu.org/licenses/>.
+
+TODO :
+1.
+- resolve infoBox error message (Noémie)
+
+- move inputseg treatement from sendData to inputData so that it works 
+    immediately when the widget is newly linked (without having to send it)
+- if nothing's linked, the list should be None
+
+2.
+- disable "rename" and "use as content" buttons when there's nothing selected
+    in the list.
+    quelque chose comme :
+    my_button.setDisabled(len(my_list.get_selected()) == 0)
+
+- "rename" button functionality
+
+- "use as content" button functionality (renaming adding a "(*content)" after
+    the content header in the list)
+
+3.
+- make csv not treat quotation marks in input 
+    (quelque chose comme dialect_quoting = CSV.QUOTE_NONE)
+    (https://docs.python.org/3.1/library/csv.html#examples)
+
+additional :
+- delete guillemets in content and annotations
+
 """
 
 __version__ = u"0.0.1"
