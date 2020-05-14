@@ -29,7 +29,7 @@ import sys
 import os
 import subprocess
 
-from Orange.widgets import gui, settings
+from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from AnyQt.QtGui import (
@@ -101,7 +101,12 @@ class SpaCy(OWTextableBaseWidget):
     # Channel definitions...
 
     inputs = [("Text data", Segmentation, "inputData")]
-    outputs = [("Linguistically analyzed data", Segmentation)]
+    outputs = [
+        ("Tokenized text", Segmentation, widget.Default),
+        ("Named entities", Segmentation),      
+        ("Noun chunks", Segmentation),
+        ("Sentences", Segmentation),
+    ]
 
     #----------------------------------------------------------------------
     # Layout parameters...
@@ -258,6 +263,83 @@ class SpaCy(OWTextableBaseWidget):
             "font-style: oblique; color: gray"
         )
 
+        segmentationsBox = gui.widgetBox(
+            widget=optionsBox, 
+            box="Additional segmentations:",
+        )
+        
+        segmentationsBoxLine1 = gui.widgetBox(
+            widget=segmentationsBox,
+            orientation="horizontal",
+            box=None,
+        )
+        
+        gui.checkBox(
+            widget=segmentationsBoxLine1,
+            master=self,
+            value='segmentEntities',
+            label='named entities',
+            callback=self.updateDisabledComponents,
+            tooltip=("TODO."),
+        )
+        
+        self.segmentEntitiesReloadLabel = gui.label(
+            segmentationsBoxLine1,
+            master=self,
+            label="(reload needed)",
+        )
+        self.segmentEntitiesReloadLabel.setStyleSheet(
+            "font-style: oblique; color: gray"
+        )
+ 
+        segmentationsBoxLine2 = gui.widgetBox(
+            widget=segmentationsBox,
+            orientation="horizontal",
+            box=None,
+        )
+        
+        gui.checkBox(
+            widget=segmentationsBoxLine2,
+            master=self,
+            value='segmentChunks',
+            label='noun chunks',
+            callback=self.updateDisabledComponents,
+            tooltip=("TODO."),
+        )
+
+        self.segmentChunksReloadLabel = gui.label(
+            segmentationsBoxLine2,
+            master=self,
+            label="(reload needed)",
+        )
+        self.segmentChunksReloadLabel.setStyleSheet(
+            "font-style: oblique; color: gray"
+        )
+
+        segmentationsBoxLine3 = gui.widgetBox(
+            widget=segmentationsBox,
+            orientation="horizontal",
+            box=None,
+        )
+        
+        gui.checkBox(
+            widget=segmentationsBoxLine3,
+            master=self,
+            value='segmentSentences',
+            label='sentences',
+            callback=self.updateDisabledComponents,
+            tooltip=("TODO."),
+        )
+
+        self.segmentSentencesReloadLabel = gui.label(
+            segmentationsBoxLine3,
+            master=self,
+            label="(reload needed)",
+        )
+        self.segmentSentencesReloadLabel.setStyleSheet(
+            "font-style: oblique; color: gray"
+        )
+
         self.updateReloadNeededLabels()
 
         gui.comboBox(
@@ -404,20 +486,32 @@ class SpaCy(OWTextableBaseWidget):
         self.annotateEntitiesReloadLabel.setVisible(
             self.annotateEntities and ("ner" not in self.loadedComponents)
         )
+        self.segmentSentencesReloadLabel.setVisible(
+            self.segmentSentences and "parser" not in self.loadedComponents
+        )
+        self.segmentChunksReloadLabel.setVisible(
+            self.segmentChunks and (
+                ("tagger" not in self.loadedComponents)
+                or ("parser" not in self.loadedComponents)
+            )
+        )
+        self.segmentEntitiesReloadLabel.setVisible(
+            self.segmentEntities and "ner" not in self.loadedComponents
+        )
 
     def getComponentStatus(self):
         """Returns the list of disabled/enabled component based on UI state."""
         disabledComponents = list()
         enabledComponents = list()
-        if self.annotatePOSTags:
+        if self.annotatePOSTags or self.segmentChunks:
             enabledComponents.append("tagger")
         else:
             disabledComponents.append("tagger")
-        if self.annotateDependencies:
+        if self.annotateDependencies or self.segmentChunks or self.segmentSentences:
             enabledComponents.append("parser")
         else:
             disabledComponents.append("parser")
-        if self.annotateEntities:
+        if self.annotateEntities or self.segmentEntities:
             enabledComponents.append("ner")
         else:
             disabledComponents.append("ner")
@@ -454,7 +548,8 @@ class SpaCy(OWTextableBaseWidget):
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
-            self.send("Linguistically analyzed data", None, self)
+            for channel in [c[0] for c in self.outputs]:
+                self.send(channel, None, self)
             return
 
         # Check max length and adjust if needed...
@@ -466,7 +561,8 @@ class SpaCy(OWTextableBaseWidget):
                     "Input exceeds max number of characters set by user.", 
                     "warning",
                 )
-                self.send("Linguistically analyzed data", None, self)
+                for channel in [c[0] for c in self.outputs]:
+                    self.send(channel, None, self)
                 return
         else:
             if inputLength > self.nlp.max_length:
@@ -489,6 +585,7 @@ class SpaCy(OWTextableBaseWidget):
         self.nlp.max_length = maxNumChar
         
         tokenizedSegments = list()
+        chunkedSegments = list()
 
         # Process each input segment...
         for segment in self.inputSeg:
@@ -528,23 +625,55 @@ class SpaCy(OWTextableBaseWidget):
                     )
                 )
 
+            # Process each noun chunk in input segment...
+            if self.segmentChunks:
+                for chunk in doc.noun_chunks:
+                    chunkAnnotations = inputAnnotations.copy()
+                    chunkAnnotations.update(
+                        {
+                            k: getattr(chunk, k) for k in RELEVANT_KEYS
+                            if hasattr(chunk, k)
+                            and getattr(chunk, k) is not None 
+                            and getattr(chunk, k) is not ""
+                            
+                        }
+                    )
+                    chunkedSegments.append(
+                        Segment(
+                            str_index=inputString,
+                            start=inputStart+chunk.start_char,
+                            end=inputStart+chunk.end_char,
+                            annotations=chunkAnnotations,
+                        )
+                    )
+
             progressBar.advance()
 
-        outputSeg = Segmentation(tokenizedSegments, self.captionTitle)
-        print(outputSeg.to_string())
+        tokenSeg = Segmentation(tokenizedSegments, self.captionTitle)
         
+        # Send data to output...
+        self.send("Tokenized text", tokenSeg, self)
+        if self.segmentChunks:
+            chunkSeg = Segmentation(chunkedSegments, self.captionTitle)
+            self.send("Noun chunks", chunkSeg, self)
+
         # Set status to OK and report data size...
-        message = "%i segment@p sent to output." % len(outputSeg)
-        message = pluralize(message, len(outputSeg))
+        message = "%i token@p" % len(tokenSeg)
+        message = pluralize(message, len(tokenSeg))
+        if self.segmentChunks:
+            message += ", %i chunk@p" % len(chunkSeg)
+            message = pluralize(message, len(chunkSeg))
+        message += " sent to output."
+        last_comma_idx = message.rfind(",")
+        if last_comma_idx > -1:
+            message = message[:last_comma_idx] + " and" +    \
+                message[last_comma_idx+1:]
         self.infoBox.setText(message)
         
         # Clear progress bar.
         progressBar.finish()
         self.controlArea.setDisabled(False)
-        
-        # Send data to output...
-        self.send("Linguistically analyzed data", outputSeg, self)
-        
+                
         self.sendButton.resetSettingsChangedFlag()             
 
     # The following method needs to be copied verbatim in
@@ -577,4 +706,4 @@ def download_spacy_model(model):
             
 if __name__ == "__main__":
     from LTTL.Input import Input
-    WidgetPreview(SpaCy).run(inputData=Input("a simple example"))
+    WidgetPreview(SpaCy).run(inputData=Input("a simple example is better than a thousand words in New York"))
