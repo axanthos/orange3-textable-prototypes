@@ -314,7 +314,7 @@ class ExtractCSV(OWTextableBaseWidget):
                  
         # Set status to OK and report data size...
         outputSeg = Segmentation(csvSeg)
-        if len(contentIsNone) == 0 :
+        if len(contentIsNone) < 1 :
             message = "%i segment@p sent to output." % len(outputSeg)
             message = pluralize(message, len(outputSeg))
             self.infoBox.setText(message)
