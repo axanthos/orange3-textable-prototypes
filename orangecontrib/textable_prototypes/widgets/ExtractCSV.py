@@ -19,18 +19,16 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 
 TODO :
-1.
+1. DONE
 - DONE : resolve infoBox error message (Noémie)
 
-- DONE(but autosend not working) : move inputseg treatement from sendData to inputData so that it works 
+- DONE : move inputseg treatement from sendData to inputData so that it works 
     immediately when the widget is newly linked (without having to send it)
 - DONE : if nothing's linked, the list should be None
 
 2.
-- TRYING (but not working properly) :disable "rename" and "use as content" buttons when there's nothing selected
+- DONE :disable "rename" and "use as content" buttons when there's nothing selected
     in the list.
-    quelque chose comme :
-    my_button.setDisabled(len(my_list.get_selected()) == 0)
 
 - "rename" button functionality
 
@@ -39,15 +37,14 @@ TODO :
 
 3.
 - make csv not treat quotation marks in input 
-    (quelque chose comme dialect_quoting = CSV.QUOTE_NONE)
+    (quoting = CSV.QUOTE_NONE)
     (https://docs.python.org/3.1/library/csv.html#examples)
 
 additional :
 - delete guillemets in content and annotations
 
-ISSUES :
-- autosend doesnt work anymore
-- can't disable button after 1 interaction
+ISSUE :
+- real problems with inputs with quotation marks
 
 """
 
@@ -122,6 +119,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.csvSeg = list()
         self.contentIsNone = list()
         self.headerList = list()
+        self.content_column = 0
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -151,8 +149,7 @@ class ExtractCSV(OWTextableBaseWidget):
             labels="headerList",
             callback=self.update_gui,
             selectionMode=1, # can only choose one item
-            tooltip="List of all the headers you can rename and\
-            change which one is the content",
+            tooltip="list of all your headers",
         )
 
         # set "rename" button (must be aside the list)
@@ -160,7 +157,8 @@ class ExtractCSV(OWTextableBaseWidget):
             widget=self.mainBox,
             master=self,
             label="rename",
-            callback=None,
+            callback=self.rename_gui,
+            tooltip="click to rename header"
         )
 
         # set "use as content" button (must be aside the list)
@@ -169,10 +167,12 @@ class ExtractCSV(OWTextableBaseWidget):
             master=self,
             label="use as content",
             callback=self.content_changed,
+            tooltip="click to select as content"
         )
 
         self.iscontentHeader.setDisabled(True)
         self.renameHeader.setDisabled(True)
+        self.update_gui()
 
         gui.rubber(self.controlArea)
 
@@ -185,12 +185,19 @@ class ExtractCSV(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def update_gui(self):
-        self.iscontentHeader.setDisabled(False)
-        self.renameHeader.setDisabled(False)
+        if len(self.selectedHeader)==0:
+            self.iscontentHeader.setDisabled(True)
+            self.renameHeader.setDisabled(True)
+        else:
+            self.iscontentHeader.setDisabled(False)
+            self.renameHeader.setDisabled(False)
 
     def content_changed(self):
         self.content_column = int(self.selectedHeader[0])
         self.treat_input()
+        return
+
+    def rename_gui(self):
         return
 
     def treat_input(self):
@@ -349,7 +356,8 @@ class ExtractCSV(OWTextableBaseWidget):
         progressBar.finish()
         self.controlArea.setDisabled(False)
 
-        #return self.csvSeg, self.contentIsNone
+        self.sendButton.resetSettingsChangedFlag()
+        self.sendButton.sendIf()
 
     def inputData(self, newInput):
         """Process incoming data."""
