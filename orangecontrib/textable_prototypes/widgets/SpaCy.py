@@ -86,7 +86,6 @@ for model, package in AVAILABLE_MODELS.items():
     else:
         DOWNLOADABLE_MODELS.append(model)
 
-
 class SpaCy(OWTextableBaseWidget):
     """Textable widget for NLP using spaCy."""
 
@@ -129,12 +128,15 @@ class SpaCy(OWTextableBaseWidget):
     segmentChunks = settings.Setting(False)
     segmentSentences = settings.Setting(False)
     autoSend = settings.Setting(False)
-    model = settings.Setting("en_core_web_sm")
-    
+    model = settings.Setting("")
+
     def __init__(self):
         """Widget creator."""
 
         super().__init__()
+
+        if INSTALLED_MODELS:
+            self.model = INSTALLED_MODELS[0]
 
         # Other attributes...
         self.inputSeg = None
@@ -401,6 +403,15 @@ class SpaCy(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.infoBox.setText("Widget needs input.", "warning")
+        
+        # Check that there's a model...
+        if not self.model:
+            self.infoBox.setText(
+                "Please download a language model first.",
+                "warning",
+            )
+            self.tabs.setCurrentIndex(1)
+            optionsBox.setDisabled(True)
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -539,7 +550,7 @@ class SpaCy(OWTextableBaseWidget):
             )
             self.tabs.setCurrentIndex(1)
             return
-            
+
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")

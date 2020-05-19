@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<scheme description="" title="" version="2.0">
+<scheme description="This tutorial shows how to use the spaCy widget to tokenize a text, add part-of-speech tags to tokens, select verb tokens and finally count the distribution of verb lemmas." title="Using spaCy for viewing verb lemmas in a text" version="2.0">
 	<nodes>
 		<node id="0" name="URLs" position="(150, 150)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableURLs.OWTextableURLs" title="Universal Declaration of Human Rights" version="" />
 		<node id="1" name="spaCy" position="(300, 150)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.SpaCy.SpaCy" title="spaCy" version="" />
