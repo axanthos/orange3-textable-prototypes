@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" /><meta content="Orange3 Textable Prototypes documentation, spaCy widget" name="description" />
+<meta content="Orange3, Textable, Prototypes, documentation, spaCy, widget" name="keywords" />
+
+    <title>spaCy &#8212; Orange3 Textable Prototypes 0.14 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lexical Hunter" href="lexical_hunter.html" />
+    <link rel="prev" title="Linguistica" href="linguistica.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="lexical_hunter.html" title="Lexical Hunter"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="linguistica.html" title="Linguistica"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Orange3 Textable Prototypes 0.14 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="spacy">
+<span id="id1"></span><h1>spaCy<a class="headerlink" href="#spacy" title="Permalink to this headline">¶</a></h1>
+<img alt="../_images/spacy.png" src="../_images/spacy.png" />
+<p>Natural language processing using the spaCy (<a class="reference external" href="https://spacy.io/">https://spacy.io/</a>) library.</p>
+<div class="section" id="author">
+<h2>Author<a class="headerlink" href="#author" title="Permalink to this headline">¶</a></h2>
+<p>Aris Xanthos</p>
+</div>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Inputs: <code class="docutils literal notranslate"><span class="pre">Text</span> <span class="pre">data</span></code></p>
+<blockquote>
+<div><p>Textable segmentation</p>
+</div></blockquote>
+<p>Outputs:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Tokenized</span> <span class="pre">text</span></code> (default)</p>
+<p>Segmentation with a segment for each <a class="reference external" href="https://spacy.io/usage/spacy-101#annotations-token">token</a> in the input data</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Named</span> <span class="pre">entities</span></code> (optional)</p>
+<p>Segmentation with a segment for each <a class="reference external" href="https://spacy.io/usage/linguistic-features#named-entities">named entity</a> in the input
+data</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Noun</span> <span class="pre">chunks</span></code> (optional)</p>
+<p>Segmentation with a segment for each <a class="reference external" href="https://spacy.io/usage/linguistic-features#noun-chunks">noun chunk</a> in the input data</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sentences</span></code> (optional)</p>
+<p>Segmentation with a segment for each <a class="reference external" href="https://spacy.io/usage/linguistic-features#sbd">sentence</a> in the input data</p>
+</li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget provides a graphical interface to a number of functionalities of
+the spaCy (<a class="reference external" href="https://spacy.io/">https://spacy.io/</a>) natural language processing Python library:</p>
+<ul class="simple">
+<li><p>tokenization</p></li>
+<li><p>part-of-speech tagging</p></li>
+<li><p>lemmatization</p></li>
+<li><p>named entity recognition</p></li>
+<li><p>noun chunk segmentation</p></li>
+<li><p>sentence segmentation</p></li>
+</ul>
+<p>The user is referred to the extensive documentation of spaCy for detailed
+explanations of what these various levels of linguistic analysis encompass and
+how they are technically obtained. Note that spaCy is able to process text in a
+range of languages (cf. <a class="reference external" href="https://spacy.io/usage/models#languages">https://spacy.io/usage/models#languages</a>), provided
+that the corresponding language “models” have been downloaded by the user, a
+task that this widget can do for you.</p>
+<p>The widget outputs at least one segmentation containing a segment for each
+token in the input data. Segments in this segmentation have a variable number
+of annotations (depending on user-defined parameters and what is available for
+the language in question). For example, here is what spaCy’s <em>en_core_web_sm</em>
+model returns for token <em>library</em> in the sentence <em>This library rocks.</em> (see spaCy’s <a class="reference external" href="https://spacy.io/api/token#attributes">documentation</a> for details):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>example value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>dep_</em></p></td>
+<td><p><em>nsubj</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>ent_iob_</em></p></td>
+<td><p><em>O</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>head</em></p></td>
+<td><p><em>rocks</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>is_alpha</em></p></td>
+<td><p><em>True</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>is_bracket</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>is_digit</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>is_left_punct</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>is_lower</em></p></td>
+<td><p><em>True</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>is_oov</em></p></td>
+<td><p><em>True</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>is_punct</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>is_quote</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>is_right_punct</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>is_space</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>is_stop</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>is_title</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>is_upper</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>lang_</em></p></td>
+<td><p><em>en</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>lemma_</em></p></td>
+<td><p><em>library</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>like_email</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>like_num</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>like_url</em></p></td>
+<td><p><em>False</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>lower_</em></p></td>
+<td><p><em>library</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>norm_</em></p></td>
+<td><p><em>library</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>pos_</em></p></td>
+<td><p><em>NOUN</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>sentiment</em></p></td>
+<td><p><em>0.0</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>shape_</em></p></td>
+<td><p><em>xxxx</em></p></td>
+</tr>
+<tr class="row-even"><td><p><em>tag_</em></p></td>
+<td><p><em>NN</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>whitespace_</em></p></td>
+<td><p><em>” “</em></p></td>
+</tr>
+</tbody>
+</table>
+<p>Optionally, the widget’s output may also include up to three more
+segmentations, into <a class="reference external" href="https://spacy.io/usage/linguistic-features#named-entities">named entities</a>, noun chunks
+&lt;<a class="reference external" href="https://spacy.io/usage/linguistic-features#noun-chunks">https://spacy.io/usage/linguistic-features#noun-chunks</a>&gt;`_, and <a class="reference external" href="https://spacy.io/usage/linguistic-features#sbd">sentences</a>. These elements have the
+annotations <em>lemma_</em>, <em>lower_</em> and <em>sentiment</em>, as well as <em>label</em> (for all but
+sentences).</p>
+<div class="section" id="interface">
+<h3>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h3>
+<p>User controls are divided into two tabs: (see <a class="reference internal" href="#spacy-fig1"><span class="std std-ref">figure 1</span></a> below): <strong>Options</strong> and <strong>Model manager</strong>.</p>
+<div class="figure align-center" id="id4">
+<span id="spacy-fig1"></span><img alt="Interface of the spaCy widget, Options tab" src="../_images/spacy_interface_options.png" />
+<p class="caption"><span class="caption-text">Figure 1: <strong>spaCy</strong> widget interface, <strong>Options</strong> tab.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<div class="section" id="options-tab">
+<h4>Options tab<a class="headerlink" href="#options-tab" title="Permalink to this headline">¶</a></h4>
+<p>The <strong>Options</strong> tab contains all controls related to the way spaCy processes
+the input data.</p>
+<p>The <strong>Model</strong> dropdown menu lets the user specify the language
+model to be used, among those that have been installed on their computer (see
+below for how to download and install models using the <strong>Model manager</strong> tab).</p>
+<p>Regardless of any configuration choices, a given language model will at least
+output a tokenized version of the input data, with a subset of the annotations
+indicated above. By ticking boxes in the <strong>Additional token annotations</strong>
+section, the user can opt to add information concerning <strong>part-of-speech
+tags</strong>, <strong>syntactic dependencies</strong>, and <strong>named entities</strong>. Note that ticking
+these boxes may require to reload the language model (which can take some time,
+depending on model size), and will increase the duration of processing (in proportion of the amount of input data).</p>
+<p>When boxes in the <strong>Additional segmentations</strong> are ticked, the widget will
+send up to three additional segmentations on separate output channels (which
+can be accessed by double-clicking the connexions between the <strong>spaCy</strong> widget
+and the next widget in the line and redrawing the connexions as desired in the
+<strong>Edit Links</strong> dialog). The segments of these segmentations correspond to
+<strong>named entities</strong>, <strong>noun chunks</strong>, and <strong>sentences</strong> respectively. The same
+remarks as for additional annotations apply: ticking these boxes may require to reload the language mode and will increase the duration of processing.</p>
+<p>The last item in the <strong>Options</strong> section controls the <strong>maximum number of input
+characters</strong> allowed by the widget. As indicated in spaCy’s documentation, the
+spaCy parser and NER models require roughly 1GB of temporary memory per 100‘000
+characters in the input; this means long texts may cause memory allocation
+errors. It is probably safe to increase the default limit of 1 million
+characters if you’re not using the syntactic parser (required for syntactic
+dependency annotation as well as noun chunk and sentence segmentation) or
+named entity recognizer, or have a large amount of RAM available.</p>
+</div>
+<div class="section" id="model-manager-tab">
+<h4>Model manager tab<a class="headerlink" href="#model-manager-tab" title="Permalink to this headline">¶</a></h4>
+<p>The <strong>spaCy</strong> is initially installed with a single language model for English. The <strong>Model manager</strong> tab (see <a class="reference internal" href="#spacy-fig2"><span class="std std-ref">figure 2</span></a> below) enables the
+user to download and install additional language models for English or for
+other languages (cf. <a class="reference external" href="https://spacy.io/usage/models#languages">https://spacy.io/usage/models#languages</a> for available
+language models)</p>
+<div class="figure align-center" id="id5">
+<span id="spacy-fig2"></span><img alt="Interface of the spaCy widget, Model manager tab" src="../_images/spacy_interface_model_manager.png" />
+<p class="caption"><span class="caption-text">Figure 2: <strong>spaCy</strong> widget interface, <strong>Model Manager</strong> tab.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<p>Simply select one ore more models to download and install, then click
+<strong>Download</strong> and confirm your choices with <strong>OK</strong>. After the models have been
+downloaded and installed, you will be prompted to quit and restart Orange
+Canvas for changes to take effect. Please note that some models may be quite
+large and take a substantial amount of time to download (in particular the
+<em>en_core_web_lg</em> English model, which weighs 798 Mb).</p>
+</div>
+</div>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><em>&lt;n&gt; tokens, &lt;m&gt; noun chunks, &lt;l&gt; entities and &lt;k&gt; sentences sent to output.</em></dt><dd><p>This confirms that the widget has operated properly.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><em>Settings were changed, please click ‘Send’ when ready.</em></dt><dd><p>Settings have changed but the <strong>Send automatically</strong> checkbox
+has not been selected, so the user is prompted to click the <strong>Send</strong>
+button (or equivalently check the box) in order for computation and data
+emission to proceed.</p>
+</dd>
+<dt><em>Widget needs input.</em></dt><dd><p>The widget instance needs data to be sent to its input channel in order
+to process it.</p>
+</dd>
+<dt><em>Please download a language model first.</em></dt><dd><p>At least one language model needs to be installed before the widget can
+operate.</p>
+</dd>
+<dt><em>Loading language model, please wait…</em></dt><dd><p>A language model is currently being downloaded and installed.</p>
+</dd>
+<dt><em>Processing, please wait…</em></dt><dd><p>The requested NLP analysis is being performed.</p>
+</dd>
+<dt><em>Input exceeds max number of characters set by user.</em></dt><dd><p>The number of characters in the widget’s input is larger than the maximum
+number of characters allowed based user-defined settings; either decrease
+the input size or increase the maximum number of characters allowed.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">spaCy</a><ul>
+<li><a class="reference internal" href="#author">Author</a></li>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#interface">Interface</a><ul>
+<li><a class="reference internal" href="#options-tab">Options tab</a></li>
+<li><a class="reference internal" href="#model-manager-tab">Model manager tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="linguistica.html"
+                        title="previous chapter">Linguistica</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="lexical_hunter.html"
+                        title="next chapter">Lexical Hunter</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/widgets/spaCy.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="lexical_hunter.html" title="Lexical Hunter"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="linguistica.html" title="Linguistica"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Orange3 Textable Prototypes 0.14 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2018, University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

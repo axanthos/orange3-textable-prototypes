@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" /><meta content="Orange3 Textable Prototypes documentation, Topic Models widget" name="description" />
+<meta content="Orange3, Textable, Prototypes, documentation, topic models, widget" name="keywords" />
+
+    <title>Topic Models &#8212; Orange3 Textable Prototypes 0.14 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Linguistica" href="linguistica.html" />
+    <link rel="prev" title="CHILDES" href="CHILDES.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="linguistica.html" title="Linguistica"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="CHILDES.html" title="CHILDES"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Orange3 Textable Prototypes 0.14 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="topic-models">
+<span id="id1"></span><h1>Topic Models<a class="headerlink" href="#topic-models" title="Permalink to this headline">¶</a></h1>
+<img alt="../_images/topic_models.png" src="../_images/topic_models.png" />
+<p>Build topic models based on term-document matrices.</p>
+<div class="section" id="author">
+<h2>Author<a class="headerlink" href="#author" title="Permalink to this headline">¶</a></h2>
+<p>Aris Xanthos</p>
+</div>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Input:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Textable</span> <span class="pre">crosstab</span></code></p>
+<blockquote>
+<div><p>A term-document matrix in Textable PivotCrosstab format</p>
+</div></blockquote>
+</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Term-topic</span> <span class="pre">Textable</span> <span class="pre">table</span></code></p>
+<blockquote>
+<div><p>A table (in Textable PivotCrosstab format) showing the association between terms and topics</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Document-topic</span> <span class="pre">Textable</span> <span class="pre">table</span></code></p>
+<blockquote>
+<div><p>A table (in Textable PivotCrosstab format) showing the association between documents and topics</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Term-topic</span> <span class="pre">Orange</span> <span class="pre">table</span></code></p>
+<blockquote>
+<div><p>A table (in Orange format) showing the association between terms and topics</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Document-topic</span> <span class="pre">Orange</span> <span class="pre">table</span></code></p>
+<blockquote>
+<div><p>A table (in Orange PivotCrosstab format) showing the association between documents and topics</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget takes a term-document matrix in input (such as emitted by
+Textable’s <strong>Count</strong> widget) and applies one of several topic modelling methods
+to these data in order to infer latent, fuzzy word and document categories.</p>
+<p>Two of the underlying methods (Latent Dirichlet and Latent semantic indexing
+allocation) are based on the <a class="reference external" href="https://radimrehurek.com/gensim/">Gensim</a>
+third-party package  while the third method (correspondence analysis) uses
+Orange’s internal implementation.</p>
+<p>The widget’s output are two pairs of tables (one in Textable format and one in
+Orange format): term-topic tables show how strongly each topic is associated to
+each term, and document-topic tables displays their association with each
+document.</p>
+<p>In addition, the widget’s interface shows the list of terms that are most
+strongly associated with each topic. In the case of Latent semantic indexing
+and Correspondence analysis, the displayed terms are those that are
+either positively or negatively associated with each latent dimension
+(or factor, or component), and an indication of the proportion of variance
+(or inertia) explained by each topic is also given (see
+<a class="reference internal" href="#topic-models-fig1"><span class="std std-ref">figure 1</span></a> below).</p>
+<div class="section" id="interface">
+<h3>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h3>
+<p>The widget’s interface requires little input from the user (see
+<a class="reference internal" href="#topic-models-fig1"><span class="std std-ref">figure 1</span></a> below): the desired topic modelling
+<strong>Method</strong> (Latent Dirichlet allocation, Latent semantic indexing, or
+Correspondence analysis) and the <strong>Number of topics</strong> to be computed.</p>
+<div class="figure align-center" id="id2">
+<span id="topic-models-fig1"></span><img alt="Interface of the Topic Models widget" src="../_images/topic_models_interface.png" />
+<p class="caption"><span class="caption-text">Figure 1: <strong>Topic Models</strong> widget interface.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>The <strong>Info</strong> section indicates that the input has been correctly processed, or
+the reason why no output is emitted (no input, etc.).</p>
+<p>The <strong>Send</strong> button triggers the computation and emission of term-topic and
+document-topic tables to the output connection(s). When it is selected, the
+<strong>Send automatically</strong> checkbox disables the button and the widget attempts to
+automatically emit results at every modification of its interface.</p>
+</div>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><em>Tables correctly sent to output.</em></dt><dd><p>This confirms that the widget has operated properly.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><em>Settings were changed, please click ‘Send’ when ready.</em></dt><dd><p>Settings have changed but the <strong>Send automatically</strong> checkbox
+has not been selected, so the user is prompted to click the <strong>Send</strong>
+button (or equivalently check the box) in order for computation and data
+emission to proceed.</p>
+</dd>
+<dt><em>Widget needs input</em></dt><dd><p>A term-document matrix (in Textable PivotCrosstab format) should be input
+in the widget.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Topic Models</a><ul>
+<li><a class="reference internal" href="#author">Author</a></li>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#interface">Interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="CHILDES.html"
+                        title="previous chapter">CHILDES</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="linguistica.html"
+                        title="next chapter">Linguistica</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/widgets/topic_models.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="linguistica.html" title="Linguistica"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="CHILDES.html" title="CHILDES"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Orange3 Textable Prototypes 0.14 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2018, University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

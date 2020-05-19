@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" /><meta content="Orange3 Textable Prototypes documentation, Lexical Hunter widget" name="description" />
+<meta content="Orange3, Textable, Prototypes, documentation, Lexical Hunter, widget" name="keywords" />
+
+    <title>Lexical Hunter &#8212; Orange3 Textable Prototypes 0.14 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="spaCy" href="spaCy.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="spaCy.html" title="spaCy"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Orange3 Textable Prototypes 0.14 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lexical-hunter">
+<span id="id1"></span><h1>Lexical Hunter<a class="headerlink" href="#lexical-hunter" title="Permalink to this headline">¶</a></h1>
+<img alt="../_images/lexical_hunter.png" src="../_images/lexical_hunter.png" />
+<p>Annotates a segmentation based on one or more lexical fields.</p>
+<div class="section" id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Maxime Bony</p></li>
+<li><p>Simon Cappelle</p></li>
+<li><p>Robin Pitteloud</p></li>
+</ul>
+</div>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Inputs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Text</span> <span class="pre">segmentation</span></code></p></li>
+</ul>
+<p>Outputs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Text</span> <span class="pre">segmentation</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget is a lexical fields identifier.
+It creates annotation based on one or multiple lexical fields.
+There are some basic lexical fields, but the user can modify or remove them.
+The user can also create and/or import custom lexical fields.
+t is possible to export these lexical fields as well.
+The interface of Lexical Hunter is available in two versions, a basic one that lets the user select some
+lexical fields to annotate the segmented data and an advanced one that lets the user manage these lexical lists.
+Do not put any special characters in your lists, unless you know what you are doing, otherwise the widget will
+interpret them as a regex.</p>
+<div class="section" id="basic-interface">
+<h3>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h3>
+<p>In its basic version (see <a class="reference internal" href="#lexicalhunter-fig1"><span class="std std-ref">figure 1</span></a> below), the
+<strong>Lexical Hunter</strong> widget simply lets the user select one or more lexical fields
+in the default list. To select multiple files use either control/command-click
+or shift-click.</p>
+<div class="figure align-center" id="id2">
+<span id="lexicalhunter-fig1"></span><img alt="Basic interface of the Lexical Hunter widget" src="../_images/lexicalhunter_basic.png" />
+<p class="caption"><span class="caption-text">Figure 1: <strong>Lexical Hunter</strong> widget (basic interface).</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>The <strong>Annotation key</strong> section allows the user to define the name of the
+annotation key.</p>
+<p>The <strong>Info</strong> section indicates the number of segments in the output segmentation, or the reasons why no segmentation is emitted (segmentation
+input is needed, please select one or more lexical lists, etc.).</p>
+<p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface.</p>
+</div>
+<div class="section" id="advanced-interface">
+<h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
+<p>The advanced version of <strong>Lexical Hunter</strong>  (see <a class="reference internal" href="#lexicalhunter-fig2"><span class="std std-ref">figure 2</span></a> below) lets the user edit, delete, add, import
+or export lists.</p>
+<div class="figure align-center" id="id3">
+<span id="lexicalhunter-fig2"></span><img alt="Advanced interface of the Lexical Hunter widget" src="../_images/lexicalhunter_advanced.png" />
+<p class="caption"><span class="caption-text">Figure 2: <strong>Lexical Hunter</strong> widget (advanced interface).</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>The <strong>Edit</strong> button puts the content of the selected list in the text
+field.</p>
+<p>The <strong>Import</strong> button allows the user to import a list from a .txt file.</p>
+<p>The <strong>Export all</strong> button allows the user to export every lexical field
+from the list. They are saved as .txt files.</p>
+<p>The <strong>Export selected</strong> button allows the user to export the selected
+lexical field.</p>
+<p>The <strong>New</strong> button allows the user to create a new lexical field.</p>
+<p>The <strong>Clear all</strong> button allows the user to delete all of the lexical lists.</p>
+<p>The <strong>Remove selected</strong> button allows the user to delete the selected
+lexical list.</p>
+<p>The <strong>Commit</strong> button saves the changes made to the list that is in the
+text field.</p>
+<p>The <strong>Save changes</strong> button saves all the changes made by the user to the lists.</p>
+<p>The <strong>Cancel button</strong> cancels all the changes made by the user to the lists.</p>
+</div>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><em>&lt;n&gt; segments sent to output.</em></dt><dd><p>This confirms that the widget has operated properly.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><em>A segmentation input is needed.</em></dt><dd><p>The widget needs an input segmentation to process data.</p>
+</dd>
+<dt><em>An annoatation key is needed.</em></dt><dd><p>The widget needs an annotation key value.</p>
+</dd>
+<dt><em>Settings were changed, please click ‘Send’ when ready.</em></dt><dd><p>Settings have changed but the <strong>Send automatically</strong> checkbox
+has not been selected, so the user is prompted to click the <strong>Send</strong>
+button (or equivalently check the box) in order for computation and data
+emission to proceed.</p>
+</dd>
+<dt><em>Please select one or more lexical lists.</em></dt><dd><p>The widget instance is not able to emit data to output because no lexical
+list has been selected.</p>
+</dd>
+<dt><em>No data sent to output yet: no input segmentation.</em></dt><dd><p>The widget instance is not able to emit data to output because it receives
+none on its input channel(s).</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="errors">
+<h3>Errors<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><em>You need to define at least one lexical list</em></dt><dd><p>The user needs to define at least one lexical list.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="note">
+<h3>Note<a class="headerlink" href="#note" title="Permalink to this headline">¶</a></h3>
+<p>The widget still has a problem with the edit window on Windows. You have to close it twice or click twice the “Save changes” or “Cancel changes” button to close it.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Lexical Hunter</a><ul>
+<li><a class="reference internal" href="#authors">Authors</a></li>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#basic-interface">Basic interface</a></li>
+<li><a class="reference internal" href="#advanced-interface">Advanced interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+<li><a class="reference internal" href="#errors">Errors</a></li>
+<li><a class="reference internal" href="#note">Note</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spaCy.html"
+                        title="previous chapter">spaCy</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/widgets/lexical_hunter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="spaCy.html" title="spaCy"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Orange3 Textable Prototypes 0.14 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2018, University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>
