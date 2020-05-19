@@ -228,4 +228,4 @@ Errors
     after recreating the database cache.
     
 
-.. [1] The user is reffered to the `CHAT transcription format documentation <https://talkbank.org/manuals/CHAT.html>`_ for the meaning and possible values of the numerous annotations extracted by the widget.
+.. [1] The user is referred to the `CHAT transcription format documentation <https://talkbank.org/manuals/CHAT.html>`_ for the meaning and possible values of the numerous annotations extracted by the widget.

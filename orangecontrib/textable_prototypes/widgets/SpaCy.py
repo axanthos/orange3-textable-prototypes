@@ -129,11 +129,7 @@ class SpaCy(OWTextableBaseWidget):
     segmentChunks = settings.Setting(False)
     segmentSentences = settings.Setting(False)
     autoSend = settings.Setting(False)
-
-    if INSTALLED_MODELS:
-        model = settings.Setting(INSTALLED_MODELS[0])
-    else:
-        model = settings.Setting("")
+    model = settings.Setting("en_core_web_sm")
     
     def __init__(self):
         """Widget creator."""
@@ -404,20 +400,13 @@ class SpaCy(OWTextableBaseWidget):
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
-        self.infoBox.setText("Widget needs input", "warning")
+        self.infoBox.setText("Widget needs input.", "warning")
 
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSeg = newInput
-        if self.model:
-            self.infoBox.inputChanged()
-            self.sendButton.sendIf()
-        else:
-            self.infoBox.setText(
-                "Please download a language model.",
-                "warning",
-            )
-            self.tabs.setCurrentIndex(1)
+        self.infoBox.inputChanged()
+        self.sendButton.sendIf()
                   
     def modelComboboxChanged(self):
         """Respond to model change in UI (Options tab)."""
@@ -553,7 +542,7 @@ class SpaCy(OWTextableBaseWidget):
             
         # Check that there's an input...
         if self.inputSeg is None:
-            self.infoBox.setText("Widget needs input", "warning")
+            self.infoBox.setText("Widget needs input.", "warning")
             for channel in [c[0] for c in self.outputs]:
                 self.send(channel, None, self)
             return
@@ -734,4 +723,8 @@ def download_spacy_model(model):
             
 if __name__ == "__main__":
     from LTTL.Input import Input
-    WidgetPreview(SpaCy).run(inputData=Input("a simple example is better than a thousand words in New York"))
+    WidgetPreview(SpaCy).run(
+        inputData=Input(
+            "a simple example is better than a thousand words in New York"
+        )
+    )
