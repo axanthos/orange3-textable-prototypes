@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.5"
+__version__ = u"0.0.6"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -137,6 +137,8 @@ class SpaCy(OWTextableBaseWidget):
 
         if INSTALLED_MODELS:
             self.model = INSTALLED_MODELS[0]
+        else:
+            self.model = ""
 
         # Other attributes...
         self.inputSeg = None
