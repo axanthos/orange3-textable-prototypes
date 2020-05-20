@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.6"
+__version__ = u"0.0.7"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -28,6 +28,7 @@ import importlib.util
 import sys
 import os
 import subprocess
+import platform
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -556,7 +557,7 @@ class SpaCy(OWTextableBaseWidget):
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
-            for channel in [c[0] for c in self.outputs]:
+            for channel in [c.name for c in self.outputs]:
                 self.send(channel, None, self)
             return
 
@@ -569,7 +570,7 @@ class SpaCy(OWTextableBaseWidget):
                     "Input exceeds max number of characters set by user.", 
                     "warning",
                 )
-                for channel in [c[0] for c in self.outputs]:
+                for channel in [c.name for c in self.outputs]:
                     self.send(channel, None, self)
                 return
         else:
@@ -719,18 +720,22 @@ def spacyItemsToSegments(items, parentSegment):
         )
     return segments
 
-# This is really a hack: Orange is normally run with pythonw.exe, but spaCy's
-# functions for downloading a model only work with python.exe (somehow!), so
-# the following function is reimplemented here to use python.exe anyway.
+
 def download_spacy_model(model):
-    """Reimplemented (and simplified) from spacy.cli.download."""
+    """Reimplemented and adapted from spacy.cli.download."""
     global DOWNLOAD_URL
     global MODEL_VERSION_NUM
     dl_tpl = "{m}-{v}/{m}-{v}.tar.gz#egg={m}=={v}"
     download_url = DOWNLOAD_URL + dl_tpl.format(m=model, v=MODEL_VERSION_NUM)
-    pip_args = ["--no-cache-dir", "--user"]
-    executable = sys.executable.replace("pythonw", "python") # <== hack!
-    cmd = [executable, "-m", "pip", "install"] + pip_args + [download_url]
+    pip_args = ["--no-cache-dir"]
+    if platform.system() == "Windows":
+        executable = sys.executable.replace("pythonw", "python")
+        pip_args.append("--user")
+        cmd = [executable, "-m", "pip", "install"] + pip_args + [download_url]
+    elif platform.system() == "Darwin":
+        executable = sys.executable.replace("MacOS/python", "MacOS/pip")
+        executable = executable.replace("pipapp", "pip")
+        cmd = [executable, "-m", "pip", "install"] + pip_args + [download_url]
     subprocess.run(cmd, env=os.environ.copy())
 
             
