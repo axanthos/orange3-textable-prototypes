@@ -39,6 +39,7 @@ Widgets
     CHILDES <widgets/CHILDES>
     Topic Models <widgets/topic_models>
     Linguistica <widgets/linguistica>
+    spaCy <widgets/spaCy>
     Lexical Hunter <widgets/lexical_hunter>
 
 
