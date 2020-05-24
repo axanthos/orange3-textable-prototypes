@@ -33,12 +33,10 @@ import re
 import json
 from io import BytesIO # SuperTextFiles OCR
 from unicodedata import normalize
-import filetype # SuperTextFiles 
+import filetype # SuperTextFiles
 import pdfplumber # SuperTextFiles
 import fitz # SuperTextFiles OCR
-from pytesseract import (
-    TesseractError,  image_to_string
-) # SuperTextFiles OCR
+from pytesseract import TesseractError, image_to_string # SuperTextFiles OCR
 from PIL import Image # SuperTextFiles OCR
 
 from PyQt5.QtCore import QTimer
@@ -87,7 +85,7 @@ class SuperTextFiles(OWTextableBaseWidget):
 
     #----------------------------------------------------------------------
     # Layout parameters...
-    
+
     want_main_area = False
 
     #----------------------------------------------------------------------
@@ -401,7 +399,7 @@ class SuperTextFiles(OWTextableBaseWidget):
         ### Start SuperTextFiles addition
         gui.separator(widget=addFileBox, width=3)
         # Field for PDF password
-        password_field = gui.lineEdit(
+        gui.lineEdit(
             widget=addFileBox,
             master=self,
             value='pdfPassword',
@@ -417,7 +415,7 @@ class SuperTextFiles(OWTextableBaseWidget):
 
         gui.separator(widget=addFileBox, width=3)
         # Field for OCR languages
-        ocr_languages_field = gui.lineEdit(
+        gui.lineEdit(
             widget=addFileBox,
             master=self,
             value='ocrLanguages',
@@ -431,7 +429,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             ),
         )
 
-        ocr_force = gui.checkBox(
+        gui.checkBox(
             widget=addFileBox,
             master=self,
             value='ocrForce',
@@ -583,7 +581,6 @@ class SuperTextFiles(OWTextableBaseWidget):
             return
 
     def sendData(self):
-
         """Load files, create and send segmentation"""
 
         # Check that there's something on input...
@@ -619,7 +616,15 @@ class SuperTextFiles(OWTextableBaseWidget):
         if self.displayAdvancedSettings:
             myFiles = self.files
         else:
-            myFiles = [[self.file, self.encoding, u'', u'']]
+            myFiles = [[
+                self.file,
+                self.encoding,
+                u'',
+                u'',
+                u'',
+                self.ocrLanguages,
+                self.ocrForce
+            ]]
 
         self.infoBox.setText(u"Processing, please wait...", "warning")
         self.controlArea.setDisabled(True)
@@ -638,26 +643,28 @@ class SuperTextFiles(OWTextableBaseWidget):
             pdf_password = myFile[4] # SuperTextFiles
             ocr_languages = myFile[5] # SuperTextFiles
             ocr_force = myFile[6] # SuperTextFiles
-            
+
             myFiletype = filetype.guess(myFile[0]) # SuperTextFiles
 
             # Try to open the file...
             self.error()
+            # Start SuperTextFiles
             try:
                 if myFiletype is None:
                     fileContent = self.extract_raw_text(filePath, encoding)
 
                 elif myFiletype.extension == "pdf":
-                    if self.ocrForce is True :
+                    if self.ocrForce is True:
                         fileContent = self.get_file_content(filePath)
-                    else :
-                        if self.is_textual_pdf_file(filePath) is True :
+                    else:
+                        if self.is_textual_pdf_file(filePath) is True:
                             fileContent = self.extract_text_from_pdf(filePath)
                         else:
-                            fileContent = self.get_file_content(filePath)
+                            fileContent = self.get_pdf_content(filePath)
 
                 elif myFiletype.extension in IMG_FILETYPES:
-                    fileContent = self.get_file_content(filePath)
+                    fileContent = self.ocrize(filePath)
+            # End SuperTextFiles
 
             except IOError:
                 progressBar.finish()
@@ -739,6 +746,8 @@ class SuperTextFiles(OWTextableBaseWidget):
         self.sendButton.resetSettingsChangedFlag()
 
     def extract_raw_text(self, filePath, encoding):
+        """This function receive a filePath and an encoding value and return a
+        string with the text of the given file."""
         if encoding == "(auto-detect)":
             detector = UniversalDetector()
             fh = open(filePath, 'rb')
@@ -783,82 +792,69 @@ class SuperTextFiles(OWTextableBaseWidget):
 
     def is_textual_pdf_file(self, filePath):
         """Evaluate the content of the pdf file"""
-        with pdfplumber.open(filePath) as fh:
+        with pdfplumber.open(filePath, password=self.pdfPassword) as fh:
             first_page = fh.pages[0]
             text = first_page.extract_text()
-            fh.close()
 
             if text is None or text.isspace() is True:
                 return False
-            else :
+            else:
                 return True
 
     def extract_text_from_pdf(self, filePath):
         """Extract all readable text contents"""
         fileContent = ""
-        with pdfplumber.open(filePath) as fh:
+        with pdfplumber.open(filePath, password=self.pdfPassword) as fh:
             for page  in fh.pages:
                 fileContent += page.extract_text()
 
-        fh.close()
-
         return fileContent
 
-    def get_file_content(self, filePath):
+    def get_pdf_content(self, filePath):
         """ First this function get all texts in the file if exist. Then it
         creates a list of pictures to make the OCR method."""
         text = ""
         with fitz.open(filePath) as doc:
             images = []
             for page in doc:
-                print(page)
                 text += page.getText("text")
                 images += doc.getPageImageList(page.number)
-                print(images)
 
+            for image in images:
+                xref = image[0]
+                picture = fitz.Pixmap(doc, xref)
 
+                if picture.n > 4: # CMYK colorspace
+                    picture = fitz.Pixmap(fitz.csRGB, picture) # convert to RGB
 
-            page_text = self.ocrize(doc, images)
+                bytes_img = BytesIO(picture.getImageData())
 
-            print(page_text)
+                page_text = self.ocrize(bytes_img)
 
-            if page_text:
-                
-                text += page_text
+                if page_text:
+                    text += page_text
 
         return text
 
-    def ocrize(self, doc, images):
+    def ocrize(self, image):
         """Make an OCR on a list of images or an image file"""
-        ocrized_text = ""
         languages = self.ocrLanguages.strip() # remove trailing spaces
-        for image in images:
-            xref = image[0]
-            picture = fitz.Pixmap(doc, xref)
 
-            if picture.n > 4: # CMYK colorspace
-                picture = fitz.Pixmap(fitz.csRGB, picture) # convert to RGB
-            
-            bytes_img = BytesIO(picture.getImageData())
-
-            print(languages)
-
-            try:
-                ocrized_text += image_to_string(
-                    Image.open(bytes_img),
-                    lang=languages
-                )
-                return ocrized_text
-            except TesseractError:
-                QMessageBox.warning(
-                    None,
-                    'Textable',
-                    "Failed to load. Please verify if Tesseract trained data " +
-                    "installed for following languages : %s."
-                    % (self.ocrLanguages),
-                    QMessageBox.Ok
-                )
-            return
+        try:
+            ocrized_text = image_to_string(
+                Image.open(image),
+                lang=languages
+            )
+            return ocrized_text
+        except TesseractError:
+            QMessageBox.warning(
+                None,
+                'Textable',
+                "Failed to load. Please verify if Tesseract trained data is " +
+                "installed for following languages : %s."
+                % (self.ocrLanguages),
+                QMessageBox.Ok
+            )
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -901,7 +897,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 pdfPassword = entry.get('pdfPassword', '') # SuperTextFiles
                 ocrLanguages = entry.get('ocr_languages', '') # SuperTextFiles
                 ocrForce = entry.get('ocr_force', '') # SuperTextFiles
-                
+
                 if path == '' or encoding == '':
                     QMessageBox.warning(
                         None,
@@ -1101,7 +1097,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                     format = u'%-' + str(maxOcrLanguagesLen + 2) + u's'
                     fileLabel += format % ocrLanguages[index]
 
-                    if ocrForce == "True" :
+                    if ocrForce == "True":
                         format = u'%-' + str(ocrForceLen + 2) + u's'
                         fileLabel += format % ocrForce[index]
                     # End SuperTextFiles
