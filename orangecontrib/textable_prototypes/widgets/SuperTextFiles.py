@@ -36,7 +36,9 @@ from unicodedata import normalize
 import filetype # SuperTextFiles 
 import pdfplumber # SuperTextFiles
 import fitz # SuperTextFiles OCR
-import pytesseract # SuperTextFiles OCR
+from pytesseract import (
+    TesseractError,  image_to_string
+) # SuperTextFiles OCR
 from PIL import Image # SuperTextFiles OCR
 
 from PyQt5.QtCore import QTimer
@@ -199,6 +201,8 @@ class SuperTextFiles(OWTextableBaseWidget):
 
         # ADVANCED GUI...
 
+        defaultLabelWidth = 120 # SuperTextFiles
+
         # File box
         fileBox = gui.widgetBox(
             widget=self.controlArea,
@@ -224,7 +228,13 @@ class SuperTextFiles(OWTextableBaseWidget):
                 u"file appears in the same position as in the list.\n"
                 u"\nColumn 1 shows the file's name.\n"
                 u"Column 2 shows the file's annotation (if any).\n"
-                u"Column 3 shows the file's encoding."
+                # Start SuperTextFiles
+                # u"Column 3 shows the file's encoding." # removed
+                u"Column 3 shows the file's password (if any).\n"
+                u"Column 4 shows the file's languages (if any).\n"
+                u"Column 5 shows if OCR is forced.\n"
+                u"Column 6 shows the file's encoding."
+                # End SuperTextFiles
             ),
         )
         font = QFont()
@@ -314,7 +324,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             value='newFiles',
             orientation='horizontal',
             label=u'File path(s):',
-            labelWidth=101,
+            labelWidth=defaultLabelWidth,
             callback=self.updateGUI,
             tooltip=(
                 u"The paths of the files that will be added to the\n"
@@ -349,7 +359,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             sendSelectedValue=True,
             orientation='horizontal',
             label=u'Encoding:',
-            labelWidth=101,
+            labelWidth=defaultLabelWidth,
             callback=self.updateGUI,
             tooltip=(
                 u"Select input file(s) encoding."
@@ -365,7 +375,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             value='newAnnotationKey',
             orientation='horizontal',
             label=u'Annotation key:',
-            labelWidth=101,
+            labelWidth=defaultLabelWidth,
             callback=self.updateGUI,
             tooltip=(
                 u"This field lets you specify a custom annotation\n"
@@ -380,7 +390,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             value='newAnnotationValue',
             orientation='horizontal',
             label=u'Annotation value:',
-            labelWidth=101,
+            labelWidth=defaultLabelWidth,
             callback=self.updateGUI,
             tooltip=(
                 u"This field lets you specify the annotation value\n"
@@ -397,7 +407,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             value='pdfPassword',
             orientation='horizontal',
             label=u'PDF password:',
-            labelWidth=101,
+            labelWidth=defaultLabelWidth,
             callback=self.updateGUI,
             tooltip=(
                 u"This field lets you specify a password\n"
@@ -412,12 +422,12 @@ class SuperTextFiles(OWTextableBaseWidget):
             master=self,
             value='ocrLanguages',
             orientation='horizontal',
-            label=u'Language(s) for OCR:',
-            labelWidth=101,
+            label=u'OCR Language(s):',
+            labelWidth=defaultLabelWidth,
             callback=self.updateGUI,
             tooltip=(
                 u"This field lets you specify languages\n"
-                u"for the OCR process"
+                u"for the OCR process. Ex.: fra+ita"
             ),
         )
 
@@ -426,7 +436,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             master=self,
             value='ocrForce',
             label=u'Force OCR',
-            labelWidth=101,
+            labelWidth=defaultLabelWidth,
             callback=self.updateGUI,
             tooltip=(u"Force to use an OCR detection on this file"),
         )
@@ -541,6 +551,10 @@ class SuperTextFiles(OWTextableBaseWidget):
                 encoding = entry.get('encoding', '')
                 annotationKey = entry.get('annotation_key', '')
                 annotationValue = entry.get('annotation_value', '')
+                pdfPassword = entry.get('pdfPassword', '') # SuperTextFiles
+                ocrLanguages = entry.get('ocr_languages', '') # SuperTextFiles
+                ocrForce = entry.get('ocr_force', '') # SuperTextFiles
+
                 if path == '' or encoding == '':
                     self.infoBox.setText(
                         u"Please verify keys and values of incoming "
@@ -554,6 +568,9 @@ class SuperTextFiles(OWTextableBaseWidget):
                     encoding,
                     annotationKey,
                     annotationValue,
+                    pdfPassword, # SuperTextFiles
+                    ocrLanguages, # SuperTextFiles
+                    ocrForce, # SuperTextFiles
                 ))
             self.files.extend(temp_files)
             self.sendButton.settingsChanged()
@@ -618,7 +635,11 @@ class SuperTextFiles(OWTextableBaseWidget):
             encoding = re.sub(r"[ ]\(.+", "", encoding)
             annotation_key = myFile[2]
             annotation_value = myFile[3]
-            myFiletype = filetype.guess(myFile[0])
+            pdf_password = myFile[4] # SuperTextFiles
+            ocr_languages = myFile[5] # SuperTextFiles
+            ocr_force = myFile[6] # SuperTextFiles
+            
+            myFiletype = filetype.guess(myFile[0]) # SuperTextFiles
 
             # Try to open the file...
             self.error()
@@ -627,13 +648,13 @@ class SuperTextFiles(OWTextableBaseWidget):
                     fileContent = self.extract_raw_text(filePath, encoding)
 
                 elif myFiletype.extension == "pdf":
-                    if (
-                        self.ocrForce is False and 
-                        self.evaluate_pdf_file(filePath) == "text_pdf"
-                    ):
-                        fileContent = self.extract_text_from_pdf(filePath)
-                    else:
+                    if self.ocrForce is True :
                         fileContent = self.get_file_content(filePath)
+                    else :
+                        if self.is_textual_pdf_file(filePath) is True :
+                            fileContent = self.extract_text_from_pdf(filePath)
+                        else:
+                            fileContent = self.get_file_content(filePath)
 
                 elif myFiletype.extension in IMG_FILETYPES:
                     fileContent = self.get_file_content(filePath)
@@ -760,7 +781,7 @@ class SuperTextFiles(OWTextableBaseWidget):
         finally:
             fh.close()
 
-    def evaluate_pdf_file(self, filePath):
+    def is_textual_pdf_file(self, filePath):
         """Evaluate the content of the pdf file"""
         with pdfplumber.open(filePath) as fh:
             first_page = fh.pages[0]
@@ -768,9 +789,9 @@ class SuperTextFiles(OWTextableBaseWidget):
             fh.close()
 
             if text is None or text.isspace() is True:
-                return "non_text_pdf"
+                return False
             else :
-                return "text_pdf"
+                return True
 
     def extract_text_from_pdf(self, filePath):
         """Extract all readable text contents"""
@@ -795,12 +816,22 @@ class SuperTextFiles(OWTextableBaseWidget):
                 images += doc.getPageImageList(page.number)
                 print(images)
 
-            text += self.ocrize(doc, images)
+
+
+            page_text = self.ocrize(doc, images)
+
+            print(page_text)
+
+            if page_text:
+                
+                text += page_text
+
         return text
 
     def ocrize(self, doc, images):
         """Make an OCR on a list of images or an image file"""
         ocrized_text = ""
+        languages = self.ocrLanguages.strip() # remove trailing spaces
         for image in images:
             xref = image[0]
             picture = fitz.Pixmap(doc, xref)
@@ -809,8 +840,25 @@ class SuperTextFiles(OWTextableBaseWidget):
                 picture = fitz.Pixmap(fitz.csRGB, picture) # convert to RGB
             
             bytes_img = BytesIO(picture.getImageData())
-            ocrized_text += pytesseract.image_to_string(Image.open(bytes_img), lang=self.ocrLanguages)
-        return ocrized_text
+
+            print(languages)
+
+            try:
+                ocrized_text += image_to_string(
+                    Image.open(bytes_img),
+                    lang=languages
+                )
+                return ocrized_text
+            except TesseractError:
+                QMessageBox.warning(
+                    None,
+                    'Textable',
+                    "Failed to load. Please verify if Tesseract trained data " +
+                    "installed for following languages : %s."
+                    % (self.ocrLanguages),
+                    QMessageBox.Ok
+                )
+            return
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -850,6 +898,10 @@ class SuperTextFiles(OWTextableBaseWidget):
                 encoding = entry.get('encoding', '')
                 annotationKey = entry.get('annotation_key', '')
                 annotationValue = entry.get('annotation_value', '')
+                pdfPassword = entry.get('pdfPassword', '') # SuperTextFiles
+                ocrLanguages = entry.get('ocr_languages', '') # SuperTextFiles
+                ocrForce = entry.get('ocr_force', '') # SuperTextFiles
+                
                 if path == '' or encoding == '':
                     QMessageBox.warning(
                         None,
@@ -864,6 +916,9 @@ class SuperTextFiles(OWTextableBaseWidget):
                     encoding,
                     annotationKey,
                     annotationValue,
+                    pdfPassword, # SuperTextFiles
+                    ocrLanguages, # SuperTextFiles
+                    ocrForce, # SuperTextFiles
                 ))
             self.files.extend(temp_files)
             if temp_files:
@@ -888,6 +943,16 @@ class SuperTextFiles(OWTextableBaseWidget):
             if myfile[2] and myfile[3]:
                 toDump[-1]['annotation_key'] = myfile[2]
                 toDump[-1]['annotation_value'] = myfile[3]
+            # Start SuperTextFiles
+            if myfile[4]:
+                toDump[-1]['pdf_password'] = myfile[4]
+
+            if myfile[5]:
+                toDump[-1]['ocr_languages'] = myfile[5]
+            if myfile[6]:
+                toDump[-1]['ocr_force'] = myfile[6]
+            # End SuperTextFiles
+
         filePath, _ = QFileDialog.getSaveFileName(
             self,
             u'Export File List',
@@ -991,6 +1056,8 @@ class SuperTextFiles(OWTextableBaseWidget):
                 self.newAnnotationKey,
                 self.newAnnotationValue,
                 self.pdfPassword, # SuperTextFiles
+                self.ocrLanguages, # SuperTextFiles
+                self.ocrForce, # SuperTextFiles
             ))
         self.sendButton.settingsChanged()
 
@@ -1009,6 +1076,14 @@ class SuperTextFiles(OWTextableBaseWidget):
                 annotations = ['{%s: %s}' % (f[2], f[3]) for f in self.files]
                 maxFilenameLen = max([len(n) for n in filenames])
                 maxAnnoLen = max([len(a) for a in annotations])
+                # Start SuperTextFiles
+                pdfPassword = [f[4] for f in self.files]
+                ocrLanguages = [f[5] for f in self.files]
+                ocrForce = [str(f[6]) for f in self.files]
+                maxPdfPasswordLen = max([len(n) for n in pdfPassword])
+                maxOcrLanguagesLen = max([len(n) for n in ocrLanguages])
+                # End SuperTextFiles
+
                 for index in range(len(self.files)):
                     format = u'%-' + str(maxFilenameLen + 2) + u's'
                     fileLabel = format % filenames[index]
@@ -1018,6 +1093,19 @@ class SuperTextFiles(OWTextableBaseWidget):
                             fileLabel += format % annotations[index]
                         else:
                             fileLabel += u' ' * (maxAnnoLen + 2)
+
+                    # Start SuperTextFiles
+                    format = u'%-' + str(maxPdfPasswordLen + 2) + u's'
+                    fileLabel += format % pdfPassword[index]
+
+                    format = u'%-' + str(maxOcrLanguagesLen + 2) + u's'
+                    fileLabel += format % ocrLanguages[index]
+
+                    if ocrForce == "True" :
+                        format = u'%-' + str(ocrForceLen + 2) + u's'
+                        fileLabel += format % ocrForce[index]
+                    # End SuperTextFiles
+
                     fileLabel += encodings[index]
                     self.fileLabels.append(fileLabel)
             self.fileLabels = self.fileLabels
