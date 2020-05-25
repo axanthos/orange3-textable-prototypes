@@ -233,6 +233,7 @@ class ExtractCSV(OWTextableBaseWidget):
             #Call data processing
             csv_stream = io.StringIO(inputContent)
             dialect = sniffer.sniff(csv_stream.readline())
+            dialect.quoting=csv.QUOTE_NONE
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
             # By default, content_column is set to 0. The content retrieved will be from the first column.
