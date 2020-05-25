@@ -36,7 +36,7 @@ TODO :
     the content header in the list)
 
 3.
-- make csv not treat quotation marks in input 
+- DONE: make csv not treat quotation marks in input 
     (quoting = CSV.QUOTE_NONE)
     (https://docs.python.org/3.1/library/csv.html#examples)
 
@@ -105,7 +105,7 @@ class ExtractCSV(OWTextableBaseWidget):
     autoSend = settings.Setting(False)
 
     content_column = settings.Setting(0)
-    
+    headerEdit = settings.Setting(u'')
     def __init__(self):
         """Widget creator."""
 
@@ -120,6 +120,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.contentIsNone = list()
         self.headerList = list()
         self.content_column = 0
+        self.headerEdit = u''
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -131,7 +132,7 @@ class ExtractCSV(OWTextableBaseWidget):
             infoBoxAttribute="infoBox",
             sendIfPreCallback=None,
         )
-
+        self.header_there = False
         # User interface...
 
         # main box...
@@ -198,8 +199,41 @@ class ExtractCSV(OWTextableBaseWidget):
         return
 
     def rename_gui(self):
+        if self.header_there == False:
+            self.headerOld = int(self.selectedHeader[0])
+            self.renameBox = gui.widgetBox(
+                widget=self.controlArea,
+                box=u'Rename header',
+                orientation='horizontal',
+                addSpace=True,
+            )
+            gui.separator(widget=self.renameBox, height=3)
+            self.headerEditLine = gui.lineEdit(
+                widget=self.renameBox,
+                master=self,
+                value='headerEdit',
+                orientation='horizontal',
+                label=u'New title:',
+                tooltip=(
+                    u"Rename the selected header."
+                )
+            )
+            self.renameButton = gui.button(
+                widget=self.renameBox,
+                master=self,
+                label="rename",
+                callback=self.rename(headerOld, headerEdit),
+                tooltip="click to rename header"
+            )
+            self.header_there = True
+        else:
+            return
         return
-
+    def rename(self, old_title, new_title):
+        self.headerList = self.headerList
+        self.headerList[old_title] = new_title
+        self.renameButton.setDisabled(False)
+        return
     def treat_input(self):
 
         # Check that there's an input...
@@ -237,7 +271,6 @@ class ExtractCSV(OWTextableBaseWidget):
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
             # By default, content_column is set to 0. The content retrieved will be from the first column.
-            # TODO: Maybe turn this into a setting?  
             position = 0
             # Process each seg in inputContent
             for seg in inputContent:
