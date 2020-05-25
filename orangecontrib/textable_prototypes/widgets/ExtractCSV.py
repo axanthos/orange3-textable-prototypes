@@ -19,31 +19,32 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 
 TODO :
-1.
-- resolve infoBox error message (Noémie)
+1. DONE
+- DONE : resolve infoBox error message (Noémie)
 
-- move inputseg treatement from sendData to inputData so that it works 
+- DONE : move inputseg treatement from sendData to inputData so that it works 
     immediately when the widget is newly linked (without having to send it)
-- if nothing's linked, the list should be None
+- DONE : if nothing's linked, the list should be None
 
 2.
-- disable "rename" and "use as content" buttons when there's nothing selected
+- DONE :disable "rename" and "use as content" buttons when there's nothing selected
     in the list.
-    quelque chose comme :
-    my_button.setDisabled(len(my_list.get_selected()) == 0)
 
 - "rename" button functionality
 
-- "use as content" button functionality (renaming adding a "(*content)" after
+- DONE : "use as content" button functionality (renaming adding a "(*content)" after
     the content header in the list)
 
 3.
 - make csv not treat quotation marks in input 
-    (quelque chose comme dialect_quoting = CSV.QUOTE_NONE)
+    (quoting = CSV.QUOTE_NONE)
     (https://docs.python.org/3.1/library/csv.html#examples)
 
 additional :
 - delete guillemets in content and annotations
+
+ISSUE :
+- real problems with inputs with quotation marks
 
 """
 
@@ -102,7 +103,8 @@ class ExtractCSV(OWTextableBaseWidget):
     )
     
     autoSend = settings.Setting(False)
-    model = settings.Setting("fr_core_news_sm")
+
+    content_column = settings.Setting(0)
     
     def __init__(self):
         """Widget creator."""
@@ -113,8 +115,11 @@ class ExtractCSV(OWTextableBaseWidget):
         self.inputSeg = None
         self.outputSeg = None
         self.dialect = None
+        self.selectedHeader = None
+        self.csvSeg = list()
+        self.contentIsNone = list()
         self.headerList = list()
-
+        self.content_column = 0
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -140,12 +145,11 @@ class ExtractCSV(OWTextableBaseWidget):
         self.headerListbox = gui.listBox(
             widget=self.mainBox,
             master=self,
-            value=None,
+            value="selectedHeader",
             labels="headerList",
-            callback=None,
+            callback=self.update_gui,
             selectionMode=1, # can only choose one item
-            tooltip="List of all the headers you can rename and\
-                change which one is the content",
+            tooltip="list of all your headers",
         )
 
         # set "rename" button (must be aside the list)
@@ -153,7 +157,8 @@ class ExtractCSV(OWTextableBaseWidget):
             widget=self.mainBox,
             master=self,
             label="rename",
-            callback=None,
+            callback=self.rename_gui,
+            tooltip="click to rename header"
         )
 
         # set "use as content" button (must be aside the list)
@@ -161,35 +166,47 @@ class ExtractCSV(OWTextableBaseWidget):
             widget=self.mainBox,
             master=self,
             label="use as content",
-            callback=None,
+            callback=self.content_changed,
+            tooltip="click to select as content"
         )
+
+        self.iscontentHeader.setDisabled(True)
+        self.renameHeader.setDisabled(True)
+        self.update_gui()
 
         gui.rubber(self.controlArea)
 
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
-
         self.infoBox.setText("Widget needs input", "warning")
-
+        
         # Send data if autoSend.
         self.sendButton.sendIf()
 
-                
-    def inputData(self, newInput):
-        """Process incoming data."""
-        self.inputSeg = newInput
-        self.infoBox.inputChanged()
-        self.sendButton.sendIf()
-  
+    def update_gui(self):
+        if len(self.selectedHeader)==0:
+            self.iscontentHeader.setDisabled(True)
+            self.renameHeader.setDisabled(True)
+        else:
+            self.iscontentHeader.setDisabled(False)
+            self.renameHeader.setDisabled(False)
 
-    def sendData(self):
-        """Compute result of widget processing and send to output"""
-        
+    def content_changed(self):
+        self.content_column = int(self.selectedHeader[0])
+        self.treat_input()
+        return
+
+    def rename_gui(self):
+        return
+
+    def treat_input(self):
+
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
-            self.send("CSV Segmentation", None, self)
+            del self.headerList[:]
+            self.headerList = self.headerList
             return
 
         # Initialize progress bar.
@@ -200,11 +217,9 @@ class ExtractCSV(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=len(self.inputSeg))
 
-        csvSeg = list()
-        # set a list for segments where content is None
-        contentIsNone = list()
-
-
+        # clear lists
+        del self.csvSeg[:]
+        del self.contentIsNone[:]
 
         # Process each input segment...
         for segment in self.inputSeg:
@@ -221,12 +236,11 @@ class ExtractCSV(OWTextableBaseWidget):
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
             # By default, content_column is set to 0. The content retrieved will be from the first column.
-            # TODO: Maybe turn this into a setting?
-            content_column = 0
+            # TODO: Maybe turn this into a setting?  
             position = 0
             # Process each seg in inputContent
             for seg in inputContent:
-            	segAnnotations = inputAnnotations.copy()
+                segAnnotations = inputAnnotations.copy()
             # This  will launch if sniffer detects a header in the content.
             if sniffer.has_header(inputContent) == True:
                 # go back to the start otherwise we're going to start from the
@@ -252,12 +266,20 @@ class ExtractCSV(OWTextableBaseWidget):
                 for item in range(0, n_cols):
                     dict_keys.append(item)
                 csv_stream.seek(0)
+
+
             # clear the list before appending
             del self.headerList[:]
+
             for key in dict_keys:
                 # appends the headers to the gui list
-                self.headerList.append(str(key))
-                self.headerList = self.headerList
+                if dict_keys.index(key) == self.content_column:
+                    self.headerList.append(str(key)+"(*content)")
+                    self.headerList = self.headerList
+                else :
+                    self.headerList.append(str(key))
+                    self.headerList = self.headerList
+
 
             for idx, row in enumerate(my_reader, start=2):
                 # Get old annotations in new dictionary
@@ -275,7 +297,7 @@ class ExtractCSV(OWTextableBaseWidget):
                     # segAnnotations["row"] = str(row)
 
                     # if column is content (first column (0) by default)
-                    if dict_keys.index(key) == content_column:
+                    if dict_keys.index(key) == self.content_column:
                         # put value as content
                         content = row[dict_keys.index(key)]
                     # else we put value in annotation
@@ -285,14 +307,14 @@ class ExtractCSV(OWTextableBaseWidget):
                             segAnnotations[key] = row[dict_keys.index(key)]
                     # implement position and next_position depending on
                     # content column
-                    if dict_keys.index(key) < content_column:
+                    if dict_keys.index(key) < self.content_column:
                         position += len(row[dict_keys.index(key)]) + 1
                         next_position += len(row[dict_keys.index(key)]) + 1
-                    if dict_keys.index(key) >= content_column:
+                    if dict_keys.index(key) >= self.content_column:
                         next_position += len(row[dict_keys.index(key)]) + 1
 
                 if len(content) != 0:
-                    csvSeg.append(
+                    self.csvSeg.append(
                         Segment(
                             str_index = inputStrIdx,
                             start = position,
@@ -304,29 +326,90 @@ class ExtractCSV(OWTextableBaseWidget):
                 else :
                     # if no content, add idx of the row and do not append
                     # TODO : something with contentIsNone
-                    contentIsNone.append(idx)
+                    self.contentIsNone.append(idx)
 
                 # initiate new row starting position
                 position = next_position
                         
             progressBar.advance()
 
+        unSeg = len(self.csvSeg)         
+        # Set status to OK and report segment analyzed...
+        if len(self.contentIsNone) == 0 :
+            message = "%i segment@p analyzed." % unSeg
+            message = pluralize(message, unSeg)
+            self.infoBox.setText(message)
+        # message if one or more segments has no content and has been ignored
+        elif len(self.contentIsNone) == 1 :
+            message = "%i segment@p analyzed. (ignored %i segment with \
+            no content)" % (unSeg, len(self.contentIsNone))
+            message = pluralize(message, unSeg)
+            self.infoBox.setText(message)
+        else :
+            message = "%i segment@p analyzed. (ignored %i segments with \
+            no content)" % (unSeg, len(self.contentIsNone))
+            message = pluralize(message, unSeg)
+            self.infoBox.setText(message)
+
+
+        # Clear progress bar.
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
+
+        self.sendButton.resetSettingsChangedFlag()
+        self.sendButton.sendIf()
+
+    def inputData(self, newInput):
+        """Process incoming data."""
+        self.inputSeg = newInput
+        self.infoBox.inputChanged()
+        self.sendButton.sendIf()
+
+        self.treat_input()
+
+    def sendData(self):
+        """Compute result of widget processing and send to output"""
+        
+        # Check that there's an input...
+        if self.inputSeg is None:
+            self.infoBox.setText("Widget needs input", "warning")
+            del self.headerList[:]
+            self.headerList = self.headerList
+            self.send("CSV Segmentation", None, self)
+            return
+
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Processing, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=len(self.inputSeg))
+
+
+        # Treat...
+        for segment in self.csvSeg:
+            
+            pass
+                        
+            progressBar.advance()
+
                  
         # Set status to OK and report data size...
-        outputSeg = Segmentation(csvSeg)
-        if len(contentIsNone) == 0 :
+        outputSeg = Segmentation(self.csvSeg)
+        if len(self.contentIsNone) == 0 :
             message = "%i segment@p sent to output." % len(outputSeg)
             message = pluralize(message, len(outputSeg))
             self.infoBox.setText(message)
         # message if one or more segments has no content and has been ignored
-        if len(contentIsNone) == 1 :
+        elif len(self.contentIsNone) == 1:
             message = "%i segment@p sent to output. (ignored %i segment with \
-            no content)" % (len(outputSeg), len(contentIsNone))
+            no content)" % (len(outputSeg), len(self.contentIsNone))
             message = pluralize(message, len(outputSeg))
             self.infoBox.setText(message)
         else :
             message = "%i segment@p sent to output. (ignored %i segments with \
-            no content)" % (len(outputSeg), len(contentIsNone))
+            no content)" % (len(outputSeg), len(self.contentIsNone))
             message = pluralize(message, len(outputSeg))
             self.infoBox.setText(message)
 
