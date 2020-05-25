@@ -10,9 +10,9 @@
 Extract CSV
 =================
 
-.. image:: figures/ TODO
+.. image:: figures/extractCSV_icon.pgn
 
-Turn CSV files into a Segmentation
+Extract tabulated data as a Textable Segmentation
 
 Author
 ------
@@ -22,30 +22,30 @@ Sorcha Walsh, Noémie Carette, Saara Jones
 Signals
 -------
 
-Inputs: .csv files
+Inputs: Tabulated data
 
 Outputs:
 
 * ``Text data``
 
-  Segmentation of a csv file
+  Segmentation of tabulated data
 
 Description
 -----------
 
-This widget is designed to extract csv files and turn them into segmentations in Orange Canvas.
-It takes .csv files as input and the user can choose which header to use as content. The output is a segmentation containing a segment for each line. Each segment has annotations with each column's header as keys.
+This widget is designed to extract tabulated data as a Textable Segmentation in Orange Canvas.
+It takes .csv files as input and the user can choose which header he wants to use as content. The output is a segmentation containing a segment for each line of the file and each segment has annotations with each column's header as keys.
 
 
 
 Interface
 ~~~~~~~~~~~~~~~
 
-Extract CSV displays a list of the csv file's headers and lets the user choose which one to use as content for the segmentation with the **Use as Content** button. If the file has no header it will simply display the number of the column.
+Extract CSV displays a list of the file's headers and lets the user choose which one to use as content for the segmentation with the **Use as Content** button. If the file has no header it will simply display the number of the column.
 
 .. _fig1:
 
-.. figure:: figures/ TODO
+.. figure:: figures/extractCSV_interface.png
     :align: center
     :alt: Interface of Extract CSV
 
@@ -54,7 +54,7 @@ Extract CSV displays a list of the csv file's headers and lets the user choose w
 The **Rename** button allows the user to rename the headers.
 
 The **Info** section indicates the number of segments in the
-output segmentation, or if any segmentation has been deleted because of a missing content.
+output segmentation, or if any segment has been ignored because of a missing content.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -70,8 +70,8 @@ Information
 
 *<n> segments sent to output.*
     This confirms that the widget has operated properly.
-*<n> segments sent to output and <n> segments were deleted because 'content' was missing.*
-    Informs the user if segments are missing.
+*<n> segments sent to output. (Ignored <n> segments with no content)*
+    Informs the user if segments were ignored.
 
 
 Warnings
@@ -83,8 +83,5 @@ Warnings
     button (or equivalently check the box) in order for computation and data
     emission to proceed.
 
-
-Errors
-~~~~~~
 
 
