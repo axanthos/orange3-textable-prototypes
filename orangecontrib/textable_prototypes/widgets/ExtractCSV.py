@@ -20,7 +20,7 @@ along with Orange-Textable-Prototypes. If not, see
 
 TODO :
 1. DONE
-- DONE : resolve infoBox error message (Noémie)
+- DONE : resolve infoBox error message
 
 - DONE : move inputseg treatement from sendData to inputData so that it works 
     immediately when the widget is newly linked (without having to send it)
@@ -40,11 +40,6 @@ TODO :
     (quoting = CSV.QUOTE_NONE)
     (https://docs.python.org/3.1/library/csv.html#examples)
 
-additional :
-- delete guillemets in content and annotations
-
-ISSUE :
-- real problems with inputs with quotation marks
 
 """
 
@@ -105,26 +100,31 @@ class ExtractCSV(OWTextableBaseWidget):
     autoSend = settings.Setting(False)
 
     content_column = settings.Setting(0)
-    headerEdit = settings.Setting(u'')
+    headerEdit = settings.Setting("")
+
     def __init__(self):
         """Widget creator."""
 
         super().__init__()
 
         # Other attributes...
+
         self.inputSeg = None
         self.outputSeg = None
         self.dialect = None
         self.selectedHeader = None
         self.csvSeg = list()
+        # list of deleted segments
         self.contentIsNone = list()
+        # list for gui
         self.headerList = list()
         self.content_column = 0
         self.headerEdit = ""
 
         # those are for the rename function
         self.renamedHeader = None
-        self.checkValue = None
+        self.isRenamed = False
+        self.dict_keys = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -139,7 +139,7 @@ class ExtractCSV(OWTextableBaseWidget):
         )
         #self.header_there = False
 
-    #----------------------------------------------------------------------
+        #----------------------------------------------------------------------
         # User interface...
 
         # main box...
@@ -178,8 +178,8 @@ class ExtractCSV(OWTextableBaseWidget):
             tooltip="click to select as content"
         )
 
-    #----------------------------------------------------------------------
-    # rename box...
+        #----------------------------------------------------------------------
+        # rename box...
 
         self.renameBox = gui.widgetBox(
             widget=self.controlArea,
@@ -205,8 +205,8 @@ class ExtractCSV(OWTextableBaseWidget):
             callback=self.rename,
             tooltip="click to rename header"
         )
-#----------------------------------------------------------------------
-# interface parameters...
+        #----------------------------------------------------------------------
+        # interface parameters...
 
         self.update_gui()
         self.renameBox.setVisible(False)
@@ -222,6 +222,8 @@ class ExtractCSV(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
+    #----------------------------------------------------------------------
+
     def update_gui(self):
         if len(self.selectedHeader)==0:
             self.iscontentHeader.setDisabled(True)
@@ -236,19 +238,34 @@ class ExtractCSV(OWTextableBaseWidget):
         return
 
     def set_renamebox(self):
+        # take selectedHeader
         self.renamedHeader = int(self.selectedHeader[0])
+        # appear rename gui
         self.renameBox.setVisible(True)
+        # disable other
         self.iscontentHeader.setDisabled(True)
         self.renameHeader.setDisabled(True)
         self.headerListbox.setDisabled(True)
 
     def rename(self):
-        # here we get back to normal
+        # rename
+        for key in self.dict_keys:
+            # change my header name
+            if self.dict_keys.index(key) == self.renamedHeader:
+                self.dict_keys[self.dict_keys.index(key)] = self.headerEdit
+        # implement check value
+        self.isRenamed = True
+        # and treat again
+        self.treat_input()
+
+        # here we get back to normal gui
         self.renameBox.setVisible(False)
         self.headerListbox.setDisabled(False)
-        self.headerEdit = ""
         self.update_gui()
+        # clear value
+        self.headerEdit = ""
         
+    
 
     # def rename_gui(self):
     #   if self.header_there == False:
@@ -323,7 +340,6 @@ class ExtractCSV(OWTextableBaseWidget):
             dialect.quoting=csv.QUOTE_NONE
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
-            # By default, content_column is set to 0. The content retrieved will be from the first column.
             position = 0
             # Process each seg in inputContent
             for seg in inputContent:
@@ -334,8 +350,11 @@ class ExtractCSV(OWTextableBaseWidget):
                 # second row
                 csv_stream.seek(0)
                 # the header row is defined here.
-                dict_keys = next(my_reader)
-                for key in dict_keys:
+                if self.isRenamed == False :
+                    self.dict_keys = next(my_reader)
+
+                input_keys = next(my_reader)
+                for key in input_keys:
                     # this is position of first content
                     # TODO : separator length (if not 1)
                     position += (len(key) + 1)
@@ -349,18 +368,19 @@ class ExtractCSV(OWTextableBaseWidget):
                 csv_stream.seek(0)
                 first_row = next(my_reader)
                 n_cols = len(first_row)
-                dict_keys = list()
-                for item in range(0, n_cols):
-                    dict_keys.append(item)
+                if self.isRenamed == False :
+                    self.dict_keys = list()
+                    for item in range(0, n_cols):
+                        self.dict_keys.append(item)
                 csv_stream.seek(0)
 
 
             # clear the list before appending
             del self.headerList[:]
 
-            for key in dict_keys:
+            for key in self.dict_keys:
                 # appends the headers to the gui list
-                if dict_keys.index(key) == self.content_column:
+                if self.dict_keys.index(key) == self.content_column:
                     self.headerList.append(str(key)+"(*content)")
                     self.headerList = self.headerList
                 else :
@@ -379,26 +399,26 @@ class ExtractCSV(OWTextableBaseWidget):
 
                 # This is the main part where we transform our data into
                 # annotations.
-                for key in dict_keys:
+                for key in self.dict_keys:
                     # segAnnotations["length"] = position
                     # segAnnotations["row"] = str(row)
 
                     # if column is content (first column (0) by default)
-                    if dict_keys.index(key) == self.content_column:
+                    if self.dict_keys.index(key) == self.content_column:
                         # put value as content
-                        content = row[dict_keys.index(key)]
+                        content = row[self.dict_keys.index(key)]
                     # else we put value in annotation
                     else:
                         # only if value is not None
-                        if len(row[dict_keys.index(key)]) != 0 :
-                            segAnnotations[key] = row[dict_keys.index(key)]
+                        if len(row[self.dict_keys.index(key)]) != 0 :
+                            segAnnotations[key] = row[self.dict_keys.index(key)]
                     # implement position and next_position depending on
                     # content column
-                    if dict_keys.index(key) < self.content_column:
-                        position += len(row[dict_keys.index(key)]) + 1
-                        next_position += len(row[dict_keys.index(key)]) + 1
-                    if dict_keys.index(key) >= self.content_column:
-                        next_position += len(row[dict_keys.index(key)]) + 1
+                    if self.dict_keys.index(key) < self.content_column:
+                        position += len(row[self.dict_keys.index(key)]) + 1
+                        next_position += len(row[self.dict_keys.index(key)]) + 1
+                    if self.dict_keys.index(key) >= self.content_column:
+                        next_position += len(row[self.dict_keys.index(key)]) + 1
 
                 if len(content) != 0:
                     self.csvSeg.append(
@@ -450,6 +470,10 @@ class ExtractCSV(OWTextableBaseWidget):
         """Process incoming data."""
         self.inputSeg = newInput
         self.infoBox.inputChanged()
+
+        del self.dict_keys[:]
+        self.isRenamed = False
+
         self.sendButton.sendIf()
 
         self.treat_input()
