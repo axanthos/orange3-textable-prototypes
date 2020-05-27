@@ -120,7 +120,12 @@ class ExtractCSV(OWTextableBaseWidget):
         self.contentIsNone = list()
         self.headerList = list()
         self.content_column = 0
-        self.headerEdit = u''
+        self.headerEdit = ""
+
+        # those are for the rename function
+        self.renamedHeader = None
+        self.checkValue = None
+
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -132,7 +137,9 @@ class ExtractCSV(OWTextableBaseWidget):
             infoBoxAttribute="infoBox",
             sendIfPreCallback=None,
         )
-        self.header_there = False
+        #self.header_there = False
+
+    #----------------------------------------------------------------------
         # User interface...
 
         # main box...
@@ -158,7 +165,7 @@ class ExtractCSV(OWTextableBaseWidget):
             widget=self.mainBox,
             master=self,
             label="rename",
-            callback=self.rename_gui,
+            callback=self.set_renamebox,
             tooltip="click to rename header"
         )
 
@@ -171,15 +178,45 @@ class ExtractCSV(OWTextableBaseWidget):
             tooltip="click to select as content"
         )
 
-        self.iscontentHeader.setDisabled(True)
-        self.renameHeader.setDisabled(True)
+    #----------------------------------------------------------------------
+    # rename box...
+
+        self.renameBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Rename header',
+            orientation='horizontal',
+            addSpace=True,
+        )
+        gui.separator(widget=self.renameBox, height=3)
+        self.headerEditLine = gui.lineEdit(
+            widget=self.renameBox,
+            master=self,
+            value='headerEdit',
+            orientation='horizontal',
+            label=u'New title:',
+            tooltip=(
+                u"Rename the selected header."
+            )
+        )
+        self.renameButton = gui.button(
+            widget=self.renameBox,
+            master=self,
+            label="rename",
+            callback=self.rename,
+            tooltip="click to rename header"
+        )
+#----------------------------------------------------------------------
+# interface parameters...
+
         self.update_gui()
+        self.renameBox.setVisible(False)
 
         gui.rubber(self.controlArea)
 
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
+        #self.set_renamebox()
         self.infoBox.setText("Widget needs input", "warning")
         
         # Send data if autoSend.
@@ -198,42 +235,58 @@ class ExtractCSV(OWTextableBaseWidget):
         self.treat_input()
         return
 
-    def rename_gui(self):
-        if self.header_there == False:
-            self.headerOld = int(self.selectedHeader[0])
-            self.renameBox = gui.widgetBox(
-                widget=self.controlArea,
-                box=u'Rename header',
-                orientation='horizontal',
-                addSpace=True,
-            )
-            gui.separator(widget=self.renameBox, height=3)
-            self.headerEditLine = gui.lineEdit(
-                widget=self.renameBox,
-                master=self,
-                value='headerEdit',
-                orientation='horizontal',
-                label=u'New title:',
-                tooltip=(
-                    u"Rename the selected header."
-                )
-            )
-            self.renameButton = gui.button(
-                widget=self.renameBox,
-                master=self,
-                label="rename",
-                callback=self.rename(headerOld, headerEdit),
-                tooltip="click to rename header"
-            )
-            self.header_there = True
-        else:
-            return
-        return
-    def rename(self, old_title, new_title):
-        self.headerList = self.headerList
-        self.headerList[old_title] = new_title
-        self.renameButton.setDisabled(False)
-        return
+    def set_renamebox(self):
+        self.renamedHeader = int(self.selectedHeader[0])
+        self.renameBox.setVisible(True)
+        self.iscontentHeader.setDisabled(True)
+        self.renameHeader.setDisabled(True)
+        self.headerListbox.setDisabled(True)
+
+    def rename(self):
+        # here we get back to normal
+        self.renameBox.setVisible(False)
+        self.headerListbox.setDisabled(False)
+        self.headerEdit = ""
+        self.update_gui()
+        
+
+    # def rename_gui(self):
+    #   if self.header_there == False:
+    #       self.headerOld = int(self.selectedHeader[0])
+    #       self.renameBox = gui.widgetBox(
+    #           widget=self.controlArea,
+    #           box=u'Rename header',
+    #           orientation='horizontal',
+    #           addSpace=True,
+    #       )
+    #       gui.separator(widget=self.renameBox, height=3)
+    #       self.headerEditLine = gui.lineEdit(
+    #           widget=self.renameBox,
+    #           master=self,
+    #           value='headerEdit',
+    #           orientation='horizontal',
+    #           label=u'New title:',
+    #           tooltip=(
+    #               u"Rename the selected header."
+    #           )
+    #       )
+    #       self.renameButton = gui.button(
+    #           widget=self.renameBox,
+    #           master=self,
+    #           label="rename",
+    #           callback=self.rename(headerOld, headerEdit),
+    #           tooltip="click to rename header"
+    #       )
+    #       self.header_there = True
+        # else:
+        #   return
+        # return
+
+    #def rename(self, old_title, new_title):
+    #   self.headerList = self.headerList
+    #   self.headerList[old_title] = new_title
+    #   return
+
     def treat_input(self):
 
         # Check that there's an input...
