@@ -30,7 +30,7 @@ TODO :
 - DONE :disable "rename" and "use as content" buttons when there's nothing selected
     in the list.
 
-- "rename" button functionality
+- DONE"rename" button functionality
 
 - DONE : "use as content" button functionality (renaming adding a "(*content)" after
     the content header in the list)
@@ -40,6 +40,13 @@ TODO :
     (quoting = CSV.QUOTE_NONE)
     (https://docs.python.org/3.1/library/csv.html#examples)
 
+ISSUE :
+- renaming cause display problem when no header is detected at input:
+    TypeError: '<' not supported between instances of 'str' and 'int'
+    Module:
+        LTTL.Segment:208
+    Widget Name:
+        Display
 
 """
 
@@ -264,48 +271,8 @@ class ExtractCSV(OWTextableBaseWidget):
         self.update_gui()
         # clear value
         self.headerEdit = ""
-        
-    
-
-    # def rename_gui(self):
-    #   if self.header_there == False:
-    #       self.headerOld = int(self.selectedHeader[0])
-    #       self.renameBox = gui.widgetBox(
-    #           widget=self.controlArea,
-    #           box=u'Rename header',
-    #           orientation='horizontal',
-    #           addSpace=True,
-    #       )
-    #       gui.separator(widget=self.renameBox, height=3)
-    #       self.headerEditLine = gui.lineEdit(
-    #           widget=self.renameBox,
-    #           master=self,
-    #           value='headerEdit',
-    #           orientation='horizontal',
-    #           label=u'New title:',
-    #           tooltip=(
-    #               u"Rename the selected header."
-    #           )
-    #       )
-    #       self.renameButton = gui.button(
-    #           widget=self.renameBox,
-    #           master=self,
-    #           label="rename",
-    #           callback=self.rename(headerOld, headerEdit),
-    #           tooltip="click to rename header"
-    #       )
-    #       self.header_there = True
-        # else:
-        #   return
-        # return
-
-    #def rename(self, old_title, new_title):
-    #   self.headerList = self.headerList
-    #   self.headerList[old_title] = new_title
-    #   return
 
     def treat_input(self):
-
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
@@ -352,12 +319,16 @@ class ExtractCSV(OWTextableBaseWidget):
                 # the header row is defined here.
                 if self.isRenamed == False :
                     self.dict_keys = next(my_reader)
-
-                input_keys = next(my_reader)
-                for key in input_keys:
+                    for key in self.dict_keys:
                     # this is position of first content
                     # TODO : separator length (if not 1)
-                    position += (len(key) + 1)
+                        position += (len(key) + 1)
+                else :
+                    input_keys = next(my_reader)
+                    for key in input_keys:
+                    # this is position of first content
+                    # TODO : separator length (if not 1)
+                        position += (len(key) + 1)
 
 
             # This will launch if sniffer does not detect a header in the content.
