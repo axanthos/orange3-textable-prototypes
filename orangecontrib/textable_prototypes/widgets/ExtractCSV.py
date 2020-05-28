@@ -37,16 +37,11 @@ TODO :
 
 3.
 - DONE: make csv not treat quotation marks in input 
-    (quoting = CSV.QUOTE_NONE)
-    (https://docs.python.org/3.1/library/csv.html#examples)
 
 ISSUE :
-- renaming cause display problem when no header is detected at input:
-    TypeError: '<' not supported between instances of 'str' and 'int'
-    Module:
-        LTTL.Segment:208
-    Widget Name:
-        Display
+- if input has quote, with quote_none headers are not 
+    detected and put in segmentation (but it works)
+- 3 quotation marks ? weird
 
 """
 
@@ -342,7 +337,7 @@ class ExtractCSV(OWTextableBaseWidget):
                 if self.isRenamed == False :
                     self.dict_keys = list()
                     for item in range(0, n_cols):
-                        self.dict_keys.append(item)
+                        self.dict_keys.append(str(item))
                 csv_stream.seek(0)
 
 
