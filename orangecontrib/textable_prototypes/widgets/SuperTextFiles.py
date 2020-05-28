@@ -549,7 +549,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 encoding = entry.get('encoding', '')
                 annotationKey = entry.get('annotation_key', '')
                 annotationValue = entry.get('annotation_value', '')
-                pdfPassword = entry.get('pdfPassword', '') # SuperTextFiles
+                pdfPassword = entry.get('pdf_password', '') # SuperTextFiles
                 ocrLanguages = entry.get('ocr_languages', '') # SuperTextFiles
                 ocrForce = entry.get('ocr_force', '') # SuperTextFiles
 
@@ -655,7 +655,7 @@ class SuperTextFiles(OWTextableBaseWidget):
 
                 elif myFiletype.extension == "pdf":
                     if self.ocrForce is True:
-                        fileContent = self.get_file_content(filePath)
+                        fileContent = self.get_pdf_content(filePath)
                     else:
                         if self.is_textual_pdf_file(filePath) is True:
                             fileContent = self.extract_text_from_pdf(filePath)
@@ -894,7 +894,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 encoding = entry.get('encoding', '')
                 annotationKey = entry.get('annotation_key', '')
                 annotationValue = entry.get('annotation_value', '')
-                pdfPassword = entry.get('pdfPassword', '') # SuperTextFiles
+                pdfPassword = entry.get('pdf_password', '') # SuperTextFiles
                 ocrLanguages = entry.get('ocr_languages', '') # SuperTextFiles
                 ocrForce = entry.get('ocr_force', '') # SuperTextFiles
 

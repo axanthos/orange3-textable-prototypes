@@ -1,7 +1,14 @@
-import unittest
-import pathlib
+"""
+A collection of tests for the SuperTextFiles widget.
 
-import orangecontrib.textable_prototypes.widgets.SuperTextFiles as stf
+Actually it does'nt work.
+"""
+
+import unittest
+from pathlib import Path 
+
+from orangecontrib.textable_prototypes.widgets.SuperTextFiles \
+    import SuperTextFiles as stf
 
 ASSETS_DIR = 'assets/'
 
