@@ -43,6 +43,8 @@ Interface
 
 Extract CSV displays a list of the file's headers and lets the user choose which one to use as content for the segmentation with the **Use as Content** button. If the file has no header it will simply display the number of the column.
 
+Quotation marks usually cause problems with detecting the segment position. If the file has quotes, the user can choose to preprocess his file with the checkbox **delete quotation marks**.
+
 .. _fig1:
 
 .. figure:: figures/extractCSV_interface.png
@@ -52,6 +54,14 @@ Extract CSV displays a list of the file's headers and lets the user choose which
     Figure 1: **Extract CSV** widget
 
 The **Rename** button allows the user to rename the headers.
+
+.. _fig2:
+
+.. figure:: figures/extractCSV_options.png
+    :align: center
+    :alt: Options of Extract CSV
+
+    Figure 2: **Extract CSV** widget
 
 The **Info** section indicates the number of segments in the
 output segmentation, or if any segment has been ignored because of a missing content.
@@ -68,7 +78,7 @@ Messages
 Information
 ~~~~~~~~~~~
 
-*<n> segments sent to output.*
+*<n> segments analyzed.*
     This confirms that the widget has operated properly.
 *<n> segments sent to output. (Ignored <n> segments with no content)*
     Informs the user if segments were ignored.
@@ -82,6 +92,5 @@ Warnings
     has not been selected, so the user is prompted to click the **Send**
     button (or equivalently check the box) in order for computation and data
     emission to proceed.
-
-
+    
 
