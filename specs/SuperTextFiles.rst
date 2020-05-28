@@ -66,12 +66,11 @@ textuel de fichiers PDF et d'images.
 ===============================
 
 * Permettre l'import de tous fichiers PDF ou images.
-* Effectuer une reconnaissance optique des caractères d'une image ou d'un PDF
-après sa conversion en image.
+* Effectuer une reconnaissance optique des caractères d'une image ou d'un PDF après sa conversion en image.
 
 2.4 Fonctionnalités optionnelles
 ================================
-.. image:: images/super_text_files_optional.png
+.. image:: images/supertextfiles_optional.png
 
 * Permettre l'import de .doc, .docx, .odt ou .rtf
 * Permettre d'importer des PDF protégés par mot de passe.
