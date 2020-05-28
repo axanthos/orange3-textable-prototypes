@@ -30,6 +30,12 @@ Outputs: ``Text data``
 
   Segmentation covering the content of imported text files
 
+Installation of Tesseract
+------------
+
+To use the OCR feature, an extra installation is needed. There are two parts to install, the engine itself, and the training data for a language.
+Please read the `official documentation of Tesseract <https://tesseract-ocr.github.io/tessdoc/Home.html>`_.
+
 
 Description
 -----------
@@ -157,15 +163,25 @@ value in the **Annotation value** field. These three parameters (encoding,
 key, value) will be applied to each file appearing in the **File paths** field
 at the moment of their addition to the list with **Add**.
 
+The **PDF Password** allows password-protected files to be passed to the widget.
+
+The **OCR Language(s)** field is needed by the OCR processes. By default,
+it contains English abbreviated by `eng`. Multilingual files are supported
+by complete the field with the languages separated by `+`. For example,
+`eng+fra+ita`. See all `installable Tesseract data files
+<https://tesseract-ocr.github.io/tessdoc/Data-Files.html>`_.
+
+**Force OCR** immediately enables the OCR processes of the widget.
+
 The **Options** section allows the user to specify the label affected to the
-output segmentation. The **Import filenames with key** checkbox enables the program to create for each imported file an
+output segmentation. The **Import filenames with key** checkbox enables the
+program to create for each imported file an
 annotation whose value is the file name (as displayed in the list) and whose
 key is specified by the user in the text field on the right of the checkbox.
 Similarly the button **Auto-number with key** enables the program to
 automatically number the imported files and to associate the number to the
 annotation key specified in the text field on the right.
 
-The **PDF Password** allows password-protected files to be passed to the widget and **Force OCR** immediately enables the OCR processes of the widget.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox

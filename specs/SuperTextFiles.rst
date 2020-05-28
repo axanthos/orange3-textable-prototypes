@@ -11,14 +11,14 @@ Créer un widget pour Orange Textable (v3.1.5) permettant d'extraire le contenu
 textuel de fichiers PDF et d'images. 
 
 
-1.2 Aperçu des etapes
+1.2 Aperçu des étapes
 =====================
 * Premiere version de la specification: 26 mars 2020
 * Remise de la specification: 02 avril 2020
 * Version alpha du projet:  30 avril 2020
 * Version finale du projet:  28 mai 2020
 
-1.3 Equipe et responsabilitées
+1.3 Équipe et responsabilités
 ==============================
 
 * Loïc Aubrays (`loic.aubrays@unil.ch`_):
@@ -53,7 +53,11 @@ textuel de fichiers PDF et d'images.
 
 * `pdfplumber 0.5.19 <https://github.com/jsvine/pdfplumber>`_
 
-* `Tesseract OCR <https://github.com/tesseract-ocr/tesseract>`_ + `pytesseract 0.3.4 <https://pypi.org/project/pytesseract/>`__
+* `filetype 1.0.7 <https://pypi.org/project/filetype/>`_ 
+
+* `Tesseract OCR <https://github.com/tesseract-ocr/tesseract>`_ 
+
+* `pytesseract 0.3.4 <https://pypi.org/project/pytesseract/>`__
 
 * `PyMuPDF (aka "fitz") 1.16.18 <https://pypi.org/project/PyMuPDF/>`_
 
@@ -80,7 +84,7 @@ textuel de fichiers PDF et d'images.
 
 TODO
 
-3. Etapes
+3. Étapes
 *********
 
 3.1 Version alpha
@@ -91,7 +95,7 @@ testées.
 
 3.2 Remise et présentation
 ==========================
-* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
+* Les fonctionnalités principales sont complètement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
 * Les fonctionnalités principales (et, le cas échéant, optionnelles) sont
 implémentées et ont été testées.
@@ -102,9 +106,6 @@ implémentées et ont été testées.
 Le projet est disponible sur GitHub à l'adresse `https://github.com/Aubrays/orange3-textable-prototypes
 <https://github.com/Aubrays/orange3-textable-prototypes>`_
 
-4.1 Installation de Tesseract
-==========
-
-4.2 OCR
+4.1 OCR
 ==========
 * Compilation de ressources sur l'OCR : `Awesome OCR <https://github.com/kba/awesome-ocr>`_
