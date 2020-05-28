@@ -8,7 +8,7 @@
 SuperTextFiles
 =======
 
-.. image:: figures/spacy.png 
+.. image:: figures/supertextfiles.png 
 
 Import raw text, PDF and image files with if necessary an usage of Tesseract, an
 OCR application.
@@ -16,7 +16,7 @@ OCR application.
 Authors
 ------
 
-Loïc Aubrays, Fàbio Torres Cabral, Aris Xanthos
+Loïc Aubrays, Fábio Torres Cabral, Aris Xanthos
 
 Signals
 -------
@@ -87,7 +87,7 @@ encoding of the file.
 
 .. _text_files_fig1:
 
-.. figure:: figures/text_files_basic_example.png
+.. figure:: figures/supertextfiles_basicinterface.png
     :align: center
     :alt: Basic interface of the Text files widget
 
