@@ -78,6 +78,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
     content_column = settings.Setting(0)
     headerEdit = settings.Setting("")
+    deleteQuotes = settings.Setting(False)
 
     def __init__(self):
         """Widget creator."""
@@ -103,6 +104,9 @@ class ExtractCSV(OWTextableBaseWidget):
         self.isRenamed = False
         self.dict_keys = list()
 
+        # preprocess
+        self.deleteQuotes = False
+
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -118,6 +122,21 @@ class ExtractCSV(OWTextableBaseWidget):
 
         #----------------------------------------------------------------------
         # User interface...
+
+        # preprocess box...
+        self.preprocessBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Preprocess",
+            orientation="vertical",
+        )
+        # check box...
+        self.checkQuotes = gui.checkBox(
+            widget=self.preprocessBox,
+            master=self,
+            value='deleteQuotes',
+            label='delete quotation marks',
+            callback=self.delete_quotes,
+        )
 
         # main box...
         self.mainBox = gui.widgetBox(
@@ -221,6 +240,9 @@ class ExtractCSV(OWTextableBaseWidget):
         self.treat_input()
         return
 
+    def delete_quotes(self):
+        self.treat_input()
+
     def set_renamebox(self):
         # take selectedHeader
         self.renamedHeader = int(self.selectedHeader[0])
@@ -230,6 +252,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.iscontentHeader.setDisabled(True)
         self.renameHeader.setDisabled(True)
         self.headerListbox.setDisabled(True)
+        self.checkQuotes.setDisabled(True)
 
     def rename(self):
         # rename
@@ -245,6 +268,7 @@ class ExtractCSV(OWTextableBaseWidget):
         # here we get back to normal gui
         self.renameBox.setVisible(False)
         self.headerListbox.setDisabled(False)
+        self.checkQuotes.setDisabled(False)
         self.update_gui()
         # clear value
         self.headerEdit = ""
@@ -282,7 +306,8 @@ class ExtractCSV(OWTextableBaseWidget):
         
             # Input segment attributes...
             inputContent = segment.get_content()
-            # if ... inputContent = inputContent.replace('"',"")
+            if not self.deleteQuotes == False :
+                inputContent = inputContent.replace('"',"")
             inputAnnotations = segment.annotations
             inputStrIdx = segment.str_index
             inputStart = segment.start or 0
