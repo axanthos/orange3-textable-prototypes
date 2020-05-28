@@ -70,14 +70,14 @@ For pictures and PDF files
 The textual content is extracted from the images with the `Tesseract OCR <https://github.com/tesseract-ocr/tessdoc>`_ 
 
   
-The interface of **Text files** is available in two versions, according to
+The interface of **Super Text files** is available in two versions, according to
 whether or not the **Advanced Settings** checkbox is selected.
 
 
 Basic interface
 ~~~~~~~~~~~~~~~
 
-In its basic version (see :ref:`figure 1 <text_files_fig1>` below), the **Text
+In its basic version (see :ref:`figure 1 <supertextfiles_basicinterface>` below), the **Text
 Files** widget is limited to the import of a single text or textual PDF file.
 The interface contains a **Source** section enabling the user to select the input 
 file. The **Browse** button opens a file selection dialog; the selected file then
@@ -85,13 +85,13 @@ appears in the **File path** text field (it can also be directly inputted with
 the keyboard). The **Encoding** drop-down menu enables the user to specify the
 encoding of the file.
 
-.. _text_files_fig1:
+.. _supertextfiles_basicinterface:
 
 .. figure:: figures/supertextfiles_basicinterface.png
     :align: center
-    :alt: Basic interface of the Text files widget
+    :alt: Basic interface of the Super Text files widget
 
-    Figure 1: **Text files** widget (basic interface).
+    Figure 1: **Super Text files** widget (basic interface).
 
 The user can define the label of the output segmentation (**Options**) by checking the **Advanced settings**.
 
@@ -107,21 +107,21 @@ segmentation is emitted (no input data, encoding issue, etc.).
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of **Text Files** allows the user to import several files
+The advanced version of **Super Text Files** allows the user to import several files
 in a determined order; each file can moreover be associated to a distinct
 encoding and specific annotations. The emitted segmentation contains a segment
 for each imported file.
 
-.. _text_files_fig2:
+.. _supertextfiles_advancedinterface:
 
-.. figure:: figures/text_files_advanced_example.png
+.. figure:: figures/supertextfiles_advancedinterface.png
     :align: center
-    :alt: Advanced interface of the Text files widget
+    :alt: Advanced interface of the Super Text files widget
     :scale: 80%
     
-    Figure 2: **Text files** widget (advanced interface).
+    Figure 2: **Super Text files** widget (advanced interface).
 
-The advanced interface (see :ref:`figure 2 <text_files_fig2>` above) presents
+The advanced interface (see :ref:`figure 2 <supertextfiles_advancedinterface>` above) presents
 similarities with that of the :ref:`URLs`, :ref:`Recode`, and :ref:`Segment`
 widgets. The **Sources** section allows the user to select the input
 file(s) as well as their encoding, to determine the order in which they appear
@@ -190,17 +190,17 @@ imported files thus total up to 1'262'145 characters.
 Remote control
 ~~~~~~~~~~~~~~
 
-**Text Files** is one the widgets that can be controlled by means of the
+**Super Text Files** is one the widgets that can be controlled by means of the
 :ref:`Message` widget. Indeed, it can receive in input a message consisting
 of a file list in JSON format (see :doc:`JSON im-/export format
 <json_format>`, :doc:`File list <json_file_list>`), in which case the list
 of files specified in this message replaces previously imported sources (if
 any). Note that removing the incoming connection from the **Message** instance
 will not, by itself, remove the list of files imported in this way from the
-**Text Files** instance's interface; conversely, this list of files can be
+**Super Text Files** instance's interface; conversely, this list of files can be
 modified using buttons **Move up/down**, **Remove**, etc. even if the incoming
 connection from the **Message** instance has not been removed. Finally, note
-that if a **Text Files** instance has the basic version of its interface
+that if a **Super Text Files** instance has the basic version of its interface
 activated when an incoming connection is created from an instance of
 :ref:`Message`, it automatically switches to the advanced interface.
 
