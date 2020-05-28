@@ -18,31 +18,6 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable-Prototypes. If not, see 
 <http://www.gnu.org/licenses/>.
 
-TODO :
-1. DONE
-- DONE : resolve infoBox error message
-
-- DONE : move inputseg treatement from sendData to inputData so that it works 
-    immediately when the widget is newly linked (without having to send it)
-- DONE : if nothing's linked, the list should be None
-
-2.
-- DONE :disable "rename" and "use as content" buttons when there's nothing selected
-    in the list.
-
-- DONE"rename" button functionality
-
-- DONE : "use as content" button functionality (renaming adding a "(*content)" after
-    the content header in the list)
-
-3.
-- DONE: make csv not treat quotation marks in input 
-
-ISSUE :
-- if input has quote, with quote_none headers are not 
-    detected and put in segmentation (but it works)
-- 3 quotation marks ? weird
-
 """
 
 __version__ = u"0.0.1"
@@ -195,7 +170,7 @@ class ExtractCSV(OWTextableBaseWidget):
             master=self,
             value='headerEdit',
             orientation='horizontal',
-            label='New title:',
+            label='New header:',
             tooltip=(
                 "Rename the selected header."
             )
@@ -307,6 +282,7 @@ class ExtractCSV(OWTextableBaseWidget):
         
             # Input segment attributes...
             inputContent = segment.get_content()
+            # if ... inputContent = inputContent.replace('"',"")
             inputAnnotations = segment.annotations
             inputStrIdx = segment.str_index
             inputStart = segment.start or 0
@@ -353,7 +329,7 @@ class ExtractCSV(OWTextableBaseWidget):
                 n_cols = len(first_row)
                 if self.isRenamed == False :
                     self.dict_keys = list()
-                    for item in range(0, n_cols):
+                    for item in range(1, n_cols+1):
                         self.dict_keys.append(str(item))
                 csv_stream.seek(0)
 
@@ -490,7 +466,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
                  
         # Set status to OK and report data size...
-        outputSeg = Segmentation(self.csvSeg)
+        outputSeg = Segmentation(self.csvSeg, label=self.captionTitle)
         if len(self.contentIsNone) == 0 :
             message = "%i segment@p sent to output." % len(outputSeg)
             message = pluralize(message, len(outputSeg))
