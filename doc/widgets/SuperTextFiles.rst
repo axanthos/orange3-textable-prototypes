@@ -38,7 +38,7 @@ This widget is designed to import the contents of one or several files in
 Orange Canvas. It outputs a segmentation containing a (potentially annotated)
 segment for each imported file.
 
-This widget process with 3 methods.
+This widget processes files with 3 methods.
 
 For raw text files
 ~~~~~~~~~~~~~~~~~~~
@@ -130,11 +130,6 @@ of imported files appears at the top of the window; the columns of this list
 indicate (a) the name of each file, (b) the corresponding annotation (if any),
 and (c) the encoding with which each is associated.
 
-In :ref:`figure 2 <text_files_fig2>`, we can see that two files are imported
-and that each is provided with an annotation whose key is *author*. The first
-file associates value *Dickens* with this key and is encoded in utf-8; the
-second one has value *Fitzgerald* and is encoded in iso-8859-1.
-
 The first buttons on the right of the imported files' list enable the user to
 modify the order in which they appear in the output segmentation (**Move Up**
 and **Move Down**), to delete a file from the list (**Remove**) or to
@@ -170,10 +165,7 @@ Similarly the button **Auto-number with key** enables the program to
 automatically number the imported files and to associate the number to the
 annotation key specified in the text field on the right.
 
-In :ref:`figure 2 <text_files_fig2>`, it was thus decided to assign the label
-*novels* to the output segmentation, and to associate the name of each file to
-the annotation key *filename*. On the other hand, the auto-numbering option
-has not been enabled.
+The **PDF Password** allows password-protected files to be passed to the widget and **Force OCR** immediately enables the OCR processes of the widget.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
