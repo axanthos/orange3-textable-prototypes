@@ -185,7 +185,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
         self.renameBox = gui.widgetBox(
             widget=self.controlArea,
-            box=u'Rename header',
+            box='Rename header',
             orientation='horizontal',
             addSpace=True,
         )
@@ -195,9 +195,9 @@ class ExtractCSV(OWTextableBaseWidget):
             master=self,
             value='headerEdit',
             orientation='horizontal',
-            label=u'New title:',
+            label='New title:',
             tooltip=(
-                u"Rename the selected header."
+                "Rename the selected header."
             )
         )
         self.renameButton = gui.button(
@@ -206,6 +206,13 @@ class ExtractCSV(OWTextableBaseWidget):
             label="rename",
             callback=self.rename,
             tooltip="click to rename header"
+        )
+        self.cancelButton = gui.button(
+            widget=self.renameBox,
+            master=self,
+            label="cancel",
+            callback=self.cancel,
+            tooltip="click to cancel renaming"
         )
         #----------------------------------------------------------------------
         # interface parameters...
@@ -260,6 +267,14 @@ class ExtractCSV(OWTextableBaseWidget):
         # and treat again
         self.treat_input()
 
+        # here we get back to normal gui
+        self.renameBox.setVisible(False)
+        self.headerListbox.setDisabled(False)
+        self.update_gui()
+        # clear value
+        self.headerEdit = ""
+
+    def cancel(self):
         # here we get back to normal gui
         self.renameBox.setVisible(False)
         self.headerListbox.setDisabled(False)
@@ -326,11 +341,13 @@ class ExtractCSV(OWTextableBaseWidget):
                         position += (len(key) + 1)
 
 
-            # This will launch if sniffer does not detect a header in the content.
+            # This will launch if sniffer does not detect a header 
+            # in the content.
             if sniffer.has_header(inputContent) == False:
-                # go back to the start otherwise we're going to start from the second row
-                # we do this here even though we don't really care about the first row
-                # simply because in general we consider the first row to not have any missing values
+                # go back to the start otherwise we're going to start from the
+                # second row. we do this here even though we don't really care
+                # about the first row simply because in general we consider the
+                # first row to not have any missing values
                 csv_stream.seek(0)
                 first_row = next(my_reader)
                 n_cols = len(first_row)
