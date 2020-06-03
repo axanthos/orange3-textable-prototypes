@@ -271,12 +271,11 @@ Errors
     A file couldn't be read with the specified encoding (it must be in another
     encoding).
 
-*Failed to load. Please verify if Tesseract trained data is installed for 
-following languages: '<languages>'.*
+*Failed to load. Please verify if Tesseract trained data is installed for following languages: '<languages>'.*
     A Tesseract language package is probably missing.
     
 *Tesseract is not installed or it's not in your path.*
-   Add the directory where the tesseract-OCR binaries are located to the Environment Path variables, probably ``C:\Program Files\Tesseract-OCR``
+    Add the directory where the tesseract-OCR binaries are located to the Environment Path variables, probably ``C:\Program Files\Tesseract-OCR``
     
 Examples
 --------
