@@ -104,8 +104,7 @@ class SuperTextFiles(OWTextableBaseWidget):
     lastLocation = settings.Setting('.')
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u'')
-    ocrForce = settings.Setting(False) # SuperTextFiles
-    ocrLanguages = settings.Setting(u'eng') # SuperTextFiles
+
 
 
 
@@ -121,6 +120,8 @@ class SuperTextFiles(OWTextableBaseWidget):
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
         self.pdfPassword = u'' # SuperTextFiles
+        self.ocrForce = False # SuperTextFiles
+        self.ocrLanguages = u'eng' # SuperTextFiles
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -553,7 +554,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 ocrLanguages = entry.get('ocr_languages', '') # SuperTextFiles
                 ocrForce = entry.get('ocr_force', '') # SuperTextFiles
 
-                if path == '' or encoding == '':
+                if path == '' or encoding == '' or ocrForce == '':
                     self.infoBox.setText(
                         u"Please verify keys and values of incoming "
                         u"JSON message.",
@@ -654,7 +655,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                     fileContent = self.extract_raw_text(filePath, encoding)
 
                 elif myFiletype.extension == "pdf":
-                    if self.ocrForce is True:
+                    if ocr_force is True:
                         fileContent = self.get_pdf_content(filePath)
                     else:
                         if self.is_textual_pdf_file(filePath) is True:
@@ -898,7 +899,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 ocrLanguages = entry.get('ocr_languages', '') # SuperTextFiles
                 ocrForce = entry.get('ocr_force', '') # SuperTextFiles
 
-                if path == '' or encoding == '':
+                if path == '' or encoding == '' or ocrForce == '':
                     QMessageBox.warning(
                         None,
                         'Textable',
@@ -945,8 +946,8 @@ class SuperTextFiles(OWTextableBaseWidget):
 
             if myfile[5]:
                 toDump[-1]['ocr_languages'] = myfile[5]
-            if myfile[6]:
-                toDump[-1]['ocr_force'] = myfile[6]
+                
+            toDump[-1]['ocr_force'] = myfile[6]
             # End SuperTextFiles
 
         filePath, _ = QFileDialog.getSaveFileName(
@@ -1097,9 +1098,8 @@ class SuperTextFiles(OWTextableBaseWidget):
                     format = u'%-' + str(maxOcrLanguagesLen + 2) + u's'
                     fileLabel += format % ocrLanguages[index]
 
-                    if ocrForce == "True":
-                        format = u'%-' + str(ocrForceLen + 2) + u's'
-                        fileLabel += format % ocrForce[index]
+                    format = u'%-' + str(5 + 2) + u's'
+                    fileLabel += format % ocrForce[index]
                     # End SuperTextFiles
 
                     fileLabel += encodings[index]
