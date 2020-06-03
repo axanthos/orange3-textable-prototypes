@@ -163,7 +163,7 @@ value in the **Annotation value** field. These three parameters (encoding,
 key, value) will be applied to each file appearing in the **File paths** field
 at the moment of their addition to the list with **Add**.
 
-The **PDF Password** allows password-protected files to be passed to the widget.
+The **PDF Password** field allows password-protected files to be passed to the widget. Insert the password in the field and proceed as usual.
 
 The **OCR Language(s)** field is needed by the OCR processes. By default,
 it contains English abbreviated by `eng`. Multilingual files are supported
@@ -171,7 +171,7 @@ by complete the field with the languages separated by `+`. For example,
 `eng+fra+ita`. See all `installable Tesseract data files
 <https://tesseract-ocr.github.io/tessdoc/Data-Files.html>`_.
 
-**Force OCR** immediately enables the OCR processes of the widget.
+**Force OCR** enables the OCR processes of the widget while also extracting textual content. Enable this if textual and image content are both present in the file. Uses PyMuPDF instead of PDFplumber
 
 The **Options** section allows the user to specify the label affected to the
 output segmentation. The **Import filenames with key** checkbox enables the
@@ -274,6 +274,9 @@ Errors
 *Failed to load. Please verify if Tesseract trained data is installed for 
 following languages: '<languages>'.*
     A Tesseract language package is probably missing.
+    
+*Tesseract is not installed or it's not in your path.*
+   Add the directory where the tesseract-OCR binaries are located to the Environment Path variables, probably ``C:\Program Files\Tesseract-OCR``
     
 Examples
 --------
