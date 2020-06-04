@@ -6,7 +6,7 @@
 .. _SuperTextFiles:
 
 SuperTextFiles
-=======
+==============
 
 .. image:: figures/supertextfiles.png 
 
@@ -14,9 +14,9 @@ Import raw text, PDF and image files with if necessary an usage of Tesseract, an
 OCR application.
 
 Authors
-------
+-------
 
-Loïc Aubrays, Fábio Torres Cabral, Aris Xanthos
+Loïc Aubrays, Fábio Torres Cabral (Aris Xanthos, original Text Files)
 
 Signals
 -------
@@ -31,7 +31,7 @@ Outputs: ``Text data``
   Segmentation covering the content of imported text files
 
 Installation of Tesseract
-------------
+-------------------------
 
 To use the OCR feature, an extra installation is needed. There are two parts to install, the engine itself, and the training data for a language.
 Please read the `official documentation of Tesseract <https://tesseract-ocr.github.io/tessdoc/Home.html>`_.
@@ -65,13 +65,13 @@ several ways:
   converted to a single form (namely ``\n``)
 
 For textual PDF files
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 The textual content is extracted from the PDF file in the order in the file, not
 in the reading view.
 
 For pictures and PDF files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The textual content is extracted from the images with the `Tesseract OCR <https://github.com/tesseract-ocr/tessdoc>`_ 
 
@@ -99,7 +99,8 @@ encoding of the file.
 
     Figure 1: **Super Text files** widget (basic interface).
 
-The user can define the label of the output segmentation (**Options**) by checking the **Advanced settings**.
+Note that the language is assumed to be English for OCR purposes (it can be
+specified otherwise using the advanced interface.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -127,8 +128,8 @@ for each imported file.
     
     Figure 2: **Super Text files** widget (advanced interface).
 
-The advanced interface (see :ref:`figure 2 <supertextfiles_advancedinterface>` above) presents
-similarities with that of the :ref:`URLs`, :ref:`Recode`, and :ref:`Segment`
+The advanced interface (see :ref:`figure 2 <supertextfiles_advancedinterface>` 
+above) presents similarities with that of the **URLs**, **Recode**, and **Segment**
 widgets. The **Sources** section allows the user to select the input
 file(s) as well as their encoding, to determine the order in which they appear
 in the output segmentation, and optionally to assign an annotation. The list
@@ -141,10 +142,10 @@ modify the order in which they appear in the output segmentation (**Move Up**
 and **Move Down**), to delete a file from the list (**Remove**) or to
 completely empty it (**Clear All**). Except for **Clear All**, all these
 buttons require the user to previously select an entry from the list. **Import
-List** enables the user to import a file list in JSON format (see
-:doc:`JSON im-/export format <json_format>`, :doc:`File list
-<json_file_list>`) and to add it to the previously selected sources. In the
-opposite **Export List** enables the user to export the source list in a JSON
+List** enables the user to import a file list in JSON format (see sections
+*JSON im-/export format* and *File list* in Textable documentation) and to add 
+it to the previously selected sources. In the opposite **Export List** enables 
+the user to export the source list in a JSON
 file.
 
 The remainder of the **Sources** section allows the user to add new files to
@@ -169,9 +170,11 @@ The **OCR Language(s)** field is needed by the OCR processes. By default,
 it contains English abbreviated by `eng`. Multilingual files are supported
 by complete the field with the languages separated by `+`. For example,
 `eng+fra+ita`. See all `installable Tesseract data files
-<https://tesseract-ocr.github.io/tessdoc/Data-Files.html>`_.
+<https://tesseract-ocr.github.io/tessdoc/Data-Files.html>`_. If nothing is
+indicated in this field, the language is assumed to be `eng`.
 
-**Force OCR** enables the OCR processes of the widget while also extracting textual content. Enable this if textual and image content are both present in the file. Uses PyMuPDF instead of PDFplumber
+**Force OCR** enables the OCR processes of the widget while also extracting textual content. Enable this if textual and image content are both present in the file (or if extraction of
+textual content gives really bad results).
 
 The **Options** section allows the user to specify the label affected to the
 output segmentation. The **Import filenames with key** checkbox enables the
@@ -199,9 +202,9 @@ Remote control
 ~~~~~~~~~~~~~~
 
 **Super Text Files** is one the widgets that can be controlled by means of the
-:ref:`Message` widget. Indeed, it can receive in input a message consisting
-of a file list in JSON format (see :doc:`JSON im-/export format
-<json_format>`, :doc:`File list <json_file_list>`), in which case the list
+**Message** widget. Indeed, it can receive in input a message consisting
+of a file list in JSON format (see sections *JSON im-/export format* and 
+*File list* in Textable documentation), in which case the list
 of files specified in this message replaces previously imported sources (if
 any). Note that removing the incoming connection from the **Message** instance
 will not, by itself, remove the list of files imported in this way from the
@@ -210,7 +213,7 @@ modified using buttons **Move up/down**, **Remove**, etc. even if the incoming
 connection from the **Message** instance has not been removed. Finally, note
 that if a **Super Text Files** instance has the basic version of its interface
 activated when an incoming connection is created from an instance of
-:ref:`Message`, it automatically switches to the advanced interface.
+**Message**, it automatically switches to the advanced interface.
 
 Messages
 --------
@@ -252,8 +255,8 @@ Warnings
 *JSON message on input connection doesn't have the right keys and/or values.*
     The widget instance has received a JSON message on its ``Message`` input
     channel and the keys and/or values specified in this message do not match
-    those that are expected for this particular widget type (see :doc:`JSON
-    im-/export format <json_format>`, :doc:`File list <json_file_list>`).
+    those that are expected for this particular widget type (see sections
+    *JSON im-/export format* and *File list* in Textable documentation).
 
 *JSON parsing error.*
     The widget instance has received data on its ``Message`` input channel and
@@ -271,20 +274,9 @@ Errors
     A file couldn't be read with the specified encoding (it must be in another
     encoding).
 
-*Failed to load. Please verify if Tesseract trained data is installed for following languages: '<languages>'.*
-    A Tesseract language package is probably missing.
+*Please make sure all Tesseract parameter files for language(s) '<languages>' have been installed..*
+    One or more Tesseract language packages are probably missing.
     
 *Tesseract is not installed or it's not in your path.*
     Add the directory where the tesseract-OCR binaries are located to the Environment Path variables, probably ``C:\Program Files\Tesseract-OCR``
     
-Examples
---------
-
-* :doc:`Cookbook: Import text from file <import_text_file>`
-
-See also
---------
-
-* :doc:`Reference: JSON im-/export format <json_format>`, :doc:`File list
-  <json_file_list>`
-* :ref:`Reference: Message widget <Message>`

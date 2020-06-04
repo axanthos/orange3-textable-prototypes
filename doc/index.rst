@@ -31,15 +31,17 @@ Widgets
 .. toctree::
     :maxdepth: 1
 
+    Super Text Files <widgets/SuperTextFiles>
     Lyrics Genius <widgets/lyrics_genius>
     Movie Transcripts <widgets/movie_transcripts>
     Theatre Classique <widgets/theatre_classique>
     18th Century Poetry <widgets/18th_century_poetry>
+    Extract CSV <widgets/extractCSV>
     Redditor <widgets/redditor>
     CHILDES <widgets/CHILDES>
-    Topic Models <widgets/topic_models>
     Linguistica <widgets/linguistica>
     spaCy <widgets/spaCy>
     Lexical Hunter <widgets/lexical_hunter>
+    Topic Models <widgets/topic_models>
 
 

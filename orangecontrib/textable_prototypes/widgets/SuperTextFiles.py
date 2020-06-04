@@ -21,7 +21,7 @@ along with Orange-Textable-Prototypes. If not, see
 """
 
 # OWTextableTextFiles version = '0.17.10'
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Loïc Aubrays, Fàbio Torres Cabral"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -73,7 +73,7 @@ class SuperTextFiles(OWTextableBaseWidget):
     name = "Super Text Files"
     description = "Import data from raw text and PDF files"
     icon = "icons/SuperTextFiles.svg"
-    priority = 25 # TODO
+    priority = 1 # TODO
 
     #----------------------------------------------------------------------
     # Channel definitions....
@@ -620,11 +620,11 @@ class SuperTextFiles(OWTextableBaseWidget):
             myFiles = [[
                 self.file,
                 self.encoding,
-                u'',
-                u'',
-                u'',
-                self.ocrLanguages,
-                self.ocrForce
+                "",
+                "",
+                "",
+                "eng",
+                False
             ]]
 
         self.infoBox.setText(u"Processing, please wait...", "warning")
@@ -656,18 +656,36 @@ class SuperTextFiles(OWTextableBaseWidget):
 
                 elif myFiletype.extension == "pdf":
                     if ocr_force is True:
-                        fileContent = self.get_pdf_content(filePath)
+                        fileContent = self.get_pdf_content(
+                            filePath,
+                            ocr_languages,
+                        )
                     else:
                         if self.is_textual_pdf_file(filePath) is True:
                             fileContent = self.extract_text_from_pdf(filePath)
                         else:
-                            fileContent = self.get_pdf_content(filePath)
+                            fileContent = self.get_pdf_content(
+                                filePath,
+                                ocr_languages,
+                            )
 
                 elif myFiletype.extension in IMG_FILETYPES:
-                    fileContent = self.ocrize(filePath)
+                    fileContent = self.ocrize(filePath, ocr_languages)
+
+                if fileContent == -1:
+                    message = u"Couldn't open file."
+                    self.infoBox.setText(message, 'error')
+                    self.send('Text data', None, self)
+                    self.controlArea.setDisabled(False)
+                    return
+
             # End SuperTextFiles
 
-            except IOError:
+            except IOError as e:
+                if "tesseract" in str(e):
+                    QMessageBox.warning(
+                        None, 'Textable', str(e), QMessageBox.Ok
+                    )
                 progressBar.finish()
                 if len(myFiles) > 1:
                     message = u"Couldn't open file '%s'." % filePath
@@ -811,7 +829,7 @@ class SuperTextFiles(OWTextableBaseWidget):
 
         return fileContent
 
-    def get_pdf_content(self, filePath):
+    def get_pdf_content(self, filePath, languages):
         """ First this function get all texts in the file if exist. Then it
         creates a list of pictures to make the OCR method."""
         text = ""
@@ -830,32 +848,37 @@ class SuperTextFiles(OWTextableBaseWidget):
 
                 bytes_img = BytesIO(picture.getImageData())
 
-                page_text = self.ocrize(bytes_img)
+                page_text = self.ocrize(bytes_img, languages)
 
-                if page_text:
+                if page_text == -1:
+                    text = -1
+                    break
+                elif page_text:
                     text += page_text
 
         return text
 
-    def ocrize(self, image):
+    def ocrize(self, image, languages):
         """Make an OCR on a list of images or an image file"""
-        languages = self.ocrLanguages.strip() # remove trailing spaces
-
+        languages = languages.strip() # remove trailing spaces
+        if languages == "":
+            languages = "eng"
         try:
             ocrized_text = image_to_string(
                 Image.open(image),
                 lang=languages
             )
             return ocrized_text
-        except TesseractError:
-            QMessageBox.warning(
-                None,
-                'Textable',
-                "Failed to load. Please verify if Tesseract trained data is " +
-                "installed for following languages : %s."
-                % (self.ocrLanguages),
-                QMessageBox.Ok
-            )
+        except TesseractError as e:
+            if "load" in str(e):
+                QMessageBox.warning(
+                    None, 
+                    'Textable', 
+                    "Please make sure all Tesseract parameter files for "
+                    "language(s) '%s' have been installed." % languages, 
+                    QMessageBox.Ok
+                )
+            return -1
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:

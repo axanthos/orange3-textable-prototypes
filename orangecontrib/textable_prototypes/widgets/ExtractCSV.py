@@ -20,7 +20,7 @@ along with Orange-Textable-Prototypes. If not, see
 
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Noémie Carette", "Saara Jones", "Sorcha Walsh"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -50,7 +50,7 @@ class ExtractCSV(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "ExtractCSV"
+    name = "Extract CSV"
     description = "Extract tabulated data as a Textable Segmentation"
     icon = "icons/extractcsv.png"
     priority = 21   # TODO
@@ -77,7 +77,6 @@ class ExtractCSV(OWTextableBaseWidget):
     autoSend = settings.Setting(False)
 
     content_column = settings.Setting(0)
-    headerEdit = settings.Setting("")
     deleteQuotes = settings.Setting(False)
 
     def __init__(self):
@@ -192,7 +191,8 @@ class ExtractCSV(OWTextableBaseWidget):
             label='New header:',
             tooltip=(
                 "Rename the selected header."
-            )
+            ),
+            callback=lambda: self.renameButton.setDisabled(not self.headerEdit),
         )
         self.renameButton = gui.button(
             widget=self.renameBox,
@@ -219,7 +219,6 @@ class ExtractCSV(OWTextableBaseWidget):
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
-        #self.set_renamebox()
         self.infoBox.setText("Widget needs input", "warning")
         
         # Send data if autoSend.
@@ -248,6 +247,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.renamedHeader = int(self.selectedHeader[0])
         # appear rename gui
         self.renameBox.setVisible(True)
+        self.renameButton.setDisabled(True)
         # disable other
         self.iscontentHeader.setDisabled(True)
         self.renameHeader.setDisabled(True)
@@ -426,22 +426,12 @@ class ExtractCSV(OWTextableBaseWidget):
 
         unSeg = len(self.csvSeg)         
         # Set status to OK and report segment analyzed...
-        if len(self.contentIsNone) == 0 :
-            message = "%i segment@p analyzed." % unSeg
-            message = pluralize(message, unSeg)
-            self.infoBox.setText(message)
-        # message if one or more segments has no content and has been ignored
-        elif len(self.contentIsNone) == 1 :
-            message = "%i segment@p analyzed. (ignored %i segment with \
-            no content)" % (unSeg, len(self.contentIsNone))
-            message = pluralize(message, unSeg)
-            self.infoBox.setText(message)
-        else :
-            message = "%i segment@p analyzed. (ignored %i segments with \
-            no content)" % (unSeg, len(self.contentIsNone))
-            message = pluralize(message, unSeg)
-            self.infoBox.setText(message)
-
+        message = "%i segment@p analyzed." % unSeg
+        message = pluralize(message, unSeg)
+        message += " (Ignored %i segment@p with no content)" %      \
+            len(self.contentIsNone)
+        message = pluralize(message, len(self.contentIsNone))
+        self.infoBox.setText(message)
 
         # Clear progress bar.
         progressBar.finish()

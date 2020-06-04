@@ -8,9 +8,9 @@
 .. _ExtractCSV:
 
 Extract CSV
-=================
+===========
 
-.. image:: figures/extractCSV_icon.pgn
+.. image:: figures/extractCSV_icon.png
 
 Extract tabulated data as a Textable Segmentation
 
@@ -39,7 +39,7 @@ It takes .csv files as input and the user can choose which header he wants to us
 
 
 Interface
-~~~~~~~~~~~~~~~
+~~~~~~~~~
 
 Extract CSV displays a list of the file's headers and lets the user choose which one to use as content for the segmentation with the **Use as Content** button. If the file has no header it will simply display the number of the column.
 
@@ -80,7 +80,7 @@ Information
 
 *<n> segments analyzed.*
     This confirms that the widget has operated properly.
-*<n> segments sent to output. (Ignored <n> segments with no content)*
+*<n> segments sent to output. (Ignored <m> segments with no content)*
     Informs the user if segments were ignored.
 
 

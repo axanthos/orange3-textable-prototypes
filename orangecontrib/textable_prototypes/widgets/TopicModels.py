@@ -56,7 +56,7 @@ class TopicModels(OWTextableBaseWidget):
     name = "Topic Models"
     description = "Build topic models based on term-document matrices"
     icon = "icons/topic_models.svg"
-    priority = 20
+    priority = 30
 
     #----------------------------------------------------------------------
     # Channel definitions...
