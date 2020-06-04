@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="" title="" version="2.0">
+	<nodes>
+		<node id="0" name="Text Field" position="(103.0, 138.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" title="Normal csv" version="" />
+		<node id="1" name="Text Field" position="(102.0, 232.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" title="csv without headers" version="" />
+		<node id="2" name="Text Field" position="(102.0, 334.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" title="csv missing content" version="" />
+		<node id="3" name="Text Field" position="(104.0, 440.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" title="csv quotes" version="" />
+		<node id="4" name="Display" position="(494.0, 276.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+		<node id="5" name="ExtractCSV" position="(307.0, 274.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.ExtractCSV.ExtractCSV" title="ExtractCSV" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="4" source_channel="CSV Segmentation" source_node_id="5" />
+		<link enabled="true" id="1" sink_channel="CSV Data" sink_node_id="5" source_channel="Text data" source_node_id="0" />
+	</links>
+	<annotations>
+		<arrow end="(153.0, 428.0)" fill="#C1272D" id="0" start="(180.0, 500.0)" />
+		<text font-family=".SF NS Text" font-size="16" id="1" rect="(173.0, 510.0, 184.0, 68.0)" type="text/plain">1. Try these examples to see how ExtractCSV works</text>
+		<arrow end="(221.0, 161.0)" fill="#C1272D" id="2" start="(256.0, 75.0)" />
+		<text font-family=".SF NS Text" font-size="16" id="3" rect="(256.0, 25.0, 194.0, 50.0)" type="text/plain">(ExtractCSV aslo takes Text Files as input)</text>
+		<arrow end="(332.99999999999994, 343.0)" fill="#C1272D" id="4" start="(356.0, 394.0)" />
+		<text font-family=".SF NS Text" font-size="16" id="5" rect="(365.0, 406.0, 150.0, 107.0)" type="text/plain">2. Choose which header to use as content and rename it if needed</text>
+		<arrow end="(519.0, 228.0)" fill="#C1272D" id="6" start="(565.0, 152.0)" />
+		<text font-family=".SF NS Text" font-size="16" id="7" rect="(542.0, 18.0, 114.0, 126.0)" type="text/plain">3. Your segments are ready to be counted and analysed.</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties format="literal" node_id="0">{'autoSend': True, 'controlAreaVisible': True, 'encoding': 'utf-8', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02@\x00\x00\x00\xe7\x00\x00\x03K\x00\x00\x02/\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/', 'textFieldContent': b'Age;nom;taille;cheveux\n20;Clea;165;blonds\n21;Junior;169;chatains\n20;Liza;170;blonds\n21;Matt;180;roux\n23;Tiff;160;blonds\n22;Gaia;150;bruns\n23;Nat;185;chatains\n22;Gabriel;183;noir', 'uuid': '7608aae4-6a7a-4016-8ffe-02cd968cb146', '__version__': 1, '_TextableUtils_settings_version__': (0, 13)}</properties>
+		<properties format="literal" node_id="1">{'autoSend': True, 'controlAreaVisible': True, 'encoding': 'utf-8', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02@\x00\x00\x00\xe7\x00\x00\x03K\x00\x00\x02/\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/', 'textFieldContent': b'20;Clea;165;blonds\n21;Junior;169;chatains\n20;Liza;170;blonds\n21;Matt;180;roux\n23;Tiff;160;blonds\n22;Gaia;150;bruns\n23;Nat;185;chatains\n22;Gabriel;183;noir', 'uuid': 'da24bafb-2ec5-4459-a0a8-5bd1b40c743f', '__version__': 1, '_TextableUtils_settings_version__': (0, 13)}</properties>
+		<properties format="literal" node_id="2">{'autoSend': True, 'controlAreaVisible': True, 'encoding': 'utf-8', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02@\x00\x00\x00\xe7\x00\x00\x03K\x00\x00\x02/\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/', 'textFieldContent': b'Age;nom;taille;cheveux\n20;Clea;165;blonds\n21;Junior;169;chatains\n20;Liza;170;\n21;;180;roux\n23;Tiff;;blonds\n22;Gaia;;bruns\n23;Nat;185;chatains\n22;Gabriel;183;noir', 'uuid': '7de18e28-b516-413f-8f4a-f6e634bdbb43', '__version__': 1, '_TextableUtils_settings_version__': (0, 13)}</properties>
+		<properties format="literal" node_id="3">{'autoSend': True, 'controlAreaVisible': True, 'encoding': 'utf-8', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02@\x00\x00\x00\xe7\x00\x00\x03K\x00\x00\x02/\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x02@\x00\x00\x00\xfd\x00\x00\x03K\x00\x00\x02/', 'textFieldContent': b'"Age";"nom";"taille";"cheveux"\n20;"Clea";165;blonds\n21;"Junior";169;chatains\n20;"Liza";170;blonds\n21;"Matt";180;roux\n23;"Tiff";160;blonds\n22;"Gaia";150;bruns\n23;"Nat";185;chatains\n22;"Gabriel";183;noir', 'uuid': '6cbdee7d-35d9-4e56-b06f-829764cf409c', '__version__': 1, '_TextableUtils_settings_version__': (0, 13)}</properties>
+		<properties format="literal" node_id="4">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x01&amp;\x00\x00\x00?\x00\x00\x04\x1f\x00\x00\x038\x00\x00\x01&amp;\x00\x00\x00U\x00\x00\x04\x1f\x00\x00\x038\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x01&amp;\x00\x00\x00U\x00\x00\x04\x1f\x00\x00\x038', 'segmentDelimiter': '\\n', 'uuid': '5339c276-2025-415d-bb8d-9875dcdf3507', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties format="literal" node_id="5">{'autoSend': True, 'content_column': 0, 'controlAreaVisible': True, 'deleteQuotes': False, 'headerEdit': '', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02/\x00\x00\x00\xe5\x00\x00\x03 \x00\x00\x02]\x00\x00\x02/\x00\x00\x00\xfb\x00\x00\x03 \x00\x00\x02]\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x02/\x00\x00\x00\xfb\x00\x00\x03 \x00\x00\x02]', 'uuid': '90f97df7-e7ce-4266-b0cb-613607ca185b', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
