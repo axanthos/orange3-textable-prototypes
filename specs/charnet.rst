@@ -9,7 +9,7 @@ Specification widget Charnet
 =================
 
 Créer un widget pour Orange Textable (v3.1.8) permettant d'appliquer à des
-textes l'algorithme de création de réseau de personnage spécifié dans le module
+textes l'algorithme de création de réseau de personnages spécifié dans le module
 Charnet.
 
 
