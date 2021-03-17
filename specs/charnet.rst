@@ -102,13 +102,14 @@ TODO
 3.1 Version alpha
 =================
 
-* L'interface graphique est complètement construite.
+* L'interface graphique pour les fonctionnalités minimales est complètement construite.
 * Les fonctionnalités minimales sont prises en charge par le logiciel et ont été testées.
 
 
 3.2 Remise et présentation
 ==========================
 
+* L'interface graphique est complètement construite.
 * Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
 * Les fonctionnalités principales (et, le cas échéant, optionnelles) sont implémentées et ont été testées.
