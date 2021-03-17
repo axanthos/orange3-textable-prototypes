@@ -57,14 +57,11 @@ Charnet.
 
 .. image:: images/charnet_minimal.png
 
-* Prendre une segmentation en entrée, la traiter comme un seul texte et lui appliquer l'algorithme par défaut de Charnet pour le texte brut (avec un modèle
-spaCy prédéfini, p.ex. en_core_web_sm).
+* Prendre une segmentation en entrée, la traiter comme un seul texte et lui appliquer l'algorithme par défaut de Charnet pour le texte brut (avec un modèle spaCy prédéfini, p.ex. en_core_web_sm).
 
-* Afficher la liste des personnages établie automatiquement par Charnet (NB: le premier élément de chaque ligne est considéré comme l'identifiant principal
-du personnage).
+* Afficher la liste des personnages établie automatiquement par Charnet (NB: le premier élément de chaque ligne est considéré comme l'identifiant principal du personnage).
 
-* Créer et émettre une segmentation avec un segment correspondant à chaque  occurrence de personnage et une annotation pour son identifiant principal (clé
-"id").
+* Créer et émettre une segmentation avec un segment correspondant à chaque  occurrence de personnage et une annotation pour son identifiant principal (clé "id").
 
 
 2.3 Fonctionnalités principales
