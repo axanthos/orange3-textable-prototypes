@@ -62,6 +62,7 @@ Une fois le cache créé, l'utilisateur a accès à l'interface principale du wi
 2.2 Fonctionnalités minimales
 =============================
 
+.. image:: images/gutenberg_first_launch.png
 .. image:: images/gutenberg_minimal.png
 
 * Générer le cache
@@ -87,13 +88,7 @@ Une fois le cache créé, l'utilisateur a accès à l'interface principale du wi
 * Créer et émettre une segmentation avec un segment correspondant à chaque  livre selectionné, avec en annotation les metadonnées du livre.
 
 
-2.4 Fonctionnalités optionnelles
-================================
-
-* Intégrer une visualisation de réseau directement dans le widget.
-
-
-2.5 Tests
+2.4 Tests
 =========
 
 TODO
