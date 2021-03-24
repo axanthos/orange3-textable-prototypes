@@ -6,6 +6,24 @@ Spécifications widget TextSum
 1. Introduction
 ===============
 
+1.1 But du projet
+---------------
+Créer un widget pour Orange Textable (v3.1.8) permettant de résumer un ou plusieurs textes.
+
+1.2 Aperçu des étapes
+---------------
+- Première version des spécifications: 25 mars 2021
+- Remise des spécifications: 1er avril 2021
+- Version alpha du projet: 29 avril 2021
+- Version finale du projet: 3 juin 2021
+
+1.3 Equipe et responsabilités
+---------------
+- Melinda Femminis
+- Jason Ola
+- Catherine Pedroni
+
+
 2. Technique
 =============
 
@@ -44,6 +62,12 @@ Spécifications widget TextSum
 
 3. Etapes
 ==========
+3.1 Version alpha
+---------------
+
+
+3.2 Remise et présentation
+---------------
 
 4. Infrastructure
 ==================
