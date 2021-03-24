@@ -107,7 +107,15 @@ Créer un widget pour Orange Textable (v3.1.8) permettant de résumer un ou plus
 - La documentation du logiciel est complète.
 - Les fonctionnalités principales (et, le cas échéant, optionnelles) sont implémentées et ont été testées.
 
-4. Infrastructure
+4. Maquette
+============
+
+.. image:: images/text_sum_maquette.png
+  :width: 400
+  :alt: Maquette
+
+
+5. Infrastructure
 ==================
 
 Le projet est disponible sur GitHub à l'adresse https://github.com/axanthos/orange3-textable-prototypes.git
