@@ -20,8 +20,38 @@ Créer un widget pour Orange Textable (v3.1.8) permettant de résumer un ou plus
 1.3 Equipe et responsabilités
 ---------------
 - Melinda Femminis
+
+.. 
+    - specification
+    - code
+    - tests
+    - Github
+    - Interface
+    - documentation
+    
+    
 - Jason Ola
+
+.. 
+
+    - code
+    - Github
+    - tests
+    - documentation
+    - spécifications
+    - interface
+    
 - Catherine Pedroni
+
+.. 
+
+    - interface
+    - spécification
+    - documentation
+    - tests
+    - Github
+    - code
+    
 
 
 2. Technique
