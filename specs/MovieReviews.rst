@@ -18,9 +18,7 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 
 1.3 Equipe et responsabilités
 =============================
-* Caroline Roxanna Rohrbach (carolineroxana.rohrbach@unil.ch)
-* Maryam Zoee (maryam.zoee@unil.ch)
-* Victor Vermot-Petit-Outhenin (victor.vermot-petit-outhenin@unil.ch)
+Caroline Roxanna Rohrbach, Maryam Zoee et Victor Vermot-Petit-Outhenin
  - specification
  - code
  - documentation
@@ -50,6 +48,7 @@ Permettre à l'utilisateur de rechercher n'importe quel film et d'en retirer les
   
 2.5 Tests
 =========
+TODO
   
 
 3. Etapes
