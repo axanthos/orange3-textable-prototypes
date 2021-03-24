@@ -44,7 +44,7 @@ Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en r
   
 2.3 Fonctionnalités principales
 ===============================
-- Ajouter de posiibilté de recherche pour les films:
+- Ajouter de possibilté de recherche pour les films:
  * Par acteur
  * Par genre
 
@@ -54,7 +54,7 @@ Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en r
 
 2.4 Fonctionnalités optionnels
 ==========================
-- Trouver un moyenne pour obtenir plus de 25 critiques par film
+- Trouver un moyen pour obtenir plus de 25 critiques par film
 
 
 2.5 Tests
