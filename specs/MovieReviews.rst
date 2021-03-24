@@ -38,16 +38,25 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
   
 2.2 Fonctionnalités minimales
 =============================
-Permettre à l'utilisateur de rechercher n'importe quel film et d'en retirer les 25 critiques les plus pertinentes. 
+Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en retirer les 25 critiques les plus pertinentes. 
 
 .. image:: images/Movie_Reviews_minimal.PNG
   
 2.3 Fonctionnalités principales
 ===============================
-  
-2.4 Fonctionnalités futurs
+- Ajouter de posiibilté de recherche pour les films:
+ * Par acteur
+ * Par genre
+
+- Pouvoir ajouter et supprimer les films dans un corpus
+
+- Importer les metadonnées liés au critiques de films
+
+2.4 Fonctionnalités optionnels
 ==========================
-  
+- Trouver un moyenne pour obtenir plus de 25 critiques par film
+
+
 2.5 Tests
 =========
 TODO
