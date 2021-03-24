@@ -22,6 +22,7 @@ Créer un widget pour Orange Textable (v3.1.8) permettant de résumer un ou plus
 - Melinda Femminis
 
 .. 
+
     - specification
     - code
     - tests
