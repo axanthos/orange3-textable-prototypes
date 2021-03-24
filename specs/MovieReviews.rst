@@ -47,10 +47,14 @@ Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en r
 - Ajouter des possibilités de recherche pour les films:
  * Par acteur
  * Par genre
+ * Offrir à l'utilisateur la possibilité de choisir un nombre d'entries 
+ 
+ .. image:: images/Movie_Reviews_Search_Options.PNG
+
 
 - Pouvoir ajouter et supprimer les films dans un corpus
 
-- Importer les metadonnées liés au critiques de films
+- Importer les metadonnées liées aux critiques de films
 
 2.4 Fonctionnalités optionnels
 ==========================
