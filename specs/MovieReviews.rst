@@ -37,6 +37,8 @@ Caroline Roxanna Rohrbach, Maryam et Victor Vermot-Petit-Outhenin
 2.2 Fonctionnalités minimales
 =============================
 Permettre à l'utilisateur de rechercher n'importe quel film et d'en retirer les 25 critiques les plus pertinentes. 
+
+.. image:: images/Movie_Reviews_minimal.PNG
   
 2.3 Fonctionnalités principales
 ===============================
