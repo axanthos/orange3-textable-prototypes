@@ -44,7 +44,7 @@ Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en r
   
 2.3 Fonctionnalités principales
 ===============================
-- Ajouter de possibilté de recherche pour les films:
+- Ajouter des possibilités de recherche pour les films:
  * Par acteur
  * Par genre
 
