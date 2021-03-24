@@ -18,7 +18,9 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 
 1.3 Equipe et responsabilités
 =============================
-Caroline Roxanna Rohrbach, Maryam Zoee et Victor Vermot-Petit-Outhenin
+* Caroline Roxanna Rohrbach (carolineroxana.rohrbach@unil.ch)
+* Maryam Zoee (maryam.zoee@unil.ch)
+* Victor Vermot-Petit-Outhenin (victor.vermot-petit-outhenin@unil.ch)
  - specification
  - code
  - documentation
