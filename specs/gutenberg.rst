@@ -1,5 +1,5 @@
 ############################
-Specification widget Charnet
+Specification widget Gutenberg
 ############################
 
 1 Introduction
