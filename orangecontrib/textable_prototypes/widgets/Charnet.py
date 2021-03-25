@@ -117,7 +117,7 @@ class Charnet(OWTextableBaseWidget):
         
         self.inputSeg = None
         self.selectedCharacters = list()
-        self.characters = list()
+        self.characters = None
         self.nlp = None
         if INSTALLED_MODELS:
             self.model = INSTALLED_MODELS[0]
@@ -210,8 +210,8 @@ class Charnet(OWTextableBaseWidget):
             progressBar.advance()
 
         # Send output...
-            output_segmentation = LTTL.Segmenter.bypass(self.inputSeg)
-            self.send("Character segmentation", output_segmentation, self)
+        output_segmentation = LTTL.Segmenter.bypass(self.inputSeg)
+        self.send("Character segmentation", output_segmentation, self)
 
         # Set status to OK and report data size...
         message = "%i segment@p sent to output." % len(output_segmentation)
