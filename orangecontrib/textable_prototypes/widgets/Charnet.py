@@ -97,7 +97,12 @@ class Charnet(OWTextableBaseWidget):
 
     #----------------------------------------------------------------------
     # Settings...
+    
+    # TODO
 
+    #----------------------------------------------------------------------
+    # The following lines need to be copied verbatim in every Textable widget...
+    
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
@@ -109,6 +114,7 @@ class Charnet(OWTextableBaseWidget):
 
         #----------------------------------------------------------------------
         # Other (non settings) attributes...
+        
         self.inputSeg = None
         self.selectedCharacters = list()
         self.characters = list()
@@ -122,6 +128,7 @@ class Charnet(OWTextableBaseWidget):
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
+        
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -148,6 +155,7 @@ class Charnet(OWTextableBaseWidget):
 
         #----------------------------------------------------------------------
         # Draw Info box and Send button...
+        
         self.sendButton.draw()
         self.infoBox.draw()
         self.infoBox.setText("Widget needs input.", "warning")
@@ -219,6 +227,7 @@ class Charnet(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
+    
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
