@@ -117,7 +117,7 @@ class Charnet(OWTextableBaseWidget):
         
         self.inputSeg = None
         self.selectedCharacters = list()
-        self.characters = None
+        self.characters = list()
         self.nlp = None
         if INSTALLED_MODELS:
             self.model = INSTALLED_MODELS[0]
