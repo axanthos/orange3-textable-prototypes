@@ -60,7 +60,7 @@ Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en r
  * Par genre
  * Offrir à l'utilisateur la possibilité de choisir un nombre d'entries
  
- .. image:: images/Movie_Reviews_Final.PNG
+ .. image:: images/Movie_Reviews_Final.png
 
 
 - Pouvoir ajouter et supprimer les films dans un corpus
