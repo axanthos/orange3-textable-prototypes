@@ -25,6 +25,11 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
  - tests 
  - Github
 * Maryam Zoee (maryam.zoee@unil.ch)
+ - documentation
+ - specification
+ - code 
+ - tests 
+ - Github
 * Victor Vermot-Petit-Outhenin (victor.vermot-petit-outhenin@unil.ch)
  - code
  - documentation
