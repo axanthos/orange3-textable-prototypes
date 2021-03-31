@@ -1,5 +1,5 @@
 =============================
-Spécifications widget TextSum
+Spécifications du widget Text Summarizer
 =============================
 
 
@@ -23,8 +23,8 @@ Créer un widget pour Orange Textable (v3.1.8) permettant de résumer un ou plus
 
 .. 
 
-    - specification
     - code
+    - spécifications
     - tests
     - Github
     - Interface
@@ -62,34 +62,37 @@ Créer un widget pour Orange Textable (v3.1.8) permettant de résumer un ou plus
 ---------------
 - Orange 3.24
 - Orange Textable 3.1.8
-- Bert Extractive Summarizer 0.7.1
-- Gensim
+- spaCy 3.0.5
+- Scikit-learn 0.24.1
+
+Il faut télécharger les modèle spaCy de chaque langue: 
+    Anglais: `$ python -m spacy download en_core_web_sm`
+    Français: `$ python -m spacy download fr_core_web_sm``
+    Portugais: `$ python -m spacy download pt_core_web_sm`
 
 2.2 Fonctionnalités minimales
 -----------------------------
 
 - Prendre une segmentation en entrée et proposer 2 possiblités:
-    - résumer la segmentation comme un seul texte
-    - résumer chaque segement séparément 
+    1. résumer la segmentation comme un seul texte
+    2. résumer chaque segement séparément 
 - Avoir le choix du nombre de phrases que le résumé doit contenir
-- Créer une segmentation de sortie
-
+- Pouvoir choisir la langue désirée entre anglais, français ou portugais
 
 2.3 Fonctionnalités principales
 -------------------------------
 
 - Prendre une segmentation en entrée et proposer 2 possiblités:
-    - résumer la segmentation comme un seul texte
-    - résumer chaque segement séparément 
-- Proposer différents algorithmes de résumé
-- Gestion de différentes langues
+    1. résumer la segmentation comme un seul texte
+    2. résumer chaque segement séparément 
 - Avoir le choix du nombre de phrases que le résumé doit contenir
-- Créer une segmentation de sortie
-
+- Choisir la longeur du résumé en pourcentage du texte principal
+- Pouvoir choisir la langue désirée entre anglais, français ou portugais
+- Visualisation des mots les plus importants en nuage de mots
 
 2.4 Fonctionnalités optionnelles
 --------------------------------
-- Ajouter une option de visualisation dans le widget
+- Proposer différents algorithmes de résumé
 
 3. Etapes
 ==========
