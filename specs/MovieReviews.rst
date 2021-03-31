@@ -21,9 +21,10 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 * Caroline Roxana Rohrbach (carolineroxana.rohrbach@unil.ch)
 * Maryam Zoee (maryam.zoee@unil.ch)
 * Victor Vermot-Petit-Outhenin (victor.vermot-petit-outhenin@unil.ch)
- - specification
  - code
  - documentation
+ - specification
+ - interface
  - tests
  - GitHub
  
@@ -47,18 +48,19 @@ Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en r
 - Ajouter des possibilités de recherche pour les films:
  * Par acteur
  * Par genre
- * Offrir à l'utilisateur la possibilité de choisir un nombre d'entries 
+ * Offrir à l'utilisateur la possibilité de choisir un nombre d'entries
  
  .. image:: images/Movie_Reviews_Search_Options.PNG
 
 
 - Pouvoir ajouter et supprimer les films dans un corpus
 
-- Importer les metadonnées liées aux critiques de films
 
 2.4 Fonctionnalités optionnels
 ==========================
 - Trouver un moyen pour obtenir plus de 25 critiques par film
+- Importer les metadonnées liées aux critiques de films
+
 
 
 2.5 Tests
