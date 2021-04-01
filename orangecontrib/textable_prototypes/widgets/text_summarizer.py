@@ -1,5 +1,5 @@
 """
-Class Charnet
+Class Text Summarizer
 Copyright 2021 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
@@ -69,14 +69,14 @@ for model, package in AVAILABLE_MODELS.items():
     if importlib.util.find_spec(package.replace("-", ".")):
         INSTALLED_MODELS.append(model)
 
-class Charnet(OWTextableBaseWidget):
+class TextSummarizer(OWTextableBaseWidget):
     """Textable widget for building character networks with Charnet."""
 
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Charnet"
-    description = "Build character networks with the Charnet package"
+    name = "Text Summariser"
+    description = "Summarize texts with spaCy models"
     icon = "icons/charnet.svg"
     priority = 21   # TODO
 
