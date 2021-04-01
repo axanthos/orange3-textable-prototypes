@@ -58,7 +58,7 @@ Permettre à l'utilisateur de rechercher n'importe quel film par titre et d'en r
 - Ajouter des possibilités de recherche pour les films:
  * Par acteur
  * Par genre
- * Offrir à l'utilisateur la possibilité de choisir un nombre d'entries
+ * Offrir à l'utilisateur la possibilité de choisir des paramètres pour filtrer les résultats (populaire, alphabétique)
  
  .. image:: images/Movie_Reviews_Final.png
 
