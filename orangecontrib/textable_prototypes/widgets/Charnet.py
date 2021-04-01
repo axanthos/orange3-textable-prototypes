@@ -46,6 +46,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
+import charnet
 import spacy
 
 AVAILABLE_MODELS = {
@@ -118,7 +119,7 @@ class Charnet(OWTextableBaseWidget):
         self.inputSeg = None
         self.selectedCharacters = list()
         self.characters = list()
-        self.nlp = None
+        self.mustLoad = True
         if INSTALLED_MODELS:
             self.model = INSTALLED_MODELS[0]
         else:
@@ -149,7 +150,6 @@ class Charnet(OWTextableBaseWidget):
             callback=None,
             tooltip="List of identified characters",
         )
-        #self.characterListbox.setSelectionMode(0)
         
         gui.rubber(self.controlArea)
 
@@ -167,8 +167,44 @@ class Charnet(OWTextableBaseWidget):
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSeg = newInput
+        if self.inputSeg is None:
+            self.infoBox.setText("Widget needs input.", "warning")
+            self.sendNoneToOutputs()
+            self.characters = list()
+            return
+        self.updateCharacterList()
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
+
+    def updateCharacterList(self):
+        """Update character list based on Charnet output."""
+        if self.mustLoad:
+            self.loadModel()
+        string = " ".join(segment.get_content() for segment in self.inputSeg)
+        segment_lengths = [len(segment.get_content()) 
+                           for segment in self.inputSeg]
+        char_tokens = charnet.extract_spacy_df(string, self.nlp) # TODO progress
+        char_tokens = charnet.unify_tags(char_tokens)
+        char_types = charnet.concatenate_parents(char_tokens, min_occ = 1)
+        self.characters = [", ".join(char_type) for char_type in char_types]
+    
+    def loadModel(self):
+        """(Re-)load language model if needed."""
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Loading language model, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)       
+        self.nlp = spacy.load(
+            #AVAILABLE_MODELS[self.model],
+            "en_core_web_sm",
+        )
+        self.mustLoad = False
+        progressBar.advance()
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
 
     def noLanguageModelWarning(self):
         """"Warn user that a spaCy model must be installed and disable GUI."""
@@ -179,19 +215,25 @@ class Charnet(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
 
+    def sendNoneToOutputs(self):
+        """Send None token to all output channels."""
+        for channel in [c.name for c in self.outputs]:
+            self.send(channel, None, self)
+        return
+
     def sendData(self):
         """Compute result of widget processing and send to output."""
 
         # Check that there's a model...
         if not self.model:
             self.noLanguageModelWarning()
+            self.sendNoneToOutputs()
             return
 
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
-            for channel in [c.name for c in self.outputs]:
-                self.send(channel, None, self)
+            self.sendNoneToOutputs()
             return
        
         # Initialize progress bar.
