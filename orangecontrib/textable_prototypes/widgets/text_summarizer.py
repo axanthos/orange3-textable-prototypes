@@ -75,7 +75,7 @@ class TextSummarizer(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Text Summariser"
+    name = "Text Summarizer"
     description = "Summarize texts with spaCy models"
     icon = "icons/charnet.svg"
     priority = 21   # TODO
@@ -236,4 +236,4 @@ class TextSummarizer(OWTextableBaseWidget):
             
 if __name__ == "__main__":
     from LTTL.Input import Input
-    WidgetPreview(Charnet).run(inputData=Input("Mary said hello to John."))
+    WidgetPreview(TextSummarizer).run(inputData=Input("Mary said hello to John."))
