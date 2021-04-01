@@ -112,11 +112,19 @@ Il faut télécharger les modèle spaCy de chaque langue:
 
 4. Maquette
 ============
+4.1 Maquette minimale
+---------------
 
-.. image:: images/text_sum_maquette.png
+.. image:: images/text_summarizer_1.png
   :width: 400
   :alt: Maquette
 
+4.2 Maquette finale
+---------------
+
+.. image:: images/text_summarizer_2.png
+  :width: 400
+  :alt: Maquette
 
 5. Infrastructure
 ==================
