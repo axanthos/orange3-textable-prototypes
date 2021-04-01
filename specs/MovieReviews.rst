@@ -58,7 +58,7 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 - Ajouter des possibilités de recherche pour les films:
  * Par acteur
  * Par genre
- * Offrir à l'utilisateur la possibilité de choisir des paramètres pour filtrer les résultats (populaire, alphabétique)
+ * Offrir à l'utilisateur la possibilité de choisir des paramètres pour filtrer les résultats (populaire, alphabétique...)
  
  .. image:: images/Movie_Reviews_All.png
 
