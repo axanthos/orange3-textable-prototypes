@@ -17,7 +17,7 @@ along with Orange-Textable-Prototypes. If not, see
 """
 
 __version__ = u"0.0.1"
-__author__ = "Aris Xanthos"
+__author__ = "Melinda Femminis, Catherine Pedroni, Jason Ola"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 import importlib.util
@@ -93,8 +93,12 @@ class TextSummarizer(OWTextableBaseWidget):
 
     #----------------------------------------------------------------------
     # Settings...
+    # Define variables in widgets (the ones weirdly in "")
     
-    # TODO
+    # Set number of sentences to keep default
+    numSentences = settings.Setting(10)
+    # Set language selection
+    language = settings.Setting("English")
 
     #----------------------------------------------------------------------
     # The following lines need to be copied verbatim in every Textable widget...
@@ -137,14 +141,39 @@ class TextSummarizer(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
 
-        self.characterListbox = gui.listBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
-            master=self,
-            value="selectedCharacters",
-            labels="characters",
-            callback=None,
-            tooltip="List of identified characters",
+            box="Options",
+            orientation="vertical",
         )
+        gui.spin(
+            widget=optionsBox,
+            master=self,
+            value='numSentences', #defined in settings
+            label='Number of sentences : ',
+            callback=self.sendButton.sendIf,
+            labelWidth=180,
+            tooltip=(
+                'Select the number of sentences'
+            ),
+            maxv=1000,
+            minv=1,
+            step=1,
+        )
+        self.choiceBox = gui.comboBox(
+            widget=optionsBox,
+            master=self, 
+            value='language', #defined in settings
+            label="Language : ",
+            callback=self.lang_changed,# defined in methods down
+            tooltip= "Choose mode",
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["English", "French", "Portuguese"],
+            labelWidth=135,
+        )
+        gui.separator(widget=optionsBox, height=2)
+
         #self.characterListbox.setSelectionMode(0)
         
         gui.rubber(self.controlArea)
@@ -160,6 +189,11 @@ class TextSummarizer(OWTextableBaseWidget):
         if not self.model:
             self.noLanguageModelWarning()
 
+    # New defined method for callback before
+    def lang_changed(self):
+        pass #refer to redditor mode_changed method
+
+    # didnt touch code below it is still copypaste from charnet
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSeg = newInput
