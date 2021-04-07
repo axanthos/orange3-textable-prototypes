@@ -74,9 +74,11 @@ class MovieReviews(OWTextableBaseWidget):
     def __init__(self):
         super().__init__()
 
-        self.searchResults = None
+        # Search filters attributs
         self.newQuery = ''
-        self.nbr_results = 10
+        self.type_results = 'Title'
+        self.filter_results = 'Popularity'
+        self.nbr_results = '10'
         # Results box attributs
         self.titleLabels = list()
         self.selectedTitles = list()
@@ -137,10 +139,10 @@ class MovieReviews(OWTextableBaseWidget):
         )
 
         # Allows to choose the wanted results numberp (10 by 10)
-        queryNbr = gui.comboBox(
+        queryType = gui.comboBox(
             widget=queryBox,
             master=self,
-            value="nbr_results",
+            value="type_results",
             items=[
                 "Title",
                 "Actor",
@@ -158,7 +160,7 @@ class MovieReviews(OWTextableBaseWidget):
         queryNbr = gui.comboBox(
             widget=filterBox,
             master=self,
-            value="nbr_results",
+            value="filter_results",
             items=[
                 "Popularity",
                 "Alphabetical",
