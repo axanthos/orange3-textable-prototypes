@@ -157,7 +157,7 @@ class MovieReviews(OWTextableBaseWidget):
             ),
         )
 
-        queryNbr = gui.comboBox(
+        queryFilter = gui.comboBox(
             widget=filterBox,
             master=self,
             value="filter_results",
@@ -201,7 +201,7 @@ class MovieReviews(OWTextableBaseWidget):
             widget=searchButtonBox,
             master=self,
             label="Search",
-            callback=None,
+            callback=self.searchMovies,
             tooltip="Connect to imdbpy and make a research",
         )
 
@@ -244,7 +244,7 @@ class MovieReviews(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        # area where confirmed songs are moved and stocked
+        # area where confirmed movies are moved and stocked
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
@@ -305,6 +305,80 @@ class MovieReviews(OWTextableBaseWidget):
 
     def placeholder(self):
         return
+
+    def searchMovies(self):
+        """Search from imdb movie database"""
+        result_list = {}
+        query_string = self.newQuery
+
+        if query_string != "":
+            page = 1
+            page_max = int(self.nbr_results)/10
+            result_id = 0
+            result_artist = []
+
+            self.controlArea.setDisabled(True)
+
+            # Initialize progress bar
+            progressBar = ProgressBar(
+                self,
+                iterations=page_max
+            )
+
+
+            while page <= page_max:
+                ia = imdb.IMDb()
+                
+                # movie name
+                name = query_string
+
+                # searching the movie
+                search = ia.search_movie(name)
+
+                # Each result is stored in a dictionnary with its title 
+                # and year of publication if it is specified
+                for result in search:
+                    try:
+                        result_id += 1
+                        year = result['year']
+                        result_list[result_id] = {'name': result,
+                                                'year': year,}
+                    except KeyError:
+                        result_id += 1
+                        result_list[result_id] = {'name': result,}
+
+                page += 1
+
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
+            # Stored the results list in the "result_list" variable
+            self.searchResults = result_list
+
+            # Reset and clear the visible widget list
+            del self.titleLabels[:]
+
+            # Update the results list with the search results
+            # in order to display them
+            for idx in self.searchResults:
+                try:
+                    result_string = f'{self.searchResults[idx]["name"]} - {self.searchResults[idx]["year"]}'
+                    self.titleLabels.append(result_string)
+                except KeyError: 
+                    result_string = f'{self.searchResults[idx]["name"]}'
+                    self.titleLabels.append(result_string)
+
+            self.titleLabels = self.titleLabels
+            self.clearButton.setDisabled(False)
+            self.addButton.setDisabled(self.selectedTitles == list())
+
+
+            # Clear progress bar.
+            progressBar.finish()
+            self.controlArea.setDisabled(False)
+
+        else:
+            self.infoBox.setText("Please enter a movie title", "warning")
+
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
