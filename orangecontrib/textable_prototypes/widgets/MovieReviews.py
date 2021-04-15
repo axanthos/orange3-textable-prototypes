@@ -85,8 +85,6 @@ class MovieReviews(OWTextableBaseWidget):
         # selections box attributs
         self.myTitles = list()
         self.mytitleLabels = list()
-        # stock all the inputs (songs) in a list
-        self.createdInputs = list()
 
         # Mandatory declaration of the info box and the send button
         self.infoBox = InfoBox(widget=self.controlArea)
@@ -125,6 +123,24 @@ class MovieReviews(OWTextableBaseWidget):
             orientation="vertical",
         )
 
+        resultButtonBox = gui.widgetBox(
+            widget=resultBox,
+            box=False,
+            orientation='horizontal',
+        )
+
+        corpusBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Corpus",
+            orientation="vertical",
+        )
+
+        corpusButtonBox = gui.widgetBox(
+            widget=corpusBox,
+            box=False,
+            orientation='horizontal',
+        )
+
 
 
         # Allows to enter specific text to the research
@@ -138,8 +154,8 @@ class MovieReviews(OWTextableBaseWidget):
             tooltip=("Enter a string"),
         )
 
-        # Allows to choose the wanted results numberp (10 by 10)
-        queryType = gui.comboBox(
+        # Allows to choose a type of search
+        searchType = gui.comboBox(
             widget=queryBox,
             master=self,
             value="type_results",
@@ -156,8 +172,8 @@ class MovieReviews(OWTextableBaseWidget):
                 "Please select the desired search.\n"
             ),
         )
-
-        queryFilter = gui.comboBox(
+        # Allows to chose a filter for the search
+        searchFilter = gui.comboBox(
             widget=filterBox,
             master=self,
             value="filter_results",
@@ -176,7 +192,7 @@ class MovieReviews(OWTextableBaseWidget):
         )
 
         # Allows to choose the wanted results numberp (10 by 10)
-        queryNbr = gui.comboBox(
+        searchNbr = gui.comboBox(
             widget=filterBox,
             master=self,
             value="nbr_results",
@@ -205,25 +221,22 @@ class MovieReviews(OWTextableBaseWidget):
             tooltip="Connect to imdbpy and make a research",
         )
 
+        # List Box where all the searched movies are stocked
         self.titleListbox = gui.listBox(
             widget=resultBox,
             master=self,
-            value="selectedTitles",    # setting (list)
-            labels="titleLabels",      # setting (list)
+            value="selectedTitles",
+            labels="titleLabels",
             callback=None,
             tooltip="The list of titles whose content will be imported",
         )
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
 
-        boxbutton = gui.widgetBox(
-            widget=resultBox,
-            box=False,
-            orientation='horizontal',
-        )
+        
         # Add movies button
         self.addButton = gui.button(
-            widget=boxbutton,
+            widget=resultButtonBox,
             master=self,
             label=u'Add to corpus',
             callback=None,
@@ -235,24 +248,20 @@ class MovieReviews(OWTextableBaseWidget):
 
         # Clear button
         self.clearButton = gui.button(
-            widget=boxbutton,
+            widget=resultButtonBox,
             master=self,
             label="Clear results",
             callback=None,
             tooltip="Clear results",
         )
         self.clearButton.setDisabled(True)
-        gui.separator(widget=queryBox, height=3)
+        #gui.separator(widget=queryBox, height=3)
 
         # area where confirmed movies are moved and stocked
-        mytitleBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="Corpus",
-            orientation="vertical",
-        )
+
 
         self.mytitleListbox = gui.listBox(
-            widget=mytitleBox,
+            widget=corpusBox,
             master=self,
             value="myTitles",
             labels="mytitleLabels",
@@ -262,14 +271,10 @@ class MovieReviews(OWTextableBaseWidget):
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
 
-        boxbutton2 = gui.widgetBox(
-            widget=mytitleBox,
-            box=False,
-            orientation='horizontal',
-        )
+
         # Remove movie button
         self.removeButton = gui.button(
-            widget=boxbutton2,
+            widget=corpusButtonBox,
             master=self,
             label=u'Remove from corpus',
             callback=None,
@@ -281,7 +286,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         # Delete all confirmed movies button
         self.clearmyBasket = gui.button(
-            widget=boxbutton2,
+            widget=corpusButtonBox,
             master=self,
             label=u'Clear corpus',
             callback=None,
@@ -291,7 +296,7 @@ class MovieReviews(OWTextableBaseWidget):
         )
         self.clearmyBasket.setDisabled(True)
 
-        gui.separator(widget=mytitleBox, height=3)
+        gui.separator(widget=corpusBox, height=3)
         gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
 
@@ -312,8 +317,8 @@ class MovieReviews(OWTextableBaseWidget):
         query_string = self.newQuery
 
         if query_string != "":
-            page = 1
-            page_max = int(self.nbr_results)/10
+            counter = 1
+            counter_max = int(self.nbr_results)
             result_id = 0
             result_artist = []
 
@@ -322,11 +327,11 @@ class MovieReviews(OWTextableBaseWidget):
             # Initialize progress bar
             progressBar = ProgressBar(
                 self,
-                iterations=page_max
+                iterations=counter_max
             )
 
 
-            while page <= page_max:
+            while counter <= counter_max:
                 ia = imdb.IMDb()
                 
                 # movie name
@@ -338,6 +343,8 @@ class MovieReviews(OWTextableBaseWidget):
                 # Each result is stored in a dictionnary with its title 
                 # and year of publication if it is specified
                 for result in search:
+                    print(counter)
+                    print(counter_max)
                     try:
                         result_id += 1
                         year = result['year']
@@ -347,7 +354,7 @@ class MovieReviews(OWTextableBaseWidget):
                         result_id += 1
                         result_list[result_id] = {'name': result,}
 
-                page += 1
+                    counter += 1
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -379,6 +386,20 @@ class MovieReviews(OWTextableBaseWidget):
         else:
             self.infoBox.setText("Please enter a movie title", "warning")
 
+    # Add movie to corpus
+    def addToCorpus(self):
+        """Add songs in your selection """
+        print('ssasasa')
+
+        """
+        for selectedTitle in self.selectedTitles:
+            songData = self.searchResults[selectedTitle+1]
+            if songData not in self.myBasket:
+                self.myBasket.append(songData)
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
+
+"""
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
