@@ -180,13 +180,19 @@ class Charnet(OWTextableBaseWidget):
         """Update character list based on Charnet output."""
         if self.mustLoad:
             self.loadModel()
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=4)
         string = " ".join(segment.get_content() for segment in self.inputSeg)
-        segment_lengths = [len(segment.get_content()) 
-                           for segment in self.inputSeg]
-        char_tokens = charnet.extract_spacy_df(string, self.nlp) # TODO progress
-        char_tokens = charnet.unify_tags(char_tokens)
-        char_types = charnet.concatenate_parents(char_tokens, min_occ = 1)
-        self.characters = [", ".join(char_type) for char_type in char_types]
+        progressBar.advance()
+        self.char_df = charnet.extract_spacy_df(string, self.nlp) # TODO progress
+        progressBar.advance()
+        self.char_df = charnet.unify_tags(self.char_df)
+        progressBar.advance()
+        self.char_list = charnet.concatenate_parents(self.char_df, min_occ = 1)
+        self.characters = [", ".join(char) for char in self.char_list]
+        progressBar.advance()
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
     
     def loadModel(self):
         """(Re-)load language model if needed."""
@@ -241,19 +247,46 @@ class Charnet(OWTextableBaseWidget):
             u"Processing, please wait...", 
             "warning",
         )
+
+        # Disable control area and initialize progress bar...
         self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=len(self.inputSeg))       
+        progressBar = ProgressBar(self, iterations=len(self.char_df))       
 
-        # Process each input segment...
-        for segment in self.inputSeg:
+        # Get start and end pos of concatenated input segments...
+        start_positions = [0]
+        end_positions = list()
+        num_segments = len(self.inputSeg)
+        for idx in range(1, num_segments):
+            prev_seg_len = len(self.inputSeg[idx-1].get_content())
+            start_positions.append(start_positions[-1] + prev_seg_len + 1)
+            end_positions.append(start_positions[-1] - 1)
+        end_positions.append(start_positions[-1] + 
+                             len(self.inputSeg[-1].get_content()) + 1)
 
-            # TODO...
+        # Initializations...
+        char_segments = list()
+        current_segment_idx = 0
+
+        # For each character token in Charnet's output...
+        for index, char_token in self.char_df.iterrows():
+
+            # Get index of containing segment...
+            while char_token["end_pos"] > end_positions[current_segment_idx]:
+                current_segment_idx += 1
+                
+            # Create segment for char with its actual coordinates...
+            str_index = self.inputSeg[current_segment_idx].str_index
+            start = char_token["start_pos"]-start_positions[current_segment_idx]
+            end = char_token["end_pos"]-start_positions[current_segment_idx]
+            char_segments.append(Segment(str_index, start, end))
             
             progressBar.advance()
 
         # Send output...
-        output_segmentation = LTTL.Segmenter.bypass(self.inputSeg)
+        output_segmentation = Segmentation(char_segments, 
+                                           label=self.captionTitle)
         self.send("Character segmentation", output_segmentation, self)
+        print(output_segmentation.to_string())
 
         # Set status to OK and report data size...
         message = "%i segment@p sent to output." % len(output_segmentation)
@@ -282,4 +315,7 @@ class Charnet(OWTextableBaseWidget):
             
 if __name__ == "__main__":
     from LTTL.Input import Input
-    WidgetPreview(Charnet).run(inputData=Input("Mary said hello to John."))
+    input1 = Input("Mary said hello to John.")
+    input2 = Input("Lucy told John to say hello in return.")
+    input = LTTL.Segmenter.concatenate([input1, input2])
+    WidgetPreview(Charnet).run(inputData=input)
