@@ -1,6 +1,6 @@
 """
-Class LyricsGenius
-Copyright 2018-2019 University of Lausanne
+Class MovieReviews
+Copyright 2020-2021 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -103,13 +103,13 @@ class MovieReviews(OWTextableBaseWidget):
         queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Search movies",
-            orientation="vertical",
+            orientation="horizontal",
         )
 
         filterBox = gui.widgetBox(
             widget=self.controlArea,
             box="Filters",
-            orientation="vertical",
+            orientation="horizontal",
         )
 
         searchButtonBox = gui.widgetBox(
@@ -241,7 +241,7 @@ class MovieReviews(OWTextableBaseWidget):
             label=u'Add to corpus',
             callback=None,
             tooltip=(
-                u"Move the selected song downward in your corpus."
+                u"Move the selected movie downward in your corpus."
             ),
         )
         self.addButton.setDisabled(True)
@@ -279,7 +279,7 @@ class MovieReviews(OWTextableBaseWidget):
             label=u'Remove from corpus',
             callback=None,
             tooltip=(
-                u"Remove the selected song from your corpus."
+                u"Remove the selected movie from your corpus."
             ),
         )
         self.removeButton.setDisabled(True)
@@ -291,7 +291,7 @@ class MovieReviews(OWTextableBaseWidget):
             label=u'Clear corpus',
             callback=None,
             tooltip=(
-                u"Remove all songs from your corpus."
+                u"Remove all movies from your corpus."
             ),
         )
         self.clearmyBasket.setDisabled(True)
