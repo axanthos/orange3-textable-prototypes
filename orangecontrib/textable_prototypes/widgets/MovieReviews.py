@@ -388,7 +388,7 @@ class MovieReviews(OWTextableBaseWidget):
 
     # Add movie to corpus
     def addToCorpus(self):
-        """Add songs in your selection """
+        """Add movies in your selection """
         print('ssasasa')
 
         """
@@ -400,6 +400,17 @@ class MovieReviews(OWTextableBaseWidget):
         self.sendButton.settingsChanged()
 
 """
+     # Remove movies function
+    def RemoveFromCorpus(self):
+        """Remove the selected movies in your selection """
+        """
+        self.myBasket = [
+            movie for idx, movie in enumerate(self.myBasket)
+            if idx not in self.myTitles
+        ]
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
+"""   
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
