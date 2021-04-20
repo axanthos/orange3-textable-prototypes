@@ -257,9 +257,7 @@ class MovieReviews(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         #gui.separator(widget=queryBox, height=3)
 
-        # area where confirmed movies are moved and stocked
-
-
+        # Corpus where confirmed movies are moved and stocked
         self.mytitleListbox = gui.listBox(
             widget=corpusBox,
             master=self,
@@ -330,19 +328,19 @@ class MovieReviews(OWTextableBaseWidget):
                 iterations=counter_max
             )
 
+            ia = imdb.IMDb()
+            
+            # movie name
+            name = query_string
 
-            while counter <= counter_max:
-                ia = imdb.IMDb()
-                
-                # movie name
-                name = query_string
+            # searching the movie
+            search = ia.search_movie(name)
+            print(search)
 
-                # searching the movie
-                search = ia.search_movie(name)
-
-                # Each result is stored in a dictionnary with its title 
-                # and year of publication if it is specified
-                for result in search:
+            # Each result is stored in a dictionnary with its title 
+            # and year of publication if it is specified
+            for result in search:
+                if counter <= counter_max:
                     print(counter)
                     print(counter_max)
                     try:
@@ -355,9 +353,11 @@ class MovieReviews(OWTextableBaseWidget):
                         result_list[result_id] = {'name': result,}
 
                     counter += 1
+                else:
+                    break
 
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
+            # 1 tick on the progress bar of the widget
+            progressBar.advance()
             # Stored the results list in the "result_list" variable
             self.searchResults = result_list
 
@@ -391,15 +391,6 @@ class MovieReviews(OWTextableBaseWidget):
         """Add songs in your selection """
         print('ssasasa')
 
-        """
-        for selectedTitle in self.selectedTitles:
-            songData = self.searchResults[selectedTitle+1]
-            if songData not in self.myBasket:
-                self.myBasket.append(songData)
-        self.updateMytitleLabels()
-        self.sendButton.settingsChanged()
-
-"""
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
