@@ -239,9 +239,9 @@ class MovieReviews(OWTextableBaseWidget):
             widget=resultButtonBox,
             master=self,
             label=u'Add to corpus',
-            callback=None,
+            callback=self.addToCorpus,
             tooltip=(
-                u"Move the selected song downward in your corpus."
+                u"Move the selected movie downward in your corpus."
             ),
         )
         self.addButton.setDisabled(True)
@@ -337,7 +337,7 @@ class MovieReviews(OWTextableBaseWidget):
             search = ia.search_movie(name)
             print(search)
 
-            # Each result is stored in a dictionnary with its title 
+            # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
             for result in search:
                 if counter <= counter_max:
@@ -388,8 +388,13 @@ class MovieReviews(OWTextableBaseWidget):
 
     # Add movie to corpus
     def addToCorpus(self):
-        """Add songs in your selection """
-        print('ssasasa')
+        """Move movie into the corpus"""
+        for selectedTitle in self.selectedTitles:
+            songData = self.searchResults[selectedTitle+1]
+            if songData not in self.myBasket:
+                self.myBasket.append(songData)
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
 
 
 if __name__ == "__main__":
