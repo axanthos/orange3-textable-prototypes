@@ -85,13 +85,15 @@ class MovieReviews(OWTextableBaseWidget):
         # selections box attributs
         self.myTitles = list()
         self.mytitleLabels = list()
+        self.createdInputs = list()
+
 
         # Mandatory declaration of the info box and the send button
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
-            callback=self.placeholder,
+            callback=self.sendData,
             infoBoxAttribute='infoBox',
             sendIfPreCallback=None,
         )
@@ -341,13 +343,15 @@ class MovieReviews(OWTextableBaseWidget):
             # and year of publication if it is specified
             for result in search:
                 if counter <= counter_max:
-                    print(counter)
-                    print(counter_max)
+                    #print(counter)
+                    #print(counter_max)
                     try:
                         result_id += 1
                         year = result['year']
+                        movie_id = result.movieID
                         result_list[result_id] = {'name': result,
-                                                'year': year,}
+                                                'year': year,
+                                                'id': movie_id}
                     except KeyError:
                         result_id += 1
                         result_list[result_id] = {'name': result,}
@@ -376,7 +380,7 @@ class MovieReviews(OWTextableBaseWidget):
 
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
-            self.addButton.setDisabled(self.selectedTitles == list())
+            self.addButton.setDisabled(False)
 
 
             # Clear progress bar.
@@ -389,28 +393,123 @@ class MovieReviews(OWTextableBaseWidget):
     # Add movie to corpus
     def addToCorpus(self):
         """Add movies in your selection """
-        print('ssasasa')
-
-        """
         for selectedTitle in self.selectedTitles:
-            songData = self.searchResults[selectedTitle+1]
-            if songData not in self.myBasket:
-                self.myBasket.append(songData)
-        self.updateMytitleLabels()
+            newMovie = self.searchResults[selectedTitle+1]
+            if newMovie not in self.myBasket:
+                self.myBasket.append(newMovie)
+        self.updateCorpus()
         self.sendButton.settingsChanged()
 
-"""
+
+    def updateCorpus(self):
+        """Update the corpus box list in order to view the movies added"""
+        self.mytitleLabels = list()
+        for newMovie in self.myBasket:
+            try: 
+                result_string = f'{newMovie["name"]} - {newMovie["year"]}'
+                self.mytitleLabels.append(result_string)
+            except KeyError:
+                result_string = newMovie["name"]
+                self.mytitleLabels.append(result_string)
+        self.mytitleLabels = self.mytitleLabels
+
+        self.clearmyBasket.setDisabled(self.myBasket == list())
+        self.removeButton.setDisabled(self.myTitles == list())
+
+
      # Remove movies function
-    def RemoveFromCorpus(self):
-        """Remove the selected movies in your selection """
+    def sendData(self):
+        """Compute result of widget processing and send to output"""
+        # Skip if title list is empty:
+        if self.myBasket == list():
+            self.infoBox.setText(
+                "Your corpus is empty, please add some movies first",
+                "warning"
+            )
+            return
+
+
+        # Clear created Inputs.
+        self.clearCreatedInputs()
+
+        self.controlArea.setDisabled(True)
+
+        # Initialize progress bar.
+        progressBar = ProgressBar(
+            self,
+            iterations=len(self.myBasket)
+        )
+
+        # Attempt to connect to Genius and retrieve lyrics...
+        selectedSongs = list()
+        list_review = list()
+        try:
+            for item in self.myBasket:
+                ia = imdb.IMDb()
+                movie = ia.get_movie_reviews(item['id'])
+                list_review.append(movie)
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
+
+        # If an error occurs (e.g. http error, or memory error)...
+        except:
+            # Set Info box and widget to "error" state.
+            self.infoBox.setText(
+                "Couldn't download data from imdb",
+                "error"
+            )
+            self.controlArea.setDisabled(False)
+            return
+
+        # Store downloaded lyrics strings in input objects...
+        for movie in list_review:
+            newInput = Input(movie)
+            self.createdInputs.append(newInput)
+
+        # If there"s only one play, the widget"s output is the created Input.
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget"s output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                import_labels_as=None,
+            )
+
+        # Annotate segments...
         """
-        self.myBasket = [
-            movie for idx, movie in enumerate(self.myBasket)
-            if idx not in self.myTitles
-        ]
-        self.updateMytitleLabels()
-        self.sendButton.settingsChanged()
-"""   
+        for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations[idx])
+            self.segmentation[idx] = segment
+        """
+
+        # Clear progress bar.
+        progressBar.finish()
+
+        self.controlArea.setDisabled(False)
+
+        # Set status to OK and report data size...
+        
+        message = f"{len(self.segmentation)} segment@p sent to output"
+        message = pluralize(message, len(self.segmentation))
+        numChars = 0
+        for segment in self.segmentation:
+            segmentLength = len(Segmentation.get_data(segment.str_index))
+            numChars += segmentLength
+        message += "(%i character@p)." % numChars
+        message = pluralize(message, numChars)
+        self.infoBox.setText(message)
+
+        self.send('Segmentation', self.segmentation, self)
+        self.sendButton.resetSettingsChangedFlag()
+   
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
