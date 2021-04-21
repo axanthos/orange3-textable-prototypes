@@ -1,6 +1,6 @@
 """
-Class LyricsGenius
-Copyright 2018-2019 University of Lausanne
+Class MovieReviews
+Copyright 2020-2021 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -103,13 +103,13 @@ class MovieReviews(OWTextableBaseWidget):
         queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Search movies",
-            orientation="vertical",
+            orientation="horizontal",
         )
 
         filterBox = gui.widgetBox(
             widget=self.controlArea,
             box="Filters",
-            orientation="vertical",
+            orientation="horizontal",
         )
 
         searchButtonBox = gui.widgetBox(
@@ -277,7 +277,7 @@ class MovieReviews(OWTextableBaseWidget):
             label=u'Remove from corpus',
             callback=None,
             tooltip=(
-                u"Remove the selected song from your corpus."
+                u"Remove the selected movie from your corpus."
             ),
         )
         self.removeButton.setDisabled(True)
@@ -289,7 +289,7 @@ class MovieReviews(OWTextableBaseWidget):
             label=u'Clear corpus',
             callback=None,
             tooltip=(
-                u"Remove all songs from your corpus."
+                u"Remove all movies from your corpus."
             ),
         )
         self.clearmyBasket.setDisabled(True)
@@ -388,7 +388,10 @@ class MovieReviews(OWTextableBaseWidget):
 
     # Add movie to corpus
     def addToCorpus(self):
-        """Move movie into the corpus"""
+        """Add movies in your selection """
+        print('ssasasa')
+
+        """
         for selectedTitle in self.selectedTitles:
             songData = self.searchResults[selectedTitle+1]
             if songData not in self.myBasket:
@@ -396,6 +399,18 @@ class MovieReviews(OWTextableBaseWidget):
         self.updateMytitleLabels()
         self.sendButton.settingsChanged()
 
+"""
+     # Remove movies function
+    def RemoveFromCorpus(self):
+        """Remove the selected movies in your selection """
+        """
+        self.myBasket = [
+            movie for idx, movie in enumerate(self.myBasket)
+            if idx not in self.myTitles
+        ]
+        self.updateMytitleLabels()
+        self.sendButton.settingsChanged()
+"""   
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
