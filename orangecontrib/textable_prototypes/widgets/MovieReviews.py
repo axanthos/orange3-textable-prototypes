@@ -461,10 +461,16 @@ class MovieReviews(OWTextableBaseWidget):
             self.controlArea.setDisabled(False)
             return
 
-        # Store downloaded lyrics strings in input objects...
+        # Store movie critics strings in input objects...
+        # TODO newInput has to be string and not dict. 
         for movie in list_review:
-            newInput = Input(movie)
-            self.createdInputs.append(newInput)
+            #for key, value in movie.items():
+            data = movie.get('data', "")
+            reviews_data = data.get('reviews')
+            for review in reviews_data:
+                reviews = review.get('content')
+                newInput = Input(reviews)
+                self.createdInputs.append(newInput)
 
         # If there"s only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
