@@ -19,6 +19,9 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
+# TODO Bouger les boutons de 'clear' et de 'add' sous les listbox
+# TODO Annoter les segments output
+
 __version__ = u"0.0.1"
 __author__ = "Caroline Rorhbach, Maryam Zoee, Victor Vermot"
 __maintainer__ = "Aris Xanthos"
@@ -400,7 +403,7 @@ class MovieReviews(OWTextableBaseWidget):
         self.updateCorpus()
         self.sendButton.settingsChanged()
 
-
+    # Make the movie appear in the corpus Listbox
     def updateCorpus(self):
         """Update the corpus box list in order to view the movies added"""
         self.mytitleLabels = list()
@@ -462,7 +465,6 @@ class MovieReviews(OWTextableBaseWidget):
             return
 
         # Store movie critics strings in input objects...
-        # TODO newInput has to be string and not dict. 
         for movie in list_review:
             #for key, value in movie.items():
             data = movie.get('data', "")
@@ -472,11 +474,11 @@ class MovieReviews(OWTextableBaseWidget):
                 newInput = Input(reviews)
                 self.createdInputs.append(newInput)
 
-        # If there"s only one play, the widget"s output is the created Input.
+        # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
 
-        # Otherwise the widget"s output is a concatenation...
+        # Otherwise the widget's output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
@@ -484,11 +486,11 @@ class MovieReviews(OWTextableBaseWidget):
             )
 
         # Annotate segments...
-        """
+"""
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
-        """
+"""
 
         # Clear progress bar.
         progressBar.finish()
@@ -496,7 +498,6 @@ class MovieReviews(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
 
         # Set status to OK and report data size...
-        
         message = f"{len(self.segmentation)} segment@p sent to output"
         message = pluralize(message, len(self.segmentation))
         numChars = 0
