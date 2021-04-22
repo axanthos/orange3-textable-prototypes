@@ -24,31 +24,26 @@ __author__ = "Florian Rieder, Paul Zignani"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
+# Orange
 from Orange.widgets import widget, gui, settings
 
+# LTTL
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
-import urllib
-import urllib.request
-import urllib.parse
-import json
-import requests
-from urllib import request
-from urllib import parse
-from bs4 import BeautifulSoup
-
+# gutenbergpy
 import gutenbergpy.textget
 from gutenbergpy.gutenbergcache import GutenbergCache
 
+# Textable
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, ProgressBar,
 )
 
 class Gutenberg(OWTextableBaseWidget):
-    """Textable widget for importing JSON data from the website Genius
+    """Textable widget for importing raw text Genius
     (https://genius.com/)
     """
 
@@ -92,7 +87,8 @@ class Gutenberg(OWTextableBaseWidget):
         self.searchResults = None
         self.inputSeg = None
         # newQuery = attribut box lineEdit (search something)
-        self.newQuery = ''
+        self.titleQuery = ''
+        self.authorQuery = ''
         self.nbr_results = 10
         # Results box attributs
         self.titleLabels = list()
@@ -118,17 +114,36 @@ class Gutenberg(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search songs",
+            box="Search books",
             orientation="vertical",
         )
+
+        self.cacheGenerationButton = gui.button(
+            widget=queryBox,
+            master=self,
+            label="Generate cache",
+            callback=self.generate_cache,
+            tooltip="Generate the gutenberg cache, this might take a while...",
+        )
+
         # Allows to enter specific text to the research
         #  Uses "newQuery" attribut
         gui.lineEdit(
             widget=queryBox,
             master=self,
-            value='newQuery',
+            value='titleQuery',
             orientation='horizontal',
-            label=u"Query: ",
+            label=u"Title: ",
+            labelWidth=120,
+            tooltip=("Enter a string"),
+        )
+
+        gui.lineEdit(
+            widget=queryBox,
+            master=self,
+            value='authorQuery',
+            orientation='horizontal',
+            label=u"Author: ",
             labelWidth=120,
             tooltip=("Enter a string"),
         )
@@ -165,7 +180,7 @@ class Gutenberg(OWTextableBaseWidget):
             widget=queryBox,
             master=self,
             label="Search",
-            callback=self.searchFunction,
+            callback=self.search,
             tooltip="Connect Genius and make a research",
         )
         self.titleListbox = gui.listBox(
@@ -192,7 +207,7 @@ class Gutenberg(OWTextableBaseWidget):
             label=u'Add to corpus',
             callback=self.add,
             tooltip=(
-                u"Move the selected song downward in your corpus."
+                u"Move the selected book downward in your corpus."
             ),
         )
         self.addButton.setDisabled(True)
@@ -223,7 +238,7 @@ class Gutenberg(OWTextableBaseWidget):
             labels="mytitleLabels",
             callback=lambda: self.removeButton.setDisabled(
                 self.myTitles == list()),
-            tooltip="The list of titles whose content will be imported",
+            tooltip="The list of books which will be imported",
         )
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
@@ -240,22 +255,22 @@ class Gutenberg(OWTextableBaseWidget):
             label=u'Remove from corpus',
             callback=self.remove,
             tooltip=(
-                u"Remove the selected song from your corpus."
+                u"Remove the selected book from your corpus."
             ),
         )
         self.removeButton.setDisabled(True)
 
         # Delete all confirmed songs button
-        self.clearmyBasket = gui.button(
+        self.clearmyBasketButton = gui.button(
             widget=boxbutton2,
             master=self,
             label=u'Clear corpus',
             callback=self.clearmyBasket,
             tooltip=(
-                u"Remove all songs from your corpus."
+                u"Remove all books from your corpus."
             ),
         )
-        self.clearmyBasket.setDisabled(True)
+        self.clearmyBasketButton.setDisabled(True)
 
         gui.separator(widget=mytitleBox, height=3)
         gui.rubber(self.controlArea)
@@ -273,105 +288,37 @@ class Gutenberg(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
 
-    # Search function which contacts the Genius API
-    def searchFunction(self):
-        """Search from website Genius"""
+    def generate_cache(self):
+        GutenbergCache.create(refresh=True, download=True, unpack=True, parse=True, deleteTemp=True)
 
-        result_list = {}
-        query_string = self.newQuery
+    def search(self):
+        """ Parse a query string and do a search in the Gutenberg cache
+        """
 
-        if query_string != "":
-            page = 1
-            page_max = int(self.nbr_results)/10
-            result_id = 0
-            result_artist = []
+        query_string = self.titleQuery
 
-            self.controlArea.setDisabled(True)
+        # TODO: parse query and lookup in gutenbergcache
+        cache = GutenbergCache.get_cache()
+        query_results = cache.native_query(sql_query="select * from titles where UPPER(name) LIKE UPPER('%{query}%')".format(query=query_string))
+        # get the results
+        self.searchResults = list(query_results)
 
-            # Initialize progress bar.
-            progressBar = ProgressBar(
-                self,
-                iterations=page_max
-            )
+        # TODO: display results
+        # Update the results list with the search results
+        # in order to display them
+        # for idx in self.searchResults:
+        #     result_string = self.searchResults[idx]["title"] + " - " + \
+        #                     self.searchResults[idx]["artist"]
+        #     self.titleLabels.append(result_string)
 
-            while page <= page_max:
-                values = {'q':query_string, 'page':page}
-                data = urllib.parse.urlencode(values)
-                query_url = 'http://api.genius.com/search?' + data
-                json_obj = self.url_request(query_url)
-                body = json_obj["response"]["hits"]
+        #     self.titleLabels = self.titleLabels
+        #     self.clearButton.setDisabled(False)
+        #     self.addButton.setDisabled(self.selectedTitles == list())
 
-                # Each result is stored in a dictionnary with its title,
-                # artist's name, artist's ID and URL path
-                for result in body:
-                    result_id += 1
-                    title = result["result"]["title"]
-                    artist = result["result"]["primary_artist"]["name"]
-                    artist_id = result["result"]["primary_artist"]["id"]
-                    path = result["result"]["path"]
-                    result_list[result_id] = {'artist': artist,
-                                              'artist_id':artist_id,
-                                              'path':path, 'title':title}
-                page += 1
+        #     self.controlArea.setDisabled(False)
 
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
-            # Stored the results list in the "result_list" variable
-            self.searchResults = result_list
-
-            # Reset and clear the visible widget list
-            del self.titleLabels[:]
-
-            # Update the results list with the search results
-            # in order to display them
-            for idx in self.searchResults:
-                result_string = self.searchResults[idx]["title"] + " - " + \
-                                self.searchResults[idx]["artist"]
-                self.titleLabels.append(result_string)
-
-            self.titleLabels = self.titleLabels
-            self.clearButton.setDisabled(False)
-            self.addButton.setDisabled(self.selectedTitles == list())
-
-
-            # Clear progress bar.
-            progressBar.finish()
-            self.controlArea.setDisabled(False)
-
-        else:
-            self.infoBox.setText("You didn't search anything", "warning")
-
-
-    # Function contacting the Genius API and returning JSON objects
-    def url_request(self, url):
-        """Opens a URL and returns it as a JSON object"""
-
-        # Token to use the Genius API. DO NOT CHANGE.
-        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
-                       "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
-        USER_AGENT = "CompuServe Classic/1.22"
-
-        request = urllib.request.Request(url, headers={
-            "Authorization" : "Bearer " + ACCESS_TOKEN,
-            "User-Agent" : USER_AGENT
-            })
-        response = urllib.request.urlopen(request)
-        raw = response.read().decode('utf-8')
-        json_obj = json.loads(raw)
-        # retourne un objet json
-        return json_obj
-
-    # Function converting HTML to string
-    def html_to_text(self, page_url):
-        """Extracts the lyrics (as a string) of the html page"""
-
-        page = requests.get(page_url)
-        html = BeautifulSoup(page.text, "html.parser")
-        [h.extract() for h in html('script')]
-        lyrics = html.find("div", class_="lyrics").get_text()
-        lyrics.replace('\\n', '\n')
-        # return a string
-        return lyrics
+        # else:
+        #     self.infoBox.setText("You didn't search anything", "warning")
 
 
     # Function clearing the results list
@@ -402,7 +349,7 @@ class Gutenberg(OWTextableBaseWidget):
             self.mytitleLabels.append(result_string)
         self.mytitleLabels = self.mytitleLabels
 
-        self.clearmyBasket.setDisabled(self.myBasket == list())
+        self.clearmyBasketButton.setDisabled(self.myBasket == list())
         self.removeButton.setDisabled(self.myTitles == list())
 
 
@@ -423,7 +370,7 @@ class Gutenberg(OWTextableBaseWidget):
         self.mytitleLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
-        self.clearmyBasket.setDisabled(True)
+        self.clearmyBasketButton.setDisabled(True)
 
 
     # Function computing results then sending them to the widget output
@@ -454,26 +401,20 @@ class Gutenberg(OWTextableBaseWidget):
         song_content = list()
         annotations = list()
         try:
-            for song in self.myBasket:
-                # song is a dict {'idx1':{'title':'song1'...},
-                # 'idx2':{'title':'song2'...}}
-                page_url = "http://genius.com" + song['path']
-                lyrics = self.html_to_text(page_url)
-                song_content.append(lyrics)
-                annotations.append(song.copy())
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
+            # TODO: Retrieve selected texts from gutenberg
+            pass
 
         # If an error occurs (e.g. http error, or memory error)...
         except:
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
-                "Couldn't download data from Genius website.",
+                "Couldn't download data from Gutenberg",
                 "error"
             )
             self.controlArea.setDisabled(False)
             return
 
+        # TODO: send gutenberg texts as output
         # Store downloaded lyrics strings in input objects...
         for song in song_content:
             newInput = Input(song, self.captionTitle)
