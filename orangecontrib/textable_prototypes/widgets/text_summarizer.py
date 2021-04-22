@@ -77,7 +77,7 @@ class TextSummarizer(OWTextableBaseWidget):
 
     name = "Text Summarizer"
     description = "Summarize texts with spaCy models"
-    icon = "icons/charnet.svg"
+    icon = "icons/TL_DR_icon.svg"
     priority = 21   # TODO
 
     #----------------------------------------------------------------------
