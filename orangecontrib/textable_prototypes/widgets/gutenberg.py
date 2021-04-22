@@ -297,28 +297,28 @@ class Gutenberg(OWTextableBaseWidget):
 
         query_string = self.titleQuery
 
-        # TODO: parse query and lookup in gutenbergcache
-        cache = GutenbergCache.get_cache()
-        query_results = cache.native_query(sql_query="select * from titles where UPPER(name) LIKE UPPER('%{query}%')".format(query=query_string))
-        # get the results
-        self.searchResults = list(query_results)
+        if query_string:
+            # parse query and lookup in gutenbergcache
+            cache = GutenbergCache.get_cache()
+            query_results = cache.native_query(sql_query="select * from titles where UPPER(name) LIKE UPPER('%{query}%')".format(query=query_string))
+            # get the results
+            self.searchResults = list(query_results)
 
-        # TODO: display results
-        # Update the results list with the search results
-        # in order to display them
-        # for idx in self.searchResults:
-        #     result_string = self.searchResults[idx]["title"] + " - " + \
-        #                     self.searchResults[idx]["artist"]
-        #     self.titleLabels.append(result_string)
+            # TODO: display results
+            # Update the results list with the search results
+            # in order to display them
+            for idx in self.searchResults:
+                result_string = str(idx[1])
+                self.titleLabels.append(result_string)
 
-        #     self.titleLabels = self.titleLabels
-        #     self.clearButton.setDisabled(False)
-        #     self.addButton.setDisabled(self.selectedTitles == list())
+                self.titleLabels = self.titleLabels
+                self.clearButton.setDisabled(False)
+                self.addButton.setDisabled(self.selectedTitles == list())
 
-        #     self.controlArea.setDisabled(False)
+                self.controlArea.setDisabled(False)
 
-        # else:
-        #     self.infoBox.setText("You didn't search anything", "warning")
+        else:
+            self.infoBox.setText("You didn't search anything", "warning")
 
 
     # Function clearing the results list
