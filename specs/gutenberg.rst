@@ -87,6 +87,11 @@ Une fois le cache créé, l'utilisateur a accès à l'interface principale du wi
 
 * Créer et émettre une segmentation avec un segment correspondant à chaque  livre selectionné, avec en annotation les metadonnées du livre.
 
+2.4 Fonctionnalités optionnelles
+================================
+
+* Permettre une recherche plus permissive
+
 
 2.4 Tests
 =========

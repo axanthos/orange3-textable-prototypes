@@ -104,6 +104,7 @@ INSTALL_REQUIRES = (
     'fitz',
     'pytesseract',
     'pillow',
+    'gutenbergpy',
 ),
 
 EXTRAS_REQUIRE = {
