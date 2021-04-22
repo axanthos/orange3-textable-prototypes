@@ -486,11 +486,11 @@ class MovieReviews(OWTextableBaseWidget):
             )
 
         # Annotate segments...
-"""
+        """
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
-"""
+        """
 
         # Clear progress bar.
         progressBar.finish()
@@ -510,7 +510,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         self.send('Segmentation', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
-   
+
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
         for i in self.createdInputs:
