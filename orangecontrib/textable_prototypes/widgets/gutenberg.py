@@ -405,11 +405,12 @@ class Gutenberg(OWTextableBaseWidget):
             # TODO: Retrieve selected texts from gutenberg
             for text in self.myBasket:
 
+                # Get the id of the text
                 cache = GutenbergCache.get_cache()
                 querry_id = cache.native_query(sql_query="select gutenbergbookid from books where id == {query}".format(query=text[2]))
-
                 gutenberg_id = list(querry_id)
 
+                # Get the text with Gutenbergpy 
                 gutenberg_text = gutenbergpy.textget.strip_headers(gutenbergpy.textget.get_text_by_id(gutenberg_id[0][0]))
                 text_content.append(gutenberg_text)
                 
