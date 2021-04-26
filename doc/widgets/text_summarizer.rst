@@ -1,13 +1,15 @@
 
 .. meta::
-    :description: Orange3 Textable Prototypes documentation,  Text_Summarizer widget
-    :keywords: Orange3, Textable, Prototypes, documentation, Text_Summarizer, widget
+    :description: Orange3 Textable Prototypes documentation,  Text_Summarizer, widget, spaCy, Scikit-learn
+    :keywords: Orange3, Textable, Prototypes, documentation, Text_Summarizer, widget, spaCy, Scikit-learn
     .. _Text_Summarizer:
 
-    Text Summarizer
-    =======
+Text Summarizer
+=======
     
-    .. image:: figures/TL;DR.png
+.. image:: figures/TL;DR.png
+
+Summarizes a text segmentation by using Scikit-learn and Spacy to select the most important sentences of a segmentation.
 
     
 Author
