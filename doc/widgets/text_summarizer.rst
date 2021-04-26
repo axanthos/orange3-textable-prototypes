@@ -8,8 +8,9 @@
     =======
     
     .. image:: figures/TL;DR.png
+
     
-    Author
+Author
 ------
 
 Jason Ola, Melinda Femminis, Catherine Pedroni
