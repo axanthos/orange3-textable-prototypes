@@ -74,7 +74,7 @@ class Gutenberg(OWTextableBaseWidget):
     )
 
     # Saved settings
-    autoSend = settings.Setting(True)
+    autoSend = settings.Setting(False)
     myBasket = settings.Setting([])
 
     def __init__(self):
@@ -138,15 +138,15 @@ class Gutenberg(OWTextableBaseWidget):
             tooltip=("Enter a string"),
         )
 
-        gui.lineEdit(
-            widget=queryBox,
-            master=self,
-            value='authorQuery',
-            orientation='horizontal',
-            label=u"Author: ",
-            labelWidth=120,
-            tooltip=("Enter a string"),
-        )
+        # gui.lineEdit(
+        #     widget=queryBox,
+        #     master=self,
+        #     value='authorQuery',
+        #     orientation='horizontal',
+        #     label=u"Author: ",
+        #     labelWidth=120,
+        #     tooltip=("Enter a string"),
+        # )
 
         # Allows to choose the wanted results numberp (10 by 10)
         queryNbr = gui.comboBox(
@@ -164,6 +164,11 @@ class Gutenberg(OWTextableBaseWidget):
                 "80",
                 "90",
                 "100",
+                "200",
+                "300",
+                "400",
+                "500",
+                "1000"
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -289,7 +294,8 @@ class Gutenberg(OWTextableBaseWidget):
 
 
     def generate_cache(self):
-        GutenbergCache.create(refresh=True, download=True, unpack=True, parse=True, deleteTemp=True)
+        GutenbergCache.create(refresh=True, download=True, unpack=True, 
+            parse=True, deleteTemp=True)
 
     def search(self):
         """ Parse a query string and do a search in the Gutenberg cache
@@ -300,9 +306,21 @@ class Gutenberg(OWTextableBaseWidget):
         if query_string:
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
-            query_results = cache.native_query(sql_query="select * from titles where UPPER(name) LIKE UPPER('%{query}%')".format(query=query_string))
+            query_results = cache.native_query(
+                sql_query="select * from titles where upper(name) like upper('%{query}%') limit {limit}"
+                .format(query=query_string, limit=self.nbr_results)
+            )
             # get the results
             self.searchResults = list(query_results)
+
+            # display info message
+            n_results = len(self.searchResults)
+            self.infoBox.setText("{n} result{s} have been found".format(
+                    n=n_results,
+                    s= "s" if n_results > 0 else ""
+                )
+            )
+            
 
             # TODO: display results
             # Update the results list with the search results
@@ -380,7 +398,7 @@ class Gutenberg(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty, please add some songs first",
+                "Your corpus is empty, please add some books first",
                 "warning"
             )
             return
@@ -392,33 +410,36 @@ class Gutenberg(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
 
         # Initialize progress bar.
-        progressBar = ProgressBar(
-           self,
-            iterations=len(self.myBasket)
-        )
+        # progressBar = ProgressBar(
+        #     self,
+        #     iterations=len(self.myBasket),
+        # )
 
-        # Attempt to connect to Genius and retrieve lyrics...
         selectedTexts = list()
         text_content = list()
         annotations = list()
+        # get the Gutenberg cache
+        cache = GutenbergCache.get_cache()
         try:
             # TODO: Retrieve selected texts from gutenberg
             for text in self.myBasket:
 
                 # Get the id of the text
-                cache = GutenbergCache.get_cache()
-                querry_id = cache.native_query(sql_query="select gutenbergbookid from books where id == {query}".format(query=text[2]))
-                gutenberg_id = list(querry_id)
+                query_id = cache.native_query(
+                    sql_query="select gutenbergbookid from books where id == {selected_id}"
+                    .format(selected_id=text[2])
+                )
+                gutenberg_id = list(query_id)
 
                 # Get the text with Gutenbergpy 
                 gutenberg_text = gutenbergpy.textget.strip_headers(gutenbergpy.textget.get_text_by_id(gutenberg_id[0][0]))
                 text_content.append(gutenberg_text)
                 
                 annotations.append(text[1])
-                progressBar.advance()
+                #progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
-        except:
+        except Exception:
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
                 "Couldn't download data from Gutenberg",
@@ -445,13 +466,14 @@ class Gutenberg(OWTextableBaseWidget):
                 import_labels_as=None,
             )
 
+        # TODO: annotate with book metadata
         # Annotate segments...
-        for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update(annotations[idx])
-            self.segmentation[idx] = segment
+        # for idx, segment in enumerate(self.segmentation):
+        #     segment.annotations.update(annotations[idx])
+        #     self.segmentation[idx] = segment
 
         # Clear progress bar.
-        progressBar.finish()
+        #progressBar.finish()
 
         self.controlArea.setDisabled(False)
 
@@ -466,7 +488,7 @@ class Gutenberg(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Lyrics importation", self.segmentation, self)
+        self.send("Gutenberg importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
