@@ -486,11 +486,11 @@ class MovieReviews(OWTextableBaseWidget):
             )
 
         # Annotate segments...
-"""
+        """
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
-"""
+        """
 
         # Clear progress bar.
         progressBar.finish()
