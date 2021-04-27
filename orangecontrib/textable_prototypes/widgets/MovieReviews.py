@@ -23,7 +23,7 @@ along with Orange-Textable-Prototypes. If not, see
 # TODO Annoter les segments output
 
 __version__ = u"0.0.1"
-__author__ = "Caroline Rorhbach, Maryam Zoee, Victor Vermot"
+__author__ = "Caroline Rohrbach, Maryam Zoee, Victor Vermot"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
