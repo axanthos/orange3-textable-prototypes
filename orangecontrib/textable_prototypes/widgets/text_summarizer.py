@@ -70,7 +70,7 @@ for model, package in AVAILABLE_MODELS.items():
         INSTALLED_MODELS.append(model)
 
 class TextSummarizer(OWTextableBaseWidget):
-    """Textable widget for building character networks with Charnet."""
+    """Textable widget for summarizing Text segmentation with spaCy models."""
 
     #----------------------------------------------------------------------
     # Widget's metadata...

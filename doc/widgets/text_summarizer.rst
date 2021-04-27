@@ -2,7 +2,8 @@
 .. meta::
     :description: Orange3 Textable Prototypes documentation,  Text_Summarizer, widget, spaCy, Scikit-learn
     :keywords: Orange3, Textable, Prototypes, documentation, Text_Summarizer, widget, spaCy, Scikit-learn
-    .. _Text_Summarizer:
+
+.. _Text_Summarizer:
 
 Text Summarizer
 =======
