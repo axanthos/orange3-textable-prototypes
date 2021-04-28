@@ -4,9 +4,9 @@
    :keywords: Orange3, Textable, Prototypes, documentation, Gutenberg,
               widget
 
-.. _Lyrics Genius:
+.. _Gutenberg:
 
-Lyrics Genius
+Gutenberg
 =============
 
 .. image:: figures/gutenberg.png
@@ -88,8 +88,8 @@ Warnings
 *You didn't search anything*
     The user want to make a search with no text in the query box.
 
-*Your corpus is empty, please add some songs first*
-    The corpus is empty, so the user have to add some songs before sending.
+*Your corpus is empty, please add some texts first*
+    The corpus is empty, so the user have to add some texts before sending.
 
 Errors
 ~~~~~~
