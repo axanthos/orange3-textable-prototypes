@@ -60,9 +60,9 @@ How to summarize a segmentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Altough there are already several existing extractive summarizer, like bert-summarizer or pysummarization and so on, we chose to do it ourselves by using spaCy and Scikit-learn.
-You can find out more about our method in this `notebook`_.
+You can find out more about our method in this `notebook <https://github.com/melindafemminis/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/summary.ipynb>`_
 
-.._notebook: https://github.com/melindafemminis/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/summary.ipynb
+
 
 Messages
 --------
