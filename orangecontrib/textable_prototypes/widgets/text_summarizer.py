@@ -25,6 +25,7 @@ import sys
 import os
 import subprocess
 import platform
+import spacy
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -42,25 +43,10 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
-import spacy
-
 AVAILABLE_MODELS = {
-    "Dutch news (small)": "nl_core_news_sm",
     "English web (small)": "en_core_web_sm",
-    "English web (medium)": "en_core_web_md",
-    "English web (large)": "en_core_web_lg",
     "French news (small)": "fr_core_news_sm",
-    "French news (medium)": "fr_core_news_md",
-    "German news (small)": "de_core_news_sm",
-    "German news (medium)": "de_core_news_md",
-    "Greek news (small)": "el_core_news_sm",
-    "Greek news (medium)": "el_core_news_md",
-    "Italian news (small)": "it_core_news_sm",
-    "Lithuanian news (small)": "lt_core_news_sm",
-    "Norwegian news (small)": "nb_core_news_sm",
     "Portuguese news (small)": "pt_core_news_sm",
-    "Spanish news (small)": "es_core_news_sm",
-    "Spanish news (medium)": "es_core_news_md",
 }
 
 # Determine which language models are installed...
@@ -70,34 +56,30 @@ for model, package in AVAILABLE_MODELS.items():
         INSTALLED_MODELS.append(model)
 
 class TextSummarizer(OWTextableBaseWidget):
-    """Textable widget for summarizing Text segmentation with spaCy models."""
+    """Textable widget for summarizing a segment in a selected language."""
 
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Text Summarizer"
+    name = "TL;DR"
     description = "Summarize texts with spaCy models"
     icon = "icons/TL_DR_icon.svg"
     priority = 21   # TODO
 
     #----------------------------------------------------------------------
     # Channel definitions...
-
-    inputs = [("Text data", Segmentation, "inputData")]
-    outputs = [("Character segmentation", Segmentation)]
+        
+    inputs = [("Segmentation", Segmentation, "inputData")]
+    outputs = [("Summary", Segmentation)]
 
     #----------------------------------------------------------------------
-    # Layout parameters...
+    # GUI layout parameters...
     
     want_main_area = False
 
     #----------------------------------------------------------------------
-    # Settings...
-    # Define variables in widgets (the ones weirdly in "")
-    
-    # Set number of sentences to keep default
+    # Settings...    
     numSentences = settings.Setting(10)
-    # Set language selection
     language = settings.Setting("English")
 
     #----------------------------------------------------------------------
@@ -116,9 +98,8 @@ class TextSummarizer(OWTextableBaseWidget):
         # Other (non settings) attributes...
         
         self.inputSeg = None
-        self.selectedCharacters = list()
-        self.characters = list()
-        self.nlp = None
+        self.outputSeg = None
+
         if INSTALLED_MODELS:
             self.model = INSTALLED_MODELS[0]
         else:
@@ -151,7 +132,7 @@ class TextSummarizer(OWTextableBaseWidget):
             master=self,
             value='numSentences', #defined in settings
             label='Number of sentences : ',
-            callback=self.sendButton.sendIf,
+            callback=self.sendButton.sendIf(),
             labelWidth=180,
             tooltip=(
                 'Select the number of sentences'
@@ -165,7 +146,7 @@ class TextSummarizer(OWTextableBaseWidget):
             master=self, 
             value='language', #defined in settings
             label="Language : ",
-            callback=self.lang_changed,# defined in methods down
+            callback=self.lang_changed(),# defined in methods down
             tooltip= "Choose mode",
             orientation='horizontal',
             sendSelectedValue=True,
@@ -173,8 +154,6 @@ class TextSummarizer(OWTextableBaseWidget):
             labelWidth=135,
         )
         gui.separator(widget=optionsBox, height=2)
-
-        #self.characterListbox.setSelectionMode(0)
         
         gui.rubber(self.controlArea)
 
@@ -189,14 +168,17 @@ class TextSummarizer(OWTextableBaseWidget):
         if not self.model:
             self.noLanguageModelWarning()
 
+
+
+
+    #----------------------------------------------------------------------------
     # New defined method for callback before
     def lang_changed(self):
         pass #refer to redditor mode_changed method
 
-    # didnt touch code below it is still copypaste from charnet
-    def inputData(self, newInput):
+    def inputData(self, segmentation):
         """Process incoming data."""
-        self.inputSeg = newInput
+        self.inputSeg = segmentation
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
 
@@ -224,37 +206,32 @@ class TextSummarizer(OWTextableBaseWidget):
                 self.send(channel, None, self)
             return
        
-        # Initialize progress bar.
-        self.infoBox.setText(
-            u"Processing, please wait...", 
-            "warning",
-        )
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=len(self.inputSeg))       
-
-        # Process each input segment...
-        for segment in self.inputSeg:
-
-            # TODO...
-            
-            progressBar.advance()
-
-        # Send output...
-        output_segmentation = LTTL.Segmenter.bypass(self.inputSeg)
-        self.send("Character segmentation", output_segmentation, self)
+        self.summarize() 
 
         # Set status to OK and report data size...
-        message = "%i segment@p sent to output." % len(output_segmentation)
-        message = pluralize(message, len(output_segmentation))
+        message = "%i segment@p sent to output " % len(self.outputSeg)
+        message = pluralize(message, len(self.outputSeg))
         self.infoBox.setText(message)
-        
-        # Clear progress bar.
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
-                
-        self.sendButton.resetSettingsChangedFlag()             
 
-    #----------------------------------------------------------------------
+        # Segmentation go to outputs...
+        self.send("Summary", self.outputSeg, self)
+        self.send(
+            "Summary", 
+            self.outputSeg,
+            self,
+        )
+
+        self.sendButton.resetSettingsChangedFlag()
+
+
+    def summarize(self):
+        "Main function that summarize the text"
+
+        if self.inputSeg is not None:
+            self.outputSeg = self.inputSeg
+            return self.outputSeg
+
+    #--------------------------------------------------------------
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
     
