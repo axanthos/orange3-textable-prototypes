@@ -9,6 +9,8 @@ Text Summarizer
 =======
     
 .. image:: figures/TL;DR.png
+    :scale: 10
+    
 
 Summarizes a text segmentation by using Scikit-learn and Spacy to select the most important sentences of a segmentation.
 
@@ -40,6 +42,8 @@ Interface
 ~~~~~~~~~
 
 The **basic** interface displays first a text field in which the user can set the number of sentences of the summary; a dropdown list of languages to chose from; finally two options to select : to summarize by text or by segments.
+
+.. image:: figures/tldr_basic_interface.png
 
 The **advanced** interface displays two more elements. 
 First a percentage option that, when selected, lets the user choose the percentage with a gauge.
