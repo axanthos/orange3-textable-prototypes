@@ -87,7 +87,7 @@ Warnings
     emission to proceed.
 
 *Widget needs input.*
-    A segem should be input in the widget.
+    A segment should be input in the widget.
 
 
 Errors
