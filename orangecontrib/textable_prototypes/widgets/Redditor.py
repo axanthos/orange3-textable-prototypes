@@ -960,6 +960,7 @@ class Redditor(OWTextableBaseWidget):
         for elem in self.annotList:
             for dic in elem:
                 annotations.append(dic)
+                print(dic)
         
         for idx, segment in enumerate(segmentation):
             segment.annotations.update(annotations[idx])

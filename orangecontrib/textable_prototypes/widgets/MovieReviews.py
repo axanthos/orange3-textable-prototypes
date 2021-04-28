@@ -21,6 +21,7 @@ along with Orange-Textable-Prototypes. If not, see
 
 # TODO Bouger les boutons de 'clear' et de 'add' sous les listbox
 # TODO Annoter les segments output
+# TODO Dealer avec les films qui n'ont pas de reviews 
 
 __version__ = u"0.0.1"
 __author__ = "Caroline Rohrbach, Maryam Zoee, Victor Vermot"
@@ -268,7 +269,8 @@ class MovieReviews(OWTextableBaseWidget):
             master=self,
             value="myTitles",
             labels="mytitleLabels",
-            callback=None,
+            callback=lambda: self.removeButton.setDisabled(
+                self.myTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
         self.mytitleListbox.setMinimumHeight(150)
@@ -280,7 +282,7 @@ class MovieReviews(OWTextableBaseWidget):
             widget=corpusButtonBox,
             master=self,
             label=u'Remove from corpus',
-            callback=None,
+            callback=self.remove,
             tooltip=(
                 u"Remove the selected movie from your corpus."
             ),
@@ -292,7 +294,7 @@ class MovieReviews(OWTextableBaseWidget):
             widget=corpusButtonBox,
             master=self,
             label=u'Clear corpus',
-            callback=None,
+            callback=self.clearCorpus,
             tooltip=(
                 u"Remove all movies from your corpus."
             ),
@@ -311,8 +313,6 @@ class MovieReviews(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
-    def placeholder(self):
-        return
 
     def searchMovies(self):
         """Search from imdb movie database"""
@@ -419,6 +419,14 @@ class MovieReviews(OWTextableBaseWidget):
         self.clearmyBasket.setDisabled(self.myBasket == list())
         self.removeButton.setDisabled(self.myTitles == list())
 
+    def remove(self):
+        """Remove the selected movie in the corpus """
+        self.myBasket = [
+            movie for idx, movie in enumerate(self.myBasket)
+            if idx not in self.myTitles
+        ]
+        self.updateCorpus()
+        self.sendButton.settingsChanged()
 
      # Remove movies function
     def sendData(self):
@@ -445,6 +453,7 @@ class MovieReviews(OWTextableBaseWidget):
         # Attempt to connect to Genius and retrieve lyrics...
         selectedSongs = list()
         list_review = list()
+        annotations = list()
         try:
             for item in self.myBasket:
                 ia = imdb.IMDb()
@@ -466,12 +475,23 @@ class MovieReviews(OWTextableBaseWidget):
         # Store movie critics strings in input objects...
         for movie in list_review:
             #for key, value in movie.items():
+            #try: 
+            annotations.append(movie.copy())
             data = movie.get('data', "")
             reviews_data = data.get('reviews')
             for review in reviews_data:
                 reviews = review.get('content')
                 newInput = Input(reviews)
                 self.createdInputs.append(newInput)
+        """
+            except:
+                self.infoBox.setText(
+                "The movie has no associated reviews",
+                "warning"
+            )
+            self.controlArea.setDisabled(False)
+            return
+        """
 
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
@@ -483,6 +503,7 @@ class MovieReviews(OWTextableBaseWidget):
                 self.createdInputs,
                 import_labels_as=None,
             )
+
 
         # Annotate segments...
         """
@@ -510,7 +531,7 @@ class MovieReviews(OWTextableBaseWidget):
         self.send('Segmentation', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
         
-   def clearResults(self):
+    def clearResults(self):
         """Clear the results list"""
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
@@ -521,6 +542,16 @@ class MovieReviews(OWTextableBaseWidget):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
+    
+    
+
+    def clearCorpus(self):
+        """Remove all movies in the corpus"""
+        self.mytitleLabels = list()
+        self.myBasket = list()
+        self.sendButton.settingsChanged()
+        self.clearmyBasket.setDisabled(True)
+    
 
 
 if __name__ == "__main__":
