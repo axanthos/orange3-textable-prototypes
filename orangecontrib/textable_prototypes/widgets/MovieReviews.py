@@ -256,7 +256,7 @@ class MovieReviews(OWTextableBaseWidget):
             widget=resultButtonBox,
             master=self,
             label="Clear results",
-            callback=None,
+            callback=self.clearResults,
             tooltip="Clear results",
         )
         self.clearButton.setDisabled(True)
@@ -430,6 +430,14 @@ class MovieReviews(OWTextableBaseWidget):
                 "warning"
             )
             return
+        
+        def clearResults(self):
+             """Clear the results list"""
+            del self.titleLabels[:]
+            self.titleLabels = self.titleLabels
+            del self.selectedTitle[:]
+            self.selectedTitle= self.selectedTitle
+            self.clearButton.setDisabled(True)
 
 
         # Clear created Inputs.
