@@ -435,8 +435,6 @@ class MovieReviews(OWTextableBaseWidget):
              """Clear the results list"""
             del self.titleLabels[:]
             self.titleLabels = self.titleLabels
-            del self.selectedTitle[:]
-            self.selectedTitle= self.selectedTitle
             self.clearButton.setDisabled(True)
 
 
