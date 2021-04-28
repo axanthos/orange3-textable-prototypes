@@ -431,13 +431,6 @@ class MovieReviews(OWTextableBaseWidget):
             )
             return
         
-     def clearResults(self):
-        """Clear the results list"""
-        del self.titleLabels[:]
-        self.titleLabels = self.titleLabels
-        self.clearButton.setDisabled(True)
-
-
         # Clear created Inputs.
         self.clearCreatedInputs()
 
@@ -516,6 +509,12 @@ class MovieReviews(OWTextableBaseWidget):
 
         self.send('Segmentation', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
+        
+   def clearResults(self):
+        """Clear the results list"""
+        del self.titleLabels[:]
+        self.titleLabels = self.titleLabels
+        self.clearButton.setDisabled(True)
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
