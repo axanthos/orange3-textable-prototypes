@@ -410,10 +410,10 @@ class Gutenberg(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
 
         # Initialize progress bar.
-        # progressBar = ProgressBar(
-        #     self,
-        #     iterations=len(self.myBasket),
-        # )
+        progressBar = ProgressBar(
+            self,
+            iterations=len(self.myBasket),
+        )
 
         selectedTexts = list()
         text_content = list()
@@ -436,7 +436,7 @@ class Gutenberg(OWTextableBaseWidget):
                 text_content.append(gutenberg_text)
                 
                 annotations.append(text[1])
-                #progressBar.advance()
+                progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
         except Exception:
@@ -468,12 +468,12 @@ class Gutenberg(OWTextableBaseWidget):
 
         # TODO: annotate with book metadata
         # Annotate segments...
-        # for idx, segment in enumerate(self.segmentation):
-        #     segment.annotations.update(annotations[idx])
-        #     self.segmentation[idx] = segment
+        for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update({"title": annotations[idx]})
+            self.segmentation[idx] = segment
 
         # Clear progress bar.
-        #progressBar.finish()
+        progressBar.finish()
 
         self.controlArea.setDisabled(False)
 
