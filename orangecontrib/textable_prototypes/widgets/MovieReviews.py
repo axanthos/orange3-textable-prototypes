@@ -431,11 +431,11 @@ class MovieReviews(OWTextableBaseWidget):
             )
             return
         
-        def clearResults(self):
-             """Clear the results list"""
-            del self.titleLabels[:]
-            self.titleLabels = self.titleLabels
-            self.clearButton.setDisabled(True)
+     def clearResults(self):
+        """Clear the results list"""
+        del self.titleLabels[:]
+        self.titleLabels = self.titleLabels
+        self.clearButton.setDisabled(True)
 
 
         # Clear created Inputs.
