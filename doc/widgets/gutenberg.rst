@@ -11,7 +11,7 @@ Gutenberg
 
 .. image:: figures/gutenberg.png
 
-Retrive texts from gutenberg.org 
+Retrieve texts from gutenberg.org 
 
 Author
 ------
@@ -48,12 +48,12 @@ Interface
 
     Figure 1: **Gutenberg** widget interface.
 
-The **Gutenberg** widget lets the user generate the databae cache of the 
-`Gutenberg <http://www.gutenberg.org/>`_ website, and search it.
+The **Gutenberg** widget lets the user generate the cache of the 
+`Gutenberg <http://www.gutenberg.org/>`_ database, and search it.
 
-The **Generate Cache** button allows the user to generate the gutenberg database.
+The **Generate Cache** button allows the user to generate the gutenberg cache.
 This has to be done only at first launch or if the database has been updated. It can 
-last up to 5 minutes.
+last about 5 to 10 minutes.
 
 The **Create my corpus** section allows the user to add or remove text from
 the search results.
@@ -96,4 +96,4 @@ Errors
 
 *Couldn't download data from Gutenberg.*
     An error has prevented the widget from accessing the 
-    Gutenberg database.
+    Gutenberg database or retrieving the data.
