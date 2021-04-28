@@ -56,6 +56,14 @@ automatically** checkbox disables the button and the widget attempts to
 automatically emit a segmentation at every modification of its interface.
 
 
+How to summarize a segmentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Altough there are already several existing extractive summarizer, like bert-summarizer or pysummarization and so on, we chose to do it ourselves by using spaCy and Scikit-learn.
+You can find out more about our method in this `notebook`_.
+
+.._notebook: https://github.com/melindafemminis/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/summary.ipynb
+
 Messages
 --------
 
@@ -68,8 +76,19 @@ Information
 Warnings
 ~~~~~~~~
 
+*Settings were changed, please click 'Send' when ready.*
+    Settings have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*Widget needs input.*
+    A segem should be input in the widget.
+
+
 Errors
 ~~~~~~
 
 Note
 ~~~~
+
