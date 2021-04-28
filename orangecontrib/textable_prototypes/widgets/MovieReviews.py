@@ -20,8 +20,8 @@ along with Orange-Textable-Prototypes. If not, see
 """
 
 # TODO Bouger les boutons de 'clear' et de 'add' sous les listbox
-# TODO Annoter les segments output
-# TODO Dealer avec les films qui n'ont pas de reviews 
+# TODO Voir si c'est possible de corriger les annotations en output
+# TODO Dealer avec les films qui n'ont pas de reviews
 
 __version__ = u"0.0.1"
 __author__ = "Caroline Rohrbach, Maryam Zoee, Victor Vermot"
@@ -476,13 +476,14 @@ class MovieReviews(OWTextableBaseWidget):
         for movie in list_review:
             #for key, value in movie.items():
             #try: 
-            annotations.append(movie.copy())
             data = movie.get('data', "")
             reviews_data = data.get('reviews')
             for review in reviews_data:
                 reviews = review.get('content')
                 newInput = Input(reviews)
                 self.createdInputs.append(newInput)
+                new_dict = review.copy()
+                annotations.append(new_dict)
         """
             except:
                 self.infoBox.setText(
@@ -506,11 +507,11 @@ class MovieReviews(OWTextableBaseWidget):
 
 
         # Annotate segments...
-        """
+
+
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
-        """
 
         # Clear progress bar.
         progressBar.finish()
