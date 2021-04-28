@@ -26,6 +26,7 @@ import os
 import subprocess
 import platform
 import spacy
+import sklearn
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -78,9 +79,9 @@ class TextSummarizer(OWTextableBaseWidget):
     want_main_area = False
 
     #----------------------------------------------------------------------
-    # Settings...    
-    numSentences = settings.Setting(10)
-    language = settings.Setting("English")
+    # Settings 
+    numSents = settings.Setting(5)
+    language = settings.Setting("French")
 
     #----------------------------------------------------------------------
     # The following lines need to be copied verbatim in every Textable widget...
@@ -130,29 +131,37 @@ class TextSummarizer(OWTextableBaseWidget):
         gui.spin(
             widget=optionsBox,
             master=self,
-            value='numSentences', #defined in settings
+            value='numSents', #defined in settings
             label='Number of sentences : ',
             callback=self.sendButton.sendIf(),
             labelWidth=180,
             tooltip=(
-                'Select the number of sentences'
+                'Select the number of sentences wanted for the summary.'
             ),
-            maxv=1000,
+            maxv=100,
             minv=1,
             step=1,
         )
-        self.choiceBox = gui.comboBox(
+
+        method_combo = gui.comboBox(
             widget=optionsBox,
-            master=self, 
-            value='language', #defined in settings
-            label="Language : ",
-            callback=self.lang_changed(),# defined in methods down
-            tooltip= "Choose mode",
-            orientation='horizontal',
+            master=self,
+            value="language",
+            items=[
+                "English",
+                "French", 
+                "Portuguese", 
+            ],
             sendSelectedValue=True,
-            items=["English", "French", "Portuguese"],
+            orientation="horizontal",
+            label="Language:",
             labelWidth=135,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "Please select the text's language.\n"
+            ),
         )
+
         gui.separator(widget=optionsBox, height=2)
         
         gui.rubber(self.controlArea)
@@ -164,21 +173,20 @@ class TextSummarizer(OWTextableBaseWidget):
         self.infoBox.draw()
         self.infoBox.setText("Widget needs input.", "warning")
         
-        # Check that there's a model...
+        # Check that there's a model and if not call noLanguageModelWarning()
         if not self.model:
             self.noLanguageModelWarning()
 
 
 
-
     #----------------------------------------------------------------------------
-    # New defined method for callback before
-    def lang_changed(self):
-        pass #refer to redditor mode_changed method
 
     def inputData(self, segmentation):
         """Process incoming data."""
         self.inputSeg = segmentation
+        if self.inputSeg is None:
+            self.infoBox.setText("Widget needs input.", "warning")
+            return
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
 
@@ -194,42 +202,132 @@ class TextSummarizer(OWTextableBaseWidget):
     def sendData(self):
         """Compute result of widget processing and send to output."""
 
-        # Check that there's a model...
+        # Check that there's a model
         if not self.model:
             self.noLanguageModelWarning()
             return
 
-        # Check that there's an input...
+        # Check that there's an input
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
-            for channel in [c.name for c in self.outputs]:
-                self.send(channel, None, self)
             return
+
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Processing, please wait...", 
+            "warning",
+        )
+
+        self.controlArea.setDisabled(True)
        
+        # Call main function 
         self.summarize() 
 
-        # Set status to OK and report data size...
+        # Segmentation go to outputs...
+        self.send("Summary", self.outputSeg, self)
+
+        # Set message to sent
         message = "%i segment@p sent to output " % len(self.outputSeg)
         message = pluralize(message, len(self.outputSeg))
         self.infoBox.setText(message)
 
-        # Segmentation go to outputs...
-        self.send("Summary", self.outputSeg, self)
-        self.send(
-            "Summary", 
-            self.outputSeg,
-            self,
-        )
-
         self.sendButton.resetSettingsChangedFlag()
+        self.controlArea.setDisabled(False)
 
 
     def summarize(self):
         "Main function that summarize the text"
+            
+        num_segments = len(self.inputSeg)
+        self.outputSeg = self.inputSeg
 
-        if self.inputSeg is not None:
-            self.outputSeg = self.inputSeg
-            return self.outputSeg
+        #Itération sur chaque segment en entrée
+        for idx in range(1, num_segments):
+            texte = self.inputSeg[idx-1].get_content()
+            if self.language == "French":
+                nlpFR = spacy.load("fr_core_news_sm")
+                docFR = nlpFR(texte)
+                # corpus is an array that contains each sentence of the document separately
+                corpus = [sent.text.lower() for sent in docFR.sents ]
+                self.outputSeg = self.inputSeg
+                return
+
+            elif self.language == "English":
+                nlpEN = spacy.load("en_core_web_sm")
+                docEN = nlpEN(texte)
+                # corpus is an array that contains each sentence of the document separately
+                corpus = [sent.text.lower() for sent in docEN.sents ]
+                elf.outputSeg = self.inputSeg
+                return
+
+            elif self.language == "Portuguese":
+                nlpPT = spacy.load("pt_core_news_sm")
+                docPT = nlpPT(texte)
+
+                # corpus is an array that contains each sentence of the document separately
+                corpus = [sent.text.lower() for sent in docPT.sents ]
+                
+                # Convert text to a matrix of token counts while removing STOP_WORDS that provides very little informations
+                cv = CountVectorizer(stop_words=list(STOP_WORDS_PT))   
+                X = cv.fit_transform(corpus) 
+                word_list = cv.get_feature_names();    
+                
+                # Count unique words and how many times they appear
+                word_list = cv.get_feature_names();    
+                count_list = cv_fit.toarray().sum(axis=0)
+                
+                # Create dictionnary of word frequency
+                word_frequency = dict(zip(word_list,count_list))
+
+                # Get sorted dict of word frequency and print the top to test
+                val=sorted(word_frequency.values())
+                higher_word_frequencies = [word for word,freq in word_frequency.items() if freq in val[-3:]]
+
+                # gets relative frequency of words to frequent words
+                higher_frequency = val[-1]
+                for word in word_frequency.keys():  
+                    word_frequency[word] = (word_frequency[word]/higher_frequency)
+
+                # Initialise a sentence dictionnary
+                sentence_rank={}    
+
+                # For each word in each sentence ... 
+                for sent in docPT.sents:
+                    for word in sent :    
+                        # if the word appears in word_frequency dict
+                        if word.text.lower() in word_frequency.keys(): 
+                            # If the sentence is already in sentence_rank dict, we add points
+                            if sent in sentence_rank.keys():
+                                sentence_rank[sent]+=word_frequency[word.text.lower()]
+                            # else we create a new key/value pair in dict    
+                            else:
+                                sentence_rank[sent]=word_frequency[word.text.lower()]
+
+                # Sort sentences
+                top_sentences=(sorted(sentence_rank.values())[::-1])
+                # This is where we can choose how many sentences we want to keep for the summary
+                top_sent=top_sentences[:3]  
+
+                # We can now create a summary from those sentences:
+                summary=[]
+                for sent,strength in sentence_rank.items():  
+                    if strength in top_sent:
+                        summary.append(sent)
+                    else:
+                        continue
+                    segments = list()
+                    for sent in summary: 
+                        input_seg = Input(sent)
+                        segments.append(
+                            Segment(
+                                str_index=input_seg[0].str_index, 
+                            )
+                        )
+                new_seg = Segmentation(segments)
+                self.outputSeg = new_seg
+
+                return
+
 
     #--------------------------------------------------------------
     # The following method needs to be copied verbatim in
