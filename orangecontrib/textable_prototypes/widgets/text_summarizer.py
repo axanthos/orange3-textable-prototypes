@@ -355,7 +355,7 @@ class TextSummarizer(OWTextableBaseWidget):
             #AVAILABLE_MODELS[self.model],
             "fr_core_web_sm",
         )
-        from spacy.lang.en.stop_words import STOP_WORDS
+        from spacy.lang.fr.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
         progressBar.advance()
         progressBar.finish()
@@ -374,7 +374,7 @@ class TextSummarizer(OWTextableBaseWidget):
             #AVAILABLE_MODELS[self.model],
             "pt_core_web_sm",
         )
-        from spacy.lang.en.stop_words import STOP_WORDS
+        from spacy.lang.pt.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
         progressBar.advance()
         progressBar.finish()
