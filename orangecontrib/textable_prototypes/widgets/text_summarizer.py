@@ -226,14 +226,16 @@ class TextSummarizer(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
        
        # Load the appropriate model according to user choice
-        if self.language == "French":
+        """if self.language == "French":
             self.loadModelFR()
         elif self.language == "English":
             self.loadModelEN()
         elif self.language == "Portuguese":
             self.loadModelPT()
         else:
-            self.noLanguageModelWarning()
+            self.noLanguageModelWarning()"""
+        
+        self.loadmodelEN()
 
         # Call main function 
         self.summarize() 
