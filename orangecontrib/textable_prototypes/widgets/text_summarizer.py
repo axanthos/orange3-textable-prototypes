@@ -337,7 +337,7 @@ class TextSummarizer(OWTextableBaseWidget):
             #AVAILABLE_MODELS[self.model],
             "en_core_web_sm",
         )
-        cv = CountVectorizer(stop_words=list(STOP_WORDS_EN))
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
@@ -349,7 +349,7 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading english language model, please wait...", 
             "warning",
         )
-        cv = CountVectorizer(stop_words=list(STOP_WORDS_FR))
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
@@ -367,7 +367,7 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading english language model, please wait...", 
             "warning",
         )
-        cv = CountVectorizer(stop_words=list(STOP_WORDS_PT))
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
