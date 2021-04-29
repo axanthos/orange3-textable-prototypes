@@ -67,7 +67,7 @@ class MovieReviews(OWTextableBaseWidget):
     )
 
     # Settings
-    autoSend = settings.Setting(True)
+    autoSend = settings.Setting(False)
     myBasket = settings.Setting([])
 
     #----------------------------------------------------------------------
@@ -236,6 +236,7 @@ class MovieReviews(OWTextableBaseWidget):
             callback=None,
             tooltip="The list of titles whose content will be imported",
         )
+        self.titleListbox.doubleClicked.connect(self.addToCorpus)
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
 
@@ -273,6 +274,7 @@ class MovieReviews(OWTextableBaseWidget):
                 self.myTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
+        self.mytitleListbox.doubleClicked.connect(self.remove)
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
 
