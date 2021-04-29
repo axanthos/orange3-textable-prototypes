@@ -26,9 +26,6 @@ import os
 import subprocess
 import platform
 import spacy
-from spacy.lang.fr.stop_words import STOP_WORDS
-from spacy.lang.en.stop_words import STOP_WORDS
-from spacy.lang.pt.stop_words import STOP_WORDS
 from sklearn.feature_extraction.text import CountVectorizer
 
 from Orange.widgets import widget, gui, settings
@@ -337,6 +334,7 @@ class TextSummarizer(OWTextableBaseWidget):
             #AVAILABLE_MODELS[self.model],
             "en_core_web_sm",
         )
+        from spacy.lang.en.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
         progressBar.advance()
         progressBar.finish()
@@ -349,13 +347,14 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading english language model, please wait...", 
             "warning",
         )
-        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
             #AVAILABLE_MODELS[self.model],
             "fr_core_web_sm",
         )
+        from spacy.lang.fr.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
@@ -367,13 +366,14 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading english language model, please wait...", 
             "warning",
         )
-        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
             #AVAILABLE_MODELS[self.model],
             "pt_core_web_sm",
         )
+        from spacy.lang.fr.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS)
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
