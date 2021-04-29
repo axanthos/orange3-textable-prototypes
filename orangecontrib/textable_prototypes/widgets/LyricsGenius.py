@@ -457,7 +457,6 @@ class LyricsGenius(OWTextableBaseWidget):
                 page_url = "http://genius.com" + song['path']
                 lyrics = self.html_to_text(page_url)
                 song_content.append(lyrics)
-                print(song.copy())
                 annotations.append(song.copy())
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -491,7 +490,6 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Annotate segments...
         for idx, segment in enumerate(self.segmentation):
-            print(segment)
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
 
