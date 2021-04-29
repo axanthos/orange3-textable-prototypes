@@ -477,22 +477,22 @@ class MovieReviews(OWTextableBaseWidget):
             #for key, value in movie.items():
             #try: 
             data = movie.get('data', "")
-            reviews_data = data.get('reviews')
-            for review in reviews_data:
-                reviews = review.get('content')
-                newInput = Input(reviews)
-                self.createdInputs.append(newInput)
-                new_dict = review.copy()
-                annotations.append(new_dict)
-        """
-            except:
+            try:
+                reviews_data = data.get('reviews')
+                for review in reviews_data:
+                    reviews = review.get('content')
+                    newInput = Input(reviews)
+                    self.createdInputs.append(newInput)
+                    new_dict = review.copy()
+                    annotations.append(new_dict)
+            
+            except TypeError:
                 self.infoBox.setText(
                 "The movie has no associated reviews",
                 "warning"
             )
-            self.controlArea.setDisabled(False)
-            return
-        """
+                self.controlArea.setDisabled(False)
+                return
 
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
