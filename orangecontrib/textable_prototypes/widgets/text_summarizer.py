@@ -235,7 +235,7 @@ class TextSummarizer(OWTextableBaseWidget):
         else:
             self.noLanguageModelWarning()"""
         
-        self.loadmodelEN()
+        self.loadModelEN()
 
         # Call main function 
         self.summarize() 
