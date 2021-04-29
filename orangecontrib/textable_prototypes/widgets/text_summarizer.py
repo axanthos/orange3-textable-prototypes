@@ -346,7 +346,7 @@ class TextSummarizer(OWTextableBaseWidget):
         """(Re-)load language model if needed."""
         # Initialize progress bar.
         self.infoBox.setText(
-            u"Loading english language model, please wait...", 
+            u"Loading french language model, please wait...", 
             "warning",
         )
         self.controlArea.setDisabled(True)
@@ -355,17 +355,17 @@ class TextSummarizer(OWTextableBaseWidget):
             #AVAILABLE_MODELS[self.model],
             "fr_core_web_sm",
         )
-        from spacy.lang.fr.stop_words import STOP_WORDS
+        from spacy.lang.en.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
-
+        
     def loadModelPT(self):
         """(Re-)load language model if needed."""
         # Initialize progress bar.
         self.infoBox.setText(
-            u"Loading english language model, please wait...", 
+            u"Loading portuguese language model, please wait...", 
             "warning",
         )
         self.controlArea.setDisabled(True)
@@ -374,8 +374,8 @@ class TextSummarizer(OWTextableBaseWidget):
             #AVAILABLE_MODELS[self.model],
             "pt_core_web_sm",
         )
-        from spacy.lang.fr.stop_words import STOP_WORDS
-        cv = CountVectorizer(stop_words=list(STOP_WORDS)
+        from spacy.lang.en.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
