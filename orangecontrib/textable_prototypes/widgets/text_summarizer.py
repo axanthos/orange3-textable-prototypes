@@ -262,7 +262,6 @@ class TextSummarizer(OWTextableBaseWidget):
         doc = self.nlp(content)
 
         corpus = [sent.text.lower() for sent in doc.sents]
-        cv = CountVectorizer(stop_words=list(STOP_WORDS_FR))   
         X = self.cv.fit_transform(corpus) 
         word_list = self.cv.get_feature_names(); 
 
