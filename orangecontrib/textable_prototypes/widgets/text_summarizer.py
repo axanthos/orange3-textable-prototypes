@@ -226,6 +226,16 @@ class TextSummarizer(OWTextableBaseWidget):
 
         self.controlArea.setDisabled(True)
        
+       # Load the appropriate model according to user choice
+       if self.language == "French":
+            self.loadModelFR()
+        elif self.language == "English":
+            self.loadModelEN()
+        elif self.language == "Portuguese":
+            self.loadModelPT()
+        else:
+            self.noLanguageModelWarning()
+
         # Call main function 
         self.summarize() 
 
@@ -248,19 +258,16 @@ class TextSummarizer(OWTextableBaseWidget):
 
         """content = self.inputSeg[0].get_content()
 
-        self.loadmodelFR()
-        docFR = self.nlp(content)
+        doc = self.nlp(content)
 
-        number_sents = 3
-
-        corpus = [sent.text.lower() for sent in docFR.sents]
+        corpus = [sent.text.lower() for sent in doc.sents]
         cv = CountVectorizer(stop_words=list(STOP_WORDS_FR))   
-        X = cv.fit_transform(corpus) 
-        word_list = cv.get_feature_names(); 
+        X = self.cv.fit_transform(corpus) 
+        word_list = self.cv.get_feature_names(); 
 
         # Count unique words and how many times they appear
-        word_list = cv.get_feature_names();    
-        count_list = cv_fit.toarray().sum(axis=0)
+        word_list = self.cv.get_feature_names();    
+        count_list = self.cv_fit.toarray().sum(axis=0)
         word_frequency = dict(zip(word_list,count_list))
 
         # Get sorted dict of word frequency and print the top to test
@@ -277,7 +284,7 @@ class TextSummarizer(OWTextableBaseWidget):
         sentence_rank={}
 
         # For each word in each sentence ... 
-        for sent in docFR.sents:
+        for sent in doc.sents:
             for word in sent :    
                 # if the word appears in word_frequency dict
                 if word.text.lower() in word_frequency.keys(): 
@@ -291,7 +298,7 @@ class TextSummarizer(OWTextableBaseWidget):
         # Sort sentences
         top_sentences=(sorted(sentence_rank.values())[::-1])
         # This is where we can choose how many sentences we want to keep for the summary
-        top_sent=top_sentences[:3]
+        top_sent=top_sentences[:numSents]
 
         summary = list()
         for sent,strength in sentence_rank.items():  
@@ -328,6 +335,7 @@ class TextSummarizer(OWTextableBaseWidget):
             #AVAILABLE_MODELS[self.model],
             "en_core_web_sm",
         )
+        cv = CountVectorizer(stop_words=list(STOP_WORDS_EN))
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
@@ -339,6 +347,7 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading english language model, please wait...", 
             "warning",
         )
+        cv = CountVectorizer(stop_words=list(STOP_WORDS_FR))
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
@@ -356,6 +365,7 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading english language model, please wait...", 
             "warning",
         )
+        cv = CountVectorizer(stop_words=list(STOP_WORDS_PT))
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
