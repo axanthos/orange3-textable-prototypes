@@ -26,9 +26,9 @@ import os
 import subprocess
 import platform
 import spacy
-from spacy.lang.fr.stop_words import STOP_WORDS_FR
-from spacy.lang.en.stop_words import STOP_WORDS_EN
-from spacy.lang.pt.stop_words import STOP_WORDS_PT
+from spacy.lang.fr.stop_words import STOP_WORDS
+from spacy.lang.en.stop_words import STOP_WORDS
+from spacy.lang.pt.stop_words import STOP_WORDS
 from sklearn.feature_extraction.text import CountVectorizer
 
 from Orange.widgets import widget, gui, settings
@@ -229,7 +229,7 @@ class TextSummarizer(OWTextableBaseWidget):
         self.controlArea.setDisabled(True)
        
        # Load the appropriate model according to user choice
-       if self.language == "French":
+        if self.language == "French":
             self.loadModelFR()
         elif self.language == "English":
             self.loadModelEN()
