@@ -25,8 +25,7 @@ import sys
 import os
 import subprocess
 import platform
-import spacy
-import sklearn
+from sklearn.feature_extraction.text import CountVectorizer
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -38,11 +37,17 @@ from AnyQt.QtGui import (
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
 import LTTL.Segmenter
+from LTTL.Input import Input
+
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, ProgressBar
 )
+
+import spacy
+from spacy.lang.fr.stop_words import STOP_WORDS_FR
+import textsummarizer
 
 AVAILABLE_MODELS = {
     "English web (small)": "en_core_web_sm",
@@ -65,7 +70,7 @@ class TextSummarizer(OWTextableBaseWidget):
     name = "TL;DR"
     description = "Summarize texts with spaCy models"
     icon = "icons/TL_DR_icon.svg"
-    priority = 21   # TODO
+    priority = 21 
 
     #----------------------------------------------------------------------
     # Channel definitions...
@@ -80,6 +85,7 @@ class TextSummarizer(OWTextableBaseWidget):
 
     #----------------------------------------------------------------------
     # Settings 
+
     numSents = settings.Setting(5)
     language = settings.Setting("French")
 
@@ -100,7 +106,7 @@ class TextSummarizer(OWTextableBaseWidget):
         
         self.inputSeg = None
         self.outputSeg = None
-
+        self.nlp = None
         if INSTALLED_MODELS:
             self.model = INSTALLED_MODELS[0]
         else:
@@ -237,96 +243,128 @@ class TextSummarizer(OWTextableBaseWidget):
 
     def summarize(self):
         "Main function that summarize the text"
-            
-        num_segments = len(self.inputSeg)
+
         self.outputSeg = self.inputSeg
 
-        #Itération sur chaque segment en entrée
-        for idx in range(1, num_segments):
-            texte = self.inputSeg[idx-1].get_content()
-            if self.language == "French":
-                nlpFR = spacy.load("fr_core_news_sm")
-                docFR = nlpFR(texte)
-                # corpus is an array that contains each sentence of the document separately
-                corpus = [sent.text.lower() for sent in docFR.sents ]
-                self.outputSeg = self.inputSeg
-                return
+        """content = self.inputSeg[0].get_content()
 
-            elif self.language == "English":
-                nlpEN = spacy.load("en_core_web_sm")
-                docEN = nlpEN(texte)
-                # corpus is an array that contains each sentence of the document separately
-                corpus = [sent.text.lower() for sent in docEN.sents ]
-                elf.outputSeg = self.inputSeg
-                return
+        self.loadmodelFR()
+        docFR = self.nlp(content)
 
-            elif self.language == "Portuguese":
-                nlpPT = spacy.load("pt_core_news_sm")
-                docPT = nlpPT(texte)
+        number_sents = 3
 
-                # corpus is an array that contains each sentence of the document separately
-                corpus = [sent.text.lower() for sent in docPT.sents ]
-                
-                # Convert text to a matrix of token counts while removing STOP_WORDS that provides very little informations
-                cv = CountVectorizer(stop_words=list(STOP_WORDS_PT))   
-                X = cv.fit_transform(corpus) 
-                word_list = cv.get_feature_names();    
-                
-                # Count unique words and how many times they appear
-                word_list = cv.get_feature_names();    
-                count_list = cv_fit.toarray().sum(axis=0)
-                
-                # Create dictionnary of word frequency
-                word_frequency = dict(zip(word_list,count_list))
+        corpus = [sent.text.lower() for sent in docFR.sents]
+        cv = CountVectorizer(stop_words=list(STOP_WORDS_FR))   
+        X = cv.fit_transform(corpus) 
+        word_list = cv.get_feature_names(); 
 
-                # Get sorted dict of word frequency and print the top to test
-                val=sorted(word_frequency.values())
-                higher_word_frequencies = [word for word,freq in word_frequency.items() if freq in val[-3:]]
+        # Count unique words and how many times they appear
+        word_list = cv.get_feature_names();    
+        count_list = cv_fit.toarray().sum(axis=0)
+        word_frequency = dict(zip(word_list,count_list))
 
-                # gets relative frequency of words to frequent words
-                higher_frequency = val[-1]
-                for word in word_frequency.keys():  
-                    word_frequency[word] = (word_frequency[word]/higher_frequency)
+        # Get sorted dict of word frequency and print the top to test
+        val=sorted(word_frequency.values())
+        higher_word_frequencies = [word for word,freq in word_frequency.items() if freq in val[-3:]]
 
-                # Initialise a sentence dictionnary
-                sentence_rank={}    
+        # gets relative frequency of words to frequent words
+        higher_frequency = val[-1]
+        for word in word_frequency.keys():  
+            word_frequency[word] = (word_frequency[word]/higher_frequency)
 
-                # For each word in each sentence ... 
-                for sent in docPT.sents:
-                    for word in sent :    
-                        # if the word appears in word_frequency dict
-                        if word.text.lower() in word_frequency.keys(): 
-                            # If the sentence is already in sentence_rank dict, we add points
-                            if sent in sentence_rank.keys():
-                                sentence_rank[sent]+=word_frequency[word.text.lower()]
-                            # else we create a new key/value pair in dict    
-                            else:
-                                sentence_rank[sent]=word_frequency[word.text.lower()]
+        
+        # Initialise a sentence dictionnary
+        sentence_rank={}
 
-                # Sort sentences
-                top_sentences=(sorted(sentence_rank.values())[::-1])
-                # This is where we can choose how many sentences we want to keep for the summary
-                top_sent=top_sentences[:3]  
-
-                # We can now create a summary from those sentences:
-                summary=[]
-                for sent,strength in sentence_rank.items():  
-                    if strength in top_sent:
-                        summary.append(sent)
+        # For each word in each sentence ... 
+        for sent in docFR.sents:
+            for word in sent :    
+                # if the word appears in word_frequency dict
+                if word.text.lower() in word_frequency.keys(): 
+                    # If the sentence is already in sentence_rank dict, we add points
+                    if sent in sentence_rank.keys():
+                        sentence_rank[sent]+=word_frequency[word.text.lower()]
+                    # else we create a new key/value pair in dict    
                     else:
-                        continue
-                    segments = list()
-                    for sent in summary: 
-                        input_seg = Input(sent)
-                        segments.append(
-                            Segment(
-                                str_index=input_seg[0].str_index, 
-                            )
-                        )
-                new_seg = Segmentation(segments)
-                self.outputSeg = new_seg
+                        sentence_rank[sent]=word_frequency[word.text.lower()]
 
-                return
+        # Sort sentences
+        top_sentences=(sorted(sentence_rank.values())[::-1])
+        # This is where we can choose how many sentences we want to keep for the summary
+        top_sent=top_sentences[:3]
+
+        summary = list()
+        for sent,strength in sentence_rank.items():  
+            if strength in top_sent:
+                summary.append(sent)
+            else:
+                continue
+        # Join all sentence in a single string
+        résumé = " ".join(summary)
+        
+        # This is how to create a segmentation from a string text (taken from inputSeg!! 
+        input_seg = Input(résumé)
+        segments = list()
+        segments.append(
+            Segment(
+                str_index=input_seg[0].str_index,   
+            )
+        )
+        new_seg = Segmentation(segments)
+        self.outputSeg = new_seg"""
+        
+
+    # loadmodelEN(), loadmodelFR() and loadmodelPT() load choosen model
+    def loadModelEN(self):
+        """(Re-)load language model if needed."""
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Loading english language model, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)       
+        self.nlp = spacy.load(
+            #AVAILABLE_MODELS[self.model],
+            "en_core_web_sm",
+        )
+        progressBar.advance()
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
+
+    def loadModelFR(self):
+        """(Re-)load language model if needed."""
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Loading english language model, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)       
+        self.nlp = spacy.load(
+            #AVAILABLE_MODELS[self.model],
+            "fr_core_web_sm",
+        )
+        progressBar.advance()
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
+
+    def loadModelPT(self):
+        """(Re-)load language model if needed."""
+        # Initialize progress bar.
+        self.infoBox.setText(
+            u"Loading english language model, please wait...", 
+            "warning",
+        )
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)       
+        self.nlp = spacy.load(
+            #AVAILABLE_MODELS[self.model],
+            "pt_core_web_sm",
+        )
+        progressBar.advance()
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
 
 
     #--------------------------------------------------------------
