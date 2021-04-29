@@ -25,6 +25,10 @@ import sys
 import os
 import subprocess
 import platform
+import spacy
+from spacy.lang.fr.stop_words import STOP_WORDS_FR
+from spacy.lang.en.stop_words import STOP_WORDS_EN
+from spacy.lang.pt.stop_words import STOP_WORDS_PT
 from sklearn.feature_extraction.text import CountVectorizer
 
 from Orange.widgets import widget, gui, settings
@@ -45,8 +49,6 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
-import spacy
-from spacy.lang.fr.stop_words import STOP_WORDS_FR
 import textsummarizer
 
 AVAILABLE_MODELS = {
@@ -254,9 +256,9 @@ class TextSummarizer(OWTextableBaseWidget):
     def summarize(self):
         "Main function that summarize the text"
 
-        self.outputSeg = self.inputSeg
+        # self.outputSeg = self.inputSeg
 
-        """content = self.inputSeg[0].get_content()
+        content = self.inputSeg[0].get_content()
 
         doc = self.nlp(content)
 
@@ -309,7 +311,7 @@ class TextSummarizer(OWTextableBaseWidget):
         # Join all sentence in a single string
         résumé = " ".join(summary)
         
-        # This is how to create a segmentation from a string text (taken from inputSeg!! 
+        # Create ouput segmentation from summary
         input_seg = Input(résumé)
         segments = list()
         segments.append(
@@ -318,7 +320,7 @@ class TextSummarizer(OWTextableBaseWidget):
             )
         )
         new_seg = Segmentation(segments)
-        self.outputSeg = new_seg"""
+        self.outputSeg = new_seg
         
 
     # loadmodelEN(), loadmodelFR() and loadmodelPT() load choosen model
