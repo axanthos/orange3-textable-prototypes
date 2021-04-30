@@ -67,7 +67,7 @@ class MovieReviews(OWTextableBaseWidget):
     )
 
     # Settings
-    autoSend = settings.Setting(False)
+    autoSend = settings.Setting(True)
     myBasket = settings.Setting([])
 
     #----------------------------------------------------------------------
@@ -233,10 +233,10 @@ class MovieReviews(OWTextableBaseWidget):
             master=self,
             value="selectedTitles",
             labels="titleLabels",
-            callback=None,
+            callback=lambda: self.addButton.setDisabled(
+                self.selectedTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
-        self.titleListbox.doubleClicked.connect(self.addToCorpus)
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
 
@@ -274,7 +274,6 @@ class MovieReviews(OWTextableBaseWidget):
                 self.myTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
-        self.mytitleListbox.doubleClicked.connect(self.remove)
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
 
@@ -379,13 +378,13 @@ class MovieReviews(OWTextableBaseWidget):
                 try:
                     result_string = f'{self.searchResults[idx]["name"]} - {self.searchResults[idx]["year"]}'
                     self.titleLabels.append(result_string)
-                except KeyError: 
+                except KeyError:
                     result_string = f'{self.searchResults[idx]["name"]}'
                     self.titleLabels.append(result_string)
 
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
-            self.addButton.setDisabled(False)
+            self.addButton.setDisabled(self.selectedTitles == list())
 
 
             # Clear progress bar.
@@ -539,6 +538,7 @@ class MovieReviews(OWTextableBaseWidget):
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
+        self.addButton.setDisabled(self.titleLabels == list())
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
