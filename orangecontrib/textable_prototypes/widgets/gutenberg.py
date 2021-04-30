@@ -289,7 +289,10 @@ class Gutenberg(OWTextableBaseWidget):
 
 
     def generate_cache(self):
-        GutenbergCache.create(refresh=True, download=True, unpack=True, parse=True, deleteTemp=True)
+        try:
+            GutenbergCache.create(refresh=True, download=True, unpack=True, parse=True, deleteTemp=True)
+        except Exception:
+            self.infoBox.setText("An error occurred while building the cache", "error")
 
     def search(self):
         """ Parse a query string and do a search in the Gutenberg cache
