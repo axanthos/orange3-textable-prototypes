@@ -67,7 +67,7 @@ class MovieReviews(OWTextableBaseWidget):
     )
 
     # Settings
-    autoSend = settings.Setting(True)
+    autoSend = settings.Setting(False)
     myBasket = settings.Setting([])
 
     #----------------------------------------------------------------------
@@ -237,6 +237,7 @@ class MovieReviews(OWTextableBaseWidget):
                 self.selectedTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
+        self.titleListbox.doubleClicked.connect(self.addToCorpus)
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
 
@@ -274,6 +275,7 @@ class MovieReviews(OWTextableBaseWidget):
                 self.myTitles == list()),
             tooltip="The list of titles whose content will be imported",
         )
+        self.mytitleListbox.doubleClicked.connect(self.remove)
         self.mytitleListbox.setMinimumHeight(150)
         self.mytitleListbox.setSelectionMode(3)
 
@@ -526,7 +528,7 @@ class MovieReviews(OWTextableBaseWidget):
         for segment in self.segmentation:
             segmentLength = len(Segmentation.get_data(segment.str_index))
             numChars += segmentLength
-        message += "(%i character@p)." % numChars
+        message += " (%i character@p)." % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
