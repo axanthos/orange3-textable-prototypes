@@ -43,8 +43,8 @@ from _textable.widgets.TextableUtils import (
 )
 
 class Gutenberg(OWTextableBaseWidget):
-    """Textable widget for importing raw text Genius
-    (https://genius.com/)
+    """Textable widget for importing clean texts from Gutenberg
+    (https://www.gutenberg.org/)
     """
 
     #----------------------------------------------------------------------
@@ -74,7 +74,7 @@ class Gutenberg(OWTextableBaseWidget):
     )
 
     # Saved settings
-    autoSend = settings.Setting(True)
+    autoSend = settings.Setting(False)
     myBasket = settings.Setting([])
 
     def __init__(self):
@@ -138,15 +138,15 @@ class Gutenberg(OWTextableBaseWidget):
             tooltip=("Enter a string"),
         )
 
-        gui.lineEdit(
-            widget=queryBox,
-            master=self,
-            value='authorQuery',
-            orientation='horizontal',
-            label=u"Author: ",
-            labelWidth=120,
-            tooltip=("Enter a string"),
-        )
+        # gui.lineEdit(
+        #     widget=queryBox,
+        #     master=self,
+        #     value='authorQuery',
+        #     orientation='horizontal',
+        #     label=u"Author: ",
+        #     labelWidth=120,
+        #     tooltip=("Enter a string"),
+        # )
 
         # Allows to choose the wanted results numberp (10 by 10)
         queryNbr = gui.comboBox(
@@ -164,6 +164,11 @@ class Gutenberg(OWTextableBaseWidget):
                 "80",
                 "90",
                 "100",
+                "200",
+                "300",
+                "400",
+                "500",
+                "1000"
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -260,7 +265,7 @@ class Gutenberg(OWTextableBaseWidget):
         )
         self.removeButton.setDisabled(True)
 
-        # Delete all confirmed songs button
+        # Delete all confirmed texts button
         self.clearmyBasketButton = gui.button(
             widget=boxbutton2,
             master=self,
@@ -303,9 +308,21 @@ class Gutenberg(OWTextableBaseWidget):
         if query_string:
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
-            query_results = cache.native_query(sql_query="select * from titles where UPPER(name) LIKE UPPER('%{query}%')".format(query=query_string))
+            query_results = cache.native_query(
+                sql_query="select * from titles where upper(name) like upper('%{query}%') limit {limit}"
+                .format(query=query_string, limit=self.nbr_results)
+            )
             # get the results
             self.searchResults = list(query_results)
+
+            # display info message
+            n_results = len(self.searchResults)
+            self.infoBox.setText("{n} result{s} have been found".format(
+                    n=n_results,
+                    s= "s" if n_results > 0 else ""
+                )
+            )
+            
 
             # TODO: display results
             # Update the results list with the search results
@@ -333,13 +350,14 @@ class Gutenberg(OWTextableBaseWidget):
         self.addButton.setDisabled(self.titleLabels == list())
 
 
-    # Add songs function
+    # Add texts function
     def add(self):
         """Add songs in your selection """
         for selectedTitle in self.selectedTitles:
-            songData = self.searchResults[selectedTitle+1]
-            if songData not in self.myBasket:
-                self.myBasket.append(songData)
+            titleData = self.searchResults[selectedTitle]
+            if titleData not in self.myBasket:
+                self.myBasket.append(titleData)
+
         self.updateMytitleLabels()
         self.sendButton.settingsChanged()
 
@@ -347,8 +365,8 @@ class Gutenberg(OWTextableBaseWidget):
     # Update selections function
     def updateMytitleLabels(self):
         self.mytitleLabels = list()
-        for songData in self.myBasket:
-            result_string = songData["title"] + " - " + songData["artist"]
+        for titleData in self.myBasket:
+            result_string = titleData[1]
             self.mytitleLabels.append(result_string)
         self.mytitleLabels = self.mytitleLabels
 
@@ -360,7 +378,7 @@ class Gutenberg(OWTextableBaseWidget):
     def remove(self):
         """Remove the selected songs in your selection """
         self.myBasket = [
-            song for idx, song in enumerate(self.myBasket)
+            title for idx, title in enumerate(self.myBasket)
             if idx not in self.myTitles
         ]
         self.updateMytitleLabels()
@@ -382,7 +400,7 @@ class Gutenberg(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty, please add some songs first",
+                "Your corpus is empty, please add some books first",
                 "warning"
             )
             return
@@ -396,19 +414,34 @@ class Gutenberg(OWTextableBaseWidget):
         # Initialize progress bar.
         progressBar = ProgressBar(
             self,
-            iterations=len(self.myBasket)
+            iterations=len(self.myBasket),
         )
 
-        # Attempt to connect to Genius and retrieve lyrics...
-        selectedSongs = list()
-        song_content = list()
+        selectedTexts = list()
+        text_content = list()
         annotations = list()
+        # get the Gutenberg cache
+        cache = GutenbergCache.get_cache()
         try:
             # TODO: Retrieve selected texts from gutenberg
-            pass
+            for text in self.myBasket:
+
+                # Get the id of the text
+                query_id = cache.native_query(
+                    sql_query="select gutenbergbookid from books where id == {selected_id}"
+                    .format(selected_id=text[2])
+                )
+                gutenberg_id = list(query_id)
+
+                # Get the text with Gutenbergpy 
+                gutenberg_text = gutenbergpy.textget.strip_headers(gutenbergpy.textget.get_text_by_id(gutenberg_id[0][0]))
+                text_content.append(gutenberg_text)
+                
+                annotations.append(text[1])
+                progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
-        except:
+        except Exception:
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
                 "Couldn't download data from Gutenberg",
@@ -419,8 +452,8 @@ class Gutenberg(OWTextableBaseWidget):
 
         # TODO: send gutenberg texts as output
         # Store downloaded lyrics strings in input objects...
-        for song in song_content:
-            newInput = Input(song, self.captionTitle)
+        for text in text_content:
+            newInput = Input(text, self.captionTitle)
             self.createdInputs.append(newInput)
 
         # If there"s only one play, the widget"s output is the created Input.
@@ -435,9 +468,10 @@ class Gutenberg(OWTextableBaseWidget):
                 import_labels_as=None,
             )
 
+        # TODO: annotate with book metadata
         # Annotate segments...
         for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update(annotations[idx])
+            segment.annotations.update({"title": annotations[idx]})
             self.segmentation[idx] = segment
 
         # Clear progress bar.
@@ -456,7 +490,7 @@ class Gutenberg(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Lyrics importation", self.segmentation, self)
+        self.send("Gutenberg importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
