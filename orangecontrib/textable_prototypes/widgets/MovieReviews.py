@@ -142,7 +142,7 @@ class MovieReviews(OWTextableBaseWidget):
         )
 
         corpusButtonBox = gui.widgetBox(
-            widget=corpusBox,
+            widget= corpusBox,
             box=False,
             orientation='horizontal',
         )
@@ -239,8 +239,7 @@ class MovieReviews(OWTextableBaseWidget):
         self.titleListbox.doubleClicked.connect(self.addToCorpus)
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
-
-        
+  
         # Add movies button
         self.addButton = gui.button(
             widget=resultButtonBox,
