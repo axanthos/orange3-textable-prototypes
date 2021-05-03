@@ -129,6 +129,20 @@ class MovieReviews(OWTextableBaseWidget):
             orientation="vertical",
         )
 
+        # List Box where all the searched movies are stocked
+        self.titleListbox = gui.listBox(
+            widget=resultBox,
+            master=self,
+            value="selectedTitles",
+            labels="titleLabels",
+            callback=lambda: self.addButton.setDisabled(
+                self.selectedTitles == list()),
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.titleListbox.doubleClicked.connect(self.addToCorpus)
+        self.titleListbox.setMinimumHeight(150)
+        self.titleListbox.setSelectionMode(3)
+
         resultButtonBox = gui.widgetBox(
             widget=resultBox,
             box=False,
@@ -141,13 +155,25 @@ class MovieReviews(OWTextableBaseWidget):
             orientation="vertical",
         )
 
+        # Corpus where confirmed movies are moved and stocked
+        self.mytitleListbox = gui.listBox(
+            widget=corpusBox,
+            master=self,
+            value="myTitles",
+            labels="mytitleLabels",
+            callback=lambda: self.removeButton.setDisabled(
+                self.myTitles == list()),
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.mytitleListbox.doubleClicked.connect(self.remove)
+        self.mytitleListbox.setMinimumHeight(150)
+        self.mytitleListbox.setSelectionMode(3)
+
         corpusButtonBox = gui.widgetBox(
             widget= corpusBox,
             box=False,
             orientation='horizontal',
         )
-
-
 
         # Allows to enter specific text to the research
         gui.lineEdit(
@@ -226,20 +252,7 @@ class MovieReviews(OWTextableBaseWidget):
             callback=self.searchMovies,
             tooltip="Connect to imdbpy and make a research",
         )
-
-        # List Box where all the searched movies are stocked
-        self.titleListbox = gui.listBox(
-            widget=resultBox,
-            master=self,
-            value="selectedTitles",
-            labels="titleLabels",
-            callback=None,
-            tooltip="The list of titles whose content will be imported",
-        )
-        self.titleListbox.doubleClicked.connect(self.addToCorpus)
-        self.titleListbox.setMinimumHeight(150)
-        self.titleListbox.setSelectionMode(3)
-  
+     
         # Add movies button
         self.addButton = gui.button(
             widget=resultButtonBox,
@@ -262,21 +275,6 @@ class MovieReviews(OWTextableBaseWidget):
         )
         self.clearButton.setDisabled(True)
         #gui.separator(widget=queryBox, height=3)
-
-        # Corpus where confirmed movies are moved and stocked
-        self.mytitleListbox = gui.listBox(
-            widget=corpusBox,
-            master=self,
-            value="myTitles",
-            labels="mytitleLabels",
-            callback=lambda: self.removeButton.setDisabled(
-                self.myTitles == list()),
-            tooltip="The list of titles whose content will be imported",
-        )
-        self.mytitleListbox.doubleClicked.connect(self.remove)
-        self.mytitleListbox.setMinimumHeight(150)
-        self.mytitleListbox.setSelectionMode(3)
-
 
         # Remove movie button
         self.removeButton = gui.button(
@@ -378,13 +376,13 @@ class MovieReviews(OWTextableBaseWidget):
                 try:
                     result_string = f'{self.searchResults[idx]["name"]} - {self.searchResults[idx]["year"]}'
                     self.titleLabels.append(result_string)
-                except KeyError: 
+                except KeyError:
                     result_string = f'{self.searchResults[idx]["name"]}'
                     self.titleLabels.append(result_string)
 
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
-            self.addButton.setDisabled(False)
+            self.addButton.setDisabled(self.selectedTitles == list())
 
 
             # Clear progress bar.
@@ -494,6 +492,8 @@ class MovieReviews(OWTextableBaseWidget):
             )
                 self.controlArea.setDisabled(False)
                 return
+        for movie in list_review:
+            print(movie)
 
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
@@ -526,7 +526,7 @@ class MovieReviews(OWTextableBaseWidget):
         for segment in self.segmentation:
             segmentLength = len(Segmentation.get_data(segment.str_index))
             numChars += segmentLength
-        message += "(%i character@p)." % numChars
+        message += " (%i character@p)." % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
@@ -538,6 +538,7 @@ class MovieReviews(OWTextableBaseWidget):
         del self.titleLabels[:]
         self.titleLabels = self.titleLabels
         self.clearButton.setDisabled(True)
+        self.addButton.setDisabled(self.titleLabels == list())
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
