@@ -89,6 +89,7 @@ class MovieReviews(OWTextableBaseWidget):
         # selections box attributs
         self.myTitles = list()
         self.mytitleLabels = list()
+        # stock all the inputs (movie names) in a list
         self.createdInputs = list()
 
 
@@ -245,6 +246,7 @@ class MovieReviews(OWTextableBaseWidget):
         )
 
         # Reasearch button
+        # Uses "searchMovies" attribute
         self.searchButton = gui.button(
             widget=searchButtonBox,
             master=self,
@@ -266,6 +268,7 @@ class MovieReviews(OWTextableBaseWidget):
         self.addButton.setDisabled(True)
 
         # Clear button
+        # Uses "clearResults" function
         self.clearButton = gui.button(
             widget=resultButtonBox,
             master=self,
