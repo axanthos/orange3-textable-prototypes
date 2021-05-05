@@ -19,8 +19,10 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-# TODO Bouger les boutons de 'clear' et de 'add' sous les listbox
-# TODO Modifier les annotations en output pour avoir des infos plus utiles (nom du film, années de sorties...)
+# TODO Ajouter d'autres annotations
+# TODO Bugfix : Le film ajouté dans le corpus n'est parfois pas le film sélectionné
+# TODO Ajouter les options de recherches
+# TODO Le bouton 'search' devrait être disable quand y'a rien qui est recherché
 
 __version__ = u"0.0.1"
 __author__ = "Caroline Rohrbach, Maryam Zoee, Victor Vermot"
@@ -341,7 +343,6 @@ class MovieReviews(OWTextableBaseWidget):
 
             # searching the movie
             search = ia.search_movie(name)
-            print(search)
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
@@ -418,7 +419,6 @@ class MovieReviews(OWTextableBaseWidget):
                     "warning"
                     )
                     return
-        print(newMovie)
         self.updateCorpus()
         self.sendButton.settingsChanged()
 
@@ -472,12 +472,15 @@ class MovieReviews(OWTextableBaseWidget):
         # Connect to imdb and add elements in lists
         selectedSongs = list()
         list_review = list()
+        list_annotation = list()
         annotations = list()
         try:
             for item in self.myBasket:
                 ia = imdb.IMDb()
                 movie = ia.get_movie_reviews(item['id'])
+                movie_annotations = ia.get_movie(item['id'])
                 list_review.append(movie)
+                list_annotation.append(movie_annotations)
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
 
@@ -500,10 +503,12 @@ class MovieReviews(OWTextableBaseWidget):
                 newInput = Input(reviews)
                 self.createdInputs.append(newInput)
                 new_dict = review.copy()
-                annotations.append(new_dict)
 
-        for movie in list_review:
-            print(movie)
+                # Store the annotation as dicts in a separate list
+                annotations_dict = {"title": movie_annotations, "year": movie_annotations["year"]}
+                annot_dict_copy = annotations_dict.copy()
+                annotations.append(annot_dict_copy)
+            
 
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
@@ -540,7 +545,6 @@ class MovieReviews(OWTextableBaseWidget):
 
         self.send('Segmentation', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
-        self.sendButton.setDisabled(self.newQuery)
 
     def clearResults(self):
         """Clear the results list"""
