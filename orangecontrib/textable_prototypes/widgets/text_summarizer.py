@@ -167,6 +167,24 @@ class TextSummarizer(OWTextableBaseWidget):
             ),
         )
 
+        method_segment = gui.comboBox(
+            widget= optionsBox,
+            master=self,
+            value= "segmentation",
+            items = [
+                "Summarize segmentation as one",
+                "Summarize each segments individually",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label= "Segmentation",
+            labelWidth=135,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "Please select the method. \n"
+            ),
+        )
+
         gui.separator(widget=optionsBox, height=2)
         
         gui.rubber(self.controlArea)
