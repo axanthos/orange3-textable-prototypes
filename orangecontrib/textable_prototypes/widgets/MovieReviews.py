@@ -379,7 +379,7 @@ class MovieReviews(OWTextableBaseWidget):
                 try:
                     result_string = f'{self.searchResults[idx]["name"]} - {self.searchResults[idx]["year"]}'
                     self.titleLabels.append(result_string)
-                except KeyError:
+                except:
                     result_string = f'{self.searchResults[idx]["name"]}'
                     self.titleLabels.append(result_string)
 
@@ -398,10 +398,28 @@ class MovieReviews(OWTextableBaseWidget):
     # Add movie to corpus
     def addToCorpus(self):
         """Add movies in your selection """
+        cond_list = list()
         for selectedTitle in self.selectedTitles:
             newMovie = self.searchResults[selectedTitle+1]
             if newMovie not in self.myBasket:
-                self.myBasket.append(newMovie)
+                # Test if the movie has review associated, if not it refuses to add it to corpus
+                try:
+                    ia = imdb.IMDb()
+                    movie = ia.get_movie_reviews(newMovie['id'])
+                    cond_list.append(movie)
+                    for movie in cond_list:
+                        data = movie.get('data', "")
+                        reviews_data = data.get('reviews')
+                        for review in reviews_data:
+                            continue
+                    self.myBasket.append(newMovie)
+                except:
+                    self.infoBox.setText(
+                    "Cannot add to corpus. The movie has no associated reviews",
+                    "warning"
+                    )
+                    return
+        print(newMovie)
         self.updateCorpus()
         self.sendButton.settingsChanged()
 
@@ -452,7 +470,7 @@ class MovieReviews(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-        # Attempt to connect to Genius and retrieve lyrics...
+        # Connect to imdb and add elements in lists
         selectedSongs = list()
         list_review = list()
         annotations = list()
@@ -479,22 +497,22 @@ class MovieReviews(OWTextableBaseWidget):
             #for key, value in movie.items():
             #try: 
             data = movie.get('data', "")
-            try:
-                reviews_data = data.get('reviews')
-                for review in reviews_data:
-                    reviews = review.get('content')
-                    newInput = Input(reviews)
-                    self.createdInputs.append(newInput)
-                    new_dict = review.copy()
-                    annotations.append(new_dict)
-            
-            except TypeError:
+            #try:
+            reviews_data = data.get('reviews')
+            for review in reviews_data:
+                reviews = review.get('content')
+                newInput = Input(reviews)
+                self.createdInputs.append(newInput)
+                new_dict = review.copy()
+                annotations.append(new_dict)
+
+            """except TypeError:
                 self.infoBox.setText(
                 "The movie has no associated reviews",
                 "warning"
             )
                 self.controlArea.setDisabled(False)
-                return
+                return"""
         for movie in list_review:
             print(movie)
 
@@ -535,7 +553,8 @@ class MovieReviews(OWTextableBaseWidget):
 
         self.send('Segmentation', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
-        
+        self.sendButton.setDisabled(self.newQuery)
+
     def clearResults(self):
         """Clear the results list"""
         del self.titleLabels[:]
@@ -548,8 +567,6 @@ class MovieReviews(OWTextableBaseWidget):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
-    
-    
 
     def clearCorpus(self):
         """Remove all movies in the corpus"""
