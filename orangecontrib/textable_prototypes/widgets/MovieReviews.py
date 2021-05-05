@@ -20,8 +20,7 @@ along with Orange-Textable-Prototypes. If not, see
 """
 
 # TODO Bouger les boutons de 'clear' et de 'add' sous les listbox
-# TODO Voir si c'est possible de corriger les annotations en output
-# TODO Dealer avec les films qui n'ont pas de reviews
+# TODO Modifier les annotations en output pour avoir des infos plus utiles (nom du film, années de sorties...)
 
 __version__ = u"0.0.1"
 __author__ = "Caroline Rohrbach, Maryam Zoee, Victor Vermot"
@@ -415,7 +414,7 @@ class MovieReviews(OWTextableBaseWidget):
                     self.myBasket.append(newMovie)
                 except:
                     self.infoBox.setText(
-                    "Cannot add to corpus. The movie has no associated reviews",
+                    "Cannot add to corpus. One or more selected movies have no associated reviews",
                     "warning"
                     )
                     return
@@ -494,10 +493,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         # Store movie critics strings in input objects...
         for movie in list_review:
-            #for key, value in movie.items():
-            #try: 
             data = movie.get('data', "")
-            #try:
             reviews_data = data.get('reviews')
             for review in reviews_data:
                 reviews = review.get('content')
@@ -506,13 +502,6 @@ class MovieReviews(OWTextableBaseWidget):
                 new_dict = review.copy()
                 annotations.append(new_dict)
 
-            """except TypeError:
-                self.infoBox.setText(
-                "The movie has no associated reviews",
-                "warning"
-            )
-                self.controlArea.setDisabled(False)
-                return"""
         for movie in list_review:
             print(movie)
 
@@ -529,8 +518,6 @@ class MovieReviews(OWTextableBaseWidget):
 
 
         # Annotate segments...
-
-
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
