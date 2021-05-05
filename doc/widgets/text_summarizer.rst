@@ -74,7 +74,7 @@ Messages
 Information
 ~~~~~~~~~~~
 
-*<n> files, <m> utterances and <l> words sent to output.*
+*1 segment sent to output.*
     This confirms that the widget has operated properly.
 
 Warnings
@@ -88,11 +88,7 @@ Warnings
 
 *Widget needs input.*
     A segment should be input in the widget.
-
-
-Errors
-~~~~~~
-
-Note
-~~~~
+    
+*Please use the spaCy widget to download a language model first.*
+    Warns user that a spaCy model must be installed and disable GUI.
 
