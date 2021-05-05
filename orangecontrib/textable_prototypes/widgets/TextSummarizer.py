@@ -85,7 +85,7 @@ class TextSummarizer(OWTextableBaseWidget):
 
     numSents = settings.Setting(5)
     language = settings.Setting("French")
-    typeSeg =  settings.Setting("Per segment")
+    typeSeg =  settings.Setting("Summarize each segments individually")
 
     #----------------------------------------------------------------------
     # The following lines need to be copied verbatim in every Textable widget...
