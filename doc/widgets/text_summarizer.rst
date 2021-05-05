@@ -38,6 +38,9 @@ This widget is designed to summarize a text segmentation. It takes, as an input,
 There are two versions of the Text_Summarizer a basic and advanced version. The basic version allows the user to chose the desired language between english, french or portugese. It also allows the user to chose the size of the summary.
 The advanced version adds the following options: the choice of the summary length based on a % of the input, meaning that the user can chose to have a summary 50% as long as the input. The other option will allow the user to visualise the most important words in a World Cloud.
 
+.. note::
+   When having several segments as input, please not that the segments have to be in the same language to have an intelligible summary.
+
 Interface
 ~~~~~~~~~
 
