@@ -85,6 +85,7 @@ class TextSummarizer(OWTextableBaseWidget):
 
     numSents = settings.Setting(5)
     language = settings.Setting("French")
+    typeSeg =  settings.Setting("Per segment")
 
     #----------------------------------------------------------------------
     # The following lines need to be copied verbatim in every Textable widget...
@@ -165,6 +166,24 @@ class TextSummarizer(OWTextableBaseWidget):
             ),
         )
 
+        method_segment = gui.comboBox(
+            widget= optionsBox,
+            master=self,
+            value= "typeSeg",
+            items = [
+                "Summarize all segments as one",
+                "Summarize each segments individually",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label= "Segmentation",
+            labelWidth=135,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "Please select the method. \n"
+            ),
+        )
+
         gui.separator(widget=optionsBox, height=2)
         
         gui.rubber(self.controlArea)
@@ -236,10 +255,31 @@ class TextSummarizer(OWTextableBaseWidget):
             cv = self.loadModelEN()
         elif self.language == "Portuguese":
             cv = self.loadModelPT()
-        
-        # Call main function 
-        self.summarize(cv) 
 
+        # Type of segmentation (per segment or per segmentation)
+        segments = list()
+        if self.typeSeg == "Summarize each segments individually":
+            # Process each segment separately, then create segmentation 
+            for segment in self.inputSeg: 
+                content = segment.get_content() 
+                resume = self.summarize(cv, content)
+                segments.append(
+                    Segment(
+                        str_index=resume[0].str_index,   
+                    )
+                )
+        elif self.typeSeg == "Summarize all segments as one":
+            merged_seg = " ".join([segment.get_content() for segment in self.inputSeg])
+            resume = self.summarize(cv, merged_seg)
+            segments.append(
+                    Segment(
+                        str_index=resume[0].str_index,   
+                    )
+                )
+        # Create segmentation from segment() and assign it to the output
+        self.outputSeg = Segmentation(segments)
+
+        # 
         # Segmentation go to outputs...
         self.send("Summary", self.outputSeg, self)
 
@@ -258,12 +298,8 @@ class TextSummarizer(OWTextableBaseWidget):
     # Main function
     ################################################################
 
-    def summarize(self, cv):
+    def summarize(self, cv, content):
         "Main function that summarize the text"
-
-        # self.outputSeg = self.inputSeg
-
-        content = self.inputSeg[0].get_content()
 
         doc = self.nlp(content)
 
@@ -319,15 +355,8 @@ class TextSummarizer(OWTextableBaseWidget):
         resume = " ".join(summary_str)
 
         # Create ouput segmentation from summary
-        input_seg = Input(resume)
-        segments = list()
-        segments.append(
-            Segment(
-                str_index=input_seg[0].str_index,   
-            )
-        )
-        new_seg = Segmentation(segments)
-        self.outputSeg = new_seg
+        return Input(resume)
+        
         
 
 
