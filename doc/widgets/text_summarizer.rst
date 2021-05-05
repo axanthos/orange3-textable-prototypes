@@ -39,7 +39,7 @@ There are two versions of the Text_Summarizer a basic and advanced version. The 
 The advanced version adds the following options: the choice of the summary length based on a % of the input, meaning that the user can chose to have a summary 50% as long as the input. The other option will allow the user to visualise the most important words in a World Cloud.
 
 .. note::
-   When having several segments as input, please not that the segments have to be in the same language to have an intelligible summary.
+   When having several segments as input, please note that the segments have to be in the same language to have an intelligible summary.
 
 Interface
 ~~~~~~~~~
