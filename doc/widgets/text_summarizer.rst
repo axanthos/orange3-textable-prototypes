@@ -77,7 +77,7 @@ Messages
 Information
 ~~~~~~~~~~~
 
-*1 segment sent to output.*
+*<n> segment sent to output.*
     This confirms that the widget has operated properly.
 
 Warnings
