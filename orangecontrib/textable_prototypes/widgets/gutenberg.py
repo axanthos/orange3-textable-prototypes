@@ -42,6 +42,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
+import traceback
+
 class Gutenberg(OWTextableBaseWidget):
     """Textable widget for importing clean texts from Gutenberg
     (https://www.gutenberg.org/)
@@ -432,20 +434,21 @@ class Gutenberg(OWTextableBaseWidget):
                 gutenberg_id = list(query_id)
 
                 # Get the text with Gutenbergpy 
-                gutenberg_text = gutenbergpy.textget.strip_headers(gutenbergpy.textget.get_text_by_id(gutenberg_id[0][0]))
+                gutenberg_text = gutenbergpy.textget.strip_headers(gutenbergpy.textget.get_text_by_id(gutenberg_id[0][0])).decode("utf-8")
                 text_content.append(gutenberg_text)
                 
                 annotations.append(text[1])
                 progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
-        except Exception:
+        except Exception as e:
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
                 "Couldn't download data from Gutenberg",
                 "error"
             )
             self.controlArea.setDisabled(False)
+            traceback.print_exc()
             return
 
         # TODO: send gutenberg texts as output
