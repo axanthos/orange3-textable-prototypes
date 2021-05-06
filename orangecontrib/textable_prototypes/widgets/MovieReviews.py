@@ -19,9 +19,10 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-# TODO Bouger les boutons de 'clear' et de 'add' sous les listbox
-# TODO Voir si c'est possible de corriger les annotations en output
-# TODO Dealer avec les films qui n'ont pas de reviews
+# TODO Ajouter d'autres annotations
+# TODO Bugfix : Le film ajouté dans le corpus n'est parfois pas le film sélectionné
+# TODO Ajouter les options de recherches
+# TODO Le bouton 'search' devrait être disable quand y'a rien qui est recherché
 
 __version__ = u"0.0.1"
 __author__ = "Caroline Rohrbach, Maryam Zoee, Victor Vermot"
@@ -89,6 +90,7 @@ class MovieReviews(OWTextableBaseWidget):
         # selections box attributs
         self.myTitles = list()
         self.mytitleLabels = list()
+        # stock all the inputs (movie names) in a list
         self.createdInputs = list()
 
 
@@ -245,6 +247,7 @@ class MovieReviews(OWTextableBaseWidget):
         )
 
         # Reasearch button
+        # Uses "searchMovies" attribute
         self.searchButton = gui.button(
             widget=searchButtonBox,
             master=self,
@@ -266,6 +269,7 @@ class MovieReviews(OWTextableBaseWidget):
         self.addButton.setDisabled(True)
 
         # Clear button
+        # Uses "clearResults" function
         self.clearButton = gui.button(
             widget=resultButtonBox,
             master=self,
@@ -339,7 +343,6 @@ class MovieReviews(OWTextableBaseWidget):
 
             # searching the movie
             search = ia.search_movie(name)
-            print(search)
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
@@ -376,7 +379,7 @@ class MovieReviews(OWTextableBaseWidget):
                 try:
                     result_string = f'{self.searchResults[idx]["name"]} - {self.searchResults[idx]["year"]}'
                     self.titleLabels.append(result_string)
-                except KeyError:
+                except:
                     result_string = f'{self.searchResults[idx]["name"]}'
                     self.titleLabels.append(result_string)
 
@@ -395,10 +398,27 @@ class MovieReviews(OWTextableBaseWidget):
     # Add movie to corpus
     def addToCorpus(self):
         """Add movies in your selection """
+        cond_list = list()
         for selectedTitle in self.selectedTitles:
             newMovie = self.searchResults[selectedTitle+1]
             if newMovie not in self.myBasket:
-                self.myBasket.append(newMovie)
+                # Test if the movie has review associated, if not it refuses to add it to corpus
+                try:
+                    ia = imdb.IMDb()
+                    movie = ia.get_movie_reviews(newMovie['id'])
+                    cond_list.append(movie)
+                    for movie in cond_list:
+                        data = movie.get('data', "")
+                        reviews_data = data.get('reviews')
+                        for review in reviews_data:
+                            continue
+                    self.myBasket.append(newMovie)
+                except:
+                    self.infoBox.setText(
+                    "Cannot add to corpus. One or more selected movies have no associated reviews",
+                    "warning"
+                    )
+                    return
         self.updateCorpus()
         self.sendButton.settingsChanged()
 
@@ -449,15 +469,18 @@ class MovieReviews(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-        # Attempt to connect to Genius and retrieve lyrics...
+        # Connect to imdb and add elements in lists
         selectedSongs = list()
         list_review = list()
+        list_annotation = list()
         annotations = list()
         try:
             for item in self.myBasket:
                 ia = imdb.IMDb()
                 movie = ia.get_movie_reviews(item['id'])
+                movie_annotations = ia.get_movie(item['id'])
                 list_review.append(movie)
+                list_annotation.append(movie_annotations)
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
 
@@ -473,27 +496,19 @@ class MovieReviews(OWTextableBaseWidget):
 
         # Store movie critics strings in input objects...
         for movie in list_review:
-            #for key, value in movie.items():
-            #try: 
             data = movie.get('data', "")
-            try:
-                reviews_data = data.get('reviews')
-                for review in reviews_data:
-                    reviews = review.get('content')
-                    newInput = Input(reviews)
-                    self.createdInputs.append(newInput)
-                    new_dict = review.copy()
-                    annotations.append(new_dict)
+            reviews_data = data.get('reviews')
+            for review in reviews_data:
+                reviews = review.get('content')
+                newInput = Input(reviews)
+                self.createdInputs.append(newInput)
+                new_dict = review.copy()
+
+                # Store the annotation as dicts in a separate list
+                annotations_dict = {"title": movie_annotations, "year": movie_annotations["year"]}
+                annot_dict_copy = annotations_dict.copy()
+                annotations.append(annot_dict_copy)
             
-            except TypeError:
-                self.infoBox.setText(
-                "The movie has no associated reviews",
-                "warning"
-            )
-                self.controlArea.setDisabled(False)
-                return
-        for movie in list_review:
-            print(movie)
 
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
@@ -508,8 +523,6 @@ class MovieReviews(OWTextableBaseWidget):
 
 
         # Annotate segments...
-
-
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
             self.segmentation[idx] = segment
@@ -532,7 +545,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         self.send('Segmentation', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
-        
+
     def clearResults(self):
         """Clear the results list"""
         del self.titleLabels[:]
@@ -545,8 +558,6 @@ class MovieReviews(OWTextableBaseWidget):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
-    
-    
 
     def clearCorpus(self):
         """Remove all movies in the corpus"""
