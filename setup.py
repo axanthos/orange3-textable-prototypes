@@ -105,6 +105,7 @@ INSTALL_REQUIRES = (
     'pytesseract',
     'pillow',
     'scikit-learn',
+    'gutenbergpy',
 ),
 
 EXTRAS_REQUIRE = {
