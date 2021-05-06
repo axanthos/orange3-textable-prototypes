@@ -326,7 +326,9 @@ class TextSummarizer(OWTextableBaseWidget):
 
         # For each word in each sentence ... 
         for sent in doc.sents:
-            for word in sent :    
+            count = 0
+            for word in sent :
+                count += 1
                 # if the word appears in word_frequency dict
                 if word.text.lower() in word_frequency.keys(): 
                     # If the sentence is already in sentence_rank dict, we add points
