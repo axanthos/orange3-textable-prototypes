@@ -335,6 +335,11 @@ class TextSummarizer(OWTextableBaseWidget):
                     # else we create a new key/value pair in dict    
                     else:
                         sentence_rank[sent]=word_frequency[word.text.lower()]
+                        
+            # Normalize: divide score of current sentence by number of words 
+            if sentence_rank.get(sent, None) != None: 
+                sentence_rank[sent] = (sentence_rank.get(sent) / count)
+                        
 
         # Sort sentences
         top_sentences=(sorted(sentence_rank.values())[::-1])
