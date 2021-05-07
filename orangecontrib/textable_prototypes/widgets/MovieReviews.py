@@ -114,6 +114,12 @@ class MovieReviews(OWTextableBaseWidget):
             orientation="horizontal",
         )
 
+        """genreBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Chose a genre",
+            orientation="horizontal",
+        )"""
+
         filterBox = gui.widgetBox(
             widget=self.controlArea,
             box="Filters",
@@ -199,6 +205,7 @@ class MovieReviews(OWTextableBaseWidget):
                 "Genre",
             ],
             sendSelectedValue=True,
+            #callback=self.mode_changed,
             orientation="horizontal",
             label="Search Type: ",
             labelWidth=120,
@@ -206,6 +213,47 @@ class MovieReviews(OWTextableBaseWidget):
                 "Please select the desired search.\n"
             ),
         )
+        """
+        genreTypes = gui.comboBox(
+            widget=genreBox,
+            master=self,
+            value="type_results",
+            items=[
+                "Comedy",
+                "Action",
+                "Drama",
+                "Horror",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Search Type: ",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
+        )
+
+        searchTypeGenre = gui.comboBox(
+            widget=genreBox,
+            master=self,
+            value="type_results",
+            items=[
+                "Title",
+                "Actor",
+                "Genre",
+            ],
+            sendSelectedValue=True,
+            callback=self.mode_changed,
+            orientation="horizontal",
+            label="Search Type: ",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
+        )
+        """
+
+
         # Allows to chose a filter for the search
         searchFilter = gui.comboBox(
             widget=filterBox,
@@ -302,6 +350,7 @@ class MovieReviews(OWTextableBaseWidget):
                 u"Remove all movies from your corpus."
             ),
         )
+
         self.clearmyBasket.setDisabled(True)
 
         gui.separator(widget=corpusBox, height=3)
@@ -313,8 +362,25 @@ class MovieReviews(OWTextableBaseWidget):
         self.searchButton.setDefault(True)
         self.infoBox.draw()
 
+        #self.mode_changed()
+        self.updateCorpus()
+
         # Send data if autoSend.
         self.sendButton.sendIf()
+
+    """
+    def mode_changed(self):
+        if self.newQuery == "Title": # 0 = subreddit selected
+            # Hide URL and full text
+            self.genreBox.setVisible(False)
+
+        elif self.newQuery == "Genre":
+            # Hide subreddit
+            self.queryBox.setVisible(False)
+            self.genreBox.setVisible(True)
+        return
+    """
+
 
 
     def searchMovies(self):
@@ -326,7 +392,6 @@ class MovieReviews(OWTextableBaseWidget):
             counter = 1
             counter_max = int(self.nbr_results)
             result_id = 0
-            result_artist = []
 
             self.controlArea.setDisabled(True)
 
@@ -335,32 +400,58 @@ class MovieReviews(OWTextableBaseWidget):
                 self,
                 iterations=counter_max
             )
+            if self.type_results == 'Title':
+                ia = imdb.IMDb()
 
-            ia = imdb.IMDb()
-            
-            # movie name
-            name = query_string
+                # movie name
+                movie_name = query_string
 
-            # searching the movie
-            search = ia.search_movie(name)
+                # searching the movie
+                search = ia.search_movie(movie_name)
+                for film in search:
+                    try:
+                        good_search = film['year']
+                    except KeyError:
+                        search.remove(film)
+
+            elif self.type_results == 'Actor':
+                ia = imdb.IMDb()
+                # movie name
+                actor_name = query_string
+                people = ia.search_person(actor_name)
+                searched_actor = people[0].personID
+                first_search = ia.get_person_filmography(searched_actor)
+                print(first_search)
+                
+                try:
+                   search = first_search['data']['filmography']['actor']
+                except KeyError:
+                    search = first_search['data']['filmography']['actress']
+
+                for film in search:
+                    try:
+                        good_search = film['year']
+                    except KeyError:
+                        search.remove(film)
+                        
+                print(search)
+                #print(actor_results)
+            elif self.type_results == 'Genre':
+                ia = imdb.IMDb()
+                result = ia.get_keyword('marvel')
+                print(result)
+
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
             for result in search:
                 if counter <= counter_max:
-                    #print(counter)
-                    #print(counter_max)
-                    try:
-                        result_id += 1
-                        year = result['year']
-                        movie_id = result.movieID
-                        result_list[result_id] = {'name': result,
-                                                'year': year,
-                                                'id': movie_id}
-                    except KeyError:
-                        result_id += 1
-                        result_list[result_id] = {'name': result,}
-
+                    result_id += 1
+                    year = result['year']
+                    movie_id = result.movieID
+                    result_list[result_id] = {'name': result,
+                                            'year': year,
+                                            'id': movie_id}
                     counter += 1
                 else:
                     break
@@ -411,7 +502,7 @@ class MovieReviews(OWTextableBaseWidget):
                         data = movie.get('data', "")
                         reviews_data = data.get('reviews')
                         for review in reviews_data:
-                            continue
+                            pass
                     self.myBasket.append(newMovie)
                 except:
                     self.infoBox.setText(
@@ -457,7 +548,7 @@ class MovieReviews(OWTextableBaseWidget):
                 "warning"
             )
             return
-        
+
         # Clear created Inputs.
         self.clearCreatedInputs()
 
@@ -565,8 +656,6 @@ class MovieReviews(OWTextableBaseWidget):
         self.myBasket = list()
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
-    
-
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
