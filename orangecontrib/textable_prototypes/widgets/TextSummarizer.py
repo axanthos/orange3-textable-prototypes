@@ -147,6 +147,19 @@ class TextSummarizer(OWTextableBaseWidget):
             step=1,
         )
 
+        optionsPercentage = gui.hSlider(
+            widget=optionsBox,
+            master=self,
+            value= "percentage",
+            box= 1
+            label="Length in %",
+            callback_finished==self.sendButton.settingsChanged,
+            minValue= 0
+            maxValue= 100
+            width= 10
+
+        )
+
         method_combo = gui.comboBox(
             widget=optionsBox,
             master=self,
