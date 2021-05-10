@@ -111,13 +111,13 @@ class MovieReviews(OWTextableBaseWidget):
         # Creation of the different working areas
         self.queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search movies",
+            box="Query",
             orientation="horizontal",
         )
 
         self.genreBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Chose a genre",
+            box="Query",
             orientation="horizontal",
         )
 
