@@ -121,7 +121,7 @@ class MovieReviews(OWTextableBaseWidget):
             orientation="horizontal",
         )
 
-        filterBox = gui.widgetBox(
+        self.filterBox = gui.widgetBox(
             widget=self.controlArea,
             box="Filters",
             orientation="horizontal",
@@ -256,8 +256,8 @@ class MovieReviews(OWTextableBaseWidget):
 
 
         # Allows to chose a filter for the search
-        searchFilter = gui.comboBox(
-            widget=filterBox,
+        self.searchFilter = gui.comboBox(
+            widget=self.filterBox,
             master=self,
             value="filter_results",
             items=[
@@ -276,7 +276,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         # Allows to choose the wanted results numberp (10 by 10)
         searchNbr = gui.comboBox(
-            widget=filterBox,
+            widget=self.filterBox,
             master=self,
             value="nbr_results",
             items=[
@@ -378,11 +378,21 @@ class MovieReviews(OWTextableBaseWidget):
             # Hide URL and full text
             self.genreBox.setVisible(False)
             self.queryBox.setVisible(True)
+            self.filterBox.setVisible(True)
+            self.searchFilter.setVisible(False)
 
         elif self.type_results == "Genre":
             # Hide subreddit
             self.queryBox.setVisible(False)
             self.genreBox.setVisible(True)
+            self.filterBox.setVisible(True)
+            self.searchFilter.setVisible(True)
+        
+        elif self.type_results == "Actor":
+            self.queryBox.setVisible(True)
+            self.genreBox.setVisible(False)
+            self.filterBox.setVisible(True)
+            self.searchFilter.setVisible(True)
         return
 
 
