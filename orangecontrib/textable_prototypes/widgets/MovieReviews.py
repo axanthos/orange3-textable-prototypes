@@ -386,8 +386,6 @@ class MovieReviews(OWTextableBaseWidget):
         return
 
 
-
-
     def searchMovies(self):
         """Search from imdb movie database"""
         result_list = {}
