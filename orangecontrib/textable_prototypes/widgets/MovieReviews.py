@@ -20,8 +20,8 @@ along with Orange-Textable-Prototypes. If not, see
 """
 
 # TODO Ajouter d'autres annotations
-# TODO Bugfix : Le film ajouté dans le corpus n'est parfois pas le film sélectionné
 # TODO Ajouter les options de recherches
+# TODO Les recherches devraient filtrés les films n'ayant pas de critique avant de les afficher dans le corpus 
 # TODO Le bouton 'search' devrait être disable quand y'a rien qui est recherché
 
 __version__ = u"0.0.1"
@@ -82,6 +82,7 @@ class MovieReviews(OWTextableBaseWidget):
         # Search filters attributs
         self.newQuery = ''
         self.type_results = 'Title'
+        self.genre_searched = 'Comedy'
         self.filter_results = 'Popularity'
         self.nbr_results = '10'
         # Results box attributs
@@ -108,17 +109,17 @@ class MovieReviews(OWTextableBaseWidget):
         # User interface...
 
         # Creation of the different working areas
-        queryBox = gui.widgetBox(
+        self.queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Search movies",
             orientation="horizontal",
         )
 
-        """genreBox = gui.widgetBox(
+        self.genreBox = gui.widgetBox(
             widget=self.controlArea,
             box="Chose a genre",
             orientation="horizontal",
-        )"""
+        )
 
         filterBox = gui.widgetBox(
             widget=self.controlArea,
@@ -185,7 +186,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         # Allows to enter specific text to the research
         gui.lineEdit(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value='newQuery',
             orientation='horizontal',
@@ -196,45 +197,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         # Allows to choose a type of search
         searchType = gui.comboBox(
-            widget=queryBox,
-            master=self,
-            value="type_results",
-            items=[
-                "Title",
-                "Actor",
-                "Genre",
-            ],
-            sendSelectedValue=True,
-            #callback=self.mode_changed,
-            orientation="horizontal",
-            label="Search Type: ",
-            labelWidth=120,
-            tooltip=(
-                "Please select the desired search.\n"
-            ),
-        )
-        """
-        genreTypes = gui.comboBox(
-            widget=genreBox,
-            master=self,
-            value="type_results",
-            items=[
-                "Comedy",
-                "Action",
-                "Drama",
-                "Horror",
-            ],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Search Type: ",
-            labelWidth=120,
-            tooltip=(
-                "Please select the desired search.\n"
-            ),
-        )
-
-        searchTypeGenre = gui.comboBox(
-            widget=genreBox,
+            widget=self.queryBox,
             master=self,
             value="type_results",
             items=[
@@ -251,7 +214,45 @@ class MovieReviews(OWTextableBaseWidget):
                 "Please select the desired search.\n"
             ),
         )
-        """
+
+        genreTypes = gui.comboBox(
+            widget=self.genreBox,
+            master=self,
+            value="genre_searched",
+            items=[
+                "Comedy",
+                "Action",
+                "Drama",
+                "Horror",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Search Type: ",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
+        )
+
+        searchTypeGenre = gui.comboBox(
+            widget=self.genreBox,
+            master=self,
+            value="type_results",
+            items=[
+                "Title",
+                "Actor",
+                "Genre",
+            ],
+            sendSelectedValue=True,
+            callback=self.mode_changed,
+            orientation="horizontal",
+            label="Search Type: ",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
+        )
+
 
 
         # Allows to chose a filter for the search
@@ -365,21 +366,25 @@ class MovieReviews(OWTextableBaseWidget):
         #self.mode_changed()
         self.updateCorpus()
 
+        self.mode_changed()
+
         # Send data if autoSend.
         self.sendButton.sendIf()
 
-    """
+
     def mode_changed(self):
-        if self.newQuery == "Title": # 0 = subreddit selected
+        self.sendButton.settingsChanged()
+        if self.type_results == "Title": # 0 = subreddit selected
             # Hide URL and full text
             self.genreBox.setVisible(False)
+            self.queryBox.setVisible(True)
 
-        elif self.newQuery == "Genre":
+        elif self.type_results == "Genre":
             # Hide subreddit
             self.queryBox.setVisible(False)
             self.genreBox.setVisible(True)
         return
-    """
+
 
 
 
