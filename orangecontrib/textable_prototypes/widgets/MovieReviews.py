@@ -275,7 +275,7 @@ class MovieReviews(OWTextableBaseWidget):
         )
 
         # Allows to choose the wanted results numberp (10 by 10)
-        searchNbr = gui.comboBox(
+        self.searchNbr = gui.comboBox(
             widget=self.filterBox,
             master=self,
             value="nbr_results",
@@ -379,20 +379,26 @@ class MovieReviews(OWTextableBaseWidget):
             self.genreBox.setVisible(False)
             self.queryBox.setVisible(True)
             self.filterBox.setVisible(True)
-            self.searchFilter.setVisible(False)
+            #self.searchFilter.setVisible(False)
+            self.searchFilter.setDisabled(True)
+            self.searchNbr.setVisible(True)
 
         elif self.type_results == "Genre":
-            # Hide subreddit
+            # Hide Title
             self.queryBox.setVisible(False)
             self.genreBox.setVisible(True)
             self.filterBox.setVisible(True)
-            self.searchFilter.setVisible(True)
+            #self.searchFilter.setVisible(True)
+            self.searchFilter.setDisabled(False)
+            self.searchNbr.setVisible(True)
         
         elif self.type_results == "Actor":
             self.queryBox.setVisible(True)
             self.genreBox.setVisible(False)
             self.filterBox.setVisible(True)
-            self.searchFilter.setVisible(True)
+            #self.searchFilter.setVisible(True)
+            self.searchFilter.setDisabled(False)
+            self.searchNbr.setVisible(True)
         return
 
 
