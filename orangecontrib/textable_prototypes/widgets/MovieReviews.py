@@ -375,7 +375,7 @@ class MovieReviews(OWTextableBaseWidget):
     def mode_changed(self):
         self.sendButton.settingsChanged()
         if self.type_results == "Title": # 0 = subreddit selected
-            # Hide URL and full text
+            # Hide Genre box
             self.genreBox.setVisible(False)
             self.queryBox.setVisible(True)
             self.filterBox.setVisible(True)
@@ -393,6 +393,7 @@ class MovieReviews(OWTextableBaseWidget):
             self.searchNbr.setVisible(True)
         
         elif self.type_results == "Actor":
+            # searchFilter disabled
             self.queryBox.setVisible(True)
             self.genreBox.setVisible(False)
             self.filterBox.setVisible(True)
@@ -504,6 +505,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         else:
             self.infoBox.setText("Please enter a movie title", "warning")
+    
 
     # Add movie to corpus
     def addToCorpus(self):
