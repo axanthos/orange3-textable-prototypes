@@ -20,6 +20,7 @@ __version__ = u"0.0.1"
 __author__ = "Melinda Femminis, Catherine Pedroni, Jason Ola"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
+import sys
 import importlib.util
 import sys
 import os
@@ -172,7 +173,7 @@ class TextSummarizer(OWTextableBaseWidget):
             ],
             sendSelectedValue=True,
             orientation="horizontal",
-            label="method:",
+            label="Method:",
             labelWidth=135,
             callback=self.sendButton.settingsChanged,
             tooltip=(
@@ -258,6 +259,17 @@ class TextSummarizer(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
 
+    def checkNumSentWarning(self, doc):
+        """Warns user if the summary's sentences' number is bigger than the input's sentences' number."""
+        if self.method == "Number of sentences":
+            count = 0
+            for sent in doc.sents:
+                count += 1
+            print(count)    
+            if self.numSents > count:
+                print(count)
+                self.infoBox.setText("The summary's sentences' number needs to be smaller than the input's sentences' number.", "warning")
+
 
 
     ################################################################
@@ -277,6 +289,7 @@ class TextSummarizer(OWTextableBaseWidget):
             self.infoBox.setText("Widget needs input.", "warning")
             return
 
+
         # Initialize progress bar.
         self.infoBox.setText(
             u"Processing, please wait...", 
@@ -292,6 +305,7 @@ class TextSummarizer(OWTextableBaseWidget):
             cv = self.loadModelEN()
         elif self.language == "Portuguese":
             cv = self.loadModelPT()
+
 
         # Type of segmentation (per segment or per segmentation)
         segments = list()
@@ -339,6 +353,10 @@ class TextSummarizer(OWTextableBaseWidget):
         "Main function that summarize the text"
 
         doc = self.nlp(content)
+
+        # Check if the sentence number is right
+        if self.checkNumSentWarning(doc):
+            return
 
         corpus = [sent.text.lower() for sent in doc.sents]
         cv_fit = cv.fit_transform(corpus) 
