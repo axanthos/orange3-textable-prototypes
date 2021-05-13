@@ -81,11 +81,13 @@ class TextSummarizer(OWTextableBaseWidget):
     want_main_area = False
 
     #----------------------------------------------------------------------
-    # Settings 
+    # Settings - defines set values when opening widget
 
     numSents = settings.Setting(5)
     language = settings.Setting("French")
     typeSeg =  settings.Setting("Summarize each segments individually")
+    percentage = settings.Setting(20)
+    method = settings.Setting("Number of sentences")
 
     #----------------------------------------------------------------------
     # The following lines need to be copied verbatim in every Textable widget...
@@ -127,13 +129,13 @@ class TextSummarizer(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
 
-        optionsBox = gui.widgetBox(
+        lenghtBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Options",
+            box="Summary's lenght options",
             orientation="vertical",
         )
         gui.spin(
-            widget=optionsBox,
+            widget=lenghtBox,
             master=self,
             value='numSents', #defined in settings
             label='Number of sentences : ',
@@ -146,7 +148,43 @@ class TextSummarizer(OWTextableBaseWidget):
             minv=1,
             step=1,
         )
+        optionsPercentage = gui.spin(
+            widget=lenghtBox,
+            master=self,
+            value='percentage',
+            label='Length in %',
+            callback=self.sendButton.sendIf(),
+            labelWidth=180,
+            tooltip=(
+                'Select the length of the summary in percentage of the input text.'
+            ),
+            maxv= 99,
+            minv=1,
+            step=1,
+        )
+        lenght_method = gui.comboBox(
+            widget=lenghtBox,
+            master=self,
+            value="method",
+            items=[
+                "Number of sentences",
+                "Percentage of text lenght", 
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="method:",
+            labelWidth=135,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "How do you want to choose the summary's lenght ?"
+            ),
+        )
 
+        optionsBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="More options",
+            orientation="vertical",
+        )
         method_combo = gui.comboBox(
             widget=optionsBox,
             master=self,
@@ -165,7 +203,6 @@ class TextSummarizer(OWTextableBaseWidget):
                 "Please select the text's language.\n"
             ),
         )
-
         method_segment = gui.comboBox(
             widget= optionsBox,
             master=self,
@@ -326,7 +363,9 @@ class TextSummarizer(OWTextableBaseWidget):
 
         # For each word in each sentence ... 
         for sent in doc.sents:
-            for word in sent :    
+            count = 0
+            for word in sent :
+                count += 1
                 # if the word appears in word_frequency dict
                 if word.text.lower() in word_frequency.keys(): 
                     # If the sentence is already in sentence_rank dict, we add points
@@ -335,6 +374,11 @@ class TextSummarizer(OWTextableBaseWidget):
                     # else we create a new key/value pair in dict    
                     else:
                         sentence_rank[sent]=word_frequency[word.text.lower()]
+                        
+            # Normalize: divide score of current sentence by number of words 
+            if sentence_rank.get(sent, None) != None: 
+                sentence_rank[sent] = (sentence_rank.get(sent) / count)
+                        
 
         # Sort sentences
         top_sentences=(sorted(sentence_rank.values())[::-1])
