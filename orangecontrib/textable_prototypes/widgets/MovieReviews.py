@@ -449,14 +449,15 @@ class MovieReviews(OWTextableBaseWidget):
                     search = first_search['data']['filmography']['actress']
 
                 # Checks if the 
+                print(search)
                 for film in search:
                     try:
                         good_search = film['year']
                     except KeyError:
                         print(film)
                         search.remove(film)
-
                 print(search)
+
                 #print(actor_results)
             elif self.type_results == 'Genre':
                 ia = imdb.IMDb()
@@ -466,8 +467,6 @@ class MovieReviews(OWTextableBaseWidget):
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
-            print(search)
-            print(type(search))
 
             for result in search:
                 if counter <= counter_max:
@@ -479,10 +478,7 @@ class MovieReviews(OWTextableBaseWidget):
                                                 'year': year,
                                                 'id': movie_id}
                     except KeyError:
-                        result_id += 1
-                        movie_id = result.movieID
-                        result_list[result_id] = {'name': result,
-                                                'id': movie_id}
+                        continue
                     counter += 1
                 else:
                     break
