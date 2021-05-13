@@ -441,19 +441,21 @@ class MovieReviews(OWTextableBaseWidget):
                 people = ia.search_person(actor_name)
                 searched_actor = people[0].personID
                 first_search = ia.get_person_filmography(searched_actor)
-                print(first_search)
                 
+                # Works for both actors and actresses
                 try:
-                   search = first_search['data']['filmography']['actor']
+                    search = first_search['data']['filmography']['actor']
                 except KeyError:
                     search = first_search['data']['filmography']['actress']
 
+                # Checks if the 
                 for film in search:
                     try:
                         good_search = film['year']
                     except KeyError:
+                        print(film)
                         search.remove(film)
-                        
+
                 print(search)
                 #print(actor_results)
             elif self.type_results == 'Genre':
@@ -464,14 +466,23 @@ class MovieReviews(OWTextableBaseWidget):
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
+            print(search)
+            print(type(search))
+
             for result in search:
                 if counter <= counter_max:
-                    result_id += 1
-                    year = result['year']
-                    movie_id = result.movieID
-                    result_list[result_id] = {'name': result,
-                                            'year': year,
-                                            'id': movie_id}
+                    try:
+                        result_id += 1
+                        year = result['year']
+                        movie_id = result.movieID
+                        result_list[result_id] = {'name': result,
+                                                'year': year,
+                                                'id': movie_id}
+                    except KeyError:
+                        result_id += 1
+                        movie_id = result.movieID
+                        result_list[result_id] = {'name': result,
+                                                'id': movie_id}
                     counter += 1
                 else:
                     break
