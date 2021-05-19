@@ -405,8 +405,14 @@ class TextSummarizer(OWTextableBaseWidget):
 
         # Sort sentences
         top_sentences=(sorted(sentence_rank.values())[::-1])
+        
         # This is where we can choose how many sentences we want to keep for the summary
-        top_sent=top_sentences[:self.numSents]
+        # Depending on the choosen method: sentences or %
+        if self.method == "Number of sentences":
+            top_sent=top_sentences[:self.numSents]
+        elif self.method == "Percentage of text lenght":
+            percentSent = int(round(self.percentage * len(sentence_rank) / 100))
+            top_sent=top_sentences[:percentSent]
 
         summary = list()
         for sent,strength in sentence_rank.items():  
