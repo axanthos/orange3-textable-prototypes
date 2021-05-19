@@ -31,7 +31,7 @@ The widget will use imdb library to import the movies’ data.
 Interface
 ~~~~~~~~~
 
-.. image:: title.png
+.. image:: figures/title.png
 
 Figure 1: **Movie Reviews** widget interface
 
@@ -43,7 +43,7 @@ The **Corpus** section is a container where the user's movie selections are stor
 
 The **Send** button triggers the emission of a segmentation to the output connection(s). When selected, the Send automatically checkbox disables the button and the widget attempts to automatically emit a segmentation at every modification of its interface.
 
-.. image:: genre.png
+.. image:: figures/Genre.png
 
 Messages
 --------
