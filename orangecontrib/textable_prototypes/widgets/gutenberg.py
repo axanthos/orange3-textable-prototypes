@@ -95,7 +95,7 @@ class Gutenberg(OWTextableBaseWidget):
         # newQuery = attribut box lineEdit (search something)
         self.titleQuery = ''
         self.authorQuery = ''
-        self.langQuery = 'any'
+        self.langQuery = 'Any'
         self.nbr_results = 10
         # Results box attributs
         self.titleLabels = list()
@@ -159,13 +159,24 @@ class Gutenberg(OWTextableBaseWidget):
             widget=queryBox,
             master=self,
             value='langQuery',
-            items=["any","af","ale","ang","ar","arp","bg","bgs","br","brx",
-                "ca","ceb","cs","csb","cy","da","de","el","en","enm","eo",
-                "es","et","fa","fi","fr","fur","fy","ga","gl","gla","grc",
-                "he","hu","ia","ilo","is","it","iu","ja","kha","kld","ko",
-                "la","lt","mi","myn","nah","nai","nap","nav","nl","no","oc",
-                "oji","pl","pt","rmr","ro","ru","sa","sl","sr","sv","te",
-                "tl","yi","zh"
+            items=["Any","Afrikaans","Aleut","Arabic",
+                "Arapaho","Bodo","Breton","Bulgarian",
+                "Caló","Catalan","Cebuano","Chinese",
+                "Czech","Danish","Dutch","English",
+                "Esperanto","Estonian","Farsi","Finnish",
+                "French","Frisian","Friulian","Gaelic, Scottish",
+                "Galician","Gamilaraay","German","Greek",
+                "Greek, Ancient","Hebrew","Hungarian","Icelandic",
+                "Iloko","Interlingua","Inuktitut","Irish",
+                "Italian","Japanese","Kashubian","Khasi",
+                "Korean","Latin","Lithuanian","Maori",
+                "Mayan Languages","Middle English","Nahuatl",
+                "Napoletano-Calabrese","Navajo","North American Indian",
+                "Norwegian","Occitan","Ojibwa","Old English",
+                "Polish","Portuguese","Romanian","Russian",
+                "Sanskrit","Serbian","Slovenian","Spanish",
+                "Swedish","Tagabawa","Tagalog","Telugu",
+                "Welsh","Yiddish"
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -348,6 +359,32 @@ class Gutenberg(OWTextableBaseWidget):
         """
         query_string = self.titleQuery
 
+        lang_dict = {
+            "Any":"", "Afrikaans":"af","Aleut":"ale",
+            "Arabic":"ar","Arapaho":"arp","Bodo":"brx",
+            "Breton":"br","Bulgarian":"bg","Caló":"rmr",
+            "Catalan":"ca","Cebuano":"ceb","Chinese":"zh",
+            "Czech":"cs","Danish":"da","Dutch":"nl",
+            "English":"en","Esperanto":"eo","Estonian":"et",
+            "Farsi":"fa","Finnish":"fi","French":"fr",
+            "Frisian":"fy","Friulian":"fur","Gaelic, Scottish":"gla",
+            "Galician":"gl","Gamilaraay":"kld","German":"de",
+            "Greek":"el","Greek, Ancient":"grc","Hebrew":"he",
+            "Hungarian":"hu","Icelandic":"is","Iloko":"ilo",
+            "Interlingua":"ia","Inuktitut":"iu","Irish":"ga",
+            "Italian":"it","Japanese":"ja","Kashubian":"csb",
+            "Khasi":"kha","Korean":"ko","Latin":"la",
+            "Lithuanian":"lt","Maori":"mi","Mayan Languages":"myn",
+            "Middle English":"enm","Nahuatl":"nah","Napoletano-Calabrese":"nap",
+            "Navajo":"nav","North American Indian":"nai","Norwegian":"no",
+            "Occitan":"oc","Ojibwa":"oji","Old English":"ang",
+            "Polish":"pl","Portuguese":"pt","Romanian":"ro",
+            "Russian":"ru","Sanskrit":"sa","Serbian":"sr",
+            "Slovenian":"sl","Spanish":"es","Swedish":"sv",
+            "Tagabawa":"bgs","Tagalog":"tl","Telugu":"te",
+            "Welsh":"cy","Yiddish":"yi"
+            }
+
         if query_string:
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
@@ -365,7 +402,7 @@ class Gutenberg(OWTextableBaseWidget):
                     AND upper(authors.name) LIKE "%{author}%"
                     AND languages.name LIKE "%{lang}%"
                     LIMIT {limit}
-                    """.format(title=query_string, author=self.authorQuery, lang=self.langQuery,limit=self.nbr_results)
+                    """.format(title=query_string, author=self.authorQuery, lang=lang_dict[self.langQuery],limit=self.nbr_results)
                 )
             except Exception as exc:
                 print(exc)
