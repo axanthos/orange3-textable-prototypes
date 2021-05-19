@@ -31,7 +31,7 @@ The widget will use imdb library to import the movies’ data.
 Interface
 ~~~~~~~~~
 
-.. image:: figures/Movie_Reviews_interface.png
+.. image:: title.png
 
 Figure 1: **Movie Reviews** widget interface
 
@@ -42,6 +42,8 @@ The **Search** button searches the database for entries matching user's input.
 The **Corpus** section is a container where the user's movie selections are stored. The user can add or remove the movies to and from their corpus or clear the corpus entirely.
 
 The **Send** button triggers the emission of a segmentation to the output connection(s). When selected, the Send automatically checkbox disables the button and the widget attempts to automatically emit a segmentation at every modification of its interface.
+
+.. image:: genre.png
 
 Messages
 --------
