@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme description="" title="" version="2.0">
+	<nodes>
+		<node id="0" name="Gutenberg" position="(182.0, 166.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.gutenberg.Gutenberg" title="Gutenberg" version="" />
+		<node id="1" name="Display" position="(352.0, 166.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+	</nodes>
+	<links>
+		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Gutenberg importation" source_node_id="0" />
+	</links>
+	<annotations />
+	<thumbnail />
+	<node_properties>
+		<properties format="literal" node_id="0">{'autoSend': False, 'controlAreaVisible': True, 'myBasket': [(8651, 'Les misérables Tome I: Fantine', 8312)], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03z\x00\x00\x00\xb4\x00\x00\x04\xac\x00\x00\x03\x9e\x00\x00\x03\x83\x00\x00\x00\xda\x00\x00\x04\xa3\x00\x00\x03\x95\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'uuid': '089112b1-58a9-4158-9c8b-c77f4b4c1b2f', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties format="literal" node_id="1">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x88\x00\x00\x00\x8e\x00\x00\x05/\x00\x00\x03y\x00\x00\x00\x91\x00\x00\x00\xb4\x00\x00\x05&amp;\x00\x00\x03p\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'segmentDelimiter': '\\n', 'uuid': 'ba33a0a9-40cd-4c44-bb17-7f780f62cc6a', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

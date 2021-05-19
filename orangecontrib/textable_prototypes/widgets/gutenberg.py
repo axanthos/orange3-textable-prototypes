@@ -24,6 +24,9 @@ __author__ = "Florian Rieder, Paul Zignani"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
+import os
+from pathlib import Path
+
 # Orange
 from Orange.widgets import widget, gui, settings
 
@@ -36,13 +39,14 @@ from LTTL.Input import Input
 import gutenbergpy.textget
 from gutenbergpy.gutenbergcache import GutenbergCache
 
+# chardet
+import chardet
+
 # Textable
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, ProgressBar,
 )
-
-import traceback
 
 class Gutenberg(OWTextableBaseWidget):
     """Textable widget for importing clean texts from Gutenberg
@@ -296,24 +300,53 @@ class Gutenberg(OWTextableBaseWidget):
 
 
     def generate_cache(self):
-        try:
-            GutenbergCache.create(refresh=True, download=True, unpack=True, parse=True, deleteTemp=True)
-        except Exception:
-            self.infoBox.setText("An error occurred while building the cache", "error")
+        print(self.cacheExists())
+        if not self.cacheExists():
+            try:
+                GutenbergCache.create(
+                    refresh=True,
+                    download=True,
+                    unpack=True,
+                    parse=True,
+                    deleteTemp=True
+                )
+            except Exception as exc:
+                print(exc)
+                self.infoBox.setText(
+                    "An error occurred while building the cache", 
+                    "error"
+                )
+        else:
+            self.infoBox.setText(
+                "The cache already exists."
+            )
 
     def search(self):
-        """ Parse a query string and do a search in the Gutenberg cache
         """
-
+            Parse a query string and do a search in the Gutenberg cache
+        """
         query_string = self.titleQuery
 
         if query_string:
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
-            query_results = cache.native_query(
-                sql_query="select * from titles where upper(name) like upper('%{query}%') limit {limit}"
-                .format(query=query_string, limit=self.nbr_results)
-            )
+
+            try:
+                query_results = cache.native_query(
+                    sql_query="""
+                        select * 
+                        from titles
+                        where upper(name) like upper('%{query}%')
+                        limit {limit}
+                    """.format(query=query_string, limit=self.nbr_results)
+                )
+            except Exception as exc:
+                print(exc)
+                self.infoBox.setText(
+                    "An error occurred while interrogating the cache.",
+                    "error"
+                )
+                return
             # get the results
             self.searchResults = list(query_results)
 
@@ -324,9 +357,7 @@ class Gutenberg(OWTextableBaseWidget):
                     s= "s" if n_results > 0 else ""
                 )
             )
-            
 
-            # TODO: display results
             # Update the results list with the search results
             # in order to display them
             for idx in self.searchResults:
@@ -376,9 +407,8 @@ class Gutenberg(OWTextableBaseWidget):
         self.removeButton.setDisabled(self.myTitles == list())
 
 
-    # fonction qui retire la selection de notre panier
     def remove(self):
-        """Remove the selected songs in your selection """
+        """Remove the selected books in the user's basket """
         self.myBasket = [
             title for idx, title in enumerate(self.myBasket)
             if idx not in self.myTitles
@@ -425,36 +455,42 @@ class Gutenberg(OWTextableBaseWidget):
         # get the Gutenberg cache
         cache = GutenbergCache.get_cache()
         try:
-            # TODO: Retrieve selected texts from gutenberg
+            # Retrieve selected texts from gutenberg
             for text in self.myBasket:
 
                 # Get the id of the text
                 query_id = cache.native_query(
-                    sql_query="select gutenbergbookid from books where id == {selected_id}"
-                    .format(selected_id=text[2])
+                        sql_query = """
+                        select gutenbergbookid
+                        from books
+                        where id == {selected_id}
+                    """.format(selected_id = text[2])
                 )
-                gutenberg_id = list(query_id)
+                gutenberg_id = list(query_id)[0][0]
 
                 # Get the text with Gutenbergpy 
-                gutenberg_text = gutenbergpy.textget.strip_headers(gutenbergpy.textget.get_text_by_id(gutenberg_id[0][0])).decode("utf-8")
+                gutenberg_text = gutenbergpy.textget.strip_headers(
+                    gutenbergpy.textget.get_text_by_id(gutenberg_id)
+                ).decode("utf-8")
+
+                #print(gutenberg_text[:500])
+
                 text_content.append(gutenberg_text)
-                
                 annotations.append(text[1])
                 progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
-        except Exception as e:
+        except Exception as exc:
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
                 "Couldn't download data from Gutenberg",
                 "error"
             )
             self.controlArea.setDisabled(False)
-            traceback.print_exc()
+            print(exc)
             return
 
-        # TODO: send gutenberg texts as output
-        # Store downloaded lyrics strings in input objects...
+        # Store downloaded text strings in input objects...
         for text in text_content:
             newInput = Input(text, self.captionTitle)
             self.createdInputs.append(newInput)
@@ -471,8 +507,8 @@ class Gutenberg(OWTextableBaseWidget):
                 import_labels_as=None,
             )
 
-        # TODO: annotate with book metadata
-        # Annotate segments...
+        # TODO: add author, language, etc
+        # Annotate segments with book metadata
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update({"title": annotations[idx]})
             self.segmentation[idx] = segment
@@ -514,6 +550,13 @@ class Gutenberg(OWTextableBaseWidget):
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
+
+    def cacheExists(self):
+        # OOH THIS IS UGLY
+        # get the root directory of the package
+        root = Path(__file__).parent.parent.parent.parent.parent
+        # check if the cache database exists
+        return os.path.isfile("gutenbergindex.db")
 
 
 if __name__ == "__main__":
