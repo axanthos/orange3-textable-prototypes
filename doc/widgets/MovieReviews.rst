@@ -33,7 +33,7 @@ Interface
 
 .. image:: figures/title.png
 
-Figure 1: **Movie Reviews** widget interface
+Figure 1: **Movie Reviews** widget interface - search by Title
 
 The **Movie Reviews** widget lets the user make a search on the IMDB library.
 
@@ -44,6 +44,9 @@ The **Corpus** section is a container where the user's movie selections are stor
 The **Send** button triggers the emission of a segmentation to the output connection(s). When selected, the Send automatically checkbox disables the button and the widget attempts to automatically emit a segmentation at every modification of its interface.
 
 .. image:: figures/Genre.png
+
+
+Figure 2: **Movie Reviews** widget interface - search by Genre
 
 Messages
 --------
