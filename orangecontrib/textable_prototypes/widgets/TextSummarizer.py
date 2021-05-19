@@ -145,7 +145,7 @@ class TextSummarizer(OWTextableBaseWidget):
             tooltip=(
                 'Select the number of sentences wanted for the summary.'
             ),
-            maxv=100,
+            maxv=self.maxNumSents(),
             minv=1,
             step=1,
         )
@@ -259,16 +259,25 @@ class TextSummarizer(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
 
-    def checkNumSentWarning(self, doc):
-        """Warns user if the summary's sentences' number is bigger than the input's sentences' number."""
-        if self.method == "Number of sentences":
-            count = 0
-            for sent in doc.sents:
-                count += 1
-            print(count)    
-            if self.numSents > count:
-                print(count)
-                self.infoBox.setText("The summary's sentences' number needs to be smaller than the input's sentences' number.", "warning")
+    def maxNumSents(self):
+        """Defines max sentence that the summary can have depending on input"""
+
+        phrases = list() 
+        """ Problem: this try, except works to pass empty segments but the error raised
+        is that self.inputSeg is NoneType.""" 
+
+        for segment in self.inputSeg: 
+            try:
+                count = 0
+                doc = self.nlp(segment.get_content())
+                for sent in doc.sents:
+                    count += 1
+                phrases.append(count)
+            except:
+                print("NoneType error. ")
+
+        phrases.sort()
+        return phrases[:1]
 
 
 
@@ -353,10 +362,6 @@ class TextSummarizer(OWTextableBaseWidget):
         "Main function that summarize the text"
 
         doc = self.nlp(content)
-
-        # Check if the sentence number is right
-        if self.checkNumSentWarning(doc):
-            return
 
         corpus = [sent.text.lower() for sent in doc.sents]
         cv_fit = cv.fit_transform(corpus) 
