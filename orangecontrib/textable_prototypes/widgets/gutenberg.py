@@ -492,7 +492,7 @@ class Gutenberg(OWTextableBaseWidget):
                 ).decode("utf-8")
 
                 text_content.append(gutenberg_text)
-                annotations.append(text[0])
+                annotations.append([text[0], text[1]])
                 progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
@@ -526,7 +526,8 @@ class Gutenberg(OWTextableBaseWidget):
         # TODO: add author, language, etc
         # Annotate segments with book metadata
         for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update({"title": annotations[idx]})
+            segment.annotations.update({"title": annotations[idx][0]})
+            segment.annotations.update({"authors": annotations[idx][1]})
             self.segmentation[idx] = segment
 
         # Clear progress bar.
