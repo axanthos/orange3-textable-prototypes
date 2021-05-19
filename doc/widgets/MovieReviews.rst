@@ -60,6 +60,9 @@ Warnings
 *Please enter a movie title*
     The user attempted to make a search with no text in the query box.
 
+*Cannot add to corpus. One or more selected movies have no associated reviews*
+    The movies with no reviews will not be added to the corpus.
+    
 *Your corpus is empty, please add some movies first*
     The corpus is empty, no movies have been selected for downloading the reviews.
 
