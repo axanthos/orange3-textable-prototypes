@@ -95,6 +95,7 @@ class Gutenberg(OWTextableBaseWidget):
         # newQuery = attribut box lineEdit (search something)
         self.titleQuery = ''
         self.authorQuery = ''
+        self.langQuery = 'any'
         self.nbr_results = 10
         # Results box attributs
         self.titleLabels = list()
@@ -144,16 +145,36 @@ class Gutenberg(OWTextableBaseWidget):
             tooltip=("Enter a string"),
         )
 
-        # gui.lineEdit(
-        #     widget=queryBox,
-        #     master=self,
-        #     value='authorQuery',
-        #     orientation='horizontal',
-        #     label=u"Author: ",
-        #     labelWidth=120,
-        #     tooltip=("Enter a string"),
-        # )
+        gui.lineEdit(
+            widget=queryBox,
+            master=self,
+            value='authorQuery',
+            orientation='horizontal',
+            label=u"Author: ",
+            labelWidth=120,
+            tooltip=("Enter a string"),
+        )
 
+        queryLang = gui.comboBox(
+            widget=queryBox,
+            master=self,
+            value='langQuery',
+            items=["any","af","ale","ang","ar","arp","bg","bgs","br","brx",
+                "ca","ceb","cs","csb","cy","da","de","el","en","enm","eo",
+                "es","et","fa","fi","fr","fur","fy","ga","gl","gla","grc",
+                "he","hu","ia","ilo","is","it","iu","ja","kha","kld","ko",
+                "la","lt","mi","myn","nah","nai","nap","nav","nl","no","oc",
+                "oji","pl","pt","rmr","ro","ru","sa","sl","sr","sv","te",
+                "tl","yi","zh"
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Language",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired language.\n"
+            ),
+        )
         # Allows to choose the wanted results numberp (10 by 10)
         queryNbr = gui.comboBox(
             widget=queryBox,
@@ -334,11 +355,17 @@ class Gutenberg(OWTextableBaseWidget):
             try:
                 query_results = cache.native_query(
                     sql_query="""
-                        select * 
-                        from titles
-                        where upper(name) like upper('%{query}%')
-                        limit {limit}
-                    """.format(query=query_string, limit=self.nbr_results)
+                    SELECT titles.name, authors.name, books.gutenbergbookid
+                    FROM titles
+                    INNER JOIN books ON books.id = titles.bookid
+                    INNER JOIN book_authors ON  books.id = book_authors.bookid 
+                    INNER JOIN authors ON authors.id = book_authors.authorid
+                    INNER JOIN languages ON books.languageid = languages.id
+                    WHERE upper(titles.name) LIKE "%{title}%"
+                    AND upper(authors.name) LIKE "%{author}%"
+                    AND languages.name LIKE "%{lang}%"
+                    LIMIT {limit}
+                    """.format(title=query_string, author=self.authorQuery, lang=self.langQuery,limit=self.nbr_results)
                 )
             except Exception as exc:
                 print(exc)
@@ -361,7 +388,8 @@ class Gutenberg(OWTextableBaseWidget):
             # Update the results list with the search results
             # in order to display them
             for idx in self.searchResults:
-                result_string = str(idx[1])
+                
+                result_string = "%s - %s" % (idx[0], idx[1])
                 self.titleLabels.append(result_string)
 
                 self.titleLabels = self.titleLabels
@@ -394,12 +422,11 @@ class Gutenberg(OWTextableBaseWidget):
         self.updateMytitleLabels()
         self.sendButton.settingsChanged()
 
-
     # Update selections function
     def updateMytitleLabels(self):
         self.mytitleLabels = list()
         for titleData in self.myBasket:
-            result_string = titleData[1]
+            result_string = "%s - %s" % (titleData[0] ,titleData[1])
             self.mytitleLabels.append(result_string)
         self.mytitleLabels = self.mytitleLabels
 
@@ -452,31 +479,20 @@ class Gutenberg(OWTextableBaseWidget):
         selectedTexts = list()
         text_content = list()
         annotations = list()
-        # get the Gutenberg cache
-        cache = GutenbergCache.get_cache()
+
         try:
             # Retrieve selected texts from gutenberg
             for text in self.myBasket:
 
-                # Get the id of the text
-                query_id = cache.native_query(
-                        sql_query = """
-                        select gutenbergbookid
-                        from books
-                        where id == {selected_id}
-                    """.format(selected_id = text[2])
-                )
-                gutenberg_id = list(query_id)[0][0]
+                gutenberg_id = text[2]
 
                 # Get the text with Gutenbergpy 
                 gutenberg_text = gutenbergpy.textget.strip_headers(
                     gutenbergpy.textget.get_text_by_id(gutenberg_id)
                 ).decode("utf-8")
 
-                #print(gutenberg_text[:500])
-
                 text_content.append(gutenberg_text)
-                annotations.append(text[1])
+                annotations.append(text[0])
                 progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
