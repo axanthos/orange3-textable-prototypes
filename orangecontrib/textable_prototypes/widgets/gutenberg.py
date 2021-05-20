@@ -335,6 +335,9 @@ class Gutenberg(OWTextableBaseWidget):
         print(self.cacheExists())
         if not self.cacheExists():
             try:
+                self.infoBox.setText(
+                    "The cache is being generated. This can take up to 10mn."
+                )
                 GutenbergCache.create(
                     refresh=True,
                     download=True,
@@ -422,6 +425,7 @@ class Gutenberg(OWTextableBaseWidget):
                 )
             )
 
+            self.clearResults()
             # Update the results list with the search results
             # in order to display them
             for idx in self.searchResults:
