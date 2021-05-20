@@ -401,7 +401,6 @@ class TextSummarizer(OWTextableBaseWidget):
 
         # Sort sentences
         top_sentences=(sorted(sentence_rank.values())[::-1])
-
         # This is where we can choose how many sentences we want to keep for the summary
         # Depending on the choosen method: sentences or %
         if self.method == "Number of sentences":
