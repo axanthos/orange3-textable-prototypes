@@ -85,7 +85,7 @@ class TextSummarizer(OWTextableBaseWidget):
     # Settings - defines set values when opening widget
 
     numSents = settings.Setting(5)
-    language = settings.Setting("French")
+    language = settings.Setting("English")
     typeSeg =  settings.Setting("Summarize each segments individually")
     percentage = settings.Setting(20)
     method = settings.Setting("Number of sentences")
@@ -130,27 +130,28 @@ class TextSummarizer(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
 
-        lenghtBox = gui.widgetBox(
+        summaryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Summary's lenght options",
             orientation="vertical",
         )
-        gui.spin(
-            widget=lenghtBox,
+        self.numSentsSpin = gui.spin(
+            widget=summaryBox,
             master=self,
-            value='numSents', #defined in settings
+            value='numSents',
             label='Number of sentences : ',
             callback=self.sendButton.sendIf(),
             labelWidth=180,
             tooltip=(
                 'Select the number of sentences wanted for the summary.'
             ),
-            maxv=100,
+            # Define max sentences according to input
+            maxv=10,
             minv=1,
             step=1,
         )
-        optionsPercentage = gui.spin(
-            widget=lenghtBox,
+        self.percentageSpin = gui.spin(
+            widget=summaryBox,
             master=self,
             value='percentage',
             label='Length in %',
@@ -163,8 +164,8 @@ class TextSummarizer(OWTextableBaseWidget):
             minv=1,
             step=1,
         )
-        lenght_method = gui.comboBox(
-            widget=lenghtBox,
+        self.lenghtMethodCombo = gui.comboBox(
+            widget=summaryBox,
             master=self,
             value="method",
             items=[
@@ -175,6 +176,7 @@ class TextSummarizer(OWTextableBaseWidget):
             orientation="horizontal",
             label="Method:",
             labelWidth=135,
+            #Add below call to method that activate/deactivate self.numSentsSpin or self.percentageSpin
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 "How do you want to choose the summary's lenght ?"
@@ -186,7 +188,7 @@ class TextSummarizer(OWTextableBaseWidget):
             box="More options",
             orientation="vertical",
         )
-        method_combo = gui.comboBox(
+        self.languageCombo = gui.comboBox(
             widget=optionsBox,
             master=self,
             value="language",
@@ -199,12 +201,13 @@ class TextSummarizer(OWTextableBaseWidget):
             orientation="horizontal",
             label="Language:",
             labelWidth=135,
+            # Appeler autre méthode
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 "Please select the text's language.\n"
             ),
         )
-        method_segment = gui.comboBox(
+        self.segmentBox = gui.comboBox(
             widget= optionsBox,
             master=self,
             value= "typeSeg",
@@ -218,7 +221,7 @@ class TextSummarizer(OWTextableBaseWidget):
             labelWidth=135,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                "Please select the method. \n"
+                "How should the input segments be summarized ? \n"
             ),
         )
 
@@ -232,6 +235,7 @@ class TextSummarizer(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.infoBox.setText("Widget needs input.", "warning")
+        self.languageChanged()
         
         # Check that there's a model and if not call noLanguageModelWarning()
         if not self.model:
@@ -247,6 +251,7 @@ class TextSummarizer(OWTextableBaseWidget):
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
             return
+        self.numSentsSpin.setMaximum(self.maxNumSents())
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
 
@@ -259,21 +264,29 @@ class TextSummarizer(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
 
-    def checkNumSentWarning(self, doc):
-        """Warns user if the summary's sentences' number is bigger than the input's sentences' number."""
-        if self.method == "Number of sentences":
-            count = 0
-            for sent in doc.sents:
-                count += 1
-            print(count)    
-            if self.numSents > count:
-                print(count)
-                self.infoBox.setText("The summary's sentences' number needs to be smaller than the input's sentences' number.", "warning")
+    
+    def maxNumSents(self):
+        """Set numSentsSpin.maxv according to inputSeg"""
+        counters = list()
+        [counters.append(len(list((self.nlp(seg.get_content()).sents)))) for seg in self.inputSeg]
+        counters.sort()
+        return counters[0]-1
+
+
+    def languageChanged(self):
+        """Load the appropriate model according to user choice"""
+        if self.language == "French":
+            self.cv = self.loadModelFR()
+        elif self.language == "English":
+            self.cv = self.loadModelEN()
+        elif self.language == "Portuguese":
+            self.cv = self.loadModelPT()
 
 
 
+    
     ################################################################
-    # Triggered when send button is clicked
+    # Called when send button is clicked
     ################################################################
 
     def sendData(self):
@@ -289,7 +302,6 @@ class TextSummarizer(OWTextableBaseWidget):
             self.infoBox.setText("Widget needs input.", "warning")
             return
 
-
         # Initialize progress bar.
         self.infoBox.setText(
             u"Processing, please wait...", 
@@ -297,15 +309,8 @@ class TextSummarizer(OWTextableBaseWidget):
         )
 
         self.controlArea.setDisabled(True)
-       
-       # Load the appropriate model according to user choice
-        if self.language == "French":
-            cv = self.loadModelFR()
-        elif self.language == "English":
-            cv = self.loadModelEN()
-        elif self.language == "Portuguese":
-            cv = self.loadModelPT()
 
+        self.languageChanged()
 
         # Type of segmentation (per segment or per segmentation)
         segments = list()
@@ -313,7 +318,7 @@ class TextSummarizer(OWTextableBaseWidget):
             # Process each segment separately, then create segmentation 
             for segment in self.inputSeg: 
                 content = segment.get_content() 
-                resume = self.summarize(cv, content)
+                resume = self.summarize(self.cv, content)
                 segments.append(
                     Segment(
                         str_index=resume[0].str_index,   
@@ -321,7 +326,7 @@ class TextSummarizer(OWTextableBaseWidget):
                 )
         elif self.typeSeg == "Summarize all segments as one":
             merged_seg = " ".join([segment.get_content() for segment in self.inputSeg])
-            resume = self.summarize(cv, merged_seg)
+            resume = self.summarize(self.cv, merged_seg)
             segments.append(
                     Segment(
                         str_index=resume[0].str_index,   
@@ -354,15 +359,11 @@ class TextSummarizer(OWTextableBaseWidget):
 
         doc = self.nlp(content)
 
-        # Check if the sentence number is right
-        if self.checkNumSentWarning(doc):
-            return
-
         corpus = [sent.text.lower() for sent in doc.sents]
-        cv_fit = cv.fit_transform(corpus) 
+        cv_fit = self.cv.fit_transform(corpus) 
 
         # Count unique words and how many times they appear
-        word_list = cv.get_feature_names();    
+        word_list = self.cv.get_feature_names();    
         count_list = cv_fit.toarray().sum(axis=0)
         word_frequency = dict(zip(word_list,count_list))
 
@@ -400,8 +401,14 @@ class TextSummarizer(OWTextableBaseWidget):
 
         # Sort sentences
         top_sentences=(sorted(sentence_rank.values())[::-1])
+
         # This is where we can choose how many sentences we want to keep for the summary
-        top_sent=top_sentences[:self.numSents]
+        # Depending on the choosen method: sentences or %
+        if self.method == "Number of sentences":
+            top_sent=top_sentences[:self.numSents]
+        elif self.method == "Percentage of text lenght":
+            percentSent = int(round(self.percentage * len(sentence_rank) / 100))
+            top_sent=top_sentences[:percentSent]
 
         summary = list()
         for sent,strength in sentence_rank.items():  
@@ -430,10 +437,12 @@ class TextSummarizer(OWTextableBaseWidget):
     def loadModelEN(self):
         """(Re-)load language model if needed."""
         # Initialize progress bar.
+        
         self.infoBox.setText(
-            u"Loading english language model, please wait...", 
+            "Loading english language model, please wait...", 
             "warning",
         )
+        
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
@@ -455,7 +464,7 @@ class TextSummarizer(OWTextableBaseWidget):
         """(Re-)load language model if needed."""
         # Initialize progress bar.
         self.infoBox.setText(
-            u"Loading french language model, please wait...", 
+            "Loading french language model, please wait...", 
             "warning",
         )
         self.controlArea.setDisabled(True)
@@ -479,7 +488,7 @@ class TextSummarizer(OWTextableBaseWidget):
         """(Re-)load language model if needed."""
         # Initialize progress bar.
         self.infoBox.setText(
-            u"Loading portuguese language model, please wait...", 
+            "Loading portuguese language model, please wait...", 
             "warning",
         )
         self.controlArea.setDisabled(True)
