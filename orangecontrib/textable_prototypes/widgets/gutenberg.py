@@ -400,7 +400,7 @@ class Gutenberg(OWTextableBaseWidget):
                     INNER JOIN languages ON books.languageid = languages.id
                     WHERE upper(titles.name) LIKE "%{title}%"
                     AND upper(authors.name) LIKE "%{author}%"
-                    AND languages.name LIKE "%{lang}%"
+                    AND languages.name = "{lang}"
                     LIMIT {limit}
                     """.format(title=query_string, author=self.authorQuery, lang=lang_dict[self.langQuery],limit=self.nbr_results)
                 )
