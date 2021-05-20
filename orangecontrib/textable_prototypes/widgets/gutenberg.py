@@ -387,8 +387,10 @@ class Gutenberg(OWTextableBaseWidget):
             "Tagabawa":"bgs","Tagalog":"tl","Telugu":"te",
             "Welsh":"cy","Yiddish":"yi"
             }
-
-        if query_string:
+        if self.langQuery == 'Any' and query_string == '' and self.authorQuery == '':
+            self.infoBox.setText("You didn't search anything", "warning")
+        
+        else:
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
 
@@ -403,7 +405,7 @@ class Gutenberg(OWTextableBaseWidget):
                     INNER JOIN languages ON books.languageid = languages.id
                     WHERE upper(titles.name) LIKE "%{title}%"
                     AND upper(authors.name) LIKE "%{author}%"
-                    AND languages.name = "{lang}"
+                    AND languages.name Like "%{lang}%"
                     LIMIT {limit}
                     """.format(title=query_string, author=self.authorQuery, lang=lang_dict[self.langQuery],limit=self.nbr_results)
                 )
@@ -439,8 +441,6 @@ class Gutenberg(OWTextableBaseWidget):
 
                 self.controlArea.setDisabled(False)
 
-        else:
-            self.infoBox.setText("You didn't search anything", "warning")
 
 
     # Function clearing the results list
