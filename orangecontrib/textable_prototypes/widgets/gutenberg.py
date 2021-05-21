@@ -387,19 +387,24 @@ class Gutenberg(OWTextableBaseWidget):
             "Tagabawa":"bgs","Tagalog":"tl","Telugu":"te",
             "Welsh":"cy","Yiddish":"yi"
             }
-
-        if query_string:
+        if self.langQuery == 'Any' and query_string == '' and self.authorQuery == '':
+            self.infoBox.setText("You didn't search anything", "warning")
+        
+        else:
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
 
             try:
                 query_results = cache.native_query(
                     sql_query="""
-                    SELECT titles.name, authors.name, books.gutenbergbookid
+                    WITH unique_book_author AS 
+                    (SELECT * FROM book_authors  
+                    WHERE authorid IN (SELECT MAX(authorid) FROM book_authors GROUP BY bookid))
+                    SELECT titles.name, authors.name, books.gutenbergbookid 
                     FROM titles
                     INNER JOIN books ON books.id = titles.bookid
-                    INNER JOIN book_authors ON  books.id = book_authors.bookid 
-                    INNER JOIN authors ON authors.id = book_authors.authorid
+                    INNER JOIN unique_book_author ON  books.id = unique_book_author.bookid 
+                    INNER JOIN authors ON authors.id = unique_book_author.authorid
                     INNER JOIN languages ON books.languageid = languages.id
                     WHERE upper(titles.name) LIKE "%{title}%"
                     AND upper(authors.name) LIKE "%{author}%"
@@ -439,8 +444,6 @@ class Gutenberg(OWTextableBaseWidget):
 
                 self.controlArea.setDisabled(False)
 
-        else:
-            self.infoBox.setText("You didn't search anything", "warning")
 
 
     # Function clearing the results list
