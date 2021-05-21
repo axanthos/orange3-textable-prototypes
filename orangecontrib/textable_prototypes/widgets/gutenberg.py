@@ -96,7 +96,7 @@ class Gutenberg(OWTextableBaseWidget):
         self.titleQuery = ''
         self.authorQuery = ''
         self.langQuery = 'Any'
-        self.nbr_results = 10
+        self.nbr_results = 200
         # Results box attributs
         self.titleLabels = list()
         self.selectedTitles = list()
