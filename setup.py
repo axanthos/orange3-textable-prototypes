@@ -104,15 +104,11 @@ INSTALL_REQUIRES = (
     'fitz',
     'pytesseract',
     'pillow',
+    'gutenbergpy @ https://github.com/Sergenti/gutenbergpy/archive/refs/heads/master.zip'
 ),
 
 EXTRAS_REQUIRE = {
 }
-
-DEPENDENCY_LINKS = [
-    # Fork of raduangelescu/gutenbergpy
-    'http://github.com/Sergenti/gutenbergpy/tarball/master#egg=package-1.0'
-]
 
 ENTRY_POINTS = {
     'orange3.addon': (
@@ -159,7 +155,6 @@ if __name__ == '__main__':
         package_data=PACKAGE_DATA,
         data_files=DATA_FILES,
         install_requires=INSTALL_REQUIRES,
-        dependency_links=DEPENDENCY_LINKS,
         entry_points=ENTRY_POINTS,
         keywords=KEYWORDS,
         namespace_packages=NAMESPACE_PACKAGES,
