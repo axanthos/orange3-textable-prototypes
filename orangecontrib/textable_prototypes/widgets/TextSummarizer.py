@@ -108,6 +108,7 @@ class TextSummarizer(OWTextableBaseWidget):
         self.inputSeg = None
         self.outputSeg = None
         self.nlp = None
+        self.cv = None
         if INSTALLED_MODELS:
             self.model = INSTALLED_MODELS[0]
         else:
@@ -202,7 +203,7 @@ class TextSummarizer(OWTextableBaseWidget):
             label="Language:",
             labelWidth=135,
             # Appeler autre méthode
-            callback=self.sendButton.settingsChanged,
+            callback=self.languageChanged,
             tooltip=(
                 "Please select the text's language.\n"
             ),
@@ -219,7 +220,7 @@ class TextSummarizer(OWTextableBaseWidget):
             orientation="horizontal",
             label= "Segmentation",
             labelWidth=135,
-            callback=self.sendButton.settingsChanged,
+            callback=self.maxNumSents,
             tooltip=(
                 "How should the input segments be summarized ? \n"
             ),
@@ -235,7 +236,6 @@ class TextSummarizer(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.infoBox.setText("Widget needs input.", "warning")
-        self.languageChanged()
         
         # Check that there's a model and if not call noLanguageModelWarning()
         if not self.model:
@@ -251,6 +251,7 @@ class TextSummarizer(OWTextableBaseWidget):
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
             return
+        self.cv = self.loadModelEN()
         self.numSentsSpin.setMaximum(self.maxNumSents())
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
@@ -264,23 +265,34 @@ class TextSummarizer(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
 
-    
     def maxNumSents(self):
         """Set numSentsSpin.maxv according to inputSeg"""
-        counters = list()
-        [counters.append(len(list((self.nlp(seg.get_content()).sents)))) for seg in self.inputSeg]
-        counters.sort()
-        return counters[0]-1
-
+        fusionStrategy = sum if self.typeSeg == "Summarize all segments as one" else min
+        self.sendButton.settingsChanged()
+        return fusionStrategy(len(list(self.nlp(seg.get_content()).sents)) for seg in self.inputSeg)
 
     def languageChanged(self):
         """Load the appropriate model according to user choice"""
+
+        self.infoBox.setText(
+            u"Loading model, please wait...", 
+            "warning",
+        )
+
+        self.controlArea.setDisabled(True)
+
         if self.language == "French":
             self.cv = self.loadModelFR()
         elif self.language == "English":
             self.cv = self.loadModelEN()
         elif self.language == "Portuguese":
             self.cv = self.loadModelPT()
+
+        self.controlArea.setDisabled(False)
+
+        self.sendButton.settingsChanged()
+
+
 
 
 
@@ -309,8 +321,6 @@ class TextSummarizer(OWTextableBaseWidget):
         )
 
         self.controlArea.setDisabled(True)
-
-        self.languageChanged()
 
         # Type of segmentation (per segment or per segmentation)
         segments = list()
@@ -357,6 +367,8 @@ class TextSummarizer(OWTextableBaseWidget):
     def summarize(self, cv, content):
         "Main function that summarize the text"
 
+        progressBar = ProgressBar(self, iterations=3)
+
         doc = self.nlp(content)
 
         corpus = [sent.text.lower() for sent in doc.sents]
@@ -376,7 +388,7 @@ class TextSummarizer(OWTextableBaseWidget):
         for word in word_frequency.keys():  
             word_frequency[word] = (word_frequency[word]/higher_frequency)
 
-        
+        progressBar.advance()
         # Initialise a sentence dictionnary
         sentence_rank={}
 
@@ -398,6 +410,7 @@ class TextSummarizer(OWTextableBaseWidget):
             if sentence_rank.get(sent, None) != None: 
                 sentence_rank[sent] = (sentence_rank.get(sent) / count)
                         
+        progressBar.advance()
 
         # Sort sentences
         top_sentences=(sorted(sentence_rank.values())[::-1])
@@ -416,12 +429,16 @@ class TextSummarizer(OWTextableBaseWidget):
             else:
                 continue
         
+        progressBar.advance()
+
         #Summary contains spacy.tokens.span.Span that must be converted to string
         summary_str = [str(i) for i in summary]
 
         # Join all sentence in a single string
         resume = " ".join(summary_str)
 
+        progressBar.finish()
+        
         # Create ouput segmentation from summary
         return Input(resume)
         
@@ -434,76 +451,32 @@ class TextSummarizer(OWTextableBaseWidget):
     ################################################################
 
     def loadModelEN(self):
-        """(Re-)load language model if needed."""
-        # Initialize progress bar.
-        
-        self.infoBox.setText(
-            "Loading english language model, please wait...", 
-            "warning",
-        )
-        
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=1)       
+        """(Re-)load language model if needed."""    
         self.nlp = spacy.load(
             "en_core_web_sm"
         )
-
-        # Get the list of stop_words that will not be counted
         from spacy.lang.en.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
-
-        # Advance and finish progress bar + make buttons available
-        progressBar.advance()
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
 
         return cv
 
     def loadModelFR(self):
-        """(Re-)load language model if needed."""
-        # Initialize progress bar.
-        self.infoBox.setText(
-            "Loading french language model, please wait...", 
-            "warning",
-        )
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=1)       
+        """(Re-)load language model if needed."""       
         self.nlp = spacy.load(
             "fr_core_news_sm"
         )
-
-        # Get the list of stop_words that will not be counted
         from spacy.lang.fr.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
-
-        # Advance and finish progress bar + make buttons available
-        progressBar.advance()
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
 
         return cv
         
     def loadModelPT(self):
         """(Re-)load language model if needed."""
-        # Initialize progress bar.
-        self.infoBox.setText(
-            "Loading portuguese language model, please wait...", 
-            "warning",
-        )
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=1)       
         self.nlp = spacy.load(
-            "pt_core_web_sm"
+            "pt_core_news_sm"
         )
-
-        # Advance and finish progress bar + make buttons available
         from spacy.lang.pt.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
-
-        # Advance and finish progress bar + make buttons available
-        progressBar.advance()
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
 
         return cv
 
