@@ -278,8 +278,8 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading model, please wait...", 
             "warning",
         )
-
         self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(self, iterations=1)
 
         if self.language == "French":
             self.cv = self.loadModelFR()
@@ -288,6 +288,8 @@ class TextSummarizer(OWTextableBaseWidget):
         elif self.language == "Portuguese":
             self.cv = self.loadModelPT()
 
+        progressBar.advance()
+        progressBar.finish()
         self.controlArea.setDisabled(False)
 
         self.sendButton.settingsChanged()
@@ -438,7 +440,7 @@ class TextSummarizer(OWTextableBaseWidget):
         resume = " ".join(summary_str)
 
         progressBar.finish()
-        
+
         # Create ouput segmentation from summary
         return Input(resume)
         
