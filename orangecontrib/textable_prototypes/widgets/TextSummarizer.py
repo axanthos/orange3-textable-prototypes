@@ -252,7 +252,7 @@ class TextSummarizer(OWTextableBaseWidget):
             self.infoBox.setText("Widget needs input.", "warning")
             return
         self.cv = self.loadModelEN()
-        self.numSentsSpin.setMaximum(self.maxNumSents())
+        self.maxNumSents,
         self.summaryGui()
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
@@ -270,7 +270,7 @@ class TextSummarizer(OWTextableBaseWidget):
         """Set numSentsSpin.maxv according to inputSeg"""
         fusionStrategy = sum if self.typeSeg == "Summarize all segments as one" else min
         self.sendButton.settingsChanged()
-        return fusionStrategy(len(list(self.nlp(seg.get_content()).sents)) for seg in self.inputSeg)
+        self.numSentsSpin.setMaximum(fusionStrategy(len(list(self.nlp(seg.get_content()).sents)) for seg in self.inputSeg))
 
     def languageChanged(self):
         """Load the appropriate model according to user choice"""
