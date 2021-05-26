@@ -178,7 +178,7 @@ class TextSummarizer(OWTextableBaseWidget):
             label="Method:",
             labelWidth=135,
             #Add below call to method that activate/deactivate self.numSentsSpin or self.percentageSpin
-            callback=self.sendButton.settingsChanged,
+            callback=self.summaryGui,
             tooltip=(
                 "How do you want to choose the summary's lenght ?"
             ),
@@ -253,6 +253,7 @@ class TextSummarizer(OWTextableBaseWidget):
             return
         self.cv = self.loadModelEN()
         self.numSentsSpin.setMaximum(self.maxNumSents())
+        self.summaryGui()
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
 
@@ -293,6 +294,18 @@ class TextSummarizer(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
 
         self.sendButton.settingsChanged()
+
+    def summaryGui(self):
+        """Disable percentageSpin or numSentsSpin"""
+        if self.method == "Number of sentences":
+            self.percentageSpin.setDisabled(1)
+            self.numSentsSpin.setDisabled(0)
+        elif self.method == "Percentage of text lenght":
+            self.percentageSpin.setDisabled(0)
+            self.numSentsSpin.setDisabled(1)
+        
+        self.sendButton.settingsChanged()
+
 
 
 
