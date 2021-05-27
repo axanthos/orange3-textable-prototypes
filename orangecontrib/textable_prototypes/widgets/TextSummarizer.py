@@ -251,6 +251,8 @@ class TextSummarizer(OWTextableBaseWidget):
         self.inputSeg = segmentation
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
+            self.send('Summary', None, self)
+            self.send('HTML_Summary', None, self)
             return
         # Load default language model
         self.cv = self.loadModelEN()
@@ -478,14 +480,26 @@ class TextSummarizer(OWTextableBaseWidget):
 
         #Summary contains spacy.tokens.span.Span that must be converted to string
         summary_str = [str(i) for i in summary]
-
         # Join all sentence in a single string
         resume = " ".join(summary_str)
+
+        # Create HTML resume
+        html_summary = list()
+        for sent in doc.sents:
+            if sent in summary:
+                new_sent = '<b style=\'color:blue\'>' + str(sent) + '</b>'
+                html_summary.append(new_sent)
+            else: html_summary.append(sent)
+        
+        #html_summary contains spacy.tokens.span.Span that must be converted to string
+        html_summary_str = [str(i) for i in html_summary]
+        # Join all sentence in a single string
+        html_resume = " ".join(html_summary_str)
 
         progressBar.finish()
 
         # Create ouput segmentation from summary
-        return Input(resume), Input(resume)
+        return Input(resume), Input(html_resume)
         
         
 
