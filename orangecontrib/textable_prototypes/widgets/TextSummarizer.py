@@ -107,6 +107,7 @@ class TextSummarizer(OWTextableBaseWidget):
         
         self.inputSeg = None
         self.outputSeg = None
+        self.html_outputSeg = None
         self.nlp = None
         self.cv = None
         if INSTALLED_MODELS:
@@ -355,30 +356,43 @@ class TextSummarizer(OWTextableBaseWidget):
 
         # Type of segmentation (per segment or per segmentation)
         segments = list()
+        html_segments = list()
         if self.typeSeg == "Summarize each segments individually":
             # Process each segment separately, then create segmentation 
             for segment in self.inputSeg: 
                 content = segment.get_content() 
-                resume = self.summarize(self.cv, content)
+                resume, html_resume = self.summarize(self.cv, content)
                 segments.append(
                     Segment(
                         str_index=resume[0].str_index,   
                     )
                 )
+                html_segments.append(
+                    Segment(
+                        str_index=html_resume[0].str_index,   
+                    )
+                )
         elif self.typeSeg == "Summarize all segments as one":
             merged_seg = " ".join([segment.get_content() for segment in self.inputSeg])
-            resume = self.summarize(self.cv, merged_seg)
+            resume, html_resume = self.summarize(self.cv, merged_seg)
             segments.append(
                     Segment(
                         str_index=resume[0].str_index,   
                     )
                 )
+            html_segments.append(
+                    Segment(
+                        str_index=html_resume[0].str_index,   
+                    )
+                )
+
         # Create segmentation from segment() and assign it to the output
         self.outputSeg = Segmentation(segments, self.captionTitle)
+        self.html_outputSeg = Segmentation(html_segments, self.captionTitle)
 
         # Send segmentation to output channels
         self.send("Summary", self.outputSeg, self)
-        self.send('HTML_Summary', None, self)
+        self.send('HTML_Summary', self.html_outputSeg, self)
 
         # Set message to sent
         message = "%i segment@p sent to output " % len(self.outputSeg)
@@ -471,7 +485,7 @@ class TextSummarizer(OWTextableBaseWidget):
         progressBar.finish()
 
         # Create ouput segmentation from summary
-        return Input(resume)
+        return Input(resume), Input(resume)
         
         
 
