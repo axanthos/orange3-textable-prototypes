@@ -24,6 +24,7 @@ __author__ = "Florian Rieder, Paul Zignani"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
+from ntpath import join
 import os
 from pathlib import Path
 
@@ -155,6 +156,7 @@ class Gutenberg(OWTextableBaseWidget):
             tooltip=("Enter a string"),
         )
 
+        #ComboBox for selecting the text language
         queryLang = gui.comboBox(
             widget=queryBox,
             master=self,
@@ -186,6 +188,33 @@ class Gutenberg(OWTextableBaseWidget):
                 "Please select the desired language.\n"
             ),
         )
+
+        #dict to get the language code
+        self.lang_dict = {
+            "Any":"", "Afrikaans":"af","Aleut":"ale",
+            "Arabic":"ar","Arapaho":"arp","Bodo":"brx",
+            "Breton":"br","Bulgarian":"bg","Caló":"rmr",
+            "Catalan":"ca","Cebuano":"ceb","Chinese":"zh",
+            "Czech":"cs","Danish":"da","Dutch":"nl",
+            "English":"en","Esperanto":"eo","Estonian":"et",
+            "Farsi":"fa","Finnish":"fi","French":"fr",
+            "Frisian":"fy","Friulian":"fur","Gaelic, Scottish":"gla",
+            "Galician":"gl","Gamilaraay":"kld","German":"de",
+            "Greek":"el","Greek, Ancient":"grc","Hebrew":"he",
+            "Hungarian":"hu","Icelandic":"is","Iloko":"ilo",
+            "Interlingua":"ia","Inuktitut":"iu","Irish":"ga",
+            "Italian":"it","Japanese":"ja","Kashubian":"csb",
+            "Khasi":"kha","Korean":"ko","Latin":"la",
+            "Lithuanian":"lt","Maori":"mi","Mayan Languages":"myn",
+            "Middle English":"enm","Nahuatl":"nah","Napoletano-Calabrese":"nap",
+            "Navajo":"nav","North American Indian":"nai","Norwegian":"no",
+            "Occitan":"oc","Ojibwa":"oji","Old English":"ang",
+            "Polish":"pl","Portuguese":"pt","Romanian":"ro",
+            "Russian":"ru","Sanskrit":"sa","Serbian":"sr",
+            "Slovenian":"sl","Spanish":"es","Swedish":"sv",
+            "Tagabawa":"bgs","Tagalog":"tl","Telugu":"te",
+            "Welsh":"cy","Yiddish":"yi"
+            }
         # Allows to choose the wanted results numberp (10 by 10)
         queryNbr = gui.comboBox(
             widget=queryBox,
@@ -360,33 +389,9 @@ class Gutenberg(OWTextableBaseWidget):
         """
             Parse a query string and do a search in the Gutenberg cache
         """
-        query_string = self.titleQuery
+        query_string = self.titleQuery        
+        language = self.lang_dict[self.langQuery]
 
-        lang_dict = {
-            "Any":"", "Afrikaans":"af","Aleut":"ale",
-            "Arabic":"ar","Arapaho":"arp","Bodo":"brx",
-            "Breton":"br","Bulgarian":"bg","Caló":"rmr",
-            "Catalan":"ca","Cebuano":"ceb","Chinese":"zh",
-            "Czech":"cs","Danish":"da","Dutch":"nl",
-            "English":"en","Esperanto":"eo","Estonian":"et",
-            "Farsi":"fa","Finnish":"fi","French":"fr",
-            "Frisian":"fy","Friulian":"fur","Gaelic, Scottish":"gla",
-            "Galician":"gl","Gamilaraay":"kld","German":"de",
-            "Greek":"el","Greek, Ancient":"grc","Hebrew":"he",
-            "Hungarian":"hu","Icelandic":"is","Iloko":"ilo",
-            "Interlingua":"ia","Inuktitut":"iu","Irish":"ga",
-            "Italian":"it","Japanese":"ja","Kashubian":"csb",
-            "Khasi":"kha","Korean":"ko","Latin":"la",
-            "Lithuanian":"lt","Maori":"mi","Mayan Languages":"myn",
-            "Middle English":"enm","Nahuatl":"nah","Napoletano-Calabrese":"nap",
-            "Navajo":"nav","North American Indian":"nai","Norwegian":"no",
-            "Occitan":"oc","Ojibwa":"oji","Old English":"ang",
-            "Polish":"pl","Portuguese":"pt","Romanian":"ro",
-            "Russian":"ru","Sanskrit":"sa","Serbian":"sr",
-            "Slovenian":"sl","Spanish":"es","Swedish":"sv",
-            "Tagabawa":"bgs","Tagalog":"tl","Telugu":"te",
-            "Welsh":"cy","Yiddish":"yi"
-            }
         if self.langQuery == 'Any' and query_string == '' and self.authorQuery == '':
             self.infoBox.setText("You didn't search anything", "warning")
         
@@ -400,7 +405,7 @@ class Gutenberg(OWTextableBaseWidget):
                     WITH unique_book_author AS 
                     (SELECT * FROM book_authors  
                     WHERE authorid IN (SELECT MAX(authorid) FROM book_authors GROUP BY bookid))
-                    SELECT titles.name, authors.name, books.gutenbergbookid 
+                    SELECT titles.name, authors.name, books.gutenbergbookid, languages.name
                     FROM titles
                     INNER JOIN books ON books.id = titles.bookid
                     INNER JOIN unique_book_author ON  books.id = unique_book_author.bookid 
@@ -410,7 +415,7 @@ class Gutenberg(OWTextableBaseWidget):
                     AND upper(authors.name) LIKE "%{author}%"
                     AND languages.name LIKE "%{lang}%"
                     LIMIT {limit}
-                    """.format(title=query_string, author=self.authorQuery, lang=lang_dict[self.langQuery],limit=self.nbr_results)
+                    """.format(title=query_string, author=self.authorQuery, lang=language,limit=self.nbr_results)
                 )
             except Exception as exc:
                 print(exc)
@@ -420,7 +425,17 @@ class Gutenberg(OWTextableBaseWidget):
                 )
                 return
             # get the results
-            self.searchResults = list(query_results)
+            Results = list(query_results)
+
+            # More readable result list
+            self.searchResults = list()
+
+            for result in Results:
+                result = list(result)
+                result[0].replace("\n", "; ")
+                result[1] = " ".join(result[1].split(", ")[::-1])
+                result[3] = [key for key,value in self.lang_dict.items() if value == result[3]][0]
+                self.searchResults.append(result)
 
             # display info message
             n_results = len(self.searchResults)
@@ -434,8 +449,9 @@ class Gutenberg(OWTextableBaseWidget):
             # Update the results list with the search results
             # in order to display them
             for idx in self.searchResults:
-                
-                result_string = "%s - %s" % (idx[0], idx[1])
+
+                result_string = "{title} - {author} - {lang}".format(
+                        title = idx[0], author = idx[1], lang = idx[3])
                 self.titleLabels.append(result_string)
 
                 self.titleLabels = self.titleLabels
@@ -457,7 +473,7 @@ class Gutenberg(OWTextableBaseWidget):
 
     # Add texts function
     def add(self):
-        """Add songs in your selection """
+        """Add texts in your selection """
         for selectedTitle in self.selectedTitles:
             titleData = self.searchResults[selectedTitle]
             if titleData not in self.myBasket:
@@ -469,11 +485,14 @@ class Gutenberg(OWTextableBaseWidget):
     # Update selections function
     def updateMytitleLabels(self):
         self.mytitleLabels = list()
+        
         for titleData in self.myBasket:
-            result_string = "%s - %s" % (titleData[0] ,titleData[1])
-            self.mytitleLabels.append(result_string)
-        self.mytitleLabels = self.mytitleLabels
 
+            result_string = "{title} — {author} — {lang}".format(
+                    title = titleData[0], author = titleData[1], lang = titleData[3])
+            self.mytitleLabels.append(result_string)
+        
+        self.mytitleLabels = self.mytitleLabels
         self.clearmyBasketButton.setDisabled(self.myBasket == list())
         self.removeButton.setDisabled(self.myTitles == list())
 
@@ -520,7 +539,6 @@ class Gutenberg(OWTextableBaseWidget):
             iterations=len(self.myBasket),
         )
 
-        selectedTexts = list()
         text_content = list()
         annotations = list()
 
@@ -536,7 +554,7 @@ class Gutenberg(OWTextableBaseWidget):
                 ).decode("utf-8")
 
                 text_content.append(gutenberg_text)
-                annotations.append([text[0], text[1]])
+                annotations.append([text[0], text[1], text[3]])
                 progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
@@ -567,11 +585,11 @@ class Gutenberg(OWTextableBaseWidget):
                 import_labels_as=None,
             )
 
-        # TODO: add author, language, etc
         # Annotate segments with book metadata
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update({"title": annotations[idx][0]})
-            segment.annotations.update({"authors": annotations[idx][1]})
+            segment.annotations.update({"author": annotations[idx][1]})
+            segment.annotations.update({"language": annotations[idx][2]})
             self.segmentation[idx] = segment
 
         # Clear progress bar.
