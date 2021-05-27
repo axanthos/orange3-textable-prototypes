@@ -74,7 +74,7 @@ class TextSummarizer(OWTextableBaseWidget):
     # Channel definitions...
         
     inputs = [("Segmentation", Segmentation, "inputData")]
-    outputs = [("Summary", Segmentation)]
+    outputs = [("Summary", Segmentation, widget.Default), ("HTML_Summary", Segmentation)]
 
     #----------------------------------------------------------------------
     # GUI layout parameters...
@@ -327,6 +327,8 @@ class TextSummarizer(OWTextableBaseWidget):
         # Check that there's an input
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
+            self.send('Summary', None, self)
+            self.send('HTML_Summary', None, self)
             return
 
         # Initialize progress bar.
@@ -358,11 +360,12 @@ class TextSummarizer(OWTextableBaseWidget):
                     )
                 )
         # Create segmentation from segment() and assign it to the output
-        self.outputSeg = Segmentation(segments)
+        self.outputSeg = Segmentation(segments, self.captionTitle)
 
         # 
         # Segmentation go to outputs...
         self.send("Summary", self.outputSeg, self)
+        self.send('HTML_Summary', None, self)
 
         # Set message to sent
         message = "%i segment@p sent to output " % len(self.outputSeg)
