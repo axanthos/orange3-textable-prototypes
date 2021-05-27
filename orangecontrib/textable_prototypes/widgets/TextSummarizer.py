@@ -251,9 +251,14 @@ class TextSummarizer(OWTextableBaseWidget):
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
             return
+        # Load default language model
         self.cv = self.loadModelEN()
-        self.maxNumSents,
+        # Set max number of sentence of summary
+        self.maxNumSents()
+        # Disable percentageSpin OR numSentsSpin
         self.summaryGui()
+        # Set segmentBox visible OR unvisible 
+        self.segmentBoxState()
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
 
@@ -306,6 +311,15 @@ class TextSummarizer(OWTextableBaseWidget):
         
         self.sendButton.settingsChanged()
 
+    def segmentBoxState(self):
+        """Hide segmentBox GUI if input is only one segment
+        Show if input is 1+ segments"""
+        if len(self.inputSeg) > 1:
+            self.segmentBox.setVisible(True)
+            self.segmentBox.label.setVisible(True)
+        elif len(self.inputSeg) == 1:
+            self.segmentBox.setVisible(False)
+            self.segmentBox.label.setVisible(False)
 
 
 
@@ -362,8 +376,7 @@ class TextSummarizer(OWTextableBaseWidget):
         # Create segmentation from segment() and assign it to the output
         self.outputSeg = Segmentation(segments, self.captionTitle)
 
-        # 
-        # Segmentation go to outputs...
+        # Send segmentation to output channels
         self.send("Summary", self.outputSeg, self)
         self.send('HTML_Summary', None, self)
 
