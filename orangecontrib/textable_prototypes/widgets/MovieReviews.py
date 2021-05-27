@@ -420,6 +420,7 @@ class MovieReviews(OWTextableBaseWidget):
                 self,
                 iterations=counter_max
             )
+            filtered_results = list()
             if self.type_results == 'Title':
                 ia = imdb.IMDb()
 
@@ -429,10 +430,10 @@ class MovieReviews(OWTextableBaseWidget):
                 # searching the movie
                 search = ia.search_movie(movie_name)
                 for film in search:
-                    try:
-                        good_search = film['year']
-                    except KeyError:
-                        search.remove(film)
+                    if 'year' in film:
+                        filtered_results.append(film)
+                    #except KeyError:
+                        #search.remove(film)
 
             elif self.type_results == 'Actor':
                 ia = imdb.IMDb()
@@ -468,7 +469,7 @@ class MovieReviews(OWTextableBaseWidget):
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
 
-            for result in search:
+            for result in filtered_results:
                 if counter <= counter_max:
                     try:
                         result_id += 1
