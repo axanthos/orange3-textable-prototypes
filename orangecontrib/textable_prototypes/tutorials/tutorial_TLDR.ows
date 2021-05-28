@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<scheme version="2.0" title="Summarize segments with TL;DR" description="">
+<scheme version="2.0" title="Summarize segments with TL;DR" description="Here is an example workflow to use the TL;DR widget.">
 	<nodes>
 		<node id="0" name="Text Field" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" project_name="Orange3-Textable" version="" title="Text Field" position="(242.0, 231.0)" />
 		<node id="1" name="Text Field" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" project_name="Orange3-Textable" version="" title="Text Field (1)" position="(242.0, 421.0)" />
