@@ -37,6 +37,7 @@ import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
 import imdb
+import random
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
@@ -91,6 +92,9 @@ class MovieReviews(OWTextableBaseWidget):
         # selections box attributs
         self.myTitles = list()
         self.mytitleLabels = list()
+
+        # stocks the imdbpy instance
+        self.ia = imdb.IMDb()
         # stock all the inputs (movie names) in a list
         self.createdInputs = list()
 
@@ -261,7 +265,7 @@ class MovieReviews(OWTextableBaseWidget):
             master=self,
             value="filter_results",
             items=[
-                "Popularity",
+                "Year",
                 "Alphabetical",
                 "Random",
             ],
@@ -422,26 +426,22 @@ class MovieReviews(OWTextableBaseWidget):
             )
             filtered_results = list()
             if self.type_results == 'Title':
-                ia = imdb.IMDb()
 
                 # movie name
                 movie_name = query_string
 
                 # searching the movie
-                search = ia.search_movie(movie_name)
+                search = self.ia.search_movie(movie_name)
                 for film in search:
                     if 'year' in film:
                         filtered_results.append(film)
-                    #except KeyError:
-                        #search.remove(film)
 
             elif self.type_results == 'Actor':
-                ia = imdb.IMDb()
                 # movie name
                 actor_name = query_string
-                people = ia.search_person(actor_name)
+                people = self.ia.search_person(actor_name)
                 searched_actor = people[0].personID
-                first_search = ia.get_person_filmography(searched_actor)
+                first_search = self.ia.get_person_filmography(searched_actor)
                 
                 # Works for both actors and actresses
                 try:
@@ -450,21 +450,20 @@ class MovieReviews(OWTextableBaseWidget):
                     search = first_search['data']['filmography']['actress']
 
                 # Checks if the 
-                print(search)
                 for film in search:
-                    try:
-                        good_search = film['year']
-                    except KeyError:
-                        print(film)
-                        search.remove(film)
-                print(search)
+                    if 'year' in film:
+                        filtered_results.append(film)
 
-                #print(actor_results)
-            elif self.type_results == 'Genre':
-                ia = imdb.IMDb()
-                result = ia.get_keyword('marvel')
-                print(result)
+            if self.filter_results == 'Random':
+                random.shuffle(filtered_results)
+            
+            elif self.filter_results == 'Alphabetical':
+                alpha_list = list()
+                for result in filtered_results:
+                    alpha_list.append(str(result))
+                print(sorted(alpha_list))
 
+                
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
@@ -524,8 +523,7 @@ class MovieReviews(OWTextableBaseWidget):
             if newMovie not in self.myBasket:
                 # Test if the movie has review associated, if not it refuses to add it to corpus
                 try:
-                    ia = imdb.IMDb()
-                    movie = ia.get_movie_reviews(newMovie['id'])
+                    movie = self.ia.get_movie_reviews(newMovie['id'])
                     cond_list.append(movie)
                     for movie in cond_list:
                         data = movie.get('data', "")
@@ -596,9 +594,8 @@ class MovieReviews(OWTextableBaseWidget):
         annotations = list()
         try:
             for item in self.myBasket:
-                ia = imdb.IMDb()
-                movie = ia.get_movie_reviews(item['id'])
-                movie_annotations = ia.get_movie(item['id'])
+                movie = self.ia.get_movie_reviews(item['id'])
+                movie_annotations = self.ia.get_movie(item['id'])
                 list_review.append(movie)
                 list_annotation.append(movie_annotations)
                 # 1 tick on the progress bar of the widget
