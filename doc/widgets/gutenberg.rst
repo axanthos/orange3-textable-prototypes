@@ -75,6 +75,12 @@ Information
 *<n> segments sent to output (<m> characters).*
     This confirms that the widget has operated properly.
 
+*The cache is being generated. This can take up to 10mn.*
+    This confirms that the cache is being generated. A message will appear in the log once the cache is fully generated.
+
+*The cache already exists.*
+    Informs the user that he has already downloaded the cache.
+
 
 Warnings
 ~~~~~~~~
@@ -86,13 +92,16 @@ Warnings
     emission to proceed.
 
 *You didn't search anything*
-    The user want to make a search with no text in the query box.
+    The user wants to make a search without changing the initial settings.
 
 *Your corpus is empty, please add some texts first*
     The corpus is empty, so the user have to add some texts before sending.
 
 Errors
 ~~~~~~
+
+*An error occurred while building the cache.*
+    An error has prevented the cache generation.
 
 *Couldn't download data from Gutenberg.*
     An error has prevented the widget from accessing the 

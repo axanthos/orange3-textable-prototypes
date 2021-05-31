@@ -509,7 +509,7 @@ class Gutenberg(OWTextableBaseWidget):
 
     # Clear selections function
     def clearmyBasket(self):
-        """Remove all songs in your selection """
+        """Remove all texts in your selection """
         self.mytitleLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
