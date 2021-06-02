@@ -104,7 +104,7 @@ class Gutenberg(OWTextableBaseWidget):
         # selections box attributs
         self.myTitles = list()
         self.mytitleLabels = list()
-        # stock all the inputs (songs) in a list
+        # stock all the inputs (texts) in a list
         self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -120,19 +120,20 @@ class Gutenberg(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
         # Create the working area
+        self.cacheGenerationButton = gui.button(
+            widget=self.controlArea,
+            master=self,
+            label="Generate cache",
+            callback=self.generate_cache,
+            tooltip="Generate the gutenberg cache, this might take a while...",
+        )
+
         queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Search books",
             orientation="vertical",
         )
 
-        self.cacheGenerationButton = gui.button(
-            widget=queryBox,
-            master=self,
-            label="Generate cache",
-            callback=self.generate_cache,
-            tooltip="Generate the gutenberg cache, this might take a while...",
-        )
 
         # Allows to enter specific text to the research
         #  Uses "newQuery" attribut
@@ -272,7 +273,7 @@ class Gutenberg(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Add songs button
+        # Add text button
         self.addButton = gui.button(
             widget=boxbutton,
             master=self,
@@ -320,7 +321,7 @@ class Gutenberg(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Remove songs button
+        # Remove text button
         self.removeButton = gui.button(
             widget=boxbutton2,
             master=self,
@@ -359,19 +360,28 @@ class Gutenberg(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
+        # checks if the cache exists
         self.check_cache()
 
+
     def check_cache(self):
+        """changes layout according to the cache existens
+        """
+        # disables the search button if cache does not exists
         if not self.cacheExists():
+            # disables the search button if not
             self.searchButton.setDisabled(True)
             self.infoBox.setText(
-                "Cache must be generated before fisrt launch",
+                "Cache must be generated before fisrt launch, it can take up to 10mn",
                 "warning"
             )
+        # disbles the the cache generation button if it does exists
         else:
             self.cacheGenerationButton.setDisabled(True)
 
     def generate_cache(self):
+        """generates the cache
+        """
         print(self.cacheExists())
         if not self.cacheExists():
             try:
@@ -385,10 +395,15 @@ class Gutenberg(OWTextableBaseWidget):
                     parse=True,
                     deleteTemp=True
                 )
+                self.infoBox.setText(
+                    "Cache generated!"
+                )
+                self.cacheGenerationButton.setDisabled(True)
+                self.searchButton.setEnabled(True)
             except Exception as exc:
                 print(exc)
                 self.infoBox.setText(
-                    "An error occurred while building the cache", 
+                    "An error occurred while building the cache",
                     "error"
                 )
         else:
@@ -401,14 +416,14 @@ class Gutenberg(OWTextableBaseWidget):
             Parse a query string and do a search in the Gutenberg cache
         """
         query_string = self.titleQuery
-        query_author = self.authorQuery       
+        query_author = self.authorQuery
         language = self.lang_dict[self.langQuery]
 
+        # infoms the user that he didn't change anything
         if self.langQuery == 'Any' and query_string == '' and self.authorQuery == '':
             self.infoBox.setText("You didn't search anything", "warning")
-        
-        else:
-            
+
+        else:    
             # Recode author with name, first name
             if len(query_author.split()) == 2:
                 if "," not in query_author:
@@ -417,6 +432,7 @@ class Gutenberg(OWTextableBaseWidget):
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
 
+            # searches the database
             try:
                 query_results = cache.native_query(
                     sql_query="""
@@ -433,7 +449,8 @@ class Gutenberg(OWTextableBaseWidget):
                     AND upper(authors.name) LIKE "%{author}%"
                     AND languages.name LIKE "%{lang}%"
                     LIMIT {limit}
-                    """.format(title=query_string, author=query_author, lang=language, limit=self.nbr_results)
+                    """.format(
+                        title=query_string, author=query_author,lang=language, limit=self.nbr_results)
                 )
             except Exception as exc:
                 print(exc)
@@ -445,14 +462,18 @@ class Gutenberg(OWTextableBaseWidget):
             # get the results
             Results = list(query_results)
 
-            # More readable result list
             self.searchResults = list()
 
+            # creates better results
             for result in Results:
                 result = list(result)
+                # replaces newlines
                 result[0].replace("\n", "; ")
+                # recodes athor from: name, first_name to: fisrt_name name
                 result[1] = " ".join(result[1].split(", ")[::-1])
+                # gets the key from the lang_dict for the coresponding language abbreviation
                 result[3] = [key for key,value in self.lang_dict.items() if value == result[3]][0]
+
                 self.searchResults.append(result)
 
             # display info message
@@ -503,13 +524,13 @@ class Gutenberg(OWTextableBaseWidget):
     # Update selections function
     def updateMytitleLabels(self):
         self.mytitleLabels = list()
-        
+
         for titleData in self.myBasket:
 
             result_string = "{title} — {author} — {lang}".format(
                     title = titleData[0], author = titleData[1], lang = titleData[3])
             self.mytitleLabels.append(result_string)
-        
+
         self.mytitleLabels = self.mytitleLabels
         self.clearmyBasketButton.setDisabled(self.myBasket == list())
         self.removeButton.setDisabled(self.myTitles == list())
@@ -566,12 +587,13 @@ class Gutenberg(OWTextableBaseWidget):
 
                 gutenberg_id = text[2]
 
-                # Get the text with Gutenbergpy 
+                # Get the text with Gutenbergpy
                 gutenberg_text = gutenbergpy.textget.strip_headers(
                     gutenbergpy.textget.get_text_by_id(gutenberg_id)
                 ).decode("utf-8")
 
                 text_content.append(gutenberg_text)
+                # populate the annotation list
                 annotations.append([text[0], text[1], text[3]])
                 progressBar.advance()
 
@@ -591,11 +613,11 @@ class Gutenberg(OWTextableBaseWidget):
             newInput = Input(text, self.captionTitle)
             self.createdInputs.append(newInput)
 
-        # If there"s only one play, the widget"s output is the created Input.
+        # If there's only one text, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
 
-        # Otherwise the widget"s output is a concatenation...
+        # Otherwise the widget"s output is a concatenation.
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
