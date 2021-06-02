@@ -36,8 +36,7 @@ Description
 
 This widget is designed to summarize a text segmentation. It takes, as an input, a text segmentation, and summarizes it. 
 There are two versions of the Text_Summarizer a basic and advanced version. The basic version allows the user to chose the desired language between english, french or portugese. It also allows the user to chose the size of the summary.
-The advanced version adds the following options: the choice of the summary length based on a % of the input, meaning that the user can chose to have a summary 50% as long as the input. The other option will allow the user to visualise the most important words in a World Cloud.
-
+The advanced version adds the following option: the choice of the summary length based on a % of the input, meaning that the user can chose to have a summary 50% as long as the input. 
 .. note::
    When having several segments as input, please note that the segments have to be in the same language to have an intelligible summary.
 
@@ -48,9 +47,8 @@ The **basic** interface displays first a text field in which the user can set th
 
 .. image:: figures/tldr_basic_interface.png
 
-The **advanced** interface displays two more elements. 
+The **advanced** interface displays one more element. 
 First a percentage option that, when selected, lets the user choose the percentage with a gauge.
-The second element is the world cloud letting the user visualize the most important words of the summary.
 
 The **Info** section informs the user about the status of the widget and 
 indicates the number of segments and characters in the output segmentation, or 
