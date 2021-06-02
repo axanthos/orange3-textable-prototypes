@@ -1,17 +1,24 @@
 <?xml version='1.0' encoding='utf-8'?>
-<scheme description="" title="" version="2.0">
+<scheme version="2.0" title="LexicalHunter example" description="This is a simple example of how to use the LexicalHunter widget">
 	<nodes>
-		<node id="0" name="Gutenberg" position="(182.0, 166.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.gutenberg.Gutenberg" title="Gutenberg" version="" />
-		<node id="1" name="Display" position="(352.0, 166.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+		<node id="0" name="Gutenberg" qualified_name="orangecontrib.textable_prototypes.widgets.gutenberg.Gutenberg" project_name="Orange3-Textable-Prototypes" version="" title="Shakespeare" position="(466.0, 276.0)" />
+		<node id="1" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(801.0, 275.0)" />
 	</nodes>
 	<links>
-		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Gutenberg importation" source_node_id="0" />
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Gutenberg importation" sink_channel="Segmentation" enabled="true" />
 	</links>
-	<annotations />
+	<annotations>
+		<text id="0" type="text/plain" rect="(351.0, 23.0, 279.0, 145.0)" font-family="MS Shell Dlg 2" font-size="16">The first time you launch the widget, you'll have to generate the cache.
+
+Search books from the Gutenber.org database, by title, author and languages. And create a corpus with all the books you want.</text>
+		<arrow id="1" start="(464.0, 177.0)" end="(465.0, 234.0)" fill="#C1272D" />
+		<text id="2" type="text/plain" rect="(710.0, 99.0, 208.0, 67.0)" font-family="MS Shell Dlg 2" font-size="16">The widget ctreates  a text segmentation for each book.</text>
+		<arrow id="3" start="(794.0, 178.0)" end="(796.0, 232.0)" fill="#C1272D" />
+	</annotations>
 	<thumbnail />
 	<node_properties>
-		<properties format="literal" node_id="0">{'autoSend': False, 'controlAreaVisible': True, 'myBasket': [(8651, 'Les misérables Tome I: Fantine', 8312)], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03z\x00\x00\x00\xb4\x00\x00\x04\xac\x00\x00\x03\x9e\x00\x00\x03\x83\x00\x00\x00\xda\x00\x00\x04\xa3\x00\x00\x03\x95\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'uuid': '089112b1-58a9-4158-9c8b-c77f4b4c1b2f', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
-		<properties format="literal" node_id="1">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\x88\x00\x00\x00\x8e\x00\x00\x05/\x00\x00\x03y\x00\x00\x00\x91\x00\x00\x00\xb4\x00\x00\x05&amp;\x00\x00\x03p\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'segmentDelimiter': '\\n', 'uuid': 'ba33a0a9-40cd-4c44-bb17-7f780f62cc6a', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties node_id="0" format="literal">{'autoSend': False, 'controlAreaVisible': True, 'myBasket': [['The Tragedy of Romeo and Juliet', 'William Shakespeare', 1112, 'English'], ['The Tragedy of Macbeth', 'William Shakespeare', 1129, 'English']], 'savedWidgetGeometry': b"\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03'\x00\x00\x00\x7f\x00\x00\x05W\x00\x00\x03\xb2\x00\x00\x030\x00\x00\x00\xa5\x00\x00\x05N\x00\x00\x03\xa9\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80", 'uuid': '19e08cac-7e6c-4672-b221-9c6f2249e876', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties node_id="1" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03?\x00\x00\x00&lt;\x00\x00\x06f\x00\x00\x03\xe3\x00\x00\x03H\x00\x00\x00b\x00\x00\x06]\x00\x00\x03\xda\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'segmentDelimiter': ' ', 'uuid': 'aa1e7ee2-e573-4c90-b2c5-f379f6841f59', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
 	</node_properties>
 	<session_state>
 		<window_groups />

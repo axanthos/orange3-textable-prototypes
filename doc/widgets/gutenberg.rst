@@ -55,11 +55,11 @@ The **Generate Cache** button allows the user to generate the gutenberg cache.
 This has to be done only at first launch or if the database has been updated. It can 
 last about 5 to 10 minutes.
 
-The **Create my corpus** section allows the user to add or remove text from
+The **results** section allows the user to add or remove text from
 the search results.
 
-The **My titles** section is the user "basket". He can add or remove texts from
-his corpus with the section **Create my corpus**.
+The **corpus** section is the user "basket". He can add or remove texts from
+his corpus with the **results** section.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When selected, the **Send automatically** checkbox
