@@ -43,12 +43,21 @@ The advanced version adds the following option: the choice of the summary length
 Interface
 ~~~~~~~~~
 
-The **basic** interface displays first a text field in which the user can set the number of sentences of the summary; a dropdown list of languages to chose from; finally two options to select : to summarize by text or by segments.
+The **widget** interface displays : 
 
-.. image:: figures/tldr_basic_interface.png
+- A text field in which the user can set the number of sentences of the summary
+- A text field in which that lets the user choose the length in %
+- A dropdown list to chose the length method
+- A dropdown list of languages to choose from
+- Two options to select : to summarize by text or by segments.
 
-The **advanced** interface displays one more element. 
-First a percentage option that, when selected, lets the user choose the percentage with a gauge.
+
+.. image:: figures/TLDR_widget.png
+
+The **link** interface lets the user choose which output to send, either the summary or the text with the most important words highlighted. 
+
+.. image:: figures/TLDR_link.png
+
 
 The **Info** section informs the user about the status of the widget and 
 indicates the number of segments and characters in the output segmentation, or 
