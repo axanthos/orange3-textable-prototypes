@@ -52,9 +52,12 @@ The **widget** interface displays :
 - Two options to select : to summarize by text or by segments.
 
 
+
 .. image:: figures/TLDR_widget.png
 
+
 The **link** interface lets the user choose which output to send, either the summary or the text with the most important words highlighted. 
+
 
 .. image:: figures/TLDR_link.png
 
