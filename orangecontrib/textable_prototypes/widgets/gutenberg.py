@@ -296,7 +296,7 @@ class Gutenberg(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        # area where confirmed songs are moved and stocked
+        # area where confirmed texts are moved and stocked
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
@@ -359,6 +359,17 @@ class Gutenberg(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
+        self.check_cache()
+
+    def check_cache(self):
+        if not self.cacheExists():
+            self.searchButton.setDisabled(True)
+            self.infoBox.setText(
+                "Cache must be generated before fisrt launch",
+                "warning"
+            )
+        else:
+            self.cacheGenerationButton.setDisabled(True)
 
     def generate_cache(self):
         print(self.cacheExists())
