@@ -24,7 +24,7 @@ Outputs:
 Description
 -----------
 
-This widget is designed for searching any movie by its title and the output is 25 reviews of the film. 
+This widget is designed for searching any movie by its title and actor/actress and the output is 25 reviews of the film. 
 The widget will use imdb library to import the movies’ data.
 
 
