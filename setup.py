@@ -104,7 +104,7 @@ INSTALL_REQUIRES = (
     'fitz',
     'pytesseract',
     'pillow',
-    'gutenbergpy @ https://github.com/Sergenti/gutenbergpy/archive/refs/heads/master.zip'
+    'gutenbergpy',
 ),
 
 EXTRAS_REQUIRE = {
