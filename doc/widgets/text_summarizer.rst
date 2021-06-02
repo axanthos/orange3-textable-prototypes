@@ -38,7 +38,9 @@ Description
 This widget is designed to summarize a text segmentation. It takes, as an input, a text segmentation, and summarizes it. 
 The Text Summarizer allows the user to chose the desired language between english, french or portugese. It also allows the user to chose the size of the summary, either with a number of sentences or percentage of the input.
 
-This widget has two types of outputs, one being the summary in itself, the other being the text input with its most important words highlighted.
+The widget can take a single input to summarize or a segmentation with more than one segment. In the later situation, the summary can be done each segment individually or all segments can be summarized as one.
+
+This widget has two types of outputs, one being the summary in itself, the other being the text input with its most important sentences highlighted.
 
 .. note::
    When having several segments as input, please note that the segments have to be in the same language to have an intelligible summary.
@@ -59,7 +61,7 @@ The **widget** interface displays :
 .. image:: figures/TLDR_widget.png
 
 
-The **link** interface lets the user choose which output to send, either the summary or the text with the most important words highlighted. 
+The **link** interface lets the user choose which output to send, either the summary or the text with the most important sentences highlighted. 
 
 
 .. image:: figures/TLDR_link.png
