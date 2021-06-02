@@ -29,14 +29,17 @@ Inputs:
 
 Outputs:
 
-* ``Text segmentation``
+* ``Text segmentation`` (Summary)
+* ``Text segmentation`` (HTML Summary)
 
 Description
 -----------
 
 This widget is designed to summarize a text segmentation. It takes, as an input, a text segmentation, and summarizes it. 
-There are two versions of the Text_Summarizer a basic and advanced version. The basic version allows the user to chose the desired language between english, french or portugese. It also allows the user to chose the size of the summary.
-The advanced version adds the following option: the choice of the summary length based on a % of the input, meaning that the user can chose to have a summary 50% as long as the input. 
+The Text Summarizer allows the user to chose the desired language between english, french or portugese. It also allows the user to chose the size of the summary, either with a number of sentences or percentage of the input.
+
+This widget has two types of outputs, one being the summary in itself, the other being the text input with its most important words highlighted.
+
 .. note::
    When having several segments as input, please note that the segments have to be in the same language to have an intelligible summary.
 
