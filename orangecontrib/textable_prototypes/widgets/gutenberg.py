@@ -400,13 +400,20 @@ class Gutenberg(OWTextableBaseWidget):
         """
             Parse a query string and do a search in the Gutenberg cache
         """
-        query_string = self.titleQuery        
+        query_string = self.titleQuery
+        query_author = self.authorQuery       
         language = self.lang_dict[self.langQuery]
 
         if self.langQuery == 'Any' and query_string == '' and self.authorQuery == '':
             self.infoBox.setText("You didn't search anything", "warning")
         
         else:
+            
+            # Recode author with name, first name
+            if len(query_author.split()) == 2:
+                if "," not in query_author:
+                    query_author = "%, ".join(query_author.split()[::-1])
+
             # parse query and lookup in gutenbergcache
             cache = GutenbergCache.get_cache()
 
@@ -426,7 +433,7 @@ class Gutenberg(OWTextableBaseWidget):
                     AND upper(authors.name) LIKE "%{author}%"
                     AND languages.name LIKE "%{lang}%"
                     LIMIT {limit}
-                    """.format(title=query_string, author=self.authorQuery, lang=language,limit=self.nbr_results)
+                    """.format(title=query_string, author=query_author, lang=language, limit=self.nbr_results)
                 )
             except Exception as exc:
                 print(exc)
