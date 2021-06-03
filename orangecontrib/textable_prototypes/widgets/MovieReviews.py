@@ -198,7 +198,7 @@ class MovieReviews(OWTextableBaseWidget):
             labelWidth=120,
             tooltip=("Enter a string"),
         )
-
+        
         # Allows to choose a type of search
         searchType = gui.comboBox(
             widget=self.queryBox,
@@ -218,7 +218,6 @@ class MovieReviews(OWTextableBaseWidget):
                 "Please select the desired search.\n"
             ),
         )
-
         genreTypes = gui.comboBox(
             widget=self.genreBox,
             master=self,
@@ -256,7 +255,6 @@ class MovieReviews(OWTextableBaseWidget):
                 "Please select the desired search.\n"
             ),
         )
-
 
 
         # Allows to chose a filter for the search
@@ -386,7 +384,6 @@ class MovieReviews(OWTextableBaseWidget):
             #self.searchFilter.setVisible(False)
             self.searchFilter.setDisabled(True)
             self.searchNbr.setVisible(True)
-
         elif self.type_results == "Genre":
             # Hide Title
             self.queryBox.setVisible(False)
@@ -395,7 +392,6 @@ class MovieReviews(OWTextableBaseWidget):
             #self.searchFilter.setVisible(True)
             self.searchFilter.setDisabled(False)
             self.searchNbr.setVisible(True)
-        
         elif self.type_results == "Actor":
             # searchFilter disabled
             self.queryBox.setVisible(True)
@@ -442,24 +438,33 @@ class MovieReviews(OWTextableBaseWidget):
                 people = self.ia.search_person(actor_name)
                 searched_actor = people[0].personID
                 first_search = self.ia.get_person_filmography(searched_actor)
-                
+
                 # Works for both actors and actresses
                 try:
                     search = first_search['data']['filmography']['actor']
                 except KeyError:
                     search = first_search['data']['filmography']['actress']
 
-                # Checks if the movie has a year associated
+                # Checks if the movie has a year associated and stores it in a list
                 filtered_results = [film for film in search if 'year' in film]
 
             if self.filter_results == 'Random':
                 random.shuffle(filtered_results)
-            
+
             elif self.filter_results == 'Alphabetical':
-                alpha_list = list()
+                alpha_dict = dict()
                 for result in filtered_results:
-                    alpha_list.append(str(result))
-                print(sorted(alpha_list))
+                    my_id = result.movieID
+                    alpha_dict[str(result)] = my_id 
+                    print(alpha_dict)
+                sorted_dict = sorted(alpha_dict.keys(), key=lambda x:x.lower())
+                print(sorted_dict)
+                filtered_results = list()
+                for i in sorted_dict:
+                    value = alpha_dict[i]
+                    print(value)
+                    print(self.ia.get_movie(value))
+                    filtered_results.append(self.ia.get_movie(value))
 
 
             # Each result is stored in a dictionnary with its title
