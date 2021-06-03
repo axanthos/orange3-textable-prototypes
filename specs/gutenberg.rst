@@ -28,20 +28,20 @@ Une fois le cache créé, l'utilisateur a accès à l'interface principale du wi
 
 .. _florian.rieder@unil.ch: mailto:florian.rieder@unil.ch
 
-    - specification
-    - code
-    - documentation
-    - tests
+    - Specification
+    - Gutenbergpy debugging & compatibility
+    - Documentation
+    - Tests
     - GitHub
 
 * Paul Zignani (`paul.zignani@unil.ch`_):
 
 .. _paul.zignani@unil.ch: mailto:paul.zignani@unil.ch
 
-    - interface
-    - code
-    - documentation
-    - tests
+    - Interface
+    - SQL queries
+    - Documentation
+    - Tests
     - GitHub
 
 
@@ -77,15 +77,15 @@ Une fois le cache créé, l'utilisateur a accès à l'interface principale du wi
 
 .. image:: images/gutenberg_principal.png
 
-* Générer le cache et rechercher un cache préexistant
+* Générer le cache
 
-* Chercher des livres par auteur, titre, langue, sujet.
+* Chercher des livres par auteur, titre, langue.
 
 * Permettre à l'utilisateur de sélectionner plusieurs livres, provenant de plusieurs recherches différentes, en un corpus.
 
 * Ajouter, retirer et vider un corpus.
 
-* Créer et émettre une segmentation avec un segment correspondant à chaque  livre selectionné, avec en annotation les metadonnées du livre.
+* Créer et émettre une segmentation avec un segment correspondant à chaque livre selectionné, avec en annotation les metadonnées du livre.
 
 2.4 Fonctionnalités optionnelles
 ================================
