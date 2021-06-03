@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="Movie Reviews" qualified_name="orangecontrib.textable_prototypes.widgets.MovieReviews.MovieReviews" project_name="Orange3-Textable-Prototypes" version="" title="Movie Reviews" position="(150, 150)" />
+		<node id="1" name="Segment" qualified_name="_textable.widgets.OWTextableSegment.OWTextableSegment" project_name="Orange3-Textable" version="" title="Segment" position="(306.0, 135.0)" />
+		<node id="2" name="Count" qualified_name="_textable.widgets.OWTextableCount.OWTextableCount" project_name="Orange3-Textable" version="" title="Count" position="(459.0, 145.0)" />
+		<node id="3" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWDataTable" project_name="Orange3" version="" title="Data Table" position="(623.0, 148.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Segmentation" sink_channel="Segmentation" enabled="true" />
+		<link id="1" source_node_id="1" sink_node_id="2" source_channel="Segmented data" sink_channel="Segmentation" enabled="true" />
+		<link id="2" source_node_id="2" sink_node_id="3" source_channel="Orange table" sink_channel="Data" enabled="true" />
+	</links>
+	<annotations>
+		<arrow id="0" start="(150.0, 227.0)" end="(149.0, 356.0)" fill="#C1272D" />
+		<text id="1" type="text/plain" rect="(70.0, 374.0, 184.0, 70.0)" font-family="MS Shell Dlg 2" font-size="16">Search for movies and add them to the corpus</text>
+		<arrow id="2" start="(315.0, 200.0)" end="(335.0, 331.0)" fill="#C1272D" />
+		<text id="3" type="text/plain" rect="(295.0, 347.0, 157.0, 71.0)" font-family="MS Shell Dlg 2" font-size="16">Segments the reviews into words</text>
+		<arrow id="4" start="(470.99999999999994, 199.0)" end="(545.0, 336.0)" fill="#C1272D" />
+		<text id="5" type="text/plain" rect="(482.0, 338.0, 198.0, 94.0)" font-family="MS Shell Dlg 2" font-size="16">Counts words occurences for each reviews associated to a movie</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="pickle">gASVLQUAAAAAAAB9lCiMCGF1dG9TZW5klImMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjAhteUJhc2tl
+dJRdlCh9lCiMBG5hbWWUjAppbWRiLk1vdmlllIwFTW92aWWUk5QpgZR9lCiMBGRhdGGUfZQojAV0
+aXRsZZSMClRoZSBNYXRyaXiUjARraW5klIwFbW92aWWUjAR5ZWFylE3PB4wJY292ZXIgdXJslIyZ
+aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL00vTVY1Qk56UXpPVGszT1RBdE5EUTBa
+aTAwWlRWa0xXSTBNVEV0TURsbFpqTmtZek5qTlRjNEwybHRZV2RsWGtFeVhrRnFjR2RlUVhWeU5q
+VTBPVFEwT1RZQC5fVjFfVVgzMl9DUjAsMCwzMiw0NF9BTF8uanBnlHWMBG15SUSUTowFbm90ZXOU
+jACUjAp0aXRsZXNSZWZzlH2UjAluYW1lc1JlZnOUfZSMDmNoYXJhY3RlcnNSZWZzlH2UjAhtb2RG
+dW5jdJSMCmltZGIudXRpbHOUjAxtb2RDbGVhclJlZnOUk5SMDGN1cnJlbnRfaW5mb5RdlIwMaW5m
+b3NldDJrZXlzlH2UjAtrZXkyaW5mb3NldJR9lIwQX0NvbnRhaW5lcl9fcm9sZZROjAdtb3ZpZUlE
+lIwHMDEzMzA5M5SMB215VGl0bGWUaBeMDGFjY2Vzc1N5c3RlbZSMBGh0dHCUjA1rZXlzX3RvbW9k
+aWZ5lH2UKIwEcGxvdJROjAZ0cml2aWGUTowSYWx0ZXJuYXRlIHZlcnNpb25zlE6MBWdvb2ZzlE6M
+BnF1b3Rlc5ROjANkdmSUTowJbGFzZXJkaXNjlE6MBG5ld3OUTowKc291bmR0cmFja5ROjA1jcmF6
+eSBjcmVkaXRzlE6MCGJ1c2luZXNzlE6MC3N1cHBsZW1lbnRzlE6MDHZpZGVvIHJldmlld5ROjARm
+YXFzlE51jA1fcm9sZUlzUGVyc29ulImMCl9yb2xlQ2xhc3OUjA5pbWRiLkNoYXJhY3RlcpSMCUNo
+YXJhY3RlcpSTlHViaBJNzweMAmlklGgqdX2UKGgGaAkpgZR9lChoDH2UKGgOjAdUaXRhbmljlGgQ
+aBFoEk3NB2gTjJFodHRwczovL20ubWVkaWEtYW1hem9uLmNvbS9pbWFnZXMvTS9NVjVCTURkbVpH
+VTNORFF0WTJFNU15MDBaVGxpTFdJek9UVXRNVFk0WkdJMVlqZGlOamszWGtFeVhrRnFjR2RlUVhW
+eU5UQTROelkxTXpZQC5fVjFfVVgzMl9DUjAsMCwzMiw0NF9BTF8uanBnlHVoFU5oFmgXaBh9lGga
+fZRoHH2UaB5oIWgiXZRoJH2UaCZ9lGgoTmgpjAcwMTIwMzM4lGgraBdoLGgtaC59lChoME5oMU5o
+Mk5oM05oNE5oNU5oNk5oN05oOE5oOU5oOk5oO05oPE5oPU51aD6JaD9oQnViaBJNzQdoQ2hQdWWM
+E3NhdmVkV2lkZ2V0R2VvbWV0cnmUQ0IB2dDLAAMAAAAAATwAAAAXAAAC+wAAAqoAAAE8AAAAFwAA
+AvsAAAKqAAAAAAAAAAAEOAAAATwAAAAXAAAC+wAAAqqUjAR1dWlklIwkYzYwNWRjY2ItZjU3YS00
+NWJmLWE0YTYtNWY2ODE5ZTk2NTI4lIwLX192ZXJzaW9uX1+USwGMIV9UZXh0YWJsZVV0aWxzX3Nl
+dHRpbmdzX3ZlcnNpb25fX5RLAEsAhpR1Lg==
+</properties>
+		<properties node_id="1" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': False, 'controlAreaVisible': True, 'displayAdvancedSettings': False, 'importAnnotations': True, 'lastLocation': '.', 'mergeDuplicates': False, 'mode': 'Tokenize', 'regex': '', 'regexes': [], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x01\xb7\x00\x00\x00R\x00\x00\x02\x80\x00\x00\x02I\x00\x00\x01\xb8\x00\x00\x00i\x00\x00\x02\x7f\x00\x00\x02H\x00\x00\x00\x00\x00\x00\x00\x00\x048\x00\x00\x01\xb8\x00\x00\x00i\x00\x00\x02\x7f\x00\x00\x02H', 'segmentType': 'Segment into words', 'uuid': '72f37fb0-3b43-4d7a-afd2-df32cd528a57', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties node_id="2" format="pickle">gASVrAIAAAAAAAB9lCiMCGF1dG9TZW5klImMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjA1pbnRyYVNl
+cURlbGltlIwBI5SMDW1lcmdlQ29udGV4dHOUiYwMbWVyZ2VTdHJpbmdzlImME3NhdmVkV2lkZ2V0
+R2VvbWV0cnmUQ0IB2dDLAAMAAAAAAWwAAABpAAACzAAAAkgAAAFsAAAAaQAAAswAAAJIAAAAAAAA
+AAAEOAAAAWwAAABpAAACzAAAAkiUjA5zZXF1ZW5jZUxlbmd0aJRLAYwNdW5pdFBvc01hcmtlcpSM
+AV+UjAR1dWlklIwkZDY3NmMyMDctZDRhNi00NjI3LWE5MjAtYjdhOTBiZjU5ZWM0lIwLX192ZXJz
+aW9uX1+USwGMEGNvbnRleHRfc2V0dGluZ3OUXZSMFW9yYW5nZXdpZGdldC5zZXR0aW5nc5SMB0Nv
+bnRleHSUk5QpgZR9lCiMBnZhbHVlc5R9lCiMCV9jb250ZXh0c5RLAIwUY29udGV4dEFubm90YXRp
+b25LZXmUjAV0aXRsZZSMD2xlZnRDb250ZXh0U2l6ZZRLAIwEbW9kZZSMF0NvbnRhaW5pbmcgc2Vn
+bWVudGF0aW9ulIwQcmlnaHRDb250ZXh0U2l6ZZRLAIwRdW5pdEFubm90YXRpb25LZXmUjAV0aXRs
+ZZSMBXVuaXRzlEsAjAp3aW5kb3dTaXpllEsBjA1zZWdtZW50YXRpb25zlF2UjAdTZWdtZW50lIwF
+dGl0bGWUjAR5ZWFylIaUjCQ3MmYzN2ZiMC0zYjQzLTRkN2EtYWZkMi1kZjMyY2Q1MjhhNTeUh5Rh
+aA5LAXWMB2VuY29kZWSUaA1oJIaUdWJhjCFfVGV4dGFibGVVdGlsc19zZXR0aW5nc192ZXJzaW9u
+X1+USwBLFYaUdS4=
+</properties>
+		<properties node_id="3" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'dist_color_RGB': (220, 220, 220, 255), 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\xb4\x00\x00\x00i\x00\x00\x03\x83\x00\x00\x02H\x00\x00\x00\xb4\x00\x00\x00i\x00\x00\x03\x83\x00\x00\x02H\x00\x00\x00\x00\x00\x00\x00\x00\x048\x00\x00\x00\xb4\x00\x00\x00i\x00\x00\x03\x83\x00\x00\x02H', 'select_rows': True, 'selected_cols': None, 'selected_rows': None, 'show_attribute_labels': True, 'show_distributions': False, '__version__': 2}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
