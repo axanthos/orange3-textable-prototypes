@@ -449,10 +449,8 @@ class MovieReviews(OWTextableBaseWidget):
                 except KeyError:
                     search = first_search['data']['filmography']['actress']
 
-                # Checks if the 
-                for film in search:
-                    if 'year' in film:
-                        filtered_results.append(film)
+                # Checks if the movie has a year associated
+                filtered_results = [film for film in search if 'year' in film]
 
             if self.filter_results == 'Random':
                 random.shuffle(filtered_results)
@@ -463,7 +461,6 @@ class MovieReviews(OWTextableBaseWidget):
                     alpha_list.append(str(result))
                 print(sorted(alpha_list))
 
-                
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
@@ -494,12 +491,8 @@ class MovieReviews(OWTextableBaseWidget):
             # Update the results list with the search results
             # in order to display them
             for idx in self.searchResults:
-                try:
-                    result_string = f'{self.searchResults[idx]["name"]} - {self.searchResults[idx]["year"]}'
-                    self.titleLabels.append(result_string)
-                except:
-                    result_string = f'{self.searchResults[idx]["name"]}'
-                    self.titleLabels.append(result_string)
+                result_string = f'{self.searchResults[idx]["name"]} - {self.searchResults[idx]["year"]}'
+                self.titleLabels.append(result_string)
 
             self.titleLabels = self.titleLabels
             self.clearButton.setDisabled(False)
@@ -522,21 +515,18 @@ class MovieReviews(OWTextableBaseWidget):
             newMovie = self.searchResults[selectedTitle+1]
             if newMovie not in self.myBasket:
                 # Test if the movie has review associated, if not it refuses to add it to corpus
-                try:
-                    movie = self.ia.get_movie_reviews(newMovie['id'])
-                    cond_list.append(movie)
-                    for movie in cond_list:
-                        data = movie.get('data', "")
-                        reviews_data = data.get('reviews')
-                        for review in reviews_data:
-                            pass
-                    self.myBasket.append(newMovie)
-                except:
-                    self.infoBox.setText(
-                    "Cannot add to corpus. One or more selected movies have no associated reviews",
-                    "warning"
-                    )
-                    return
+                movie = self.ia.get_movie_reviews(newMovie['id'])
+                cond_list.append(movie)
+                for movie in cond_list:
+                    data = movie.get('data', "")
+                    if 'reviews' in data:
+                        self.myBasket.append(newMovie)
+                    else:
+                        self.infoBox.setText(
+                        "Cannot add to corpus. One or more selected movies have no associated reviews",
+                        "warning"
+                        )
+                        return
         self.updateCorpus()
         self.sendButton.settingsChanged()
 
@@ -545,12 +535,9 @@ class MovieReviews(OWTextableBaseWidget):
         """Update the corpus box list in order to view the movies added"""
         self.mytitleLabels = list()
         for newMovie in self.myBasket:
-            try: 
-                result_string = f'{newMovie["name"]} - {newMovie["year"]}'
-                self.mytitleLabels.append(result_string)
-            except KeyError:
-                result_string = newMovie["name"]
-                self.mytitleLabels.append(result_string)
+            result_string = f'{newMovie["name"]} - {newMovie["year"]}'
+            self.mytitleLabels.append(result_string)
+
         self.mytitleLabels = self.mytitleLabels
 
         self.clearmyBasket.setDisabled(self.myBasket == list())
@@ -588,7 +575,6 @@ class MovieReviews(OWTextableBaseWidget):
         )
 
         # Connect to imdb and add elements in lists
-        selectedSongs = list()
         list_review = list()
         list_annotation = list()
         annotations = list()
