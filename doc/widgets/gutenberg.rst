@@ -54,11 +54,11 @@ The **Generate Cache** button allows the user to generate the gutenberg cache.
 This has to be done only at first launch or if the database has been updated. It can 
 last about 5 to 10 minutes.
 
-The **results** section allows the user to add or remove text from
+The **results** section allows the user to add or remove texts from
 the search results.
 
-The **corpus** section is the user "basket". He can add or remove texts from
-his corpus with the **results** section.
+The **corpus** section is the users "basket". He can add or remove texts from
+his corpus in the **results** section.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When selected, the **Send automatically** checkbox
@@ -69,12 +69,14 @@ Caveat about searches
 ~~~~~~~~~~~~~~~~~~~~~
 
 A search can be executed using one or more parameters. The only case it won't work
-is if the *language*, set to `any`, is the only one.
+is if the *language* is set to `any` and the other parameters are empty. However it 
+is possible to make a search only by language.
 
 The aurhors are written as `name, first name` in the database. However writing `first name name`
 should also work for most of the authors.
 
 In general using only one keyword in the inputs should give the most results.
+
 Messages
 --------
 
