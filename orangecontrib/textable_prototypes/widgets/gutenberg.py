@@ -368,7 +368,7 @@ class Gutenberg(OWTextableBaseWidget):
         """changes layout according to the cache existens
         """
         # disables the search button if cache does not exists
-        if not self.cacheExists():
+        if not GutenbergCache.exists():
             # disables the search button if not
             self.searchButton.setDisabled(True)
             self.infoBox.setText(
@@ -382,8 +382,7 @@ class Gutenberg(OWTextableBaseWidget):
     def generate_cache(self):
         """generates the cache
         """
-        print(self.cacheExists())
-        if not self.cacheExists():
+        if not GutenbergCache.exists():
             try:
                 self.infoBox.setText(
                     "The cache is being generated. This can take up to 10mn."
@@ -669,13 +668,6 @@ class Gutenberg(OWTextableBaseWidget):
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
-
-    def cacheExists(self):
-        # OOH THIS IS UGLY
-        # get the root directory of the package
-        root = Path(__file__).parent.parent.parent.parent.parent
-        # check if the cache database exists
-        return os.path.isfile("gutenbergindex.db")
 
 
 if __name__ == "__main__":
