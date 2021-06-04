@@ -494,7 +494,7 @@ class TextSummarizer(OWTextableBaseWidget):
         #html_summary contains spacy.tokens.span.Span that must be converted to string
         html_summary_str = [str(i) for i in html_summary]
         # Join all sentence in a single string
-        html_resume = " ".join(html_summary_str)
+        html_resume = "<!DOCTYPE html>\n<html>\n<body>\n" + " ".join(html_summary_str) + "\n</body>\n</html>"
 
         progressBar.finish()
 
