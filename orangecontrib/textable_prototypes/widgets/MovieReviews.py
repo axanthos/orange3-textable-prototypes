@@ -83,7 +83,7 @@ class MovieReviews(OWTextableBaseWidget):
         # Search filters attributs
         self.newQuery = ''
         self.type_results = 'Title'
-        self.genre_searched = 'Comedy'
+        #self.genre_searched = 'Comedy'
         self.filter_results = 'Popularity'
         self.nbr_results = '10'
         # Results box attributs
@@ -127,7 +127,7 @@ class MovieReviews(OWTextableBaseWidget):
 
         self.filterBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Filters",
+            box="Query options",
             orientation="horizontal",
         )
 
@@ -207,18 +207,18 @@ class MovieReviews(OWTextableBaseWidget):
             items=[
                 "Title",
                 "Actor",
-                "Genre",
+                #"Genre",
             ],
             sendSelectedValue=True,
             callback=self.mode_changed,
             orientation="horizontal",
-            label="Search Type: ",
+            label="Search by: ",
             labelWidth=120,
             tooltip=(
                 "Please select the desired search.\n"
             ),
         )
-        genreTypes = gui.comboBox(
+        """genreTypes = gui.comboBox(
             widget=self.genreBox,
             master=self,
             value="genre_searched",
@@ -236,7 +236,7 @@ class MovieReviews(OWTextableBaseWidget):
                 "Please select the desired search.\n"
             ),
         )
-
+        """
         searchTypeGenre = gui.comboBox(
             widget=self.genreBox,
             master=self,
@@ -269,7 +269,7 @@ class MovieReviews(OWTextableBaseWidget):
             ],
             sendSelectedValue=True,
             orientation="horizontal",
-            label="Search by: ",
+            label="Sort by: ",
             labelWidth=120,
             tooltip=(
                 "Please select the desired search.\n"
@@ -290,7 +290,7 @@ class MovieReviews(OWTextableBaseWidget):
             ],
             sendSelectedValue=True,
             orientation="horizontal",
-            label="Number of results: ",
+            label="Results' number: ",
             labelWidth=120,
             tooltip=(
                 "Please select the desired search.\n"
@@ -433,17 +433,19 @@ class MovieReviews(OWTextableBaseWidget):
                         filtered_results.append(film)
 
             elif self.type_results == 'Actor':
-                # movie name
                 actor_name = query_string
                 people = self.ia.search_person(actor_name)
                 searched_actor = people[0].personID
                 first_search = self.ia.get_person_filmography(searched_actor)
 
-                # Works for both actors and actresses
-                try:
+                # Checks if the user input is a valid actor/actress
+                if 'actor' in first_search['data']['filmography']:
                     search = first_search['data']['filmography']['actor']
-                except KeyError:
+                elif 'actress' in first_search['data']['filmography']:
                     search = first_search['data']['filmography']['actress']
+                else:
+                    search = list()
+                    self.infoBox.setText("Please enter a valid actor or actress name", "warning")
 
                 # Checks if the movie has a year associated and stores it in a list
                 filtered_results = [film for film in search if 'year' in film]
@@ -455,7 +457,7 @@ class MovieReviews(OWTextableBaseWidget):
                 alpha_dict = dict()
                 for result in filtered_results:
                     my_id = result.movieID
-                    alpha_dict[str(result)] = my_id 
+                    alpha_dict[str(result)] = my_id
                     print(alpha_dict)
                 sorted_dict = sorted(alpha_dict.keys(), key=lambda x:x.lower())
                 print(sorted_dict)
@@ -465,7 +467,6 @@ class MovieReviews(OWTextableBaseWidget):
                     print(value)
                     print(self.ia.get_movie(value))
                     filtered_results.append(self.ia.get_movie(value))
-
 
             # Each result is stored in a dictionnary with its title
             # and year of publication if it is specified
@@ -509,7 +510,7 @@ class MovieReviews(OWTextableBaseWidget):
             self.controlArea.setDisabled(False)
 
         else:
-            self.infoBox.setText("Please enter a movie title", "warning")
+            self.infoBox.setText("Please type something in the search bar", "warning")
     
 
     # Add movie to corpus
@@ -610,13 +611,12 @@ class MovieReviews(OWTextableBaseWidget):
                 reviews = review.get('content')
                 newInput = Input(reviews)
                 self.createdInputs.append(newInput)
-                new_dict = review.copy()
-
                 # Store the annotation as dicts in a separate list
                 annotations_dict = {"title": movie_annotations, "year": movie_annotations["year"]}
                 annot_dict_copy = annotations_dict.copy()
                 annotations.append(annot_dict_copy)
-            
+        print(annotations)
+
 
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
