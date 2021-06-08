@@ -69,7 +69,7 @@ Warnings
 *Your corpus is empty, please add some movies first*
     The corpus is empty, no movies have been selected for downloading the reviews.
 
-*Please enter a valid actor or actress name
+*Please enter a valid actor or actress name*
     The entered word is not an actor/actress name as found on the imdb website
 
 Errors
