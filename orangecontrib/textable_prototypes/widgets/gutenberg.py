@@ -418,13 +418,13 @@ class Gutenberg(OWTextableBaseWidget):
         query_author = self.authorQuery
         language = self.lang_dict[self.langQuery]
 
-        # infoms the user that he didn't change anything
+        # informs the user that he didn't change anything
         if self.langQuery == 'Any' and query_string == '' and self.authorQuery == '':
             self.infoBox.setText("You can't search only by language, if it's set to Any",
                                  "warning")
 
         else:    
-            # Recode author with name, first name
+            # Recode author to name, first_name
             if len(query_author.split()) == 2:
                 if "," not in query_author:
                     query_author = "%, ".join(query_author.split()[::-1])
@@ -436,15 +436,27 @@ class Gutenberg(OWTextableBaseWidget):
             try:
                 query_results = cache.native_query(
                     sql_query="""
-                    WITH unique_book_author AS 
+                    /* Creates a new table with one author per book
+                    by selecting the greatest author id */
+
+                    WITH unique_book_author AS
                     (SELECT * FROM book_authors  
                     WHERE authorid IN (SELECT MAX(authorid) FROM book_authors GROUP BY bookid))
+
+                    /* Selects title, author, gutenberg id and language */
+
                     SELECT titles.name, authors.name, books.gutenbergbookid, languages.name
                     FROM titles
+
+                    /* Merges every needed table into one on shared attributes */
+
                     INNER JOIN books ON books.id = titles.bookid
                     INNER JOIN unique_book_author ON  books.id = unique_book_author.bookid 
                     INNER JOIN authors ON authors.id = unique_book_author.authorid
                     INNER JOIN languages ON books.languageid = languages.id
+
+                    /* Matches users query using % wildcard for more permissive query */
+
                     WHERE upper(titles.name) LIKE "%{title}%"
                     AND upper(authors.name) LIKE "%{author}%"
                     AND languages.name LIKE "%{lang}%"
