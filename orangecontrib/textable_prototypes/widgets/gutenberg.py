@@ -40,8 +40,8 @@ from LTTL.Input import Input
 import gutenbergpy.textget
 from gutenbergpy.gutenbergcache import GutenbergCache
 
-# chardet
-import chardet
+# regex
+import re
 
 # Textable
 from _textable.widgets.TextableUtils import (
@@ -128,7 +128,7 @@ class Gutenberg(OWTextableBaseWidget):
             tooltip="Generate the gutenberg cache, this might take a while...",
         )
 
-        queryBox = gui.widgetBox(
+        self.queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Search books",
             orientation="vertical",
@@ -138,7 +138,7 @@ class Gutenberg(OWTextableBaseWidget):
         # Allows to enter specific text to the research
         #  Uses "newQuery" attribut
         gui.lineEdit(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value='titleQuery',
             orientation='horizontal',
@@ -148,7 +148,7 @@ class Gutenberg(OWTextableBaseWidget):
         )
 
         gui.lineEdit(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value='authorQuery',
             orientation='horizontal',
@@ -159,7 +159,7 @@ class Gutenberg(OWTextableBaseWidget):
 
         #ComboBox for selecting the text language
         queryLang = gui.comboBox(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value='langQuery',
             items=["Any","Afrikaans","Aleut","Arabic",
@@ -218,7 +218,7 @@ class Gutenberg(OWTextableBaseWidget):
             }
         # Allows to choose the wanted results numberp (10 by 10)
         queryNbr = gui.comboBox(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value="nbr_results",
             items=[
@@ -250,14 +250,14 @@ class Gutenberg(OWTextableBaseWidget):
         # Reasearch button
         # Uses "searchFunction" attribut
         self.searchButton = gui.button(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             label="Search",
             callback=self.search,
             tooltip="Connect Genius and make a research",
         )
         self.titleListbox = gui.listBox(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value="selectedTitles",    # setting (list)
             labels="titleLabels",      # setting (list)
@@ -269,7 +269,7 @@ class Gutenberg(OWTextableBaseWidget):
         self.titleListbox.setSelectionMode(3)
 
         boxbutton = gui.widgetBox(
-            widget=queryBox,
+            widget=self.queryBox,
             box=False,
             orientation='horizontal',
         )
@@ -295,7 +295,7 @@ class Gutenberg(OWTextableBaseWidget):
             tooltip="Clear results",
         )
         self.clearButton.setDisabled(True)
-        gui.separator(widget=queryBox, height=3)
+        gui.separator(widget=self.queryBox, height=3)
 
         # area where confirmed texts are moved and stocked
         mytitleBox = gui.widgetBox(
@@ -370,7 +370,7 @@ class Gutenberg(OWTextableBaseWidget):
         # disables the search button if cache does not exists
         if not GutenbergCache.exists():
             # disables the search button if not
-            self.searchButton.setDisabled(True)
+            self.queryBox.setDisabled(True)
             self.infoBox.setText(
                 "Cache must be generated before fisrt launch, it can take up to 10mn",
                 "warning"
@@ -420,7 +420,8 @@ class Gutenberg(OWTextableBaseWidget):
 
         # infoms the user that he didn't change anything
         if self.langQuery == 'Any' and query_string == '' and self.authorQuery == '':
-            self.infoBox.setText("You didn't search anything", "warning")
+            self.infoBox.setText("You can't search only by language, if it's set to Any",
+                                 "warning")
 
         else:    
             # Recode author with name, first name
@@ -466,8 +467,8 @@ class Gutenberg(OWTextableBaseWidget):
             # creates better results
             for result in Results:
                 result = list(result)
-                # replaces newlines
-                result[0].replace("\n", "; ")
+                # replaces all newlines types
+                result[0] = re.sub(r'[\n\r]+', r', ', result[0])
                 # recodes athor from: name, first_name to: fisrt_name name
                 result[1] = " ".join(result[1].split(", ")[::-1])
                 # gets the key from the lang_dict for the coresponding language abbreviation
@@ -488,7 +489,7 @@ class Gutenberg(OWTextableBaseWidget):
             # in order to display them
             for idx in self.searchResults:
 
-                result_string = "{title} - {author} - {lang}".format(
+                result_string = "{title} — {author} — {lang}".format(
                         title = idx[0], author = idx[1], lang = idx[3])
                 self.titleLabels.append(result_string)
 
