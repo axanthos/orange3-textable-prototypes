@@ -611,13 +611,14 @@ class MovieReviews(OWTextableBaseWidget):
                 reviews = review.get('content')
                 newInput = Input(reviews)
                 self.createdInputs.append(newInput)
-                # Store the annotation as dicts in a separate list
-                annotations_dict = {"title": movie_annotations, "year": movie_annotations["year"]}
-                annot_dict_copy = annotations_dict.copy()
+        for item in list_annotation:
+            print(item)
+            # Store the annotation as dicts in a separate list
+            annotations_dict = {"title": item, "year": item["year"]}
+            annot_dict_copy = annotations_dict.copy()
+            for i in range(25):
                 annotations.append(annot_dict_copy)
         print(annotations)
-
-
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
@@ -628,7 +629,6 @@ class MovieReviews(OWTextableBaseWidget):
                 self.createdInputs,
                 import_labels_as=None,
             )
-
 
         # Annotate segments...
         for idx, segment in enumerate(self.segmentation):

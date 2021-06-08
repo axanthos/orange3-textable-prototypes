@@ -10,7 +10,6 @@ Authors
 Caroline Roxana Rohrbach, Maryam Zoee, Victor Vermot-Petit-Outhenin
 
 
-
 Signals
 -------
 Input: None
@@ -24,14 +23,17 @@ Outputs:
 Description
 -----------
 
-This widget is designed for searching any movie by its title and the output is 25 reviews of the film. 
-The widget will use imdb library to import the movies’ data.
+This widget is designed for searching any movie by its title or actors and the output is 25 reviews of the film. 
+The widget will use the imdbpy library to import the movies’ data.
 
 
 Interface
 ~~~~~~~~~
 
-.. image:: figures/title.png
+.. figure:: figures/Movie_Reviews_interface.png
+    :align: center
+    :scale: 50 %
+    :alt: Interface of the MovieReviews widget
 
 Figure 1: **Movie Reviews** widget interface - search by Title
 
@@ -43,10 +45,6 @@ The **Corpus** section is a container where the user's movie selections are stor
 
 The **Send** button triggers the emission of a segmentation to the output connection(s). When selected, the Send automatically checkbox disables the button and the widget attempts to automatically emit a segmentation at every modification of its interface.
 
-.. image:: figures/Genre.png
-
-
-Figure 2: **Movie Reviews** widget interface - search by Genre
 
 Messages
 --------
@@ -71,6 +69,8 @@ Warnings
 *Your corpus is empty, please add some movies first*
     The corpus is empty, no movies have been selected for downloading the reviews.
 
+*Please enter a valid actor or actress name
+    The entered word is not an actor/actress name as found on the imdb website
 
 Errors
 ~~~~~~
