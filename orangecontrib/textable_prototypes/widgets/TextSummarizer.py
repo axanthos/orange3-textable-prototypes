@@ -48,16 +48,16 @@ from _textable.widgets.TextableUtils import (
 )
 
 AVAILABLE_MODELS = {
-    "Dutch news (small)": "nl_core_news_sm",
-    "English web (small)": "en_core_web_sm",
-    "French news (small)": "fr_core_news_sm",
-    "German news (small)": "de_core_news_sm",
-    "Greek news (small)": "el_core_news_sm",
-    "Italian news (small)": "it_core_news_sm",
-    "Lithuanian news (small)": "lt_core_news_sm",
-    "Norwegian news (small)": "nb_core_news_sm",
-    "Portuguese news (small)": "pt_core_news_sm",
-    "Spanish news (small)": "es_core_news_sm",
+    "Dutch": "nl_core_news_sm",
+    "English": "en_core_web_sm",
+    "French": "fr_core_news_sm",
+    "German": "de_core_news_sm",
+    "Greek": "el_core_news_sm",
+    "Italian": "it_core_news_sm",
+    "Lithuanian": "lt_core_news_sm",
+    "Norwegian": "nb_core_news_sm",
+    "Portuguese": "pt_core_news_sm",
+    "Spanish": "es_core_news_sm",
 }
 
 # Determine which language models are installed...
