@@ -48,16 +48,26 @@ from _textable.widgets.TextableUtils import (
 )
 
 AVAILABLE_MODELS = {
+    "Dutch news (small)": "nl_core_news_sm",
     "English web (small)": "en_core_web_sm",
     "French news (small)": "fr_core_news_sm",
+    "German news (small)": "de_core_news_sm",
+    "Greek news (small)": "el_core_news_sm",
+    "Italian news (small)": "it_core_news_sm",
+    "Lithuanian news (small)": "lt_core_news_sm",
+    "Norwegian news (small)": "nb_core_news_sm",
     "Portuguese news (small)": "pt_core_news_sm",
+    "Spanish news (small)": "es_core_news_sm",
 }
 
 # Determine which language models are installed...
 INSTALLED_MODELS = list()
+DOWNLOADABLE_MODELS = list()
 for model, package in AVAILABLE_MODELS.items():
     if importlib.util.find_spec(package.replace("-", ".")):
         INSTALLED_MODELS.append(model)
+    else:
+        DOWNLOADABLE_MODELS.append(model)
 
 class TextSummarizer(OWTextableBaseWidget):
     """Textable widget for summarizing a segment in a selected language."""
@@ -136,11 +146,7 @@ class TextSummarizer(OWTextableBaseWidget):
             widget= self.controlArea,
             master=self,
             value="language",
-            items=[
-                "English",
-                "French", 
-                "Portuguese", 
-            ],
+            items=INSTALLED_MODELS[:],
             sendSelectedValue=True,
             orientation="horizontal",
             label="Input's language:",
@@ -288,6 +294,20 @@ class TextSummarizer(OWTextableBaseWidget):
             self.cv = self.loadModelEN()
         elif self.language == "Portuguese":
             self.cv = self.loadModelPT()
+        elif self.language == "Dutch":
+            self.cv = self.loadModelLN()
+        elif self.language == "German":
+            self.cv = self.loadModelDE()
+        elif self.language == "Greek":
+            self.cv = self.loadModelEL()
+        elif self.language == "Italian":
+            self.cv = self.loadModelIT()
+        elif self.language == "Lithuanian":
+            self.cv = self.loadModelLT()
+        elif self.language == "Norwegian":
+            self.cv = self.loadModelNB()
+        elif self.language == "Spanish":
+            self.cv = self.loadModelES()
 
         progressBar.advance()
         progressBar.finish()
@@ -298,15 +318,17 @@ class TextSummarizer(OWTextableBaseWidget):
     def summaryGui(self):
         """Disable percentageSpin or numSentsSpin"""
         if self.method == "Number of sentences":
-            self.percentageSpin.label.setVisible(1)
             self.percentageSpin.setVisible(1)
+            #RAISES ERROR: AttributeError: 'SpinBox' object has no attribute 'label'
+            #self.percentageSpin.label.setVisible(1)
             self.numSentsSpin.setVisible(0)
-            self.numSentsSpin.label.setVisible(0)
+            #self.numSentsSpin.label.setVisible(0)
         elif self.method == "Percentage of text length":
             self.percentageSpin.setVisible(0)
-            self.percentageSpin.label.setVisible(0)
+            #RAISES ERROR: AttributeError: 'SpinBox' object has no attribute 'label'
+            #self.percentageSpin.label.setVisible(0)
             self.numSentsSpin.setVisible(1)
-            self.numSentsSpin.label.setVisible(1)
+            #self.numSentsSpin.label.setVisible(1)
         
         self.sendButton.settingsChanged()
 
@@ -512,7 +534,6 @@ class TextSummarizer(OWTextableBaseWidget):
         )
         from spacy.lang.en.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
-
         return cv
 
     def loadModelFR(self):
@@ -522,7 +543,6 @@ class TextSummarizer(OWTextableBaseWidget):
         )
         from spacy.lang.fr.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
-
         return cv
         
     def loadModelPT(self):
@@ -532,7 +552,69 @@ class TextSummarizer(OWTextableBaseWidget):
         )
         from spacy.lang.pt.stop_words import STOP_WORDS
         cv = CountVectorizer(stop_words=list(STOP_WORDS))
+        return cv
 
+    def loadModelNL(self):
+        """(Re-)load language model if needed."""
+        self.nlp = spacy.load(
+            "nl_core_news_sm"
+        )
+        from spacy.lang.nl.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
+        return cv
+
+    def loadModelDE(self):
+        """(Re-)load language model if needed."""
+        self.nlp = spacy.load(
+            "de_core_news_sm"
+        )
+        from spacy.lang.de.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
+        return cv
+
+    def loadModelEL(self):
+        """(Re-)load language model if needed."""
+        self.nlp = spacy.load(
+            "el_core_news_sm"
+        )
+        from spacy.lang.el.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
+        return cv
+
+    def loadModelIT(self):
+        """(Re-)load language model if needed."""
+        self.nlp = spacy.load(
+            "it_core_news_sm"
+        )
+        from spacy.lang.it.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
+        return cv
+
+    def loadModelLT(self):
+        """(Re-)load language model if needed."""
+        self.nlp = spacy.load(
+            "lt_core_news_sm"
+        )
+        from spacy.lang.lt.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
+        return cv
+
+    def loadModelNB(self):
+        """(Re-)load language model if needed."""
+        self.nlp = spacy.load(
+            "nb_core_news_sm"
+        )
+        from spacy.lang.nb.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
+        return cv
+
+    def loadModelES(self):
+        """(Re-)load language model if needed."""
+        self.nlp = spacy.load(
+            "es_core_news_sm"
+        )
+        from spacy.lang.es.stop_words import STOP_WORDS
+        cv = CountVectorizer(stop_words=list(STOP_WORDS))
         return cv
 
 
