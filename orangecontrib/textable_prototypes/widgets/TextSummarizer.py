@@ -158,7 +158,7 @@ class TextSummarizer(OWTextableBaseWidget):
             value="method",
             items=[
                 "Number of sentences",
-                "Percentage of text lenght", 
+                "Percentage of text length", 
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -167,7 +167,7 @@ class TextSummarizer(OWTextableBaseWidget):
             #Add below call to method that activate/deactivate self.numSentsSpin or self.percentageSpin
             callback=self.summaryGui,
             tooltip=(
-                "How do you want to choose the summary's lenght ?"
+                "How do you want to choose the summary's length ?"
             ),
         )
 
@@ -191,7 +191,7 @@ class TextSummarizer(OWTextableBaseWidget):
             widget= self.controlArea,
             master=self,
             value='percentage',
-            label='Length in %',
+            label='Length in %:',
             labelWidth=180,
             callback=self.sendButton.sendIf(),
             tooltip=(
@@ -298,15 +298,15 @@ class TextSummarizer(OWTextableBaseWidget):
     def summaryGui(self):
         """Disable percentageSpin or numSentsSpin"""
         if self.method == "Number of sentences":
-            #self.percentageSpin.label.setVisible(1)
+            self.percentageSpin.label.setVisible(1)
             self.percentageSpin.setVisible(1)
             self.numSentsSpin.setVisible(0)
-            #self.numSentsSpin.label.setVisible(0)
-        elif self.method == "Percentage of text lenght":
+            self.numSentsSpin.label.setVisible(0)
+        elif self.method == "Percentage of text length":
             self.percentageSpin.setVisible(0)
-            #self.percentageSpin.label.setVisible(0)
+            self.percentageSpin.label.setVisible(0)
             self.numSentsSpin.setVisible(1)
-            #self.numSentsSpin.label.setVisible(1)
+            self.numSentsSpin.label.setVisible(1)
         
         self.sendButton.settingsChanged()
 
