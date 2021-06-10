@@ -12,7 +12,7 @@ Text Summarizer
     :scale: 10
     
 
-Summarizes a text segmentation by using Scikit-learn and Spacy to select the most important sentences of a segmentation.
+Create summaries with Scikit-learn and Spacy to select the most important sentences of a segmentation.
 
     
 Author
@@ -35,33 +35,31 @@ Outputs:
 Description
 -----------
 
-This widget is designed to summarize a text segmentation. It takes, as an input, a text segmentation, and summarizes it. 
-The Text Summarizer allows the user to chose the desired language between english, french or portugese. It also allows the user to chose the size of the summary, either with a number of sentences or percentage of the input.
+This widget is designed to summarize a text segmentation. It takes a text segmentation as an input and summarizes it.  
+Supported languages are dutch, english, french, german, greek, italian, lithuanian, norwegian, portuguese and spanish. 
+It allows the user to chose the length of the summary by defining either the total number of sentences or the percentage of the input's length. When a segmentation with multiple segment is give as the input, the percetage is estimated according to the shortest segment. All created summaries will have the same number of sentences.
 
-The widget can take a single input to summarize or a segmentation with more than one segment. In the later situation, the summary can be done each segment individually or all segments can be summarized as one.
+The widget can take a single segment to summarize or a segmentation with more than one segment. In the later situation, the widget can summarize each segment individually or consider all segments as one text input.
 
-This widget has two types of outputs, one being the summary in itself, the other being the text input with its most important sentences highlighted.
+This widget has two types of outputs, one being the summary in itself, the other being the text input with its most important sentences highlighted. The ouput can be changed in the link interface.
 
 .. note::
-   When having several segments as input, please note that the segments have to be in the same language to have an intelligible summary.
+   When having several segments as input, please note that the segments must be in the same language to have an intelligible summary.
 
 Interface
 ~~~~~~~~~
 
 The **widget** interface displays : 
 
-- A text field in which the user can set the number of sentences of the summary
-- A text field in which that lets the user choose the length in %
-- A dropdown list to chose the length method
 - A dropdown list of languages to choose from
-- Two options to select : to summarize by text or by segments.
+*Only installed models will be in this list. To use a model that is not installed, it must be downloaded with the spaCy widget first.*
 
+- A dropdown list to define how to chose the summary's length
+- An input field in which the user can set the number of sentences of the summary **OR** an input field that lets the user choose the summary's in percentage of the input's length
+- An option to summarize all segments as one or each segment separately 
+*Only available if the input is a segmentation with multiple semgnets.*
 
-
-.. image:: figures/TLDR_widget.png
-
-
-The **link** interface lets the user choose which output to send, either the summary or the text with the most important sentences highlighted. 
+The **link** interface lets the user choose which output to send, either the summary or the text with the most important sentences highlighted:
 
 
 .. image:: figures/TLDR_link.png
