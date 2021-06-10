@@ -132,13 +132,47 @@ class TextSummarizer(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
 
-        summaryBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="Summary's lenght options",
-            orientation="vertical",
+        self.languageCombo = gui.comboBox(
+            widget= self.controlArea,
+            master=self,
+            value="language",
+            items=[
+                "English",
+                "French", 
+                "Portuguese", 
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Input's language:",
+            labelWidth=135,
+            # Appeler autre méthode
+            callback=self.languageChanged,
+            tooltip=(
+                "Please select the text's language.\n"
+            ),
         )
+
+        self.lenghtMethodCombo = gui.comboBox(
+            widget= self.controlArea,
+            master=self,
+            value="method",
+            items=[
+                "Number of sentences",
+                "Percentage of text lenght", 
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Define summary's length by:",
+            labelWidth=172,
+            #Add below call to method that activate/deactivate self.numSentsSpin or self.percentageSpin
+            callback=self.summaryGui,
+            tooltip=(
+                "How do you want to choose the summary's lenght ?"
+            ),
+        )
+
         self.numSentsSpin = gui.spin(
-            widget=summaryBox,
+            widget= self.controlArea,
             master=self,
             value='numSents',
             label='Number of sentences : ',
@@ -152,13 +186,14 @@ class TextSummarizer(OWTextableBaseWidget):
             minv=1,
             step=1,
         )
+
         self.percentageSpin = gui.spin(
-            widget=summaryBox,
+            widget= self.controlArea,
             master=self,
             value='percentage',
             label='Length in %',
-            callback=self.sendButton.sendIf(),
             labelWidth=180,
+            callback=self.sendButton.sendIf(),
             tooltip=(
                 'Select the length of the summary in percentage of the input text.'
             ),
@@ -166,51 +201,9 @@ class TextSummarizer(OWTextableBaseWidget):
             minv=1,
             step=1,
         )
-        self.lenghtMethodCombo = gui.comboBox(
-            widget=summaryBox,
-            master=self,
-            value="method",
-            items=[
-                "Number of sentences",
-                "Percentage of text lenght", 
-            ],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Method:",
-            labelWidth=135,
-            #Add below call to method that activate/deactivate self.numSentsSpin or self.percentageSpin
-            callback=self.summaryGui,
-            tooltip=(
-                "How do you want to choose the summary's lenght ?"
-            ),
-        )
 
-        optionsBox = gui.widgetBox(
-            widget=self.controlArea,
-            box="More options",
-            orientation="vertical",
-        )
-        self.languageCombo = gui.comboBox(
-            widget=optionsBox,
-            master=self,
-            value="language",
-            items=[
-                "English",
-                "French", 
-                "Portuguese", 
-            ],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Language:",
-            labelWidth=135,
-            # Appeler autre méthode
-            callback=self.languageChanged,
-            tooltip=(
-                "Please select the text's language.\n"
-            ),
-        )
         self.segmentBox = gui.comboBox(
-            widget= optionsBox,
+            widget= self.controlArea,
             master=self,
             value= "typeSeg",
             items = [
@@ -226,8 +219,6 @@ class TextSummarizer(OWTextableBaseWidget):
                 "How should the input segments be summarized ? \n"
             ),
         )
-
-        gui.separator(widget=optionsBox, height=2)
         
         gui.rubber(self.controlArea)
 
@@ -287,6 +278,7 @@ class TextSummarizer(OWTextableBaseWidget):
             u"Loading model, please wait...", 
             "warning",
         )
+        
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=1)
 
@@ -306,11 +298,15 @@ class TextSummarizer(OWTextableBaseWidget):
     def summaryGui(self):
         """Disable percentageSpin or numSentsSpin"""
         if self.method == "Number of sentences":
-            self.percentageSpin.setDisabled(1)
-            self.numSentsSpin.setDisabled(0)
+            #self.percentageSpin.label.setVisible(1)
+            self.percentageSpin.setVisible(1)
+            self.numSentsSpin.setVisible(0)
+            #self.numSentsSpin.label.setVisible(0)
         elif self.method == "Percentage of text lenght":
-            self.percentageSpin.setDisabled(0)
-            self.numSentsSpin.setDisabled(1)
+            self.percentageSpin.setVisible(0)
+            #self.percentageSpin.label.setVisible(0)
+            self.numSentsSpin.setVisible(1)
+            #self.numSentsSpin.label.setVisible(1)
         
         self.sendButton.settingsChanged()
 
