@@ -131,6 +131,7 @@ class TextSummarizer(OWTextableBaseWidget):
         # their position in the UI)...
         
         self.infoBox = InfoBox(widget=self.controlArea)
+        
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
@@ -138,6 +139,8 @@ class TextSummarizer(OWTextableBaseWidget):
             infoBoxAttribute="infoBox",
             sendIfPreCallback=None,
         )
+
+
 
         #----------------------------------------------------------------------
         # User interface...
@@ -158,18 +161,23 @@ class TextSummarizer(OWTextableBaseWidget):
             ),
         )
 
+        box = gui.widgetBox(self.controlArea, "Language informations:")
+        self.infoa = gui.widgetLabel(
+            box, "More languages are available. \nTo access them, please use the spaCy widget to \ndownload the model first."
+        )
+
         self.lenghtMethodCombo = gui.comboBox(
             widget= self.controlArea,
             master=self,
             value="method",
             items=[
                 "Number of sentences",
-                "Percentage of text length", 
+                "Percentage of input's length", 
             ],
             sendSelectedValue=True,
             orientation="horizontal",
             label="Define summary's length by:",
-            labelWidth=172,
+            labelWidth=180,
             #Add below call to method that activate/deactivate self.numSentsSpin or self.percentageSpin
             callback=self.summaryGui,
             tooltip=(
@@ -318,17 +326,15 @@ class TextSummarizer(OWTextableBaseWidget):
     def summaryGui(self):
         """Disable percentageSpin or numSentsSpin"""
         if self.method == "Number of sentences":
-            self.percentageSpin.setVisible(1)
-            #RAISES ERROR: AttributeError: 'SpinBox' object has no attribute 'label'
-            #self.percentageSpin.label.setVisible(1)
-            self.numSentsSpin.setVisible(0)
-            #self.numSentsSpin.label.setVisible(0)
-        elif self.method == "Percentage of text length":
-            self.percentageSpin.setVisible(0)
-            #RAISES ERROR: AttributeError: 'SpinBox' object has no attribute 'label'
-            #self.percentageSpin.label.setVisible(0)
-            self.numSentsSpin.setVisible(1)
-            #self.numSentsSpin.label.setVisible(1)
+            self.percentageSpin.setVisible(False)
+            self.percentageSpin.label.setVisible(False)
+            self.numSentsSpin.setVisible(True)
+            self.numSentsSpin.label.setVisible(True)
+        elif self.method == "Percentage of input's length":
+            self.percentageSpin.setVisible(True)
+            self.percentageSpin.label.setVisible(True)
+            self.numSentsSpin.setVisible(False)
+            self.numSentsSpin.label.setVisible(False)
         
         self.sendButton.settingsChanged()
 
