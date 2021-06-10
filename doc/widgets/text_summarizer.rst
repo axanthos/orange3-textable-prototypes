@@ -59,8 +59,9 @@ The **widget** interface displays :
 - An option to summarize all segments as one or each segment separately 
 *Only available if the input is a segmentation with multiple semgnets.*
 
-The **link** interface lets the user choose which output to send, either the summary or the text with the most important sentences highlighted:
+.. image:: figures/TL;DR_interface.png
 
+The **link** interface lets the user choose which output to send, either the summary or the text with the most important sentences highlighted:
 
 .. image:: figures/TLDR_link.png
 
