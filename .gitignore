@@ -114,7 +114,6 @@ _textable/widgets/icons/Thumbs.db
 dist/*
 build/*
 *.pyc
-Thumbs.db
 
 release.bat
 *.DS_Store
