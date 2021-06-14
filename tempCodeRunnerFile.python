@@ -1,0 +1,6 @@
+import imdb
+
+ia = imdb()
+people = ia.search_person('Mel Gibson')
+for person in people:
+    print(person.personID, person['name'])
