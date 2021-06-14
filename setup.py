@@ -104,7 +104,6 @@ INSTALL_REQUIRES = (
     'fitz',
     'pytesseract',
     'pillow',
-    'scikit-learn',
 ),
 
 EXTRAS_REQUIRE = {
