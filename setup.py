@@ -104,13 +104,11 @@ INSTALL_REQUIRES = (
     'fitz',
     'pytesseract',
     'pillow',
+    'gutenbergpy',
 ),
 
 EXTRAS_REQUIRE = {
 }
-
-DEPENDENCY_LINKS = (
-)
 
 ENTRY_POINTS = {
     'orange3.addon': (
