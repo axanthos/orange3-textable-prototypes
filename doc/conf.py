@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Orange3 Textable Prototypes'
-copyright = '2016-2018, University of Lausanne'
+copyright = '2016-2021, University of Lausanne'
 author = 'Aris Xanthos'
 
 # The version info for the project you're documenting, acts as replacement for

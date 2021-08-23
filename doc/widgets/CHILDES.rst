@@ -11,7 +11,7 @@ CHILDES
 .. image:: figures/CHILDES.png
 
 Import data in XML format from the `CHILDES
-<https://childes.talkbank.org/data-xml/>`_ database.
+<https://childes.talkbank.org/data-xml/>`__ database.
 
 Author
 ------
@@ -42,7 +42,7 @@ Description
 
 This widget is designed to import one or more CHILDES corpora 
 in Orange Canvas. The corpora are retrieved from
-`<https://childes.talkbank.org/data-xml/>`_ and richly encoded in XML format. 
+`<https://childes.talkbank.org/data-xml/>`__ and richly encoded in XML format. 
 The widget outputs at least one segmentation containing a segment for each file 
 in  each imported corpus. Segments in this segmentation have a variable number 
 of annotations (depending on what is available for each corpus): [1]_
@@ -104,7 +104,7 @@ User controls are divided into three main sections (see :ref:`figure 1
     Figure 1: **CHILDES** widget interface.
 
 The **Browse database** section allows the user to navigate the XML section of
-the CHILDES database (`<https://childes.talkbank.org/data-xml/>`_) and select
+the CHILDES database (`<https://childes.talkbank.org/data-xml/>`__) and select
 the desired corpora. It is organized like a file tree, starting from a root 
 folder (denoted as "/"), and each folder may contain any number of subfolders
 and/or zipped archives.

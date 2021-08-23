@@ -12,7 +12,7 @@
 .. image:: figures/18thCenturyPoetry.png
 
 Import poems from the `Eighteenth Century Poetry
-<http://eighteenthcenturypoetry.org/>`_ website (in TEI-XML).
+<http://eighteenthcenturypoetry.org/>`__ website (in TEI-XML).
 
 Author
 ------
@@ -50,7 +50,7 @@ Basic interface
 In its basic version (see :ref:`figure 1 <18thCenturyPoetry_fig1>` below),
 the **18th Century Poetry** widget simply lets the user select one or more
 poems in the catalogue of a large number of entries downloadable from the
-`18th Century Poetry <http://eighteenthcenturypoetry.org/>`_ website. To
+`18th Century Poetry <http://eighteenthcenturypoetry.org/>`__ website. To
 select multiple files use either control/command-click or shift-click.
 
 .. _18thCenturyPoetry_fig1:
@@ -62,7 +62,7 @@ select multiple files use either control/command-click or shift-click.
     Figure 1: **18th Century Poetry** widget (basic interface).
 
 The  **Refresh** button allows the user to refresh the list of poems in
-case the `18th Century Poetry <http://eighteenthcenturypoetry.org/>`_
+case the `18th Century Poetry <http://eighteenthcenturypoetry.org/>`__
 database has been updated.
 
 The **Send** button triggers the emission of a segmentation to the output

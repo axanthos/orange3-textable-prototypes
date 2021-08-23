@@ -7,7 +7,7 @@
 .. _Gutenberg:
 
 Gutenberg
-=============
+=========
 
 .. image:: figures/gutenberg.png
 
@@ -32,7 +32,7 @@ Outputs:
 Description
 -----------
 
-The widget is designed to import one or more texts from `<http://www.gutenberg.org/>`_ in Orange Canvas.
+The widget is designed to import one or more texts from `<http://www.gutenberg.org/>`__ in Orange Canvas.
 The output is a segmentation containing a segment for each imported text, annoted by title author and language.
 
 Interface
@@ -48,7 +48,7 @@ Interface
     Figure 1: **Gutenberg** widget interface.
 
 The **Gutenberg** widget lets the user generate the cache of the 
-`Gutenberg <http://www.gutenberg.org/>`_ database, and search it.
+`Gutenberg <http://www.gutenberg.org/>`__ database, and search it.
 
 The **Generate Cache** button allows the user to generate the gutenberg cache.
 This has to be done only at first launch or if the database has been updated. It can 

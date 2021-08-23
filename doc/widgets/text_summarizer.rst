@@ -6,7 +6,7 @@
 .. _Text_Summarizer:
 
 Text Summarizer
-=======
+===============
     
 .. image:: figures/TL;DR.png
     :scale: 10
@@ -52,11 +52,13 @@ Interface
 The **widget** interface displays : 
 
 - A dropdown list of languages to choose from
+
 *Only installed models will be in this list. To use a model that is not installed, it must be downloaded with the spaCy widget first.*
 
 - A dropdown list to define how to chose the summary's length
 - An input field in which the user can set the number of sentences of the summary **OR** an input field that lets the user choose the summary's in percentage of the input's length
 - An option to summarize all segments as one or each segment separately 
+
 *Only available if the input is a segmentation with multiple semgnets.*
 
 .. image:: figures/TL;DR_interface.png
