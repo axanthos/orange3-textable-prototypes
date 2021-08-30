@@ -34,6 +34,8 @@ Widgets
     Super Text Files <widgets/SuperTextFiles>
     Lyrics Genius <widgets/lyrics_genius>
     Movie Transcripts <widgets/movie_transcripts>
+    Movie Reviews <widgets/MovieReviews>
+    Gutenberg <widgets/gutenberg>
     Theatre Classique <widgets/theatre_classique>
     18th Century Poetry <widgets/18th_century_poetry>
     Extract CSV <widgets/extractCSV>
@@ -41,6 +43,7 @@ Widgets
     CHILDES <widgets/CHILDES>
     Linguistica <widgets/linguistica>
     spaCy <widgets/spaCy>
+    Text Summarizer <widgets/text_summarizer>
     Lexical Hunter <widgets/lexical_hunter>
     Topic Models <widgets/topic_models>
 

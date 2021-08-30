@@ -122,3 +122,4 @@ orangecontrib/textable_prototypes/widgets/cached_childes_corpora/*
 # gutenbergpy temporary files
 cache/
 texts/
+tempCodeRunnerFile.python

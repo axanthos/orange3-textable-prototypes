@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="Summarize segments with TL;DR" description="Here is an example workflow to use the TL;DR widget.">
+	<nodes>
+		<node id="0" name="Text Field" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" project_name="Orange3-Textable" version="" title="Text Field" position="(242.0, 231.0)" />
+		<node id="1" name="Text Field" qualified_name="_textable.widgets.OWTextableTextField.OWTextableTextField" project_name="Orange3-Textable" version="" title="Text Field (1)" position="(242.0, 421.0)" />
+		<node id="2" name="Merge" qualified_name="_textable.widgets.OWTextableMerge.OWTextableMerge" project_name="Orange3-Textable" version="" title="Merge" position="(376.0, 321.0)" />
+		<node id="3" name="TL;DR" qualified_name="orangecontrib.textable_prototypes.widgets.TextSummarizer.TextSummarizer" project_name="Orange3-Textable-Prototypes" version="" title="TL;DR" position="(631.0, 319.0)" />
+		<node id="4" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(878.0, 318.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="2" source_channel="Text data" sink_channel="Segmentation" enabled="true" />
+		<link id="1" source_node_id="1" sink_node_id="2" source_channel="Text data" sink_channel="Segmentation" enabled="true" />
+		<link id="2" source_node_id="2" sink_node_id="3" source_channel="Merged data" sink_channel="Segmentation" enabled="true" />
+		<link id="3" source_node_id="3" sink_node_id="4" source_channel="Summary" sink_channel="Segmentation" enabled="true" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(19.0, 270.0, 140.0, 240.0)" font-family="MS Shell Dlg 2" font-size="16">1. Add there one or severals texts that you want to summarize.</text>
+		<arrow id="1" start="(144.0, 263.0)" end="(198.0, 235.0)" fill="#C1272D" />
+		<arrow id="2" start="(141.0, 372.0)" end="(195.0, 413.0)" fill="#C1272D" />
+		<text id="3" type="text/plain" rect="(324.0, 123.0, 121.0, 145.0)" font-family="MS Shell Dlg 2" font-size="16">2. If you want have more than one Text Fields, merge them all before linking it to TL;DR</text>
+		<text id="4" type="text/plain" rect="(1034.0, 277.0, 296.0, 369.0)" font-family="MS Shell Dlg 2" font-size="16">5. View the two different outputs:
+- The summarized segmentations
+- The Segmentations with the most important words highlighted</text>
+		<arrow id="5" start="(1022.0, 320.0)" end="(922.0, 319.0)" fill="#C1272D" />
+		<text id="6" type="text/plain" rect="(556.0, 388.0, 172.0, 245.0)" font-family="MS Shell Dlg 2" font-size="16">3. Configure the widget as needed</text>
+		<text id="7" type="text/plain" rect="(742.0, 460.0, 152.0, 167.0)" font-family="MS Shell Dlg 2" font-size="16">4. Click on this link to chose the output</text>
+		<arrow id="8" start="(793.0, 439.0)" end="(760.0, 344.0)" fill="#C1272D" />
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoSend': True, 'controlAreaVisible': True, 'encoding': 'utf-8', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\xc1\x00\x00\x01B\x00\x00\x03\xce\x00\x00\x02\x9f\x00\x00\x02\xc2\x00\x00\x01h\x00\x00\x03\xcd\x00\x00\x02\x9e\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80\x00\x00\x02\xc2\x00\x00\x01h\x00\x00\x03\xcd\x00\x00\x02\x9e', 'textFieldContent': b'', 'uuid': 'd48ebc7f-e228-4860-ab32-c82a3cb503c2', '__version__': 1, '_TextableUtils_settings_version__': (0, 13)}</properties>
+		<properties node_id="1" format="literal">{'autoSend': True, 'controlAreaVisible': True, 'encoding': 'utf-8', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\xc1\x00\x00\x01B\x00\x00\x03\xce\x00\x00\x02\x9f\x00\x00\x02\xc2\x00\x00\x01h\x00\x00\x03\xcd\x00\x00\x02\x9e\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80\x00\x00\x02\xc2\x00\x00\x01h\x00\x00\x03\xcd\x00\x00\x02\x9e', 'textFieldContent': b'', 'uuid': '52136c43-5b3b-4558-8b26-22a6f9a41310', '__version__': 1, '_TextableUtils_settings_version__': (0, 13)}</properties>
+		<properties node_id="2" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': False, 'controlAreaVisible': True, 'copyAnnotations': True, 'importLabels': True, 'labelKey': 'source', 'mergeDuplicates': False, 'savedWidgetGeometry': None, 'uuid': '8dec7cbd-95d2-49b1-b2c4-32d8874e92db', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties node_id="3" format="literal">{'autoSend': False, 'controlAreaVisible': True, 'language': 'French', 'method': 'Percentage of text lenght', 'numSents': 5, 'percentage': 20, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x05\x03\x00\x00\x01N\x00\x00\x06\x8b\x00\x00\x02\xa6\x00\x00\x05\x04\x00\x00\x01t\x00\x00\x06\x8a\x00\x00\x02\xa5\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80\x00\x00\x05\x04\x00\x00\x01t\x00\x00\x06\x8a\x00\x00\x02\xa5', 'typeSeg': 'Summarize each segments individually', 'uuid': 'de69549b-5c59-4aad-b463-649fa9ef8d52', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties node_id="4" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03/\x00\x00\x01\r\x00\x00\x05\xa4\x00\x00\x02\xeb\x00\x00\x033\x00\x00\x01$\x00\x00\x05\xa0\x00\x00\x02\xe7\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'segmentDelimiter': '\\n', 'uuid': '8373cf70-6ce6-4e90-8ce4-bffa11a170af', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

@@ -5,7 +5,7 @@
 .. _Redditor:
 
 Redditor
-=================
+========
 
 .. image:: figures/redditor_fig1.png
     :alt: First look at Redditor widget

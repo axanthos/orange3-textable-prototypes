@@ -32,12 +32,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "0.24"   # file version
+__version__ = "0.25"   # file version
 
 NAME = 'Orange3-Textable-Prototypes'
 DOCUMENTATION_NAME = 'Textable Prototypes'
 
-VERSION = '0.24'  # package version
+VERSION = '0.25'  # package version
 
 DESCRIPTION = 'Additional widgets for the Textable add-on to Orange 3.'
 LONG_DESCRIPTION = open(
@@ -87,11 +87,11 @@ DATA_FILES = [
 ]
 
 INSTALL_REQUIRES = (
-    'Orange3 >= 3.24',
+    'Orange3 >= 3.29',
     'setuptools',
     'future',
     'LTTL >= 2.0.9',
-    'Orange3-Textable >= 3.1.5',
+    'Orange3-Textable >= 3.1.11',
     'gensim',
     'lxa5crab',
     'bs4',
@@ -104,6 +104,7 @@ INSTALL_REQUIRES = (
     'fitz',
     'pytesseract',
     'pillow',
+    'scikit-learn',
     'gutenbergpy',
 ),
 
