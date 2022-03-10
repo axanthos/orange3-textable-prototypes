@@ -372,10 +372,10 @@ class Gutenberg(OWTextableBaseWidget):
             # disables the search button if not
             self.queryBox.setDisabled(True)
             self.infoBox.setText(
-                "Cache must be generated before fisrt launch, it can take up to 10mn",
+                "Cache must be generated before first launch, it can take up to 10min",
                 "warning"
             )
-        # disbles the the cache generation button if it does exists
+        # disables the the cache generation button if it does exists
         else:
             self.cacheGenerationButton.setDisabled(True)
 
@@ -385,7 +385,8 @@ class Gutenberg(OWTextableBaseWidget):
         if not GutenbergCache.exists():
             try:
                 self.infoBox.setText(
-                    "The cache is being generated. This can take up to 10mn."
+                    "The cache is being generated. This can take up to 10min.",
+                    "warning"
                 )
                 GutenbergCache.create(
                     refresh=True,
@@ -398,7 +399,7 @@ class Gutenberg(OWTextableBaseWidget):
                     "Cache generated!"
                 )
                 self.cacheGenerationButton.setDisabled(True)
-                self.searchButton.setEnabled(True)
+                self.queryBox.setEnabled(True)
             except Exception as exc:
                 print(exc)
                 self.infoBox.setText(
