@@ -7,40 +7,38 @@ Spécification widget AudioFile
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arborescence complète contenant des fichiers de texte.
+Créer un widget pour Orange Textable (v3.0b0) permettant d'importer ou d'enregistrer un fichier audio pour ensuite le retranscrire et/ou le segmenter en fichier texte
 
 1.2 Aperçu des étapes
 =====================
-* Première version de la specification: 16 mars 2017
-* Remise de la spécification: 23 mars 2017
-* Version alpha du projet:  27 avril 2017
-* Remise et présentation du projet:  25 mai 2017
+* Première version de la specification: 24 mars 2022
+* Remise de la spécification: 31 mars 2022
+* Version alpha du projet:  28 avril 2022
+* Remise et présentation du projet:  02 juin 2022
 
 1.3 Équipe et responsabilités
 ==============================
 
-* Olivier Cavaleri (`olivier.cavaleri@unil.ch`_):
+* Johan Cuda (`johan.cuda@unil.ch`_):
 
-.. _olivier.cavaleri@unil.ch: mailto:olivier.cavaleri@unil.ch
+.. _johan.cuda@unil.ch: mailto:johan.cuda@unil.ch
 
-    - specification
+    - code
+
+* Gavin Vinasi (`gavin.vinasi@unil.ch`_):
+
+.. _gavin.vinasi@unil.ch: mailto:gavin.vinasi@unil.ch
+
+    - maquette
     - interface
-    - code
 
-* Augustin Maillefer (`augustin.maillefer@unil.ch`_):
+* Rebecca Kneubuehelr (`rebecca.kneubuehler@unil.ch`_):
 
-.. _augustin.maillefer@unil.ch: mailto:augustin.maillefer@unil.ch
-
-    - code
-    - documentation
-
-* Mathieu Mercapide (`mathieu.mercapide@unil.ch`_):
-
-.. _mathieu.mercapide@unil.ch: mailto:mathieu.mercapide@unil.ch
+.. _rebecca.kneubuehler@unil.ch: mailto:rebecca.kneubuehler@unil.ch
 
     - specification
     - code
-    - documentation
+
 
 2. Technique
 ************
@@ -55,40 +53,40 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d’importer une arbor
 2.2 Fonctionnalités minimales
 =============================
 
-.. image:: images/arborescence_minimal_input.png
+.. image:: images/ajouterIciLeNomDeLImage.png
 
-* permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence en encodage utf-8 (autres encodages ignorés en fonctionnalité minimale)
+* permettre le choix entre l'importation d'un fichier audio en format wav ou mp3 et entre l'enregistrement d'un fichier audio à partir du micro de l'utilisateur
 
-* créer et émettre une segmentation avec un segment pour chaque fichier importé et une annotation par niveau (max. 5) dans l'arborescence (dont une contenant tout le path)
+* créer et émettre une segmentation du fichier audio
 
 
 2.3 Fonctionnalités principales
 =============================
 
-.. image:: images/arborescence_advanced_principal_input.png
+.. image:: images/ajouterIciLeNomDeLImage.png
 
-* permettre le choix et l'importation de multiples fichiers en format texte (.txt, .xml, .html) dans une arborescence.
+* permettre l'importation d'un fichier audio en format wav ou mp3 
 
-* détection automatique de l'encoding (utf-8, iso 8859-1, etc...) puis tests des plus fréquents en cas d'erreur.
+* détection du format audio et convertissement vers le format wav pour les fichiers mp3
 
-* traitement correct des exceptions (UnicodeEncodeError ou UnicodeDecodeError)
+* permettre l'enregistrement d'un fichier audio à partir du micro de l'utilisateur
 
-* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales (nom, path répertoire)
+* spécifier la durée de l'enregistrement audio 
+
+* spécifier la langue dans laquelle l'audio est
+
+* permettre l'ajout d'une annotation_key et d'une annotation_value
+
+* permettre une segmentation en fonction du volume de l'audio lors d'une certaine durée
+
 
 2.4 Fonctionnalités optionnelles
 ================================
 
-.. image:: images/arborescence_advanced_optional_input.png
+.. image:: images/ajouterIciLeNomDeLImage.png
 
-* conditions d'inclusions [i] et exclusions [e] de fichiers et dossiers par leur nom.
+* afficher une barre de chargement pour l'enregistrement audio
 
-* pouvoir spécifier un niveau de profondeur maximum de parcours de l'arborescence.
-
-* échantillonage (x % sur tous les fichiers correspondant aux éventuelles conditions)
-
-* affichage des répertoires ajoutés dans une liste avec leurs caractéristiques minimales et optionnelles (minimales : nom, path répertoire ; optionnelles : inclusions [i]:{conditions} / exclusions:{conditions} [e], échantillonage [s]:{pourcentage})
-
-* importer ou exporter une liste de fichiers (avec leurs attributs)
 
 2.5 Tests
 =========
