@@ -23,7 +23,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d'importer ou d'enregi
 
 .. _johan.cuda@unil.ch: mailto:johan.cuda@unil.ch
 
-    - code
+    - code : enregistrement du fichier audio et retranscription en segmentation
 
 * Gavin Vinasi (`gavin.vinasi@unil.ch`_):
 
@@ -37,7 +37,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d'importer ou d'enregi
 .. _rebecca.kneubuehler@unil.ch: mailto:rebecca.kneubuehler@unil.ch
 
     - specification
-    - code
+    - code : importation du fichier audio et retranscritpion en segmentation
 
 
 2. Technique
