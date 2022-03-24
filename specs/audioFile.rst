@@ -49,9 +49,9 @@ Créer un widget pour Orange Textable (v3.30.1) permettant d'importer ou d'enreg
 
 * Orange 3.30.1
 
-* Orange Textable 3.0b0 # mettre cette version à jour
+* Orange Textable 3.1.11
 
-* Ajouter les packages ici
+* Ajouter les packages ici (speech recognition, etc.)
 
 2.2 Fonctionnalités minimales
 =============================
