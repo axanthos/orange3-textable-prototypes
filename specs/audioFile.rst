@@ -38,6 +38,7 @@ Créer un widget pour Orange Textable (v3.30.1) permettant d'importer ou d'enreg
 
     - specification
     - code : importation du fichier audio et retranscritpion en segmentation
+    - fichier doc
 
 
 2. Technique
