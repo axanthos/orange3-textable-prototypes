@@ -32,7 +32,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d'importer ou d'enregi
     - maquette
     - interface
 
-* Rebecca Kneubuehelr (`rebecca.kneubuehler@unil.ch`_):
+* Rebecca Kneubuehler (`rebecca.kneubuehler@unil.ch`_):
 
 .. _rebecca.kneubuehler@unil.ch: mailto:rebecca.kneubuehler@unil.ch
 
