@@ -64,7 +64,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d'importer ou d'enregi
 =============================
 
 .. image:: images/audio_file_import_file.png
-.. image:: images/audio_file_record_file.png
+.. image:: images/audio_file_record_voice.png
 
 * permettre l'importation d'un fichier audio en format wav ou mp3 
 
