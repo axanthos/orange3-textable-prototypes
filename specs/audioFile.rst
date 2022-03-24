@@ -7,7 +7,7 @@ Spécification widget AudioFile
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v3.0b0) permettant d'importer ou d'enregistrer un fichier audio pour ensuite le retranscrire et/ou le segmenter en fichier texte
+Créer un widget pour Orange Textable (v3.30.1) permettant d'importer ou d'enregistrer un fichier audio pour ensuite le retranscrire et/ou le segmenter en fichier texte
 
 1.2 Aperçu des étapes
 =====================
@@ -46,7 +46,7 @@ Créer un widget pour Orange Textable (v3.0b0) permettant d'importer ou d'enregi
 2.1 Dépendances
 ===============
 
-* Orange 3.3.12
+* Orange 3.30.1
 
 * Orange Textable 3.0b0
 
