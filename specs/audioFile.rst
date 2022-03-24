@@ -7,7 +7,7 @@ Spécification widget AudioFile
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v3.30.1) permettant d'importer ou d'enregistrer un fichier audio pour ensuite le retranscrire et/ou le segmenter en fichier texte
+Créer un widget pour Orange Textable (v3.1.11) permettant d'importer un fichier audio, puis de le segmenter selon un volume spécifique.
 
 1.2 Aperçu des étapes
 =====================
@@ -58,9 +58,9 @@ Créer un widget pour Orange Textable (v3.30.1) permettant d'importer ou d'enreg
 
 .. image:: images/audio_file_main.png
 
-* permettre le choix entre l'importation d'un fichier audio en format wav ou mp3 et entre l'enregistrement d'un fichier audio à partir du micro de l'utilisateur
+* permettre à l'utilisateur d'importer un fichier audio et de préciser avec quelle langue le fichier est utilisé
 
-* créer et émettre une segmentation du fichier audio
+* créer et émettre une segmentation classique du fichier audio ou une segmentation en fonction du volume
 
 
 2.3 Fonctionnalités principales
@@ -73,21 +73,15 @@ Créer un widget pour Orange Textable (v3.30.1) permettant d'importer ou d'enreg
 
 * détection du format audio et convertissement vers le format wav pour les fichiers mp3
 
-* permettre l'enregistrement d'un fichier audio à partir du micro de l'utilisateur
-
-* spécifier la durée de l'enregistrement audio 
-
 * spécifier la langue dans laquelle l'audio est
 
-* permettre l'ajout d'une annotation_key et d'une annotation_value
-
-* permettre une segmentation en fonction du volume de l'audio lors d'une certaine durée
+* permettre le choix d'un volume audio maximum et du temps minimum de ce dit-volume selon lequel une segmentation se fait
 
 
 2.4 Fonctionnalités optionnelles
 ================================
 
-* afficher une barre de chargement pour l'enregistrement audio
+* permettre la prise en charge d'autres langues que le français et l'anglais
 
 
 2.5 Tests
@@ -100,14 +94,13 @@ TODO
 
 3.1 Version alpha
 =================
-* L'interface graphique est complètement construite.
-* Les fonctionnalités minimales sont prises en charge par le logiciel.
+*
+
 
 3.2 Remise et présentation
 ==========================
-* Les fonctionnalités principales sont complètement prises en charge par le logiciel.
-* La documentation du logiciel est complète.
-* Le logiciel possède des routines et fichiers de test de ses fonctionnalités (principales ou optionnelles)
+* 
+
 
 4. Infrastructure
 =================
