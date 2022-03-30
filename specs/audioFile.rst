@@ -47,11 +47,13 @@ Créer un widget pour Orange Textable (v3.1.11) permettant d'importer un fichier
 2.1 Dépendances
 ===============
 
-* Orange 3.30.1
+* Orange 3.31.0
 
 * Orange Textable 3.1.11
 
-* Ajouter les packages ici (speech recognition, etc.)
+* SpeechRecognition 3.8.1
+
+* Pydub 0.25.1
 
 2.2 Fonctionnalités minimales
 =============================
