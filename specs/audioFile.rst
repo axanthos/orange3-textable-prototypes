@@ -55,14 +55,16 @@ Créer un widget pour Orange Textable (v3.1.11) permettant d'importer un fichier
 
 * Pydub 0.25.1
 
+
+
 2.2 Fonctionnalités minimales
 =============================
 
 .. image:: images/audio_file_main.png
 
-* permettre à l'utilisateur d'importer un fichier audio et de préciser avec quelle langue le fichier est utilisé
+* Permettre à l'utilisateur d'importer un fichier audio et de préciser avec quelle langue le fichier est utilisé
 
-* créer et émettre une segmentation classique du fichier audio ou une segmentation en fonction du volume
+* Créer et émettre une segmentation classique du fichier audio ou une segmentation en fonction du volume
 
 
 2.3 Fonctionnalités principales
@@ -71,19 +73,19 @@ Créer un widget pour Orange Textable (v3.1.11) permettant d'importer un fichier
 .. image:: images/audio_file_import.png
 .. image:: images/audio_file_record.png
 
-* permettre l'importation d'un fichier audio en format wav ou mp3 
+* Permettre l'importation d'un fichier audio en format wav ou mp3 
 
-* détection du format audio et convertissement vers le format wav pour les fichiers mp3
+* Détection du format audio et convertissement vers le format wav pour les fichiers mp3
 
-* spécifier la langue dans laquelle l'audio est
+* Spécifier la langue dans laquelle l'audio est
 
-* permettre le choix d'un volume audio maximum et du temps minimum de ce dit-volume selon lequel une segmentation se fait
+* Permettre le choix d'un volume audio maximum et du temps minimum de ce dit-volume selon lequel une segmentation se fait
 
 
 2.4 Fonctionnalités optionnelles
 ================================
 
-* permettre la prise en charge d'autres langues que le français et l'anglais
+* Permettre la prise en charge d'autres langues que le français et l'anglais
 
 
 2.5 Tests
