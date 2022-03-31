@@ -66,6 +66,12 @@ Créer un widget pour Orange Textable (v3.1.11) permettant d'importer un fichier
 
 * Créer et émettre une segmentation classique du fichier audio ou une segmentation en fonction du volume
 
+* Détection du format audio et convertissement vers le format wav pour les fichiers mp3
+
+* Spécifier la langue dans laquelle l'audio est
+
+
+
 
 2.3 Fonctionnalités principales
 =============================
@@ -75,8 +81,6 @@ Créer un widget pour Orange Textable (v3.1.11) permettant d'importer un fichier
 * Permettre l'importation d'un fichier audio en format wav ou mp3 
 
 * Détection du format audio et convertissement vers le format wav pour les fichiers mp3
-
-* Spécifier la langue dans laquelle l'audio est
 
 * Permettre le choix d'un volume audio maximum et du temps minimum de ce dit-volume selon lequel une segmentation se fait
 
