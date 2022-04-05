@@ -6,6 +6,7 @@ from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from LTTL.Segmentation import Segmentation
 
 
 from _textable.widgets.TextableUtils import (
@@ -29,6 +30,7 @@ class AudioFile(OWTextableBaseWidget):
     resizing_enabled = True
 
     displayAdvancedSettings = settings.Setting(False)
+    file = settings.Setting(u'')
 
     def __init__(self):
         super().__init__()
