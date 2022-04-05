@@ -22,7 +22,7 @@ class AudioFile(OWTextableBaseWidget):
     priority = 20
 
     inputs =[]
-    outputs = [] 
+    outputs = [('Text', Segmentation)] 
 
 
     want_main_area = False
