@@ -28,6 +28,8 @@ class AudioFile(OWTextableBaseWidget):
     want_main_area = False
     resizing_enabled = True
 
+    displayAdvancedSettings = settings.Setting(False)
+
     def __init__(self):
         super().__init__()
         self.infoBox = InfoBox(widget=self.controlArea)
