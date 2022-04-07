@@ -31,8 +31,10 @@ class AudioFile(OWTextableBaseWidget):
 
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u'')
+    print('hello')
 
     def __init__(self):
+
         super().__init__()
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
@@ -96,8 +98,6 @@ class AudioFile(OWTextableBaseWidget):
         # Info box...
         self.infoBox.draw()
 
-        self.adjustSizeWithTimer()
-        QTimer.singleShot(0, self.sendButton.sendIf)
 
     def sendData(self):
             
@@ -139,4 +139,12 @@ class AudioFile(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    WidgetPreview(AudioFile)
+    #WidgetPreview(AudioFile)
+    import sys
+    from PyQt5.QtWidgets import QApplication
+    myApplication = QApplication(sys.argv)
+    myWidget = AudioFile()
+    myWidget.show()
+    myApplication.exec_()
+    myWidget.saveSettings()
+
