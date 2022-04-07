@@ -21,7 +21,7 @@ class OWTextableAudioFiles(OWTextableBaseWidget):
 
 	name = "Audio Files"
 	description = "Convert audio into segmented text"
-	icon = "icons/???.png"
+	icon = "icons/audioFiles.png"
 	priority = 10
 
 	# Inputs and ouputs
