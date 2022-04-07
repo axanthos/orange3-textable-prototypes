@@ -26,15 +26,15 @@ class AudioFile(OWTextableBaseWidget):
     outputs = [('Text', Segmentation)] 
 
 
+    #selected_int = Setting(50)
+    language = settings.Setting(0)
     want_main_area = False
     resizing_enabled = True
 
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u'')
-    print('hello')
-
+  
     def __init__(self):
-
         super().__init__()
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
@@ -57,7 +57,7 @@ class AudioFile(OWTextableBaseWidget):
         # Basic file box
         basicFileBox = gui.widgetBox(
             widget=self.controlArea,
-            box=u'Source',
+            box=u'File selection',
             orientation='vertical',
             addSpace=False,
         )
@@ -78,7 +78,24 @@ class AudioFile(OWTextableBaseWidget):
                 u"The path of the file."
             ),
         )
-        gui.separator(widget=basicFileBoxLine1, width=5)
+        languageComboBox = gui.comboBox(
+            widget=basicFileBox,
+            master=self,
+            value="language",
+            items=[
+                "French",
+                "English",
+            ],
+            sendSelectedValue=True,
+            orientation=u"horizontal",
+            label="Input language:",
+            labelWidth=101,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Select the language of the input text."
+            ),
+        )
+        gui.separator(widget=basicFileBoxLine1, width=3)
         gui.button(
             widget=basicFileBoxLine1,
             master=self,
@@ -88,6 +105,30 @@ class AudioFile(OWTextableBaseWidget):
                 u"Open a dialog for selecting file."
             ),
         )
+
+        # OptionsBox = gui.widgetBox(
+        #     widget=self.controlArea,
+        #     box=u'Segmentation options',
+        #     orientation='vertical',
+        #     addSpace=False,
+        # )
+
+        # OptionBoxLine1 = gui.widgetBox(
+        #     widget=OptionsBox,
+        #     box=False,
+        #     orientation='horizontal',
+        # )
+        # gui.spin(
+        #     widget=self.OptionsBox,  
+        #     master=self,                
+        #     value='selected_int',       
+        #     label='Select an integer: ',
+        #     callback=self.int_changed,  
+        #     tooltip='Select a value between 1 and 100',
+        #     minv=1,                     
+        #     maxv=100,                   
+        #     step=1,
+        # )
 
         gui.separator(widget=basicFileBox, width=3)
         self.advancedSettings.basicWidgets.append(basicFileBox)
@@ -139,12 +180,12 @@ class AudioFile(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    #WidgetPreview(AudioFile)
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = AudioFile()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    WidgetPreview(AudioFile).run()
+    # import sys
+    # from PyQt5.QtWidgets import QApplication
+    # myApplication = QApplication(sys.argv)
+    # myWidget = AudioFile()
+    # myWidget.show()
+    # myApplication.exec_()
+    # myWidget.saveSettings()
 
