@@ -22,14 +22,18 @@ class OWTextableAudioFiles(OWTextableBaseWidget):
 	priority = 2
 
 	# Inputs and ouputs
-	inputs = [
-
-	]
+	inputs = []
 	outputs = [("Transcripted data", Segmentation)]
+
+	want_main_area = False
+    resizing_enabled = True
 
 	settingsHandler = VersionedSettingsHandler(
         version = __version__.rsplit(".", 1)[0]
     )
+
+    displayAdvancedSettings = settings.Setting(False)
+    file = settings.Setting(u'')
 
     # Settings - à définir
 
@@ -41,13 +45,86 @@ class OWTextableAudioFiles(OWTextableBaseWidget):
 		super().__init__(*args, **kwargs)
 
 		# Other attributes
-		
+		self.infoBox = InfoBox(widget=self.controlArea)
+        self.sendButton = SendButton(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute='infoBox',
+            #sendIfPreCallback=self.updateGUI,
+        )
+        self.advancedSettings = AdvancedSettings(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendButton.settingsChanged,
+        )
+
+        # GUI EL DISAGNO 
+
+        self.advancedSettings.draw()
+
+        # Basic file box
+        basicFileBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Source',
+            orientation='vertical',
+            addSpace=False,
+        )
+        basicFileBoxLine1 = gui.widgetBox(
+            widget=basicFileBox,
+            box=False,
+            orientation='horizontal',
+        )
+        gui.lineEdit(
+            widget=basicFileBoxLine1,
+            master=self,
+            value='file',
+            orientation='horizontal',
+            label=u'File path:',
+            labelWidth=101,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The path of the file."
+            ),
+        )
+        gui.separator(widget=basicFileBoxLine1, width=5)
+        gui.button(
+            widget=basicFileBoxLine1,
+            master=self,
+            label=u'Browse',
+            callback=self.browse,
+            tooltip=(
+                u"Open a dialog for selecting file."
+            ),
+        )
+
+        gui.separator(widget=basicFileBox, width=3)
+        self.advancedSettings.basicWidgets.append(basicFileBox)
+        self.advancedSettings.basicWidgetsAppendSeparator()
+        # Send button...
+        self.sendButton.draw()
+
+        # Info box...
+        self.infoBox.draw()
+
+        self.adjustSizeWithTimer()
+        QTimer.singleShot(0, self.sendButton.sendIf)
 
 		# Initialize the recognizer / creates a speech recognition object
 		self.recognition = speechRecognition.Recognizer()
 		# 
 		print("\nFull text : ", self.get_large_audio_transcription(path))
 
+	def sendData(self):
+           
+       if (
+           (self.displayAdvancedSettings and not self.files) or
+           not (self.file or self.displayAdvancedSettings)
+       ):
+           self.infoBox.setText(u'Please select input file.', 'warning')
+           self.send('Text data', None, self)
+           return 
+     # Appeler la fonction get_large_audio_transcirption
 
 	# A function that applies speech recognition to a large audio file
 	def get_large_audio_transcription(self, path):
