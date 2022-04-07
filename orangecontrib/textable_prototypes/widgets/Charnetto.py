@@ -1,6 +1,6 @@
 """
-Class Charnet
-Copyright 2021 University of Lausanne
+Class Charnetto
+Copyright 2022 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -46,7 +46,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
-import charnet
+import charnetto
 import spacy
 
 AVAILABLE_MODELS = {
@@ -74,15 +74,15 @@ for model, package in AVAILABLE_MODELS.items():
     if importlib.util.find_spec(package.replace("-", ".")):
         INSTALLED_MODELS.append(model)
 
-class Charnet(OWTextableBaseWidget):
-    """Textable widget for building character networks with Charnet."""
+class Charnetto(OWTextableBaseWidget):
+    """Textable widget for building character networks with Charnetto."""
 
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Charnet"
+    name = "Charnetto"
     description = "Build character networks with the Charnet package"
-    icon = "icons/charnet.svg"
+    icon = "icons/charnetto.svg"
     priority = 21   # TODO
 
     #----------------------------------------------------------------------
@@ -177,18 +177,19 @@ class Charnet(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def updateCharacterList(self):
-        """Update character list based on Charnet output."""
+        """Update character list based on Charnetto output."""
         if self.mustLoad:
             self.loadModel()
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=4)
-        string = " ".join(segment.get_content() for segment in self.inputSeg)
+        strings = [segment.get_content() for segment in self.inputSeg]
         progressBar.advance()
-        self.char_df = charnet.extract_spacy_df(string, self.nlp) # TODO progress
+        self.char_df = charnetto.extract_spacy_df(strings, self.nlp) # TODO progress
+        print(self.char_df)
         progressBar.advance()
-        self.char_df = charnet.unify_tags(self.char_df)
+        self.char_df = charnetto.unify_tags(self.char_df)
         progressBar.advance()
-        self.char_list = charnet.concatenate_parents(self.char_df, min_occ = 1)
+        self.char_list = charnetto.concatenate_parents(self.char_df, min_occ = 1)
         self.characters = [", ".join(char) for char in self.char_list]
         progressBar.advance()
         progressBar.finish()
@@ -267,7 +268,7 @@ class Charnet(OWTextableBaseWidget):
         char_segments = list()
         current_segment_idx = 0
 
-        # For each character token in Charnet's output...
+        # For each character token in Charnetto's output...
         for index, char_token in self.char_df.iterrows():
 
             # Get index of containing segment...
@@ -316,6 +317,6 @@ class Charnet(OWTextableBaseWidget):
 if __name__ == "__main__":
     from LTTL.Input import Input
     input1 = Input("Mary said hello to John.")
-    input2 = Input("Lucy told John to say hello in return.")
+    input2 = Input("Lucy told Johnny to say hello in return.")
     input = LTTL.Segmenter.concatenate([input1, input2])
-    WidgetPreview(Charnet).run(inputData=input)
+    WidgetPreview(Charnetto).run(inputData=input)
