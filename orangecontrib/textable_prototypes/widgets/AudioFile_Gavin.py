@@ -3,6 +3,7 @@ Mon fichier pour le projet
 """
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.settings import Setting
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
@@ -33,6 +34,7 @@ class AudioFile(OWTextableBaseWidget):
 
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u'')
+    selected_int = Setting(50)
   
     def __init__(self):
         super().__init__()
@@ -106,29 +108,41 @@ class AudioFile(OWTextableBaseWidget):
             ),
         )
 
-        # OptionsBox = gui.widgetBox(
-        #     widget=self.controlArea,
-        #     box=u'Segmentation options',
-        #     orientation='vertical',
-        #     addSpace=False,
-        # )
+        OptionsBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Segmentation options',
+            orientation='vertical',
+            addSpace=False,
+        )
 
-        # OptionBoxLine1 = gui.widgetBox(
-        #     widget=OptionsBox,
-        #     box=False,
-        #     orientation='horizontal',
-        # )
-        # gui.spin(
-        #     widget=self.OptionsBox,  
-        #     master=self,                
-        #     value='selected_int',       
-        #     label='Select an integer: ',
-        #     callback=self.int_changed,  
-        #     tooltip='Select a value between 1 and 100',
-        #     minv=1,                     
-        #     maxv=100,                   
-        #     step=1,
-        # )
+        OptionBoxLine1 = gui.widgetBox(
+            widget=OptionsBox,
+            box=False,
+            orientation='horizontal',
+        )
+        gui.spin(
+            widget=OptionsBox,  
+            master=self,                
+            value='selected_int',       
+            label='Select an integer: ',
+            callback=self.int_changed,  
+            tooltip='Select a value between 1 and 100',
+            minv=1,                     
+            maxv=100,                   
+            step=1,
+        )
+
+        gui.spin(
+            widget=OptionsBox,  
+            master=self,                
+            value='selected_int',       
+            label='Select an integer: ',
+            callback=self.int_changed,  
+            tooltip='Select a value between 1 and 100',
+            minv=1,                     
+            maxv=100,                   
+            step=1,
+        )
 
         gui.separator(widget=basicFileBox, width=3)
         self.advancedSettings.basicWidgets.append(basicFileBox)
@@ -139,6 +153,9 @@ class AudioFile(OWTextableBaseWidget):
         # Info box...
         self.infoBox.draw()
 
+    def int_changed(self):
+        """Send the entered number on "Number" output"""
+        self.send("Integer", self.selected_int)
 
     def sendData(self):
             
@@ -175,8 +192,7 @@ class AudioFile(OWTextableBaseWidget):
             self.file = os.path.normpath(filePath)
             self.lastLocation = os.path.dirname(filePath)
             self.sendButton.settingsChanged()
-
-            
+        
 
 
 if __name__ == '__main__':
