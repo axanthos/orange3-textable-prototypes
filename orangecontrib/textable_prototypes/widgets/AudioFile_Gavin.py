@@ -35,6 +35,7 @@ class AudioFile(OWTextableBaseWidget):
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u'')
     selected_int = Setting(0)
+    lastLocation = settings.Setting('.')
   
     def __init__(self):
         super().__init__()
@@ -49,7 +50,7 @@ class AudioFile(OWTextableBaseWidget):
         self.advancedSettings = AdvancedSettings(
             widget=self.controlArea,
             master=self,
-            callback=self.sendButton.settingsChanged,
+            callback=self.showAdvancedSettings,
         )
 
         # GUI EL DISAGNO 
@@ -144,14 +145,18 @@ class AudioFile(OWTextableBaseWidget):
             step=1,
         )
 
-        gui.separator(widget=basicFileBox, width=3)
-        self.advancedSettings.basicWidgets.append(basicFileBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
+        gui.separator(widget=OptionsBox, width=3)
+        self.advancedSettings.advancedWidgets.append(OptionsBox)
+        self.advancedSettings.advancedWidgetsAppendSeparator()
+
+        gui.rubber(self.controlArea)
         # Send button...
         self.sendButton.draw()
 
         # Info box...
         self.infoBox.draw()
+
+        self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
     def int_changed(self):
         """Send the entered number on "Number" output"""
@@ -168,31 +173,19 @@ class AudioFile(OWTextableBaseWidget):
             return 
 
     def browse(self):
-        if self.displayAdvancedSettings:
-            filePathList, _ = QFileDialog.getOpenFileNames(
-                self,
-                u'Select Text File(s)',
-                self.lastLocation,
-                u'Text files (*)'
-            )
-            if not filePathList:
-                return
-            filePathList = [os.path.normpath(f) for f in filePathList]
-            self.newFiles = u' / '.join(filePathList)
-            self.lastLocation = os.path.dirname(filePathList[-1])
-        else:
-            filePath, _ = QFileDialog.getOpenFileName(
-                self,
-                u'Open Text File',
-                self.lastLocation,
-                u'Text files (*)'
-            )
-            if not filePath:
-                return
-            self.file = os.path.normpath(filePath)
-            self.lastLocation = os.path.dirname(filePath)
-            self.sendButton.settingsChanged()
-        
+        exempleFichier = QFileDialog.getOpenFileName(
+            self,
+            u'open Text File',
+            self.lastLocation,
+            u'Text files (*)')
+        self.file = os.path.normpath(filePath)
+        self.lastLocation = os.path.dirname(filePath)
+        self.updateGUI()
+        self.sendButton.settingsChanged()
+
+    def showAdvancedSettings(self):
+
+        self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
 
 if __name__ == '__main__':
