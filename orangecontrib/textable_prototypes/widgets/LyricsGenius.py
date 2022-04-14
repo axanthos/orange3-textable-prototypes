@@ -347,8 +347,9 @@ class LyricsGenius(OWTextableBaseWidget):
         """Opens a URL and returns it as a JSON object"""
 
         # Token to use the Genius API. DO NOT CHANGE.
-        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
-                       "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
+        #ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
+                       #"9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
+        ACCESS_TOKEN = "_VqiUA11I4lR9tZ2Kc8wo3cq4GUOMcnRyIG_vEO6IbXEKn-vRmQ8lswwrNCLUkKc"
         USER_AGENT = "CompuServe Classic/1.22"
         request = urllib.request.Request(url, headers={
             "Authorization" : "Bearer " + ACCESS_TOKEN,
