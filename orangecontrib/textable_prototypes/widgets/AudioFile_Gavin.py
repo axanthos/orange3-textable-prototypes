@@ -34,7 +34,7 @@ class AudioFile(OWTextableBaseWidget):
 
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u'')
-    selected_int = Setting(50)
+    selected_int = Setting(0)
   
     def __init__(self):
         super().__init__()
@@ -110,7 +110,7 @@ class AudioFile(OWTextableBaseWidget):
 
         OptionsBox = gui.widgetBox(
             widget=self.controlArea,
-            box=u'Segmentation options',
+            box=u'Segmentation at pauses',
             orientation='vertical',
             addSpace=False,
         )
@@ -124,7 +124,7 @@ class AudioFile(OWTextableBaseWidget):
             widget=OptionsBox,  
             master=self,                
             value='selected_int',       
-            label='Select an integer: ',
+            label='Maximum Volume: ',
             callback=self.int_changed,  
             tooltip='Select a value between 1 and 100',
             minv=1,                     
@@ -136,7 +136,7 @@ class AudioFile(OWTextableBaseWidget):
             widget=OptionsBox,  
             master=self,                
             value='selected_int',       
-            label='Select an integer: ',
+            label='Minimum Duration: ',
             callback=self.int_changed,  
             tooltip='Select a value between 1 and 100',
             minv=1,                     
