@@ -36,6 +36,8 @@ class AudioFile(OWTextableBaseWidget):
     file = settings.Setting(u'')
     selected_int = Setting(0)
     lastLocation = settings.Setting('.')
+    selected_vol = settings.Setting(50)
+    selected_dur = settings.Setting(50)
   
     def __init__(self):
         super().__init__()
@@ -53,7 +55,6 @@ class AudioFile(OWTextableBaseWidget):
             callback=self.showAdvancedSettings,
         )
 
-        # GUI EL DISAGNO 
 
         self.advancedSettings.draw()
 
@@ -124,9 +125,9 @@ class AudioFile(OWTextableBaseWidget):
         gui.spin(
             widget=OptionsBox,  
             master=self,                
-            value='selected_int',       
+            value='selected_vol',       
             label='Maximum Volume: ',
-            callback=self.int_changed,  
+            callback=self.sendButton.settingsChanged,
             tooltip='Select a value between 1 and 100',
             minv=1,                     
             maxv=100,                   
@@ -134,14 +135,14 @@ class AudioFile(OWTextableBaseWidget):
         )
 
         gui.spin(
-            widget=OptionsBox,  
-            master=self,                
-            value='selected_int',       
+            widget=OptionsBox,
+            master=self, 
+            value='selected_dur',
             label='Minimum Duration: ',
-            callback=self.int_changed,  
+            callback=self.sendButton.settingsChanged,
             tooltip='Select a value between 1 and 100',
-            minv=1,                     
-            maxv=100,                   
+            minv=1,
+            maxv=100,
             step=1,
         )
 
@@ -158,9 +159,9 @@ class AudioFile(OWTextableBaseWidget):
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
-    def int_changed(self):
-        """Send the entered number on "Number" output"""
-        self.send("Integer", self.selected_int)
+    # def int_changed(self):
+    #     """Send the entered number on "Number" output"""
+    #     self.send("Integer", self.selected_int)
 
     def sendData(self):
             
