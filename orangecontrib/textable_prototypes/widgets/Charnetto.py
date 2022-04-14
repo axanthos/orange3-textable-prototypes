@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.1"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -81,7 +81,7 @@ class Charnetto(OWTextableBaseWidget):
     # Widget's metadata...
 
     name = "Charnetto"
-    description = "Build character networks with the Charnet package"
+    description = "Build character networks with the Charnetto package"
     icon = "icons/charnetto.svg"
     priority = 21   # TODO
 
@@ -185,12 +185,15 @@ class Charnetto(OWTextableBaseWidget):
         strings = [segment.get_content() for segment in self.inputSeg]
         progressBar.advance()
         self.char_df = charnetto.extract_spacy_df(strings, self.nlp) # TODO progress
-        print(self.char_df)
+        # TODO deal with \n in names
         progressBar.advance()
         self.char_df = charnetto.unify_tags(self.char_df)
+        print(self.char_df)
         progressBar.advance()
         self.char_list = charnetto.concatenate_parents(self.char_df, min_occ = 1)
+        print(self.char_list)
         self.characters = [", ".join(char) for char in self.char_list]
+        print(self.characters)
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
@@ -254,44 +257,58 @@ class Charnetto(OWTextableBaseWidget):
         progressBar = ProgressBar(self, iterations=len(self.char_df))       
 
         # Get start and end pos of concatenated input segments...
-        start_positions = [0]
-        end_positions = list()
-        num_segments = len(self.inputSeg)
-        for idx in range(1, num_segments):
-            prev_seg_len = len(self.inputSeg[idx-1].get_content())
-            start_positions.append(start_positions[-1] + prev_seg_len + 1)
-            end_positions.append(start_positions[-1] - 1)
-        end_positions.append(start_positions[-1] + 
+        startPositions = [0]
+        endPositions = list()
+        numSegments = len(self.inputSeg)
+        for idx in range(1, numSegments):
+            prevSegLen = len(self.inputSeg[idx-1].get_content())
+            startPositions.append(startPositions[-1] + prevSegLen + 1)
+            endPositions.append(startPositions[-1] - 1)
+        endPositions.append(startPositions[-1] + 
                              len(self.inputSeg[-1].get_content()) + 1)
 
+        # Create character name to id mapping...
+        charNameToId = dict()
+        for characterSet in self.characters:
+            characters = characterSet.split(", ")
+            charId = characters[0]
+            for character in characters:
+                charNameToId[character] = charId
+        print(charNameToId)
+        
         # Initializations...
-        char_segments = list()
-        current_segment_idx = 0
-
+        charSegments = list()
+        currentSegmentIdx = 0
+                
         # For each character token in Charnetto's output...
-        for index, char_token in self.char_df.iterrows():
+        for index, charToken in self.char_df.iterrows():
+        
+            # Skip non-PER named entities.
+            if charToken["tag"] != "PER":
+                continue
 
             # Get index of containing segment...
-            while char_token["end_pos"] > end_positions[current_segment_idx]:
-                current_segment_idx += 1
+            while charToken["end_pos"] > endPositions[currentSegmentIdx]:
+                currentSegmentIdx += 1
                 
             # Create segment for char with its actual coordinates...
-            str_index = self.inputSeg[current_segment_idx].str_index
-            start = char_token["start_pos"]-start_positions[current_segment_idx]
-            end = char_token["end_pos"]-start_positions[current_segment_idx]
-            char_segments.append(Segment(str_index, start, end))
+            strIndex = self.inputSeg[currentSegmentIdx].str_index
+            start = charToken["start_pos"]-startPositions[currentSegmentIdx]
+            end = charToken["end_pos"]-startPositions[currentSegmentIdx]
+            annotations = {"id": charNameToId[charToken["name"]]}
+            charSegments.append(Segment(strIndex, start, end, annotations))
             
             progressBar.advance()
 
         # Send output...
-        output_segmentation = Segmentation(char_segments, 
+        outputSegmentation = Segmentation(charSegments, 
                                            label=self.captionTitle)
-        self.send("Character segmentation", output_segmentation, self)
-        print(output_segmentation.to_string())
+        self.send("Character segmentation", outputSegmentation, self)
+        print(outputSegmentation.to_string())
 
         # Set status to OK and report data size...
-        message = "%i segment@p sent to output." % len(output_segmentation)
-        message = pluralize(message, len(output_segmentation))
+        message = "%i segment@p sent to output." % len(outputSegmentation)
+        message = pluralize(message, len(outputSegmentation))
         self.infoBox.setText(message)
         
         # Clear progress bar.
@@ -316,7 +333,7 @@ class Charnetto(OWTextableBaseWidget):
             
 if __name__ == "__main__":
     from LTTL.Input import Input
-    input1 = Input("Mary said hello to John.")
+    input1 = Input("Mary said hello to John and Mike.")
     input2 = Input("Lucy told Johnny to say hello in return.")
     input = LTTL.Segmenter.concatenate([input1, input2])
     WidgetPreview(Charnetto).run(inputData=input)
