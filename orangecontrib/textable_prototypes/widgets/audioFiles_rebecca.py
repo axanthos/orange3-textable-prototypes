@@ -34,9 +34,12 @@ class OWTextableAudioFiles(OWTextableBaseWidget):
 	#settingsHandler = VersionedSettingsHandler(
 	#	version = __version__.rsplit(".", 1)[0]
     #)
-	displayAdvancedSettings = settings.Setting(False)
-	file = settings.Setting(u'')	
-   	# Settings - A DEFINIR	
+	
+		
+   	# Settings
+   	displayAdvancedSettings = settings.Setting(False)
+   	file = settings.Setting(u'')
+
 	def __init__(self, *args, **kwargs):
 		"""Initialize a Preprocess widget"""
 		super().__init__(*args, **kwargs)	
