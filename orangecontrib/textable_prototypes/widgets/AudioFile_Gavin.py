@@ -178,7 +178,7 @@ class AudioFile(OWTextableBaseWidget):
             self,
             u'open Text File',
             self.lastLocation,
-            u'Text files (*)')
+            u'Audio Files(*)')
         self.file = os.path.normpath(audioPath)
         self.lastLocation = os.path.dirname(audioPath)
         self.updateGUI()
