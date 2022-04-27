@@ -1,7 +1,7 @@
 """
 Mon fichier pour le projet 
 """
-
+import os 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.settings import Setting
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -174,14 +174,16 @@ class AudioFile(OWTextableBaseWidget):
             return 
 
     def browse(self):
-        exempleFichier = QFileDialog.getOpenFileName(
+        audioPath, _ = QFileDialog.getOpenFileName(
             self,
             u'open Text File',
             self.lastLocation,
-            u'Text files (*)')
-        self.file = os.path.normpath(filePath)
-        self.lastLocation = os.path.dirname(filePath)
-        self.updateGUI()
+            u'Audio Files(*)'
+        )
+        if not audioPath:
+            return
+        self.file = os.path.normpath(audioPath)
+        self.lastLocation = os.path.dirname(audioPath)
         self.sendButton.settingsChanged()
 
     def showAdvancedSettings(self):
