@@ -3,16 +3,15 @@ import os
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 from _textable.widgets.TextableUtils import (
-	OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
-    JSONMessage, InfoBox, SendButton, AdvancedSettings,
-    addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
-    getPredefinedEncodings, normalizeCarriageReturns, pluralize
+	OWTextableBaseWidget, ProgressBar,
 )
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.settings import Setting
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from LTTL.Segmentation import Segmentation
+
 
 path = "/Users/rebeccakneubuehler/Desktop/UNIL/deuxiemePartie/ish/informatiqueTextuelle/p22_progTexte2/projet/orange3-textable-prototypes/orangecontrib/textable_prototypes/widgets/testAudioFiles_7min.wav"
 
@@ -30,94 +29,18 @@ class OWTextableAudioFiles(OWTextableBaseWidget):
 
 	want_main_area = False
 	resizing_enabled = True
-
-	#settingsHandler = VersionedSettingsHandler(
-	#	version = __version__.rsplit(".", 1)[0]
-    #)
 	
-		
-   	# Settings
-   	displayAdvancedSettings = settings.Setting(False)
-   	file = settings.Setting(u'')
-
-	def __init__(self, *args, **kwargs):
-		"""Initialize a Preprocess widget"""
-		super().__init__(*args, **kwargs)	
-		# Other attributes
-		self.infoBox = InfoBox(widget = self.controlArea)
-		self.sendButton = SendButton(
-   	        widget = self.controlArea,
-   	        master = self,
-   	        callback = self.sendData,
-   	        infoBoxAttribute = "infoBox",
-   	        #sendIfPreCallback=self.updateGUI,
-   	    )
-		self.advancedSettings = AdvancedSettings(
-   	        widget = self.controlArea,
-   	        master = self,
-   	        callback = self.sendButton.settingsChanged,
-   	    )	
-   	    # GUI 	
-		self.advancedSettings.draw()	
-   	    # Basic file box
-		basicFileBox = gui.widgetBox(
-   	        widget = self.controlArea,
-   	        box = u"Source",
-   	        orientation = "vertical",
-   	        addSpace = False,
-   	    )
-		basicFileBoxLine1 = gui.widgetBox(
-   	        widget=basicFileBox,
-   	        box=False,
-   	        orientation='horizontal',
-   	    )
-		gui.lineEdit(
-   	        widget=basicFileBoxLine1,
-   	        master=self,
-   	        value='file',
-   	        orientation='horizontal',
-   	        label=u'File path:',
-   	        labelWidth=101,
-   	        callback=self.sendButton.settingsChanged,
-   	        tooltip=(
-   	            u"The path of the file."
-   	        ),
-   	    )
-		gui.separator(widget = basicFileBoxLine1, width = 5)
-		gui.button(
-   	        widget=basicFileBoxLine1,
-   	        master=self,
-   	        label=u'Browse',
-   	        callback=self.browse,
-   	        tooltip=(
-   	            u"Open a dialog for selecting file."
-   	        ),
-   	    )	
-		gui.separator(widget=basicFileBox, width=3)
-		self.advancedSettings.basicWidgets.append(basicFileBox)
-		self.advancedSettings.basicWidgetsAppendSeparator()
-		# Send button...
-		self.sendButton.draw()	
-		# Info box...
-		self.infoBox.draw()	
-		self.adjustSizeWithTimer()
-		QTimer.singleShot(0, self.sendButton.sendIf)	
-		# Initialize the recognizer / creates a speech recognition object
-		self.recognition = speechRecognition.Recognizer()
-		# 
-		print("\nFull text : ", self.get_large_audio_transcription(path))	
+	#def sendData(self):
+	#	if (
+	#		(self.displayAdvancedSettings and not self.files) or
+	#		not (self.file or self.displayAdvancedSettings)
+	#		):
+	#		self.infoBox.setText(u'Please select input file.', 'warning')
+	#		self.send('Text data', None, self) 
+	#		# Appeler la fonction get_large_audio_transcirption	
+	#		self.get_large_audio_transcription(path)
+	#		return
 	
-	def sendData(self):
-   	       
-   	   if (
-   	       (self.displayAdvancedSettings and not self.files) or
-   	       not (self.file or self.displayAdvancedSettings)
-   	   ):
-   	       self.infoBox.setText(u'Please select input file.', 'warning')
-   	       self.send('Text data', None, self) 
-   	       # Appeler la fonction get_large_audio_transcirption	
-   	       self.get_large_audio_transcription(path)
-   	       return
 	# A function that applies speech recognition to a large audio file
 	def get_large_audio_transcription(self, path):
 		""" Splitting the large audio file into chunks
