@@ -174,14 +174,16 @@ class AudioFile(OWTextableBaseWidget):
             return 
 
     def browse(self):
-        audioPath = QFileDialog.getOpenFileName(
+        audioPath, _ = QFileDialog.getOpenFileName(
             self,
             u'open Text File',
             self.lastLocation,
-            u'Audio Files(*)')
+            u'Audio Files(*)'
+        )
+        if not audioPath:
+            return
         self.file = os.path.normpath(audioPath)
         self.lastLocation = os.path.dirname(audioPath)
-        self.updateGUI()
         self.sendButton.settingsChanged()
 
     def showAdvancedSettings(self):
