@@ -27,7 +27,7 @@ class AudioFile(OWTextableBaseWidget):
 
     name = "AudioFile"
     description = "Import audio files transcribe them and segment them"
-    icon = "icons/mywidget.svg"
+    icon = "icons/audioFiles.png"
     priority = 20
 
     inputs =[]
@@ -135,7 +135,7 @@ class AudioFile(OWTextableBaseWidget):
             widget=OptionsBox,  
             master=self,                
             value='selected_vol',       
-            label='Maximum Volume: ',
+            label='Maximum Volume (in dBFS): ',
             callback=self.sendButton.settingsChanged,
             tooltip='Select a value between 1 and 50',
             minv=1,                     
@@ -147,7 +147,7 @@ class AudioFile(OWTextableBaseWidget):
             widget=OptionsBox,
             master=self, 
             value='selected_dur',
-            label='Minimum Duration: ',
+            label='Minimum Duration (in milliseconds): ',
             callback=self.sendButton.settingsChanged,
             tooltip='Select a value between 1 and 1000',
             minv=1,

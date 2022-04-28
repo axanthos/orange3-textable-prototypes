@@ -27,7 +27,7 @@ class AudioFile(OWTextableBaseWidget):
 
     name = "AudioFile_Rebecca"
     description = "Import audio files transcribe them and segment them"
-    icon = "icons/audioFile.png"
+    icon = "icons/audioFiles.png"
     priority = 20
 
     inputs =[]
