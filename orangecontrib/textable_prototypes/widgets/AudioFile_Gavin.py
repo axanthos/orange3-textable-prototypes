@@ -195,13 +195,11 @@ class AudioFile(OWTextableBaseWidget):
                                   # keep the silence for 1 second, adjustable as well
                                   keep_silence=500,
                                   )
-        self.infoBox.setText(u"Processing, please wait...", "warning")
-        progressBar = ProgressBar(
-        self,
-        iterations=len(chunks)
-        )
-        progressBar.finish()
         whole_text = ""
+        progressBar = ProgressBar(
+                        self,
+                        iterations=len(chunks)
+                        )
         # create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
             # process each chunk
@@ -222,7 +220,10 @@ class AudioFile(OWTextableBaseWidget):
                         text = f"{text.capitalize()}. "
                         print(chunk_filename, ":", text)
                         whole_text += text
+                        self.infoBox.setText(u"Processing, please wait...", "warning")
+                        progressBar.advance()
         # return the text for all chunks detected
+        progressBar.finish()
         return whole_text
 
     def sendData(self):
