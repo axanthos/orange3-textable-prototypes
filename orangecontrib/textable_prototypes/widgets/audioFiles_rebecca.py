@@ -21,6 +21,7 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import filetype 
 import tempfile
+import re
 
 class AudioFile(OWTextableBaseWidget):
     
@@ -238,9 +239,13 @@ class AudioFile(OWTextableBaseWidget):
             )
             # gets transcription
             transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language)
-            #updates segmentation for output
+            # updates segmentation for output
             # TODO: regex that detects '\' before and '.wav' after for name
-            self.segmentation.update(transcription, label=self.file)
+            title = self.file
+            regex = re.compile("[^(/|\\)]+[mp3|wav]$")
+            match = regex.match(title)
+            self.segmentation.update(transcription, label=match)
+
             
             # Send token...
             self.send('Text', self.segmentation, self)
@@ -261,6 +266,7 @@ class AudioFile(OWTextableBaseWidget):
         self.file = os.path.normpath(audioPath)
         self.lastLocation = os.path.dirname(audioPath)
         self.sendButton.settingsChanged()
+        print (self.file)
 
     def showAdvancedSettings(self):
 
