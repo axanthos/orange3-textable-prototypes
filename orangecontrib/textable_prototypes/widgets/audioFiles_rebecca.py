@@ -46,7 +46,6 @@ class AudioFile(OWTextableBaseWidget):
     lastLocation = settings.Setting('.')
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
-    selected_seg = settings.Setting()
   
     def __init__(self):
         super().__init__()
