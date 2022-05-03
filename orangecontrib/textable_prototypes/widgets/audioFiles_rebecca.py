@@ -46,6 +46,7 @@ class AudioFile(OWTextableBaseWidget):
     lastLocation = settings.Setting('.')
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
+    selected_seg = settings.Setting()
   
     def __init__(self):
         super().__init__()
@@ -156,6 +157,15 @@ class AudioFile(OWTextableBaseWidget):
             step=1,
         )
 
+        #gui.checkBox(
+        #    widget = OptionsBox,
+        #    master = self, 
+        #    value = "selected_seg",
+        #    label = "Segment the audio file depending on the parameters",
+        #    callback = self.,
+        #    tooltip = "Leave this box unchecked if you want one and only segment."
+        #)
+
         gui.separator(widget=OptionsBox, width=3)
         self.advancedSettings.advancedWidgets.append(OptionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
@@ -173,7 +183,7 @@ class AudioFile(OWTextableBaseWidget):
     #     """Send the entered number on "Number" output"""
     #     self.send("Integer", self.selected_int)
 
-    def get_large_audio_transcription(self, path, set_silence_len=500, set_silence_threshold=14, language="en-US"):
+    def get_large_audio_transcription(self, path, set_silence_len=500, set_silence_threshold=14, language="en-US", set_segmentation):
         """
         Splitting the large audio file into chunks
         and apply speech recognition on each of these chunks
@@ -213,7 +223,7 @@ class AudioFile(OWTextableBaseWidget):
                     try:
                         text = r.recognize_google(audio_listened, language=language)
                     except sr.UnknownValueError as e:
-                        print("Error:", str(e))
+                        print("Error : ", str(e))
                     else:
                         text = f"{text.capitalize()}. "
                         print(chunk_filename, ":", text)
@@ -238,15 +248,14 @@ class AudioFile(OWTextableBaseWidget):
             iterations=2
             )
             # gets transcription
-            transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language)
+            transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language, set_segmentation = self.selected_seg)
             # updates segmentation for output
-            # TODO: regex that detects '\' before and '.wav' after for name
-            title = self.file
-            regex = re.compile("[^(/|\\)]+[mp3|wav]$")
+            # Regex that detects '\' before and '.wav' after for name
+            title = self.file.to_string()
+            regex = re.compile("[^(/\\)]+[mp3|wav]$")
             match = regex.match(title)
-            self.segmentation.update(transcription, label=match)
+            self.segmentation.update(transcription, label = match)
 
-            
             # Send token...
             self.send('Text', self.segmentation, self)
             message = "Succesfully transcripted!"
