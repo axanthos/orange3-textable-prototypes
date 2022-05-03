@@ -156,7 +156,7 @@ class AudioFile(OWTextableBaseWidget):
             maxv=1000,
             step=1,
         )
-
+        # Ajout de l'option de segmentation en fonction des AdvancedSettings
         #gui.checkBox(
         #    widget = OptionsBox,
         #    master = self, 
@@ -183,7 +183,7 @@ class AudioFile(OWTextableBaseWidget):
     #     """Send the entered number on "Number" output"""
     #     self.send("Integer", self.selected_int)
 
-    def get_large_audio_transcription(self, path, set_silence_len=500, set_silence_threshold=14, language="en-US", set_segmentation):
+    def get_large_audio_transcription(self, path, set_silence_len=500, set_silence_threshold=14, language="en-US"):
         """
         Splitting the large audio file into chunks
         and apply speech recognition on each of these chunks
@@ -248,7 +248,7 @@ class AudioFile(OWTextableBaseWidget):
             iterations=2
             )
             # gets transcription
-            transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language, set_segmentation = self.selected_seg)
+            transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language)
             # updates segmentation for output
             # Regex that detects '\' before and '.wav' after for name
             title = self.file.to_string()
