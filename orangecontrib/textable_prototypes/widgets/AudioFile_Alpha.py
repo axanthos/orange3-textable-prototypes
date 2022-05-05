@@ -25,7 +25,7 @@ import tempfile
 class AudioFile(OWTextableBaseWidget):
     
 
-    name = "AudioFile"
+    name = "AudioFile_Alpha"
     description = "Import audio files transcribe them and segment them"
     icon = "icons/audioFiles.png"
     priority = 20
