@@ -9,6 +9,7 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
+from LTTL.Segment import Segment 
 
 
 from _textable.widgets.TextableUtils import (
@@ -46,6 +47,7 @@ class AudioFile(OWTextableBaseWidget):
     lastLocation = settings.Setting('.')
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
+    selected_seg = settings.Setting(False)
   
     def __init__(self):
         super().__init__()
@@ -155,15 +157,17 @@ class AudioFile(OWTextableBaseWidget):
             maxv=1000,
             step=1,
         )
-        # Ajout de l'option de segmentation en fonction des AdvancedSettings
-        #gui.checkBox(
-        #    widget = OptionsBox,
-        #    master = self, 
-        #    value = "selected_seg",
-        #    label = "Segment the audio file depending on the parameters",
-        #    callback = self.,
-        #    tooltip = "Leave this box unchecked if you want one and only segment."
-        #)
+        """ MON CODE ICI - ajout de l'option de segmentation en fonction des Advanced Settings """
+        gui.checkBox(
+            widget = OptionsBox,
+            master = self,
+            value = "selected_seg",
+            label = "Segment the audio file with the parameters",
+            box = None,
+            callback = self.sendButton.settingsChanged,
+            tooltip = "Leave this box unchecked if you want one and only segment."
+        )
+
 
         gui.separator(widget=OptionsBox, width=3)
         self.advancedSettings.advancedWidgets.append(OptionsBox)
@@ -207,6 +211,7 @@ class AudioFile(OWTextableBaseWidget):
                                   )
 
         whole_text = ""
+        segments = list()
         # create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
             # process each chunk
@@ -224,11 +229,19 @@ class AudioFile(OWTextableBaseWidget):
                     except sr.UnknownValueError as e:
                         print("Error : ", str(e))
                     else:
-                        text = f"{text.capitalize()}. "
-                        print(chunk_filename, ":", text)
-                        whole_text += text
-        # return the text for all chunks detected
-        return whole_text
+                        if self.selected_seg:
+                            segmented_text = f"{text.capitalize()}. "
+                            print(chunk_filename, ":", segmented_text)
+                            segments.append(segmented_text)
+                        else:
+                            text = f"{text.capitalize()}. "
+                            print(chunk_filename, ":", text)
+                            whole_text += text
+            # return the text for all chunks detected
+            if self.selected_seg:
+                return segments
+            else:
+                return whole_text
 
     def sendData(self):
             
@@ -240,7 +253,7 @@ class AudioFile(OWTextableBaseWidget):
             self.send('Text data', None, self)
             return 
         else:
-            #Initiate alert message and progress bar
+            # Initiate alert message and progress bar
             self.infoBox.setText(u"Processing, please wait...", "warning")
             progressBar = ProgressBar(
             self,
@@ -250,10 +263,19 @@ class AudioFile(OWTextableBaseWidget):
             transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language)
             # updates segmentation for output
             # Regex that detects '\' before and '.wav' after for name
-            title = self.file.to_string()
             regex = re.compile("[^(/\\)]+[mp3|wav]$")
-            match = regex.match(title)
-            self.segmentation.update(transcription, label = match)
+            match = re.findall(regex, self.file)
+
+            if self.selected_seg:
+                list_test = list()
+                for i in transcription:
+                    input_test = Input(i)
+                    str_index = input_test[0].str_index
+                    list_test.append(Segment(str_index = str_index))
+                new_seg = Segmentation(list_test)
+                self.segmentation.update(new_seg, label = match)
+            else:
+                self.segmentation.update(transcription, label = match)
 
             # Send token...
             self.send('Text', self.segmentation, self)
