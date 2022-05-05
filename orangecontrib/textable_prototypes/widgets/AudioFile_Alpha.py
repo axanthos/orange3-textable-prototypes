@@ -223,6 +223,7 @@ class AudioFile(OWTextableBaseWidget):
                         text = f"{text.capitalize()}. "
                         print(chunk_filename, ":", text)
                         whole_text += text
+                        self.infoBox.setText(u"Processing, please wait...", "warning")
                         progressBar.advance()
         # return the text for all chunks detected
         progressBar.finish()
