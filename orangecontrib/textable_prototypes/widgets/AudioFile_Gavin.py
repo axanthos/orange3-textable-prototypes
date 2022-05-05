@@ -26,7 +26,7 @@ class AudioFile(OWTextableBaseWidget):
     
 
     name = "AudioFile"
-    description = "Import audio files transcribe them and segment them"
+    description = " Gavin Import audio files transcribe them and segment them"
     icon = "icons/audioFiles.png"
     priority = 20
 
@@ -172,7 +172,7 @@ class AudioFile(OWTextableBaseWidget):
     #     """Send the entered number on "Number" output"""
     #     self.send("Integer", self.selected_int)
 
-    def get_large_audio_transcription(self, path, set_silence_len=500, set_silence_threshold=14, language="en-US"):
+    def get_large_audio_transcription(self, path, language, set_silence_len=500, set_silence_threshold=14):
         """
         Splitting the large audio file into chunks
         and apply speech recognition on each of these chunks
@@ -238,7 +238,8 @@ class AudioFile(OWTextableBaseWidget):
         else:
             #Initiate alert message and progress bar
             # gets transcription
-            transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language)
+            print(type(self.language))
+            transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
             #updates segmentation for output
             # TODO: regex that detects '\' before and '.wav' after for name
             self.segmentation.update(transcription, label=self.file)
