@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 from LTTL.Segment import Segment 
+import LTTL.Segmenter as Segmenter
 
 
 from _textable.widgets.TextableUtils import (
@@ -66,7 +67,10 @@ class AudioFile(OWTextableBaseWidget):
         )
 
         # Initiates output segmentation
+
+        #est ce que tu peux mettre None ou pas comme valeur --> à demander au prof
         self.segmentation = Input(text=u'')
+        self.createdInputs = list()
 
         self.advancedSettings.draw()
 
@@ -263,18 +267,19 @@ class AudioFile(OWTextableBaseWidget):
             transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language)
             # updates segmentation for output
             # Regex that detects '\' before and '.wav' after for name
+            title = self.file
             regex = re.compile("[^(/\\)]+[mp3|wav]$")
-            match = re.findall(regex, self.file)
+            match = re.findall(regex, title)
 
+            #merci de donner des bons noms é ces variables
             if self.selected_seg:
-                list_test = list()
                 for i in transcription:
                     input_test = Input(i)
-                    str_index = input_test[0].str_index
-                    list_test.append(Segment(str_index = str_index))
-                new_seg = Segmentation(list_test)
-                self.segmentation.update(new_seg, label = match)
+                    self.createdInputs.append(input_test)
+                    self.segmentation = Segmenter.concatenate(segmentations=self.createdInputs, label=match)
+
             else:
+                # POTO FAUT CHECK CE UPDATE POUR VERIFIER SI çA MARCHE
                 self.segmentation.update(transcription, label = match)
 
             # Send token...
