@@ -197,6 +197,12 @@ class AudioFile(OWTextableBaseWidget):
                                   )
 
         whole_text = ""
+        #Initiate alert message and progress bar
+        progressBar = ProgressBar(
+                    self,
+                    iterations=len(chunks)
+        )
+
         # create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
             # process each chunk
@@ -217,7 +223,9 @@ class AudioFile(OWTextableBaseWidget):
                         text = f"{text.capitalize()}. "
                         print(chunk_filename, ":", text)
                         whole_text += text
+                        progressBar.advance()
         # return the text for all chunks detected
+        progressBar.finish()
         return whole_text
 
     def sendData(self):
@@ -230,12 +238,6 @@ class AudioFile(OWTextableBaseWidget):
             self.send('Text data', None, self)
             return 
         else:
-            #Initiate alert message and progress bar
-            self.infoBox.setText(u"Processing, please wait...", "warning")
-            progressBar = ProgressBar(
-            self,
-            iterations=2
-            )
             # gets transcription
             transcription = self.get_large_audio_transcription(self.file, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol, language=self.language)
             #updates segmentation for output
@@ -247,7 +249,6 @@ class AudioFile(OWTextableBaseWidget):
             message = "Succesfully transcripted!"
             self.infoBox.setText(message)
             self.sendButton.resetSettingsChangedFlag()
-            progressBar.finish()
 
     def browse(self):
         audioPath, _ = QFileDialog.getOpenFileName(
