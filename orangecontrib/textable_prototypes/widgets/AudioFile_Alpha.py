@@ -9,6 +9,8 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
+from LTTL.Segment import Segment 
+import LTTL.Segmenter as Segmenter
 
 
 from _textable.widgets.TextableUtils import (
@@ -21,6 +23,7 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import filetype 
 import tempfile
+import re 
 
 class AudioFile(OWTextableBaseWidget):
     
@@ -34,7 +37,6 @@ class AudioFile(OWTextableBaseWidget):
     outputs = [('Text', Segmentation)] 
 
 
-    #selected_int = Setting(50)
     language = settings.Setting('fr-FR')
     want_main_area = False
     resizing_enabled = True
@@ -45,6 +47,7 @@ class AudioFile(OWTextableBaseWidget):
     lastLocation = settings.Setting('.')
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
+    selected_seg = settings.Setting(False)
   
     def __init__(self):
         super().__init__()
@@ -64,6 +67,7 @@ class AudioFile(OWTextableBaseWidget):
 
         # Initiates output segmentation
         self.segmentation = Input(text=u'')
+        self.createdInputs = list()
 
         self.advancedSettings.draw()
 
@@ -155,6 +159,16 @@ class AudioFile(OWTextableBaseWidget):
             step=1,
         )
 
+        gui.checkBox(
+            widget = OptionsBox,
+            master = self,
+            value = "selected_seg",
+            label = "Segment the audio file with the parameters",
+            box = None,
+            callback = self.sendButton.settingsChanged,
+            tooltip = "Leave this box unchecked if you want one and only segment."
+        )
+
         gui.separator(widget=OptionsBox, width=3)
         self.advancedSettings.advancedWidgets.append(OptionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
@@ -195,8 +209,9 @@ class AudioFile(OWTextableBaseWidget):
                                   # keep the silence for 1 second, adjustable as well
                                   keep_silence=500,
                                   )
-
+        # Initiates ouput variable
         whole_text = ""
+        segments = list()
         #Initiate alert message and progress bar
         progressBar = ProgressBar(
                     self,
@@ -220,14 +235,22 @@ class AudioFile(OWTextableBaseWidget):
                     except sr.UnknownValueError as e:
                         print("Error:", str(e))
                     else:
-                        text = f"{text.capitalize()}. "
-                        print(chunk_filename, ":", text)
-                        whole_text += text
+                        if self.selected_seg:
+                            segmented_text = f"{text.capitalize()}. "
+                            print(chunk_filename, ":", segmented_text)
+                            segments.append(segmented_text)
+                        else:
+                            text = f"{text.capitalize()}. "
+                            print(chunk_filename, ":", text)
+                            whole_text += text
                         self.infoBox.setText(u"Processing, please wait...", "warning")
                         progressBar.advance()
         # return the text for all chunks detected
         progressBar.finish()
-        return whole_text
+        if self.selected_seg:
+            return segments
+        else:
+            return whole_text
 
     def sendData(self):
             
@@ -239,11 +262,25 @@ class AudioFile(OWTextableBaseWidget):
             self.send('Text data', None, self)
             return 
         else:
+            # Clear created Inputs.
+            self.clearCreatedInputs()
+
             # gets transcription
             transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
-            #updates segmentation for output
-            # TODO: regex that detects '\' before and '.wav' after for name
-            self.segmentation.update(transcription, label=self.file)
+            # Regex to get the name of the input file
+            title = self.file
+            regex = re.compile("[^(/\\)]+[mp3|wav]$")
+            match = re.findall(regex, title)
+
+            if self.selected_seg:
+                for chunk in transcription:
+                    new_input = Input(chunk, label=match)
+                    self.createdInputs.append(new_input)
+            else:
+                new_input = Input(transcription, label=match)
+                self.createdInputs.append(new_input)
+            # Concatenates the segmentations in the output segmentation
+            self.segmentation = Segmenter.concatenate(segmentations=self.createdInputs, label=match)
             
             # Send token...
             self.send('Text', self.segmentation, self)
@@ -283,6 +320,16 @@ class AudioFile(OWTextableBaseWidget):
         # convert wav to mp3
         sound = AudioSegment.from_mp3(source)
         sound.export(destination, format="wav")
+
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
+    def onDeleteWidget(self):
+        """Free memory when widget is deleted (overriden method)"""
+        self.clearCreatedInputs()
 
 
 
