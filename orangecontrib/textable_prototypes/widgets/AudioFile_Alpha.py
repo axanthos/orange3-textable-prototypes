@@ -266,6 +266,7 @@ class AudioFile(OWTextableBaseWidget):
 
             # gets transcription
             transcription = self.get_large_audio_transcription(self.file, language = self.language, set_silence_len = self.selected_dur, set_silence_threshold = self.selected_vol)
+            
             # Regex to get the name of the input file
             title = self.file
             regex = re.compile("[^(/\\)]+[mp3|wav]$")
@@ -279,13 +280,22 @@ class AudioFile(OWTextableBaseWidget):
                 new_input = Input(transcription, label = match)
                 self.createdInputs.append(new_input)
             # Concatenates the segmentations in the output segmentation
-            self.segmentation = Segmenter.concatenate(segmentations = self.createdInputs, label = match)
+            self.segmentation = Segmenter.concatenate(segmentations = self.createdInputs, label = self.captionTitle, copy_annotations = False, import_labels_as = "")
             
             # Send token...
             self.send("Text", self.segmentation, self)
             message = "Succesfully transcripted !"
             self.infoBox.setText(message)
             self.sendButton.resetSettingsChangedFlag()
+
+    def setCaption(self, title):
+        if "captionTitle" in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
     def browse(self):
         audioPath, _ = QFileDialog.getOpenFileName(
