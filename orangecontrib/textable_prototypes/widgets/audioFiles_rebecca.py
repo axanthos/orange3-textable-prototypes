@@ -26,7 +26,6 @@ import tempfile
 import re
 
 class AudioFile(OWTextableBaseWidget):
-    
 
     name = "AudioFile_Rebecca"
     description = "Import audio files transcribe them and segment them"
@@ -67,13 +66,13 @@ class AudioFile(OWTextableBaseWidget):
         )
 
         # Initiates output segmentation
-
         #est ce que tu peux mettre None ou pas comme valeur --> à demander au prof
         self.segmentation = Input(text=u'')
         self.createdInputs = list()
 
         self.advancedSettings.draw()
 
+        #Creating the user interface
         # Basic file box
         basicFileBox = gui.widgetBox(
             widget=self.controlArea,
@@ -140,13 +139,13 @@ class AudioFile(OWTextableBaseWidget):
         )
         gui.spin(
             widget=OptionsBox,  
-            master=self,                
-            value='selected_vol',       
+            master=self,
+            value='selected_vol',
             label='Maximum Volume (in dBFS): ',
             callback=self.sendButton.settingsChanged,
             tooltip='Select a value between 1 and 50',
-            minv=1,                     
-            maxv=50,                   
+            minv=1,
+            maxv=50,
             step=1,
         )
 
@@ -161,7 +160,7 @@ class AudioFile(OWTextableBaseWidget):
             maxv=1000,
             step=1,
         )
-        """ MON CODE ICI - ajout de l'option de segmentation en fonction des Advanced Settings """
+        # Creating segments based on the advanced settings. 
         gui.checkBox(
             widget = OptionsBox,
             master = self,
@@ -176,7 +175,7 @@ class AudioFile(OWTextableBaseWidget):
         gui.separator(widget=OptionsBox, width=3)
         self.advancedSettings.advancedWidgets.append(OptionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
-
+        # Adding sapce between control area and send button
         gui.rubber(self.controlArea)
         # Send button...
         self.sendButton.draw()
@@ -185,10 +184,6 @@ class AudioFile(OWTextableBaseWidget):
         self.infoBox.draw()
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
-
-    # def int_changed(self):
-    #     """Send the entered number on "Number" output"""
-    #     self.send("Integer", self.selected_int)
 
     def get_large_audio_transcription(self, path, set_silence_len=500, set_silence_threshold=14, language="en-US"):
         """
@@ -253,9 +248,9 @@ class AudioFile(OWTextableBaseWidget):
             (self.displayAdvancedSettings and not self.file) or
             not (self.file or self.displayAdvancedSettings)
         ):
-            self.infoBox.setText(u'Please select input file.', 'warning')
+            self.infoBox.setText(u"Please select input file.", "warning")
             self.send('Text data', None, self)
-            return 
+            return
         else:
             # Initiate alert message and progress bar
             self.infoBox.setText(u"Processing, please wait...", "warning")
@@ -334,4 +329,3 @@ if __name__ == '__main__':
     # myWidget.show()
     # myApplication.exec_()
     # myWidget.saveSettings()
-
