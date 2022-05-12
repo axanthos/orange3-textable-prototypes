@@ -2,6 +2,7 @@
 AUDIOFILE
 """
 import os 
+import sys
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.settings import Setting
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -99,8 +100,15 @@ class AudioFile(OWTextableBaseWidget):
             master = self,
             value = "language",
             items = [
-                "fr-FR",
-                "en-US",
+                "fr-FR", # French
+                "en-US", # English
+                "de-DE", # German
+                "es-ES", # Spanish
+                "it-IT", # Italian
+                "ja", # Japanese
+                "pt-PT", # Portugese
+                "ru", # Russian
+                "zh-CN", # Mandarin Chinese
             ],
             sendSelectedValue = True,
             orientation = u"horizontal",

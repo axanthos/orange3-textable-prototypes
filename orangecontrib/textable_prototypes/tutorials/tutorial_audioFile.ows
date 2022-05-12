@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="Counting songs words" description="">
+	<nodes>
+		<node id="0" name="AudioFile_Alpha" qualified_name="orangecontrib.textable_prototypes.widgets.AudioFile_Alpha.AudioFile" project_name="Orange3-Textable-Prototypes" version="" title="AudioFile_Alpha" position="(175.0, 253.0)" />
+		<node id="1" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(336.0, 253.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Text" sink_channel="Segmentation" enabled="true" />
+	</links>
+	<annotations>
+		<arrow id="0" start="(152.99999999999994, 435.0)" end="(166.99999999999994, 319.0)" fill="#C1272D" />
+		<text id="1" type="text/plain" rect="(5.0, 438.0, 447.0, 236.0)" font-family="Helvetica" font-size="16">Transcribe your audio file into a segmentation. 
+
+First, browse your audio file. Then, you can modify the parameters you want for the segmentation. Finally, click "send". 
+
+You can find sample of audio files in different language and download them on this website :  https://omniglot.com/soundfiles/</text>
+		<arrow id="2" start="(175.00000000000006, 128.00000000000006)" end="(175.00000000000006, 202.00000000000009)" fill="#C1272D" />
+		<text id="3" type="text/plain" rect="(117.0, 81.0, 150.0, 60.0)" font-family="Helvetica" font-size="16">Segmentation of the audio file</text>
+		<text id="4" type="text/plain" rect="(273.0, 77.0, 152.0, 50.0)" font-family=".AppleSystemUIFont" font-size="16">Display the segmentation</text>
+		<arrow id="5" start="(332.0, 128.0)" end="(334.00000000000006, 201.00000000000006)" fill="#C1272D" />
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoSend': False, 'controlAreaVisible': True, 'displayAdvancedSettings': True, 'file': '', 'language': 'fr-FR', 'lastLocation': '/Users/rebeccakneubuehler/Desktop', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x028\x00\x00\x00\x19\x00\x00\x03\xae\x00\x00\x02(\x00\x00\x028\x00\x00\x005\x00\x00\x03\xae\x00\x00\x02(\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x028\x00\x00\x005\x00\x00\x03\xae\x00\x00\x02(', 'selected_dur': 500, 'selected_int': 0, 'selected_seg': True, 'selected_vol': 14, 'uuid': 'f68c7e0e-6fb8-48a1-aa68-1178e38d35ca', '__version__': 1}</properties>
+		<properties node_id="1" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': False, 'customFormat': '{"regex":"\\\\b%(regex)s\\\\b", "replacement_string": "%(replacement_string)s"}', 'customFormatting': True, 'displayAdvancedSettings': False, 'encoding': 'utf-8', 'footer': '\\n]', 'header': '[\\n', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\xf6\x00\x00\x00\x8d\x00\x00\x04U\x00\x00\x02\xc8\x00\x00\x02\xf6\x00\x00\x00\xa9\x00\x00\x04U\x00\x00\x02\xc8\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x02\xf6\x00\x00\x00\xa9\x00\x00\x04U\x00\x00\x02\xc8', 'segmentDelimiter': ',\\n', 'uuid': '876e5de3-64df-4669-96e4-c9591cfe2a99', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
