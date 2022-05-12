@@ -9,7 +9,7 @@
 Audio File
 =============
 
-.. image:: figures/audioFile.png
+.. image:: figures/audioFile_widget.png
 
 Transcribe an audio file into text and segment it depending on volume parameters. 
 
