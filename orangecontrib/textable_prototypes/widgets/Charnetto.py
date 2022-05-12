@@ -49,7 +49,7 @@ from _textable.widgets.TextableUtils import (
 import charnetto
 import spacy
 
-AVAILABLE_MODELS = {
+AVAILABLE_MODELS = {                            # TODO: retrieve from widget spaCy.
     "Dutch news (small)": "nl_core_news_sm",
     "English web (small)": "en_core_web_sm",
     "English web (medium)": "en_core_web_md",
@@ -99,7 +99,8 @@ class Charnetto(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Settings...
     
-    # TODO
+    sourceType = settings.Setting("Plain text")
+    minFreq = settings.Setting(1)
 
     #----------------------------------------------------------------------
     # The following lines need to be copied verbatim in every Textable widget...
@@ -142,14 +143,104 @@ class Charnetto(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
 
-        self.characterListbox = gui.listBox(
+        # Sample box...
+        self.optionsBox = gui.widgetBox(
             widget=self.controlArea,
+            box="Options",
+            orientation="vertical",
+            addSpace=False,
+        )
+        sourceTypeCombo = gui.comboBox(
+            widget=self.optionsBox,
+            master=self,
+            value="sourceType",
+            sendSelectedValue=True,
+            items=["Plain text", "IMSDB-formatted script"],
+            orientation="horizontal",
+            label="Source type:",
+            labelWidth=120,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "TODO\n"
+                "TODO\n"
+                "TODO\n"
+            ),
+        )
+
+        # TODO spacy model combobox
+
+        # gui.separator(widget=self.optionsBox, height=3)
+
+        minFreqSpin = gui.spin(
+            widget=self.optionsBox,
+            master=self,
+            value='minFreq',
+            minv=1,
+            maxv=1000,
+            orientation='horizontal',
+            label="Minimum frequency:",
+            labelWidth=120,
+            callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
+            tooltip=(
+                "TODO\n"
+                "TODO\n"
+                "TODO\n"
+            ),
+        )
+        
+        # gui.separator(widget=self.optionsBox, height=3)
+
+        # Character box...
+        self.characterBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Edit character list",
+            orientation="vertical",
+            addSpace=False,
+        )
+
+        characterListbox = gui.listBox(
+            widget=self.characterBox,
             master=self,
             value="selectedCharacters",
             labels="characters",
             callback=None,
             tooltip="List of identified characters",
         )
+        # TODO set min height
+
+        self.characterButtonBox = gui.widgetBox(
+            widget=self.characterBox,
+            orientation="horizontal",
+            addSpace=False,
+        )
+
+        self.newButton = gui.button(
+            widget=self.characterButtonBox,
+            master=self,
+            label="New",
+            callback=None,  # TODO
+            tooltip="TODO.",
+        )
+        self.newButton.setDisabled(True)
+        
+        self.editButton = gui.button(
+            widget=self.characterButtonBox,
+            master=self,
+            label="Edit",
+            callback=None,  # TODO
+            tooltip="TODO.",
+        )
+        self.editButton.setDisabled(True)
+        
+        self.deleteButton = gui.button(
+            widget=self.characterButtonBox,
+            master=self,
+            label="Delete",
+            callback=None,  # TODO
+            tooltip="TODO.",
+        )
+        self.deleteButton.setDisabled(True)
         
         gui.rubber(self.controlArea)
 
@@ -268,6 +359,7 @@ class Charnetto(OWTextableBaseWidget):
                              len(self.inputSeg[-1].get_content()) + 1)
 
         # Create character name to id mapping...
+        # TODO: how to deal with duplicate IDs?
         charNameToId = dict()
         for characterSet in self.characters:
             characters = characterSet.split(", ")
