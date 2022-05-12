@@ -1,5 +1,5 @@
 """
-AUDIOFILES
+AUDIOFILE
 """
 import os 
 from Orange.widgets import widget, gui, settings
@@ -28,8 +28,8 @@ import re
 class AudioFile(OWTextableBaseWidget):
     
     name = "AudioFile_Alpha"
-    description = "Import audio files transcribe them and segment them"
-    icon = "icons/audioFiles.png"
+    description = "Import an audio file, transcribe it and segment it"
+    icon = "icons/audioFile.png"
     priority = 20
 
     inputs =[]
@@ -138,7 +138,7 @@ class AudioFile(OWTextableBaseWidget):
             widget = OptionsBox,  
             master = self,                
             value = "selected_vol",       
-            label = "Maximum Volume (in dBFS) : ",
+            label = "Maximum volume (in dBFS) : ",
             callback = self.sendButton.settingsChanged,
             tooltip = "Select a value between 1 and 50",
             minv = 1,                     
@@ -150,7 +150,7 @@ class AudioFile(OWTextableBaseWidget):
             widget = OptionsBox,
             master = self, 
             value = "selected_dur",
-            label = "Minimum Duration (in milliseconds) : ",
+            label = "Minimum duration (in milliseconds) : ",
             callback = self.sendButton.settingsChanged,
             tooltip = "Select a value between 1 and 1000",
             minv = 1,

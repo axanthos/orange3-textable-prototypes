@@ -55,6 +55,8 @@ Créer un widget pour Orange Textable (v3.1.11) permettant d'importer un fichier
 
 * Pydub 0.25.1
 
+* Homebrew ??
+
 
 
 2.2 Fonctionnalités minimales
