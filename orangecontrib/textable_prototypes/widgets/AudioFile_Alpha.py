@@ -2,7 +2,6 @@
 AUDIOFILE
 """
 import os 
-import sys
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.settings import Setting
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -97,7 +96,7 @@ class AudioFile(OWTextableBaseWidget):
                 u"The path of the file."
             ),
         )
-        
+
         languageComboBox = gui.comboBox(
             widget = basicFileBox,
             master = self,
