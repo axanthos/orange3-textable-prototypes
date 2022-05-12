@@ -38,7 +38,7 @@ class AudioFile(OWTextableBaseWidget):
 
     outputs = [('Text data', Segmentation)] 
 
-    #Settings
+    # Settings
     language = settings.Setting("fr-FR")
     want_main_area = False
     resizing_enabled = True
@@ -49,7 +49,7 @@ class AudioFile(OWTextableBaseWidget):
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
     selected_seg = settings.Setting(False)
-  
+
     def __init__(self):
         super().__init__()
         self.infoBox = InfoBox(widget = self.controlArea)
@@ -97,21 +97,24 @@ class AudioFile(OWTextableBaseWidget):
             ),
         )
 
+        dict_languages = {
+            "English":"en-US",
+            "French": "fr-FR",
+            "German": "de-DE",
+            "Italian": "it-IT",
+            "Japanese": "ja",
+            "Mandarin Chinese": "zh-CN",
+            "Portugese": "pt-PT",
+            "Russian": "ru",
+            "Spanish": "es-ES",
+        }
+
         languageComboBox = gui.comboBox(
             widget = basicFileBox,
             master = self,
             value = "language",
-            items = [
-                "fr-FR", # French
-                "en-US", # English
-                "de-DE", # German
-                "es-ES", # Spanish
-                "it-IT", # Italian
-                "ja", # Japanese
-                "pt-PT", # Portugese
-                "ru", # Russian
-                "zh-CN", # Mandarin Chinese
-            ],
+            # Displays the keys of the above dict of the multiple languages
+            items = [(language) for language in dict_languages],
             sendSelectedValue = True,
             orientation = u"horizontal",
             label = "Input language :",
@@ -236,7 +239,9 @@ class AudioFile(OWTextableBaseWidget):
                     audio_listened = r.record(source)
                     # try converting it to text
                     try:
-                        text = r.recognize_google(audio_listened, language = language)
+                        # A COMPLETER POUR LE CHOIX DE LA LANGUE
+                        # Il faut aller chercher la valeur de la langue choisie dans le dictionnaire
+                        text = r.recognize_google(audio_listened, language = [(dict_languages[language]) for language in dict_languages])
                     except sr.UnknownValueError as e:
                         print("Error : ", str(e))
                     else:
