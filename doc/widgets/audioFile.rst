@@ -10,9 +10,8 @@ Audio File
 =============
 
 .. image:: figures/audioFile_widget.png
-.. image:: figures/audioFile_widget.png
     :align: center
-    :scale: 50 %
+    :scale: 25 %
 
 Transcribe an audio file into text and segment it depending on volume parameters. 
 
