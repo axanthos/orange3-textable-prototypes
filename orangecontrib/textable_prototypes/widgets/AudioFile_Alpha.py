@@ -145,17 +145,10 @@ class AudioFile(OWTextableBaseWidget):
             orientation = "horizontal",
         )
         gui.spin(
-<<<<<<< Updated upstream
             widget = OptionsBox,  
             master = self,                
             value = "selected_vol",       
             label = "Maximum volume (in dBFS) : ",
-=======
-            widget = OptionsBox,
-            master = self,
-            value = "selected_vol",
-            label = "Maximum Volume (in dBFS) : ",
->>>>>>> Stashed changes
             callback = self.sendButton.settingsChanged,
             tooltip = "Select a value between 1 and 50",
             minv = 1,
