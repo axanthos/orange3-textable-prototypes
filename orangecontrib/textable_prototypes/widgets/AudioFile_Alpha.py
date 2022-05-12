@@ -15,7 +15,7 @@ import LTTL.Segmenter as Segmenter
 
 
 from _textable.widgets.TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
 
@@ -28,6 +28,7 @@ import re
 
 class AudioFile(OWTextableBaseWidget):
     
+    # Widget info
     name = "AudioFile_Alpha"
     description = "Import an audio file, transcribe it and segment it"
     icon = "icons/audioFile.png"
@@ -36,15 +37,16 @@ class AudioFile(OWTextableBaseWidget):
     inputs =[]
     outputs = [("Text data", Segmentation)] 
 
+    outputs = [('Text data', Segmentation)] 
 
+    #Settings
     language = settings.Setting("fr-FR")
     want_main_area = False
     resizing_enabled = True
-
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u"")
-    selected_int = Setting(0)
     lastLocation = settings.Setting(".")
+    #Advanced settings 
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
     selected_seg = settings.Setting(False)
@@ -143,14 +145,21 @@ class AudioFile(OWTextableBaseWidget):
             orientation = "horizontal",
         )
         gui.spin(
+<<<<<<< Updated upstream
             widget = OptionsBox,  
             master = self,                
             value = "selected_vol",       
             label = "Maximum volume (in dBFS) : ",
+=======
+            widget = OptionsBox,
+            master = self,
+            value = "selected_vol",
+            label = "Maximum Volume (in dBFS) : ",
+>>>>>>> Stashed changes
             callback = self.sendButton.settingsChanged,
             tooltip = "Select a value between 1 and 50",
-            minv = 1,                     
-            maxv = 50,                   
+            minv = 1,
+            maxv = 50,
             step = 1,
         )
 
@@ -179,7 +188,7 @@ class AudioFile(OWTextableBaseWidget):
         gui.separator(widget = OptionsBox, width = 3)
         self.advancedSettings.advancedWidgets.append(OptionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
-
+        # Adding space between control area and send button
         gui.rubber(self.controlArea)
         # Send button...
         self.sendButton.draw()
@@ -188,10 +197,6 @@ class AudioFile(OWTextableBaseWidget):
         self.infoBox.draw()
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
-
-    # def int_changed(self):
-    #     """Send the entered number on "Number" output"""
-    #     self.send("Integer", self.selected_int)
 
     def get_large_audio_transcription(self, path, language, set_silence_len = 500, set_silence_threshold = 14):
         """
@@ -261,40 +266,41 @@ class AudioFile(OWTextableBaseWidget):
 
     def sendData(self):
             
-        if (
-            (self.displayAdvancedSettings and not self.file) or
-            not (self.file or self.displayAdvancedSettings)
-        ):
+        if not self.file:
             self.infoBox.setText(u"Please select input file.", "warning")
-            self.send("Text data", None, self)
+            self.send('Text data', None, self)
             return 
-        else:
-            # Clear created Inputs.
-            self.clearCreatedInputs()
 
-            # gets transcription
-            transcription = self.get_large_audio_transcription(self.file, language = self.language, set_silence_len = self.selected_dur, set_silence_threshold = self.selected_vol)
-            
-            # Regex to get the name of the input file
-            title = self.file
-            regex = re.compile("[^(/\\)]+[mp3|wav]$")
-            match = re.findall(regex, title)
+        # Clear created Inputs.
+        self.clearCreatedInputs()
+        # gets transcription
+        transcription = self.get_large_audio_transcription(self.file, language = self.language, set_silence_len = self.selected_dur, set_silence_threshold = self.selected_vol)
+        
+        # Regex to get the name of the input file
+        title = self.file
+        regex = re.compile("[^(/\\)]+[mp3|wav]$")
+        match = re.findall(regex, title)
 
-            if self.selected_seg:
-                for chunk in transcription:
-                    new_input = Input(chunk, label = match)
-                    self.createdInputs.append(new_input)
-            else:
-                new_input = Input(transcription, label = match)
+        if self.selected_seg:
+            for chunk in transcription:
+                new_input = Input(chunk, label = match)
                 self.createdInputs.append(new_input)
-            # Concatenates the segmentations in the output segmentation
-            self.segmentation = Segmenter.concatenate(segmentations = self.createdInputs, label = self.captionTitle, copy_annotations = False, import_labels_as = "")
-            
-            # Send token...
-            self.send("Text", self.segmentation, self)
-            message = "Succesfully transcripted !"
-            self.infoBox.setText(message)
-            self.sendButton.resetSettingsChangedFlag()
+        else:
+            new_input = Input(transcription, label = match)
+            self.createdInputs.append(new_input)
+        # Concatenates the segmentations in the output segmentation
+        self.segmentation = Segmenter.concatenate(segmentations = self.createdInputs, label = self.captionTitle, copy_annotations = False, import_labels_as = "")
+        
+        #Sending segments lenght
+        # message = "% i segment@p sent to output" % len(self.segmentation)
+        # message = pluralize(message, len(self.segmentation))
+        # self.infoBox.setText(message)
+
+        # Send token...
+        self.send("Text data", self.segmentation, self)
+        message = "Succesfully transcripted !"
+        self.infoBox.setText(message)
+        self.sendButton.resetSettingsChangedFlag()
 
     def setCaption(self, title):
         if "captionTitle" in dir(self):
@@ -347,7 +353,6 @@ class AudioFile(OWTextableBaseWidget):
     def onDeleteWidget(self):
         """Free memory when widget is deleted (overriden method)"""
         self.clearCreatedInputs()
-
 
 
 if __name__ == '__main__':
