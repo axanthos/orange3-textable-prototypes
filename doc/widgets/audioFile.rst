@@ -25,9 +25,9 @@ Author
 Signals
 -------
 
-Input: None
+Input : None
 
-Outputs:
+Outputs :
 
 * ``Text data``
 
@@ -66,8 +66,8 @@ The **Advanced settings** lets the user add different settings to sharpen the de
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of **Audio file**  (see :ref:`figure 2 
-<audioFile_fig2>` below) lets the user refine the settings of the desired segmentation by modifying volumes parameters. 
+The advanced version of **Audio file**  (see :ref:"figure 2 
+<audioFile_fig2>" below) lets the user refine the settings of the desired segmentation by modifying volumes parameters. 
 
 .. _audioFile_fig2:
 
