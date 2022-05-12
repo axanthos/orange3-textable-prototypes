@@ -28,7 +28,7 @@ import re
 class AudioFile(OWTextableBaseWidget):
     
     # Widget info
-    name = "AudioFile_Alpha"
+    name = "AudioFile_rebecca"
     description = "Import an audio file, transcribe it and segment it"
     icon = "icons/audioFile.png"
     priority = 20
