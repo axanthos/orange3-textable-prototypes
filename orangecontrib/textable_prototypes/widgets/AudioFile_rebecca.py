@@ -97,23 +97,21 @@ class AudioFile(OWTextableBaseWidget):
             ),
         )
 
-        dict_language = dict(
-            "English" : "en-US",
-            "French" : "fr-FR",
-            "German" : "de-DE",
-            "Italian" : "it-IT",
-            "Japanese" : "ja",
-            "Mandarin Chinese" : "zh-CN",
-            "Portugese" : "pt-PT",
-            "Russian" : "ru",
-            "Spanish" : "es-ES",
-        ),
-
         languageComboBox = gui.comboBox(
             widget = basicFileBox,
             master = self,
             value = "language",
-            items = dict_language.get(language),
+            items = [
+                "fr-FR", # French
+                "en-US", # English
+                "de-DE", # German
+                "es-ES", # Spanish
+                "it-IT", # Italian
+                "ja", # Japanese
+                "pt-PT", # Portugese
+                "ru", # Russian
+                "zh-CN", # Mandarin Chinese
+            ],
             sendSelectedValue = True,
             orientation = u"horizontal",
             label = "Input language :",
