@@ -97,6 +97,7 @@ class AudioFile(OWTextableBaseWidget):
                 u"The path of the file."
             ),
         )
+        
         languageComboBox = gui.comboBox(
             widget = basicFileBox,
             master = self,

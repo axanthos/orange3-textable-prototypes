@@ -95,21 +95,24 @@ class AudioFile(OWTextableBaseWidget):
                 u"The path of the file."
             ),
         )
+
+        dict_language = dict(
+            "English" : "en-US",
+            "French" : "fr-FR",
+            "German" : "de-DE",
+            "Italian" : "it-IT",
+            "Japanese" : "ja",
+            "Mandarin Chinese" : "zh-CN",
+            "Portugese" : "pt-PT",
+            "Russian" : "ru",
+            "Spanish" : "es-ES",
+        ),
+
         languageComboBox = gui.comboBox(
             widget = basicFileBox,
             master = self,
             value = "language",
-            items = dict(
-                "English" : "en-US",
-                "French" : "fr-FR",
-                "German" : "de-DE",
-                "Italian" : "it-IT",
-                "Japanese" : "ja",
-                "Mandarin Chinese" : "zh-CN",
-                "Portugese" : "pt-PT",
-                "Russian" : "ru",
-                "Spanish" : "es-ES",
-            ),
+            items = dict_language.get(language)
             sendSelectedValue = True,
             orientation = u"horizontal",
             label = "Input language :",
@@ -193,7 +196,7 @@ class AudioFile(OWTextableBaseWidget):
     #     """Send the entered number on "Number" output"""
     #     self.send("Integer", self.selected_int)
 
-    def get_large_audio_transcription(self, path, items.get(language), set_silence_len = 500, set_silence_threshold = 14):
+    def get_large_audio_transcription(self, path, language, set_silence_len = 500, set_silence_threshold = 14):
         """
         Splitting the large audio file into chunks
         and apply speech recognition on each of these chunks
