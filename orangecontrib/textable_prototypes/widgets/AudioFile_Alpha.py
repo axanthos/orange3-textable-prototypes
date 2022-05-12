@@ -34,7 +34,7 @@ class AudioFile(OWTextableBaseWidget):
     priority = 20
 
     inputs =[]
-    outputs = [("Text", Segmentation)] 
+    outputs = [("Text data", Segmentation)] 
 
 
     language = settings.Setting("fr-FR")
@@ -359,4 +359,3 @@ if __name__ == '__main__':
     # myWidget.show()
     # myApplication.exec_()
     # myWidget.saveSettings()
-
