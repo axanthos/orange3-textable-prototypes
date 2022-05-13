@@ -36,8 +36,6 @@ class AudioFile(OWTextableBaseWidget):
     inputs =[]
     outputs = [("Text data", Segmentation)] 
 
-    outputs = [('Text data', Segmentation)] 
-
     #Settings
     language = settings.Setting("fr-FR")
     want_main_area = False
@@ -251,10 +249,11 @@ class AudioFile(OWTextableBaseWidget):
                         self.infoBox.setText(u"Processing, please wait...", "warning")
                         progressBar.advance()
         # return the text for all chunks detected
-        progressBar.finish()
         if self.selected_seg:
+            progressBar.finish()
             return segments
         else:
+            progressBar.finish()
             return whole_text
 
     def sendData(self):
@@ -285,13 +284,10 @@ class AudioFile(OWTextableBaseWidget):
         self.segmentation = Segmenter.concatenate(segmentations = self.createdInputs, label = self.captionTitle, copy_annotations = False, import_labels_as = "")
         
         #Sending segments lenght
-        # message = "% i segment@p sent to output" % len(self.segmentation)
-        # message = pluralize(message, len(self.segmentation))
-        # self.infoBox.setText(message)
-
+        message = " Succesfully transcripted ! % i segment@p sent to output" % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
         # Send token...
         self.send("Text data", self.segmentation, self)
-        message = "Succesfully transcripted !"
         self.infoBox.setText(message)
         self.sendButton.resetSettingsChangedFlag()
 
