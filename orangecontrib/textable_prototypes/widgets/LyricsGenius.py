@@ -371,7 +371,7 @@ class LyricsGenius(OWTextableBaseWidget):
         lyrics = html.find("div", class_="lyrics").get_text()
         lyrics.replace('\\n', '\n')
         """
-        """Extracts the lyrics (as a string) of the html page using LyricsGenius package"""
+        """Extracts the lyrics (as a string) off the html page using LyricsGenius package"""
         
         genius = Genius("_VqiUA11I4lR9tZ2Kc8wo3cq4GUOMcnRyIG_vEO6IbXEKn-vRmQ8lswwrNCLUkKc")
         genius.remove_section_headers = True

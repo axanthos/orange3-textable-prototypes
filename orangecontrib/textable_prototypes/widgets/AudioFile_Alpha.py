@@ -24,6 +24,7 @@ from pydub.silence import split_on_silence
 import filetype 
 import tempfile
 import re 
+import subprocess
 
 class AudioFile(OWTextableBaseWidget):
     
@@ -199,7 +200,9 @@ class AudioFile(OWTextableBaseWidget):
         audio_type = self.detect_format(path)
 
         if audio_type == "mp3":
+            print("about to wav")
             path = self.to_wav(path)
+            print("to wav")
 
         # open the audio file using pydub
         sound = AudioSegment.from_wav(path)
@@ -329,9 +332,11 @@ class AudioFile(OWTextableBaseWidget):
         source = file
         destination = file.replace(".mp3", ".wav")
 
-        # convert wav to mp3
-        sound = AudioSegment.from_mp3(source)
-        sound.export(destination, format = "wav")
+        subprocess.call(
+            ['/usr/local/bin/ffmpeg', '-i',
+             file,
+             destination])
+        return destination
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
