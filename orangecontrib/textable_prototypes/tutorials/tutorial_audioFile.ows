@@ -9,7 +9,7 @@
 	</links>
 	<annotations>
 		<arrow id="0" start="(152.99999999999994, 435.0)" end="(166.99999999999994, 319.0)" fill="#C1272D" />
-		<text id="1" type="text/plain" rect="(5.0, 438.0, 447.0, 236.0)" font-family="Helvetica" font-size="16">Transcribe your audio file into a segmentation. 
+		<text id="1" type="text/plain" rect="(4.0, 438.0, 447.0, 236.0)" font-family="Helvetica" font-size="16">Transcribe your audio file into a segmentation. 
 
 First, browse your audio file. Then, you can modify the parameters you want for the segmentation. Finally, click "send". 
 
