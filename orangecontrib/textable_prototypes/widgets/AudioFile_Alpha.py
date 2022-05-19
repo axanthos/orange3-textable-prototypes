@@ -226,7 +226,8 @@ class AudioFile(OWTextableBaseWidget):
 
         # create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
-            sound = os.path.join(tempDict, sound)
+            moving_path = os.path.join(tempDict, 'temp.mp3')
+            os.replace(path, moving_path)
             # process each chunk
             for i, audio_chunk in enumerate(chunks, start = 1):
                 # export audio chunk and save it in
