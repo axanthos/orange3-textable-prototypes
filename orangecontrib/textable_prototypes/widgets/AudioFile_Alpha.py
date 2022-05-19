@@ -286,7 +286,7 @@ class AudioFile(OWTextableBaseWidget):
         # Concatenates the segmentations in the output segmentation
         self.segmentation = Segmenter.concatenate(segmentations = self.createdInputs, label = self.captionTitle, copy_annotations = False, import_labels_as = "")
         
-        #Sending segments lenght
+        #Sending segments length
         message = " Succesfully transcripted ! % i segment@p sent to output" % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
         # Send token...

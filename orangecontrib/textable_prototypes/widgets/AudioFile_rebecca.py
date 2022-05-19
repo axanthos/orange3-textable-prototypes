@@ -2,6 +2,7 @@
 AUDIOFILE
 """
 import os 
+import subprocess
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.settings import Setting
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -291,14 +292,12 @@ class AudioFile(OWTextableBaseWidget):
         # Concatenates the segmentations in the output segmentation
         self.segmentation = Segmenter.concatenate(segmentations=self.createdInputs, label=self.captionTitle, copy_annotations=False, import_labels_as="")
         
-        #Sending segments lenght
-        # message = "% i segment@p sent to output" % len(self.segmentation)
-        # message = pluralize(message, len(self.segmentation))
-        # self.infoBox.setText(message)
+        #Sending segments length
+        message = " Succesfully transcripted ! % i segment@p sent to output" % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
 
         # Send token...
         self.send("Text data", self.segmentation, self)
-        message = "Succesfully transcripted !"
         self.infoBox.setText(message)
         self.sendButton.resetSettingsChangedFlag()
 
@@ -340,9 +339,11 @@ class AudioFile(OWTextableBaseWidget):
         source = file
         destination = file.replace(".mp3", ".wav")
 
-        # convert wav to mp3
-        sound = AudioSegment.from_mp3(source)
-        sound.export(destination, format="wav")
+        subprocess.call(
+            ['/usr/local/bin/ffmpeg', '-i',
+             file,
+             destination])
+        return destination
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created."""
