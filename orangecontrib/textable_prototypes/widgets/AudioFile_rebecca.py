@@ -46,11 +46,13 @@ class AudioFile(OWTextableBaseWidget):
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u"")
     lastLocation = settings.Setting(".")
-    #Advanced settings 
+
+    # Advanced settings 
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
     selected_seg = settings.Setting(False)
 
+    # Dictionnaries that contains all the languages and their corresponding encoding
     dict_languages = {
             "English":"en-US",
             "French": "fr-FR",
@@ -109,8 +111,6 @@ class AudioFile(OWTextableBaseWidget):
                 u"The path of the file."
             ),
         )
-
-        
 
         languageComboBox = gui.comboBox(
             widget=basicFileBox,
@@ -189,10 +189,10 @@ class AudioFile(OWTextableBaseWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
         # Adding space between control area and send button
         gui.rubber(self.controlArea)
-        # Send button...
+        # Send button
         self.sendButton.draw()
 
-        # Info box...
+        # Info box
         self.infoBox.draw()
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
@@ -205,60 +205,59 @@ class AudioFile(OWTextableBaseWidget):
         r = sr.Recognizer()
         # Check type of the audio file and change it to wav if mp3
         audio_type = self.detect_format(path)
-
         if audio_type == "mp3":
             path = self.to_wav(path)
 
-        # open the audio file using pydub
+        # Open the audio file using pydub
         sound = AudioSegment.from_wav(path)
-        # split audio sound where silence is 700 milliseconds or more and get chunks
+        # Split audio sound where silence is 700 milliseconds or more and get chunks
         chunks = split_on_silence(sound,
-                                  # experiment with this value for your target audio file
+                                  # Experiment with this value for your target audio file
                                   min_silence_len=set_silence_len,
-                                  # adjust this per requirement
+                                  # Adjust this per requirement
                                   silence_thresh=sound.dBFS-set_silence_threshold,
-                                  # keep the silence for 1 second, adjustable as well
+                                  # Keep the silence for 1 second, adjustable as well
                                   keep_silence=500,
                                   )
-        # Initiates ouput variable
+        # Initiate ouput variables
         whole_text = ""
         segments = list()
-        #Initiate alert message and progress bar
+        # Initiate an alert message and a progress bar
         progressBar = ProgressBar(
                     self,
                     iterations=len(chunks)
         )
 
-        # create a temporary folder to handle the chunks, will be deleted upon completion of the task
+        # Create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
-            # process each chunk
+            # Process each chunk
             for i, audio_chunk in enumerate(chunks, start=1):
-                # export audio chunk and save it in
-                # the `folder_name` directory.
+                # Export audio chunk and save it in he "tempDict" directory.
                 chunk_filename = os.path.join(tempDict, f"chunk{i}.wav")
                 audio_chunk.export(chunk_filename, format="wav")
-                # recognize the chunk
+                # Recognize the chunk
                 with sr.AudioFile(chunk_filename) as source:
                     audio_listened = r.record(source)
-                    # try converting it to text
+                    # Try converting it to text
                     try:
-                        # A COMPLETER POUR LE CHOIX DE LA LANGUE
-                        # Il faut aller chercher la valeur de la langue choisie dans le dictionnaire
+                        # Get the value of the chosen language in the dictionnary
                         text = r.recognize_google(audio_listened, language=AudioFile.dict_languages[self.language])
                     except sr.UnknownValueError as e:
                         print("Error : ", str(e))
                     else:
+                        # Add the segment to the list
                         if self.selected_seg:
                             segmented_text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", segmented_text)
                             segments.append(segmented_text)
+                        # Add the segment to the segmentation
                         else:
                             text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", text)
                             whole_text += text
                         self.infoBox.setText(u"Processing, please wait...", "warning")
                         progressBar.advance()
-        # return the text for all chunks detected
+        # Return the text for all chunks detected
         progressBar.finish()
         if self.selected_seg:
             return segments
@@ -272,9 +271,9 @@ class AudioFile(OWTextableBaseWidget):
             self.send('Text data', None, self)
             return 
 
-        # Clear created Inputs.
+        # Clear created Inputs
         self.clearCreatedInputs()
-        # gets transcription
+        # Get the transcription
         transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
         
         # Regex to get the name of the input file
@@ -289,14 +288,15 @@ class AudioFile(OWTextableBaseWidget):
         else:
             new_input = Input(transcription, label=match)
             self.createdInputs.append(new_input)
-        # Concatenates the segmentations in the output segmentation
+
+        # Concatenate the segmentations in the output segmentation
         self.segmentation = Segmenter.concatenate(segmentations=self.createdInputs, label=self.captionTitle, copy_annotations=False, import_labels_as="")
         
-        #Sending segments length
+        # Send the segmentation's length
         message = " Succesfully transcripted ! % i segment@p sent to output" % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
 
-        # Send token...
+        # Send token
         self.send("Text data", self.segmentation, self)
         self.infoBox.setText(message)
         self.sendButton.resetSettingsChangedFlag()
@@ -335,7 +335,7 @@ class AudioFile(OWTextableBaseWidget):
     def to_wav(self, file):
         """A function to convert mp3 files to wav files"""
 
-        # files
+        # Files
         source = file
         destination = file.replace(".mp3", ".wav")
 
