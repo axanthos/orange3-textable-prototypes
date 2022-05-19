@@ -223,7 +223,6 @@ class AudioFile(OWTextableBaseWidget):
                                     # Keep the silence for 1 second, adjustable as well
                                     keep_silence=500,
                                     )
-            # Initiates ouput variable
         
             # Initiates ouput variables (depending on advanced settings)
 
@@ -281,7 +280,7 @@ class AudioFile(OWTextableBaseWidget):
 
         # Clear created Inputs.
         self.clearCreatedInputs()
-        # gets transcription
+        # Get transcription
         transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
         
         # Regex to get the name of the input file
