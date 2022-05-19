@@ -37,147 +37,152 @@ class AudioFile(OWTextableBaseWidget):
     inputs =[]
     outputs = [("Text data", Segmentation)] 
 
-    #Settings
-    language = settings.Setting("fr-FR")
+    # Settings
+    language = settings.Setting("French")
     want_main_area = False
     resizing_enabled = True
     displayAdvancedSettings = settings.Setting(False)
     file = settings.Setting(u"")
     lastLocation = settings.Setting(".")
-    #Advanced settings 
+
+    # Advanced settings 
     selected_vol = settings.Setting(14)
     selected_dur = settings.Setting(500)
     selected_seg = settings.Setting(False)
+
+    # Dictionnaries that contains all the languages and their corresponding encoding
+    dict_languages = {
+            "English":"en-US",
+            "French": "fr-FR",
+            "German": "de-DE",
+            "Italian": "it-IT",
+            "Japanese": "ja",
+            "Mandarin Chinese": "zh-CN",
+            "Portugese": "pt-PT",
+            "Russian": "ru",
+            "Spanish": "es-ES",
+    }
   
     def __init__(self):
         super().__init__()
-        self.infoBox = InfoBox(widget = self.controlArea)
+        self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
-            widget = self.controlArea,
-            master = self,
-            callback = self.sendData,
-            infoBoxAttribute = "infoBox",
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute="infoBox",
             #sendIfPreCallback = self.updateGUI,
         )
         self.advancedSettings = AdvancedSettings(
-            widget = self.controlArea,
-            master = self,
-            callback = self.showAdvancedSettings,
+            widget=self.controlArea,
+            master=self,
+            callback=self.showAdvancedSettings,
         )
 
         # Initiates output segmentation
-        self.segmentation = Input(text = u"")
+        self.segmentation = Input(text=u"")
         self.createdInputs = list()
 
         self.advancedSettings.draw()
 
         # Basic file box
         basicFileBox = gui.widgetBox(
-            widget = self.controlArea,
-            box = u"File selection",
-            orientation = "vertical",
-            addSpace = False,
+            widget=self.controlArea,
+            box=u"File selection",
+            orientation="vertical",
+            addSpace=False,
         )
         basicFileBoxLine1 = gui.widgetBox(
-            widget = basicFileBox,
-            box = False,
-            orientation = "horizontal",
+            widget=basicFileBox,
+            box=False,
+            orientation="horizontal",
         )
         gui.lineEdit(
-            widget = basicFileBoxLine1,
-            master = self,
-            value = "file",
-            orientation = "horizontal",
-            label = u"File path :",
-            labelWidth = 101,
-            callback = self.sendButton.settingsChanged,
-            tooltip = (
+            widget=basicFileBoxLine1,
+            master=self,
+            value="file",
+            orientation="horizontal",
+            label=u"File path :",
+            labelWidth=101,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
                 u"The path of the file."
             ),
         )
 
         languageComboBox = gui.comboBox(
-            widget = basicFileBox,
-            master = self,
-            value = "language",
-            items = [
-                "fr-FR", # French
-                "en-US", # English
-                "de-DE", # German
-                "es-ES", # Spanish
-                "it-IT", # Italian
-                "ja", # Japanese
-                "pt-PT", # Portugese
-                "ru", # Russian
-                "zh-CN", # Mandarin Chinese
-            ],
-            sendSelectedValue = True,
-            orientation = u"horizontal",
-            label = "Input language :",
-            labelWidth = 101,
-            callback = self.sendButton.settingsChanged,
-            tooltip = (
+            widget=basicFileBox,
+            master= self,
+            value="language",
+            # Displays the keys of the above dict of the multiple languages
+            items=[(language) for language in AudioFile.dict_languages],
+            sendSelectedValue=True,
+            orientation=u"horizontal",
+            label="Input language :",
+            labelWidth=101,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
                 u"Select the language of the input text."
             ),
         )
-        gui.separator(widget = basicFileBoxLine1, width = 3)
+        gui.separator(widget=basicFileBoxLine1, width=3)
         gui.button(
-            widget = basicFileBoxLine1,
-            master = self,
-            label = u"Browse",
-            callback = self.browse,
-            tooltip = (
+            widget=basicFileBoxLine1,
+            master=self,
+            label=u"Browse",
+            callback=self.browse,
+            tooltip=(
                 u"Open a dialog for selecting file."
             ),
         )
 
         OptionsBox = gui.widgetBox(
-            widget = self.controlArea,
-            box = u"Segmentation at pauses",
-            orientation = "vertical",
-            addSpace = False,
+            widget=self.controlArea,
+            box=u"Segmentation at pauses",
+            orientation="vertical",
+            addSpace=False,
         )
 
         OptionBoxLine1 = gui.widgetBox(
-            widget = OptionsBox,
-            box = False,
-            orientation = "horizontal",
+            widget=OptionsBox,
+            box=False,
+            orientation="horizontal",
         )
         gui.spin(
-            widget = OptionsBox,  
-            master = self,                
-            value = "selected_vol",       
-            label = "Maximum volume (in dBFS) : ",
-            callback = self.sendButton.settingsChanged,
-            tooltip = "Select a value between 1 and 50",
-            minv = 1,
-            maxv = 50,
-            step = 1,
+            widget=OptionsBox,  
+            master=self,                
+            value="selected_vol",       
+            label="Maximum volume (in dBFS) : ",
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select a value between 1 and 50",
+            minv=1,
+            maxv=50,
+            step=1,
         )
 
         gui.spin(
-            widget = OptionsBox,
-            master = self, 
-            value = "selected_dur",
-            label = "Minimum duration (in milliseconds) : ",
-            callback = self.sendButton.settingsChanged,
-            tooltip = "Select a value between 1 and 1000",
-            minv = 1,
-            maxv = 1000,
-            step = 1,
+            widget=OptionsBox,
+            master=self, 
+            value="selected_dur",
+            label="Minimum duration (in milliseconds) : ",
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select a value between 1 and 1000",
+            minv=1,
+            maxv=1000,
+            step=1,
         )
 
         gui.checkBox(
-            widget = OptionsBox,
-            master = self,
-            value = "selected_seg",
-            label = "Segment the audio file with the parameters",
-            box = None,
-            callback = self.sendButton.settingsChanged,
-            tooltip = "Leave this box unchecked if you want one and only segment."
+            widget=OptionsBox,
+            master=self,
+            value="selected_seg",
+            label="Segment the audio file with the parameters",
+            box=None,
+            callback=self.sendButton.settingsChanged,
+            tooltip="Leave this box unchecked if you want one and only segment."
         )
 
-        gui.separator(widget = OptionsBox, width = 3)
+        gui.separator(widget=OptionsBox, width=3)
         self.advancedSettings.advancedWidgets.append(OptionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
         # Adding space between control area and send button
@@ -190,12 +195,12 @@ class AudioFile(OWTextableBaseWidget):
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
-    def get_large_audio_transcription(self, path, language, set_silence_len = 500, set_silence_threshold = 14):
+    def get_large_audio_transcription(self, path, language, set_silence_len=500, set_silence_threshold=14):
         """
         Splitting the large audio file into chunks
         and apply speech recognition on each of these chunks
         """
-        # create a temporary folder to handle the chunks, will be deleted upon completion of the task
+        # Create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
             r = sr.Recognizer()
             # Check type of the audio file and change it to wav if mp3
@@ -206,17 +211,17 @@ class AudioFile(OWTextableBaseWidget):
                 path = self.to_wav(path, tempDict)
                 print("to wav")
 
-            # open the audio file using pydub
+            # Open the audio file using pydub
             sound = AudioSegment.from_wav(path)
-            # split audio sound where silence is 700 milliseconds or more and get chunks
+            # Split audio sound where silence is 700 milliseconds or more and get chunks
             chunks = split_on_silence(sound,
-                                      # experiment with this value for your target audio file
-                                      min_silence_len = set_silence_len,
-                                      # adjust this per requirement
-                                      silence_thresh = sound.dBFS - set_silence_threshold,
-                                      # keep the silence for 1 second, adjustable as well
-                                      keep_silence = 500,
-                                      )
+                                    # Experiment with this value for your target audio file
+                                    min_silence_len=set_silence_len,
+                                    # Adjust this per requirement
+                                    silence_thresh=sound.dBFS-set_silence_threshold,
+                                    # Keep the silence for 1 second, adjustable as well
+                                    keep_silence=500,
+                                    )
             # Initiates ouput variable
             whole_text = ""
             segments = list()
@@ -226,25 +231,27 @@ class AudioFile(OWTextableBaseWidget):
                         iterations=len(chunks)
             )
 
-            # process each chunk
+            # Process each chunk
             for i, audio_chunk in enumerate(chunks, start = 1):
-                # export audio chunk and save it in
-                # the `folder_name` directory.
+                # Export audio chunk and save it in he "tempDict" directory.
                 chunk_filename = os.path.join(tempDict, f"chunk{i}.wav")
-                audio_chunk.export(chunk_filename, format = "wav")
+                audio_chunk.export(chunk_filename, format="wav")
                 # recognize the chunk
                 with sr.AudioFile(chunk_filename) as source:
                     audio_listened = r.record(source)
-                    # try converting it to text
+                    # Try converting it to text
                     try:
-                        text = r.recognize_google(audio_listened, language = language)
+                        # Get the value of the chosen language in the dictionnary
+                        text = r.recognize_google(audio_listened, language=AudioFile.dict_languages[self.language])
                     except sr.UnknownValueError as e:
                         print("Error : ", str(e))
                     else:
+                        # Add the segment to the list
                         if self.selected_seg:
                             segmented_text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", segmented_text)
                             segments.append(segmented_text)
+                        # Add the segment to the segmentation    
                         else:
                             text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", text)
@@ -269,7 +276,7 @@ class AudioFile(OWTextableBaseWidget):
         # Clear created Inputs.
         self.clearCreatedInputs()
         # gets transcription
-        transcription = self.get_large_audio_transcription(self.file, language = self.language, set_silence_len = self.selected_dur, set_silence_threshold = self.selected_vol)
+        transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
         
         # Regex to get the name of the input file
         title = self.file
@@ -278,13 +285,13 @@ class AudioFile(OWTextableBaseWidget):
 
         if self.selected_seg:
             for chunk in transcription:
-                new_input = Input(chunk, label = match)
+                new_input = Input(chunk, label=match)
                 self.createdInputs.append(new_input)
         else:
-            new_input = Input(transcription, label = match)
+            new_input = Input(transcription, label=match)
             self.createdInputs.append(new_input)
         # Concatenates the segmentations in the output segmentation
-        self.segmentation = Segmenter.concatenate(segmentations = self.createdInputs, label = self.captionTitle, copy_annotations = False, import_labels_as = "")
+        self.segmentation = Segmenter.concatenate(segmentations=self.createdInputs, label=self.captionTitle, copy_annotations=False, import_labels_as="")
         
         #Sending segments length
         message = " Succesfully transcripted ! % i segment@p sent to output" % len(self.segmentation)
