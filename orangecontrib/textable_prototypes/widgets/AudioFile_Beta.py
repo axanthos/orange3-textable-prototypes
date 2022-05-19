@@ -202,14 +202,15 @@ class AudioFile(OWTextableBaseWidget):
         """
         # Create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
+
+            # Initialize the recognizer
             r = sr.Recognizer()
+
             # Check type of the audio file and change it to wav if mp3
             audio_type = self.detect_format(path)
 
             if audio_type == "mp3":
-                print("about to wav")
                 path = self.to_wav(path, tempDict)
-                print("to wav")
 
             # Open the audio file using pydub
             sound = AudioSegment.from_wav(path)
@@ -223,6 +224,9 @@ class AudioFile(OWTextableBaseWidget):
                                     keep_silence=500,
                                     )
             # Initiates ouput variable
+        
+            # Initiates ouput variables (depending on advanced settings)
+
             whole_text = ""
             segments = list()
             #Initiate alert message and progress bar
@@ -233,7 +237,8 @@ class AudioFile(OWTextableBaseWidget):
 
             # Process each chunk
             for i, audio_chunk in enumerate(chunks, start = 1):
-                # Export audio chunk and save it in he "tempDict" directory.
+                # export audio chunk and save it in
+                # the tempDict directory.
                 chunk_filename = os.path.join(tempDict, f"chunk{i}.wav")
                 audio_chunk.export(chunk_filename, format="wav")
                 # recognize the chunk
@@ -246,13 +251,14 @@ class AudioFile(OWTextableBaseWidget):
                     except sr.UnknownValueError as e:
                         print("Error : ", str(e))
                     else:
-                        # Add the segment to the list
+                        # Creates an entry of the list "segments" for each audio_chunk
                         if self.selected_seg:
                             segmented_text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", segmented_text)
                             segments.append(segmented_text)
                         # Add the segment to the segmentation    
                         else:
+                        # Returns transciprtion as whole_text
                             text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", text)
                             whole_text += text
