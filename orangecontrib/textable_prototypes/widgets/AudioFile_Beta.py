@@ -197,14 +197,15 @@ class AudioFile(OWTextableBaseWidget):
         """
         # create a temporary folder to handle the chunks, will be deleted upon completion of the task
         with tempfile.TemporaryDirectory() as tempDict:
+
+            # Initialize the recognizer
             r = sr.Recognizer()
+
             # Check type of the audio file and change it to wav if mp3
             audio_type = self.detect_format(path)
 
             if audio_type == "mp3":
-                print("about to wav")
                 path = self.to_wav(path, tempDict)
-                print("to wav")
 
             # open the audio file using pydub
             sound = AudioSegment.from_wav(path)
@@ -217,7 +218,7 @@ class AudioFile(OWTextableBaseWidget):
                                       # keep the silence for 1 second, adjustable as well
                                       keep_silence = 500,
                                       )
-            # Initiates ouput variable
+            # Initiates ouput variables (depending on advanced settings)
             whole_text = ""
             segments = list()
             #Initiate alert message and progress bar
@@ -229,7 +230,7 @@ class AudioFile(OWTextableBaseWidget):
             # process each chunk
             for i, audio_chunk in enumerate(chunks, start = 1):
                 # export audio chunk and save it in
-                # the `folder_name` directory.
+                # the tempDict directory.
                 chunk_filename = os.path.join(tempDict, f"chunk{i}.wav")
                 audio_chunk.export(chunk_filename, format = "wav")
                 # recognize the chunk
@@ -241,11 +242,13 @@ class AudioFile(OWTextableBaseWidget):
                     except sr.UnknownValueError as e:
                         print("Error : ", str(e))
                     else:
+                        # Creates an entry of the list "segments" for each audio_chunk
                         if self.selected_seg:
                             segmented_text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", segmented_text)
                             segments.append(segmented_text)
                         else:
+                        # Returns transciprtion as whole_text
                             text = f"{text.capitalize()}. "
                             print(chunk_filename, " : ", text)
                             whole_text += text
@@ -268,7 +271,7 @@ class AudioFile(OWTextableBaseWidget):
 
         # Clear created Inputs.
         self.clearCreatedInputs()
-        # gets transcription
+        # Get transcription
         transcription = self.get_large_audio_transcription(self.file, language = self.language, set_silence_len = self.selected_dur, set_silence_threshold = self.selected_vol)
         
         # Regex to get the name of the input file
