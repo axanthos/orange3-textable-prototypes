@@ -36,7 +36,7 @@ Outputs :
 Description
 -----------
 
-This widget is designed to import one audio file, wether it is an mp4 file or a wav file, and to transcribe it into a single segmentation, or multiple segments depending on volumes parameters, in Orange Canvas. 
+This widget is designed to import one audio file, wether it is an mp3 file or a wav file, and to transcribe it into a single segmentation, or multiple segments depending on volumes parameters, in Orange Canvas. 
 The user can transcript any audio file, and the output is a segmentation. Each segment has one annotation with the key *title*. 
 
 
