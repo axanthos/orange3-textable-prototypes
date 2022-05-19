@@ -34,7 +34,7 @@ from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from AnyQt.QtGui import (
-    QTabWidget, QWidget, QHBoxLayout, QMessageBox, QIntValidator
+    QTabWidget, QWidget, QHBoxLayout, QMessageBox, QInputDialog
 )
 
 from LTTL.Segmentation import Segmentation
@@ -67,6 +67,8 @@ AVAILABLE_MODELS = {                            # TODO: retrieve from widget spa
     "Spanish news (small)": "es_core_news_sm",
     "Spanish news (medium)": "es_core_news_md",
 }
+
+# TODO: how to update character list without going through a file
 
 # Determine which language models are installed...
 INSTALLED_MODELS = list()
@@ -148,7 +150,6 @@ class Charnetto(OWTextableBaseWidget):
             widget=self.controlArea,
             box="Options",
             orientation="vertical",
-            addSpace=False,
         )
         sourceTypeCombo = gui.comboBox(
             widget=self.optionsBox,
@@ -196,7 +197,6 @@ class Charnetto(OWTextableBaseWidget):
             widget=self.controlArea,
             box="Edit character list",
             orientation="vertical",
-            addSpace=False,
         )
 
         characterListbox = gui.listBox(
@@ -204,7 +204,7 @@ class Charnetto(OWTextableBaseWidget):
             master=self,
             value="selectedCharacters",
             labels="characters",
-            callback=None,
+            callback=self.updateButtons,
             tooltip="List of identified characters",
         )
         # TODO set min height
@@ -212,7 +212,6 @@ class Charnetto(OWTextableBaseWidget):
         self.characterButtonBox = gui.widgetBox(
             widget=self.characterBox,
             orientation="horizontal",
-            addSpace=False,
         )
 
         self.newButton = gui.button(
@@ -222,16 +221,14 @@ class Charnetto(OWTextableBaseWidget):
             callback=None,  # TODO
             tooltip="TODO.",
         )
-        self.newButton.setDisabled(True)
         
         self.editButton = gui.button(
             widget=self.characterButtonBox,
             master=self,
             label="Edit",
-            callback=None,  # TODO
+            callback=self.editCharacters,
             tooltip="TODO.",
         )
-        self.editButton.setDisabled(True)
         
         self.deleteButton = gui.button(
             widget=self.characterButtonBox,
@@ -240,7 +237,8 @@ class Charnetto(OWTextableBaseWidget):
             callback=None,  # TODO
             tooltip="TODO.",
         )
-        self.deleteButton.setDisabled(True)
+
+        self.updateButtons()
         
         gui.rubber(self.controlArea)
 
@@ -252,8 +250,9 @@ class Charnetto(OWTextableBaseWidget):
         self.infoBox.setText("Widget needs input.", "warning")
         
         # Check that there's a model...
+        # TODO: is this working?
         if not self.model:
-            self.noLanguageModelWarning()
+            self.noLanguageModelWarning()                            
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -279,12 +278,12 @@ class Charnetto(OWTextableBaseWidget):
         # TODO deal with \n in names
         progressBar.advance()
         self.char_df = charnetto.unify_tags(self.char_df)
-        print(self.char_df)
+        #print(self.char_df)
         progressBar.advance()
         self.char_list = charnetto.concatenate_parents(self.char_df, min_occ = 1)
-        print(self.char_list)
+        #print(self.char_list)
         self.characters = [", ".join(char) for char in self.char_list]
-        print(self.characters)
+        #print(self.characters)
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
@@ -315,6 +314,22 @@ class Charnetto(OWTextableBaseWidget):
             "warning",
         )
         self.controlArea.setDisabled(True)
+
+    def editCharacters(self):
+        """"Deal with user requested edition of character in list."""
+        selected_idx = self.selectedCharacters[0]
+        old_value = self.characters[selected_idx]
+        new_value, ok = QInputDialog.getText(self, "Edit character", 
+            "Enter new value for this line:", text=old_value)
+        if ok:
+            # TODO check input validity (nonempty, commas, ...)
+            self.characters[selected_idx] = str(new_value)
+            self.characters = self.characters
+
+    def updateButtons(self):
+        """Enable/disable buttons depending on selection in list."""
+        self.editButton.setDisabled(len(self.selectedCharacters) == 0)
+        self.deleteButton.setDisabled(len(self.selectedCharacters) == 0)
 
     def sendNoneToOutputs(self):
         """Send None token to all output channels."""
@@ -366,7 +381,7 @@ class Charnetto(OWTextableBaseWidget):
             charId = characters[0]
             for character in characters:
                 charNameToId[character] = charId
-        print(charNameToId)
+        #print(charNameToId)
         
         # Initializations...
         charSegments = list()
