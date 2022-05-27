@@ -46,35 +46,11 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
+from orangecontrib.textable_prototypes.widgets import SpaCy as spacy_widget
+
 import charnetto
 import spacy
 
-AVAILABLE_MODELS = {                            # TODO: retrieve from widget spaCy.
-    "Dutch news (small)": "nl_core_news_sm",
-    "English web (small)": "en_core_web_sm",
-    "English web (medium)": "en_core_web_md",
-    "English web (large)": "en_core_web_lg",
-    "French news (small)": "fr_core_news_sm",
-    "French news (medium)": "fr_core_news_md",
-    "German news (small)": "de_core_news_sm",
-    "German news (medium)": "de_core_news_md",
-    "Greek news (small)": "el_core_news_sm",
-    "Greek news (medium)": "el_core_news_md",
-    "Italian news (small)": "it_core_news_sm",
-    "Lithuanian news (small)": "lt_core_news_sm",
-    "Norwegian news (small)": "nb_core_news_sm",
-    "Portuguese news (small)": "pt_core_news_sm",
-    "Spanish news (small)": "es_core_news_sm",
-    "Spanish news (medium)": "es_core_news_md",
-}
-
-# TODO: how to update character list without going through a file
-
-# Determine which language models are installed...
-INSTALLED_MODELS = list()
-for model, package in AVAILABLE_MODELS.items():
-    if importlib.util.find_spec(package.replace("-", ".")):
-        INSTALLED_MODELS.append(model)
 
 class Charnetto(OWTextableBaseWidget):
     """Textable widget for building character networks with Charnetto."""
@@ -103,6 +79,7 @@ class Charnetto(OWTextableBaseWidget):
     
     sourceType = settings.Setting("Plain text")
     minFreq = settings.Setting(1)
+    model = settings.Setting("")
 
     #----------------------------------------------------------------------
     # The following lines need to be copied verbatim in every Textable widget...
@@ -122,11 +99,13 @@ class Charnetto(OWTextableBaseWidget):
         self.inputSeg = None
         self.selectedCharacters = list()
         self.characters = list()
-        self.mustLoad = True
-        if INSTALLED_MODELS:
-            self.model = INSTALLED_MODELS[0]
+        if spacy_widget.INSTALLED_MODELS:
+            self.model = spacy_widget.INSTALLED_MODELS[0]
+            self.mustInstall = False
         else:
             self.model = ""
+            self.mustInstall = True
+        self.editsWereMade = False
 
         #----------------------------------------------------------------------
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -151,16 +130,33 @@ class Charnetto(OWTextableBaseWidget):
             box="Options",
             orientation="vertical",
         )
-        sourceTypeCombo = gui.comboBox(
+        # self.sourceTypeCombo = gui.comboBox(
+            # widget=self.optionsBox,
+            # master=self,
+            # value="sourceType",
+            # sendSelectedValue=True,
+            # items=["Plain text", "IMSDB-formatted script"],
+            # orientation="horizontal",
+            # label="Source type:",
+            # labelWidth=120,
+            # callback=self.changeSourceType,
+            # tooltip=(
+                # "TODO\n"
+                # "TODO\n"
+                # "TODO\n"
+            # ),
+        # )
+
+        self.spacyModelCombo = gui.comboBox(
             widget=self.optionsBox,
             master=self,
-            value="sourceType",
+            value="model",
             sendSelectedValue=True,
-            items=["Plain text", "IMSDB-formatted script"],
+            items=spacy_widget.INSTALLED_MODELS,
             orientation="horizontal",
-            label="Source type:",
+            label="SpaCy model:",
             labelWidth=120,
-            callback=self.sendButton.settingsChanged,
+            callback=self.loadModel,
             tooltip=(
                 "TODO\n"
                 "TODO\n"
@@ -168,27 +164,26 @@ class Charnetto(OWTextableBaseWidget):
             ),
         )
 
-        # TODO spacy model combobox
 
         # gui.separator(widget=self.optionsBox, height=3)
 
-        minFreqSpin = gui.spin(
-            widget=self.optionsBox,
-            master=self,
-            value='minFreq',
-            minv=1,
-            maxv=1000,
-            orientation='horizontal',
-            label="Minimum frequency:",
-            labelWidth=120,
-            callback=self.sendButton.settingsChanged,
-            keyboardTracking=False,
-            tooltip=(
-                "TODO\n"
-                "TODO\n"
-                "TODO\n"
-            ),
-        )
+        # minFreqSpin = gui.spin(
+            # widget=self.optionsBox,
+            # master=self,
+            # value='minFreq',
+            # minv=1,
+            # maxv=1000,
+            # orientation='horizontal',
+            # label="Minimum frequency:",
+            # labelWidth=120,
+            # callback=self.sendButton.settingsChanged,
+            # keyboardTracking=False,
+            # tooltip=(
+                # "TODO\n"
+                # "TODO\n"
+                # "TODO\n"
+            # ),
+        # )
         
         # gui.separator(widget=self.optionsBox, height=3)
 
@@ -218,7 +213,7 @@ class Charnetto(OWTextableBaseWidget):
             widget=self.characterButtonBox,
             master=self,
             label="New",
-            callback=None,  # TODO
+            callback=self.newCharacter,
             tooltip="TODO.",
         )
         
@@ -234,7 +229,15 @@ class Charnetto(OWTextableBaseWidget):
             widget=self.characterButtonBox,
             master=self,
             label="Delete",
-            callback=None,  # TODO
+            callback=self.deleteCharacter,
+            tooltip="TODO.",
+        )
+
+        self.resetButton = gui.button(
+            widget=self.characterButtonBox,
+            master=self,
+            label="Reset",
+            callback=self.resetCharacters,
             tooltip="TODO.",
         )
 
@@ -251,11 +254,15 @@ class Charnetto(OWTextableBaseWidget):
         
         # Check that there's a model...
         # TODO: is this working?
-        if not self.model:
-            self.noLanguageModelWarning()                            
+        if self.mustInstall:
+            self.noLanguageModelWarning()
+        else:
+            self.loadModel()
 
     def inputData(self, newInput):
         """Process incoming data."""
+        if self.mustInstall:
+            return
         self.inputSeg = newInput
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
@@ -268,52 +275,96 @@ class Charnetto(OWTextableBaseWidget):
 
     def updateCharacterList(self):
         """Update character list based on Charnetto output."""
-        if self.mustLoad:
-            self.loadModel()
+        # Sanity checks...
+        if not self.model or not self.inputSeg:
+            return
+        
+        # Init UI...
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=4)
+        
+        # Get input strings...
         strings = [segment.get_content() for segment in self.inputSeg]
         progressBar.advance()
-        self.char_df = charnetto.extract_spacy_df(strings, self.nlp) # TODO progress
+        
+        # Extract character tokens...
+        # if self.sourceType == "Plain text":
+            # self.char_df = charnetto.extract_spacy_df(strings, self.nlp)
+        # elif self.sourceType == "IMSDB-formatted script":
+            # self.char_df = charnetto.extract_movie_df(" ".join(strings))
+        self.char_df = charnetto.extract_spacy_df(strings, self.nlp)
+        
         # TODO deal with \n in names
         progressBar.advance()
+        
+        # Unify spaCy tags to match those of flair... TODO: is this needed? 
         self.char_df = charnetto.unify_tags(self.char_df)
-        #print(self.char_df)
         progressBar.advance()
+        
+        # Collapse characters whose name is the prefix of another.
         self.char_list = charnetto.concatenate_parents(self.char_df, min_occ = 1)
-        #print(self.char_list)
+
+        # Build char list and reset UI.
         self.characters = [", ".join(char) for char in self.char_list]
-        #print(self.characters)
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
+        
+        # Cache character list for resetting if needed.
+        self.cachedCaracters = self.characters[:]
     
     def loadModel(self):
         """(Re-)load language model if needed."""
-        # Initialize progress bar.
+        # Display warning, disable UI and initialize progress bar...
         self.infoBox.setText(
             u"Loading language model, please wait...", 
             "warning",
         )
         self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(self, iterations=1)       
-        self.nlp = spacy.load(
-            #AVAILABLE_MODELS[self.model],
-            "en_core_web_sm",
-        )
-        self.mustLoad = False
+        progressBar = ProgressBar(self, iterations=1)
+
+        # Load model and reset UI.
+        self.nlp = spacy.load(spacy_widget.AVAILABLE_MODELS[self.model])
         progressBar.advance()
         progressBar.finish()
         self.controlArea.setDisabled(False)
+        
+        # Update char list if there's an input...
+        if self.inputSeg:
+            self.updateCharacterList()
+        
+        self.sendButton.settingsChanged()
 
     def noLanguageModelWarning(self):
         """"Warn user that a spaCy model must be installed and disable GUI."""
         self.infoBox.setText(
-            "Please use the spaCy widget to download a language "
-            "model first.",
+            "Please first use the spaCy widget to download a language "
+            "model, then create a new copy of the Charnetto widget.",
             "warning",
         )
         self.controlArea.setDisabled(True)
+
+    def changeSourceType(self):
+        """"Deal with user-requested source type change."""
+        self.spacyModelCombo.setDisabled(self.sourceType ==
+            "IMSDB-formatted script")
+            
+        # Update char list if there's an input...
+        if self.inputSeg:
+            self.updateCharacterList()
+        
+        self.sendButton.settingsChanged()
+
+    def newCharacter(self):
+        """"Add new character to list."""
+        new_value, ok = QInputDialog.getText(self, "New character", 
+            "Enter new line:")
+        if ok:
+            self.editsWereMade = True
+            # TODO check input validity (nonempty, commas, ...)
+            self.characters.append(str(new_value))
+            self.characters = self.characters
+            self.sendButton.settingsChanged()
 
     def editCharacters(self):
         """"Deal with user requested edition of character in list."""
@@ -322,14 +373,37 @@ class Charnetto(OWTextableBaseWidget):
         new_value, ok = QInputDialog.getText(self, "Edit character", 
             "Enter new value for this line:", text=old_value)
         if ok:
-            # TODO check input validity (nonempty, commas, ...)
-            self.characters[selected_idx] = str(new_value)
+            if new_value != old_value:
+                self.editsWereMade = True
+                # TODO check input validity (nonempty, commas, ...)
+                self.characters[selected_idx] = str(new_value)
+                self.characters = self.characters
+                self.sendButton.settingsChanged()
+
+    def deleteCharacter(self):
+        """"Deal with user requested deletion of character in list."""
+        selected_idx = self.selectedCharacters[0]
+        old_value = self.characters[selected_idx]
+        answer = QMessageBox.question(self, "Delete character",
+            f"Do you really want to delete line '{old_value}'")
+        if answer == QMessageBox.Yes:
+            self.editsWereMade = True
+            del self.characters[selected_idx]
             self.characters = self.characters
+            self.sendButton.settingsChanged()
+
+    def resetCharacters(self):
+        """"Revert all edits to character list."""
+        self.characters = self.cachedCaracters[:]
+        self.editsWereMade = False
+        self.resetButton.setDisabled(not self.editsWereMade)
+        self.sendButton.settingsChanged()
 
     def updateButtons(self):
         """Enable/disable buttons depending on selection in list."""
         self.editButton.setDisabled(len(self.selectedCharacters) == 0)
         self.deleteButton.setDisabled(len(self.selectedCharacters) == 0)
+        self.resetButton.setDisabled(not self.editsWereMade)
 
     def sendNoneToOutputs(self):
         """Send None token to all output channels."""
@@ -390,8 +464,8 @@ class Charnetto(OWTextableBaseWidget):
         # For each character token in Charnetto's output...
         for index, charToken in self.char_df.iterrows():
         
-            # Skip non-PER named entities.
-            if charToken["tag"] != "PER":
+            # Skip non-PER named entities and names not in char list.
+            if charToken["tag"] != "PER" or charToken["name"] not in charNameToId:
                 continue
 
             # Get index of containing segment...

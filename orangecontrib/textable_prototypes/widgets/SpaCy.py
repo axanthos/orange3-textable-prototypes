@@ -1,6 +1,6 @@
 """
 Class SpaCy
-Copyright 2020 University of Lausanne
+Copyright 2022 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.7"
+__version__ = u"0.0.8"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -58,24 +58,81 @@ RELEVANT_KEYS = [
    'tag_', 'whitespace_',
 ]
 AVAILABLE_MODELS = {
+    "Catalan news (small)": "cat_core_news_sm",
+    "Catalan news (medium)": "cat_core_news_md",
+    "Catalan news (large)": "cat_core_news_lg",
+    "Catalan news (transformer)": "cat_core_news_trf",
+    "Chinese web (small)": "zh_core_web_sm",
+    "Chinese web (medium)": "zh_core_web_md",
+    "Chinese web (large)": "zh_core_web_lg",
+    "Chinese web (transformer)": "zh_core_web_trf",
+    "Danish news (small)": "da_core_news_sm",
+    "Danish news (medium)": "da_core_news_md",
+    "Danish news (large)": "da_core_news_lg",
+    "Danish news (transformer)": "da_core_news_trf",
     "Dutch news (small)": "nl_core_news_sm",
+    "Dutch news (medium)": "nl_core_news_md",
+    "Dutch news (large)": "nl_core_news_lg",
     "English web (small)": "en_core_web_sm",
     "English web (medium)": "en_core_web_md",
     "English web (large)": "en_core_web_lg",
+    "English web (transformer)": "en_core_web_trf",
+    "Finnish news (small)": "fi_core_news_sm",
+    "Finnish news (medium)": "fi_core_news_md",
+    "Finnish news (large)": "fi_core_news_lg",
     "French news (small)": "fr_core_news_sm",
     "French news (medium)": "fr_core_news_md",
+    "French news (large)": "fr_core_news_lg",
+    "French news (transformer)": "fr_dep_news_trf",
     "German news (small)": "de_core_news_sm",
     "German news (medium)": "de_core_news_md",
+    "German news (large)": "de_core_news_lg",
+    "German news (transformer)": "de_dep_news_trf",
     "Greek news (small)": "el_core_news_sm",
     "Greek news (medium)": "el_core_news_md",
+    "Greek news (large)": "el_core_news_lg",
     "Italian news (small)": "it_core_news_sm",
+    "Italian news (medium)": "it_core_news_md",
+    "Italian news (large)": "it_core_news_lg",
+    "Japanese news (small)": "ja_core_news_sm",
+    "Japanese news (medium)": "ja_core_news_md",
+    "Japanese news (large)": "ja_core_news_lg",
+    "Japanese news (transformer)": "ja_core_news_trf",
+    "Korean news (small)": "ko_core_news_sm",
+    "Korean news (medium)": "ko_core_news_md",
+    "Korean news (large)": "ko_core_news_lg",
     "Lithuanian news (small)": "lt_core_news_sm",
-    "Norwegian news (small)": "nb_core_news_sm",
+    "Lithuanian news (medium)": "lt_core_news_md",
+    "Lithuanian news (large)": "lt_core_news_lg",
+    "Macedonian news (small)": "mk_core_news_sm",
+    "Macedonian news (medium)": "mk_core_news_md",
+    "Macedonian news (large)": "mk_core_news_lg",
+    "Multi-language Wikipedia (small)": "xx_ent_wiki_sm",
+    "Multi-language Universal Dependencies (small)": "xx_ent_ud_sm",
+    "Norwegian Bokmal news (small)": "nb_core_news_sm",
+    "Norwegian Bokmal news (medium)": "nb_core_news_md",
+    "Norwegian Bokmal news (large)": "nb_core_news_lg",
+    "Polish news (small)": "pl_core_news_sm",
+    "Polish news (medium)": "pl_core_news_md",
+    "Polish news (large)": "pl_core_news_lg",
     "Portuguese news (small)": "pt_core_news_sm",
+    "Portuguese news (medium)": "pt_core_news_md",
+    "Portuguese news (large)": "pt_core_news_lg",
+    "Romanian news (small)": "ro_core_news_sm",
+    "Romanian news (medium)": "ro_core_news_md",
+    "Romanian news (large)": "ro_core_news_lg",
+    "Russian news (small)": "ru_core_news_sm",
+    "Russian news (medium)": "ru_core_news_md",
+    "Russian news (large)": "ru_core_news_lg",
     "Spanish news (small)": "es_core_news_sm",
     "Spanish news (medium)": "es_core_news_md",
+    "Spanish news (large)": "es_core_news_lg",
+    "Spanish news (transformer)": "es_core_news_trf",
+    "Swedish news (small)": "sv_core_news_sm",
+    "Swedish news (medium)": "sv_core_news_md",
+    "Swedish news (large)": "sv_core_news_lg",
 }
-MODEL_VERSION_NUM = "2.2.5"
+MODEL_VERSION_NUM = "3.1.0"
 DOWNLOAD_URL = "https://github.com/explosion/spacy-models/releases/download/"
 
 # Determine which language models are installed...
