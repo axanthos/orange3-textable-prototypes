@@ -58,7 +58,7 @@ class Charnetto(OWTextableBaseWidget):
     name = "Charnetto"
     description = "Build character networks with the Charnetto package"
     icon = "icons/charnetto.svg"
-    priority = 21   # TODO
+    priority = 20
 
     #----------------------------------------------------------------------
     # Channel definitions...
