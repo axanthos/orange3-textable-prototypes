@@ -26,9 +26,6 @@ __email__ = "aris.xanthos@unil.ch"
 
 import importlib.util
 import sys
-import os
-import subprocess
-import platform
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -157,11 +154,7 @@ class Charnetto(OWTextableBaseWidget):
             label="SpaCy model:",
             labelWidth=120,
             callback=self.loadModel,
-            tooltip=(
-                "TODO\n"
-                "TODO\n"
-                "TODO\n"
-            ),
+            tooltip=("Choose spaCy model for named entity recognition."),
         )
 
 
@@ -214,7 +207,7 @@ class Charnetto(OWTextableBaseWidget):
             master=self,
             label="New",
             callback=self.newCharacter,
-            tooltip="TODO.",
+            tooltip="Add a new entry to the character list.",
         )
         
         self.editButton = gui.button(
@@ -222,7 +215,7 @@ class Charnetto(OWTextableBaseWidget):
             master=self,
             label="Edit",
             callback=self.editCharacters,
-            tooltip="TODO.",
+            tooltip="Add the selected character list entry.",
         )
         
         self.deleteButton = gui.button(
@@ -230,7 +223,7 @@ class Charnetto(OWTextableBaseWidget):
             master=self,
             label="Delete",
             callback=self.deleteCharacter,
-            tooltip="TODO.",
+            tooltip="Delete the selected character list entry.",
         )
 
         self.resetButton = gui.button(
@@ -238,7 +231,7 @@ class Charnetto(OWTextableBaseWidget):
             master=self,
             label="Reset",
             callback=self.resetCharacters,
-            tooltip="TODO.",
+            tooltip="Revert all changes made to character list.",
         )
 
         self.updateButtons()
@@ -253,7 +246,6 @@ class Charnetto(OWTextableBaseWidget):
         self.infoBox.setText("Widget needs input.", "warning")
         
         # Check that there's a model...
-        # TODO: is this working?
         if self.mustInstall:
             self.noLanguageModelWarning()
         else:
@@ -297,7 +289,7 @@ class Charnetto(OWTextableBaseWidget):
         # TODO deal with \n in names
         progressBar.advance()
         
-        # Unify spaCy tags to match those of flair... TODO: is this needed? 
+        # Unify spaCy tags to match those of flair...  
         self.char_df = charnetto.unify_tags(self.char_df)
         progressBar.advance()
         
@@ -359,9 +351,8 @@ class Charnetto(OWTextableBaseWidget):
         """"Add new character to list."""
         new_value, ok = QInputDialog.getText(self, "New character", 
             "Enter new line:")
-        if ok:
+        if ok and self.checkInputValidity(new_value):
             self.editsWereMade = True
-            # TODO check input validity (nonempty, commas, ...)
             self.characters.append(str(new_value))
             self.characters = self.characters
             self.sendButton.settingsChanged()
@@ -372,10 +363,9 @@ class Charnetto(OWTextableBaseWidget):
         old_value = self.characters[selected_idx]
         new_value, ok = QInputDialog.getText(self, "Edit character", 
             "Enter new value for this line:", text=old_value)
-        if ok:
+        if ok and self.checkInputValidity(new_value):
             if new_value != old_value:
                 self.editsWereMade = True
-                # TODO check input validity (nonempty, commas, ...)
                 self.characters[selected_idx] = str(new_value)
                 self.characters = self.characters
                 self.sendButton.settingsChanged()
@@ -398,6 +388,19 @@ class Charnetto(OWTextableBaseWidget):
         self.editsWereMade = False
         self.resetButton.setDisabled(not self.editsWereMade)
         self.sendButton.settingsChanged()
+
+    def checkInputValidity(self, value):
+        """"Check validity of user-submitted character list entry."""
+        if value == "":
+            QMessageBox.warning(self, "Invalid input",
+                "Please submit a nonempty string value.")
+            return False
+        if [item for item in value.split(", ") if item == ""]:
+            QMessageBox.warning(self, "Invalid input",
+                "Please make sure your entry consists in nonempty strings "
+                "separated by \", \".")
+            return False
+        return True
 
     def updateButtons(self):
         """Enable/disable buttons depending on selection in list."""
@@ -445,18 +448,13 @@ class Charnetto(OWTextableBaseWidget):
             startPositions.append(startPositions[-1] + prevSegLen + 1)
             endPositions.append(startPositions[-1] - 1)
         endPositions.append(startPositions[-1] + 
-                             len(self.inputSeg[-1].get_content()) + 1)
+                            len(self.inputSeg[-1].get_content()) + 1)
 
-        # Create character name to id mapping...
-        # TODO: how to deal with duplicate IDs?
-        charNameToId = dict()
-        for characterSet in self.characters:
-            characters = characterSet.split(", ")
-            charId = characters[0]
-            for character in characters:
-                charNameToId[character] = charId
-        #print(charNameToId)
-        
+        # Get or update character aliases...
+        find_pairs = sys.modules['charnetto.find_pairs']
+        characters = [entry.split(", ") for entry in self.characters]
+        find_pairs.map_names(self.char_df, characters)
+
         # Initializations...
         charSegments = list()
         currentSegmentIdx = 0
@@ -464,8 +462,8 @@ class Charnetto(OWTextableBaseWidget):
         # For each character token in Charnetto's output...
         for index, charToken in self.char_df.iterrows():
         
-            # Skip non-PER named entities and names not in char list.
-            if charToken["tag"] != "PER" or charToken["name"] not in charNameToId:
+            # Skip non-PER named entities.
+            if charToken["tag"] != "PER":
                 continue
 
             # Get index of containing segment...
@@ -476,7 +474,7 @@ class Charnetto(OWTextableBaseWidget):
             strIndex = self.inputSeg[currentSegmentIdx].str_index
             start = charToken["start_pos"]-startPositions[currentSegmentIdx]
             end = charToken["end_pos"]-startPositions[currentSegmentIdx]
-            annotations = {"id": charNameToId[charToken["name"]]}
+            annotations = {"id": charToken["alias"]}
             charSegments.append(Segment(strIndex, start, end, annotations))
             
             progressBar.advance()
