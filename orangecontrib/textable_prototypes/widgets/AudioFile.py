@@ -29,7 +29,7 @@ import subprocess
 class AudioFile(OWTextableBaseWidget):
     
     # Widget info
-    name = "AudioFile_Beta"
+    name = "AudioFile"
     description = "Import an audio file, transcribe it and segment it"
     icon = "icons/audioFile.png"
     priority = 20

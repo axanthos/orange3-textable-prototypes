@@ -84,6 +84,16 @@ The **Minimum duration (in milliseconds)** lets the user pick the minimum durati
 
 The **Segment the audio file with the parameters** checkbox allows the user to get segments depending on those precise parameters. 
 
+Installation
+------------
+
+Install ffmpeg
+~~~~~~~~~~~~~~
+
+Mac OS: `Install ffmpeg <https://superuser.com/questions/624561/install-ffmpeg-on-os-x>`_ (we recommend using homebrew)
+Windows : `Install ffmpeg Windows <https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/>`_
+Linux/Ubuntu : `Install ffmpeg <https://www.tecmint.com/install-ffmpeg-in-linux/>`_
+
 
 Messages
 --------
