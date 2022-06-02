@@ -320,7 +320,7 @@ class AudioFile(OWTextableBaseWidget):
             self,
             u"open Text File",
             self.lastLocation,
-            u"Audio Files(*)"
+            u"Audio Files(*.wav;*.mp3)",
         )
         if not audioPath:
             return
