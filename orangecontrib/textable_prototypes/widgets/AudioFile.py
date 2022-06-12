@@ -206,6 +206,9 @@ class AudioFile(OWTextableBaseWidget):
             # Initialize the recognizer
             r = sr.Recognizer()
 
+            if 'wav' not in self.file or 'mp3' not in self.file:
+                return
+
             # Check type of the audio file and change it to wav if mp3
             audio_type = self.detect_format(path)
 
@@ -281,8 +284,20 @@ class AudioFile(OWTextableBaseWidget):
         # Clear created Inputs.
         self.clearCreatedInputs()
         # Get transcription
-        transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
-        
+
+        try: 
+            transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
+        except speech_recognition.UnknownValueError as err:
+            self.infoBox.setText(u"You seem to have overuseed the built-in API key, refer to the documentation for further informations.", "warning")
+            self.send('Text data', None, self)
+            return 
+
+        # Checks if there is a transcription
+        if transcription is None:
+            self.infoBox.setText(u"You must use mp3 or wav audio files.", "warning")
+            self.send('Text data', None, self)
+            return 
+
         # Regex to get the name of the input file
         title = self.file
         regex = re.compile("[^(/\\)]+[mp3|wav]$")

@@ -26,9 +26,6 @@ __email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
 
-from lyricsgenius import Genius
-import re
-
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
@@ -347,10 +344,10 @@ class LyricsGenius(OWTextableBaseWidget):
         """Opens a URL and returns it as a JSON object"""
 
         # Token to use the Genius API. DO NOT CHANGE.
-        #ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
-                       #"9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
-        ACCESS_TOKEN = "_VqiUA11I4lR9tZ2Kc8wo3cq4GUOMcnRyIG_vEO6IbXEKn-vRmQ8lswwrNCLUkKc"
+        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
+                       "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
         USER_AGENT = "CompuServe Classic/1.22"
+
         request = urllib.request.Request(url, headers={
             "Authorization" : "Bearer " + ACCESS_TOKEN,
             "User-Agent" : USER_AGENT
@@ -364,22 +361,14 @@ class LyricsGenius(OWTextableBaseWidget):
     # Function converting HTML to string
     def html_to_text(self, page_url):
         """Extracts the lyrics (as a string) of the html page"""
-        """
+
         page = requests.get(page_url)
         html = BeautifulSoup(page.text, "html.parser")
         [h.extract() for h in html('script')]
         lyrics = html.find("div", class_="lyrics").get_text()
         lyrics.replace('\\n', '\n')
-        """
-        """Extracts the lyrics (as a string) off the html page using LyricsGenius package"""
-        
-        genius = Genius("_VqiUA11I4lR9tZ2Kc8wo3cq4GUOMcnRyIG_vEO6IbXEKn-vRmQ8lswwrNCLUkKc")
-        genius.remove_section_headers = True
-        lyric = genius.lyrics(song_url=page_url)
-        lyric = re.sub('(?<=[a-z])(?=[A-Z])', '\n', lyric)
         # return a string
-        
-        return lyric
+        return lyrics
 
 
     # Function clearing the results list
