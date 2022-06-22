@@ -106,6 +106,9 @@ INSTALL_REQUIRES = (
     'pillow',
     'scikit-learn',
     'gutenbergpy',
+    'filetype',
+    'pydub',
+    'SpeechRecognition',
 ),
 
 EXTRAS_REQUIRE = {
