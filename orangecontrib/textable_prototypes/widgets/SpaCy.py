@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.8"
+__version__ = u"0.0.9"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -33,8 +33,8 @@ import platform
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import (
-    QTabWidget, QWidget, QHBoxLayout, QMessageBox, QIntValidator
+from AnyQt.QtWidgets import (
+    QTabWidget, QWidget, QHBoxLayout, QMessageBox
 )
 
 from LTTL.Segmentation import Segmentation
@@ -757,7 +757,7 @@ def spacyItemsToSegments(items, parentSegment):
                 k: getattr(item, k) for k in RELEVANT_KEYS
                 if hasattr(item, k)
                 and getattr(item, k) is not None 
-                and getattr(item, k) is not ""
+                and getattr(item, k) != ""
                 
             }
         )
