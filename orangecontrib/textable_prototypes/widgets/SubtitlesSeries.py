@@ -1,0 +1,1 @@
+'''Widget to gather subtitle files from the website addic7ed'''
