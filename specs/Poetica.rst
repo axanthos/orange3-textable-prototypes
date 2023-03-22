@@ -56,7 +56,7 @@ différents thèmes.
 2.2 Fonctionnalités principales
 ===============================
 
-.. image:: images/charnet_principal.png
+.. image:: images/poetica_maquette.png
 
 * Première box : afficher la liste des auteurs établie par Poetica. Les auteurs sont triés par ordre alphabétique.
 
