@@ -53,10 +53,10 @@ différents thèmes.
 * poetica *.*
 
 
-2.2 Fonctionnalités minimales
-=============================
+2.2 Fonctionnalités principales
+===============================
 
-.. image:: images/charnet_minimal.png
+.. image:: images/charnet_principal.png
 
 * Première box : afficher la liste des auteurs établie par Poetica. Les auteurs sont triés par ordre alphabétique.
 
@@ -71,31 +71,13 @@ NB :
     * Si un champ est rempli, les poèmes sortis sont ceux correspoondant au champ rempli.
     * Si plusieurs champs sont remplis, la recherche est affinée et les poèmes sortent spécifiquement.
 
-
-
-
-
-2.3 Fonctionnalités principales
-===============================
-
-.. image:: images/charnet_principal.png
-
-* Première box : afficher la liste des auteurs établie par Poetica. Les auteurs sont triés par ordre alphabétique.
-
-* Deuxième box : afficher la liste des dates établie par Poetica. Les dates sont triées par décénies, de manière croissante.
-
-* Troisième box : afficher la liste des thèmes établie par Poetica. Les thèmes sont triés par ordre alphabétique.
-
-* Bouton search permet de sortir tous les différents poèmes par auteur, date ou thème.
-
-
-2.4 Fonctionnalités optionnelles
+2.3 Fonctionnalités optionnelles
 ================================
 
 * A voir...
 
 
-2.5 Tests
+2.4 Tests
 =========
 
 TODO
@@ -107,17 +89,10 @@ TODO
 3.1 Version alpha
 =================
 
-* L'interface graphique pour les fonctionnalités minimales est complètement construite.
-* Les fonctionnalités minimales sont prises en charge par le logiciel et ont été testées.
 
 
 3.2 Remise et présentation
 ==========================
-
-* L'interface graphique est complètement construite.
-* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
-* La documentation du logiciel est complète.
-* Les fonctionnalités principales (et, le cas échéant, optionnelles) sont implémentées et ont été testées.
 
 
 4. Infrastructure
