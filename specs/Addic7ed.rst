@@ -12,9 +12,9 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 1.2 Etapes du projet
 ====================
 * Première version des spécifications: 23 mars 2023
-* Remise des spécifications: 
-* Version alpha du projet: 
-* Version finale du projet: 
+* Remise des spécifications: 30 mars 2023
+* Version alpha du projet: 27 avril 2023
+* Version finale du projet: 1 juin 2023
 
 1.3 Equipe et responsabilités
 =============================
@@ -64,7 +64,7 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 - Ajouter les résultats de la recherche au corpus
 
 
-.. image:: images/Addic7ed_minimal.PNG
+.. image:: images/Addic7ed_minimal.png
   
 2.3 Fonctionnalités principales
 ===============================
@@ -94,11 +94,11 @@ TODO
   
 3.1 Version Alpha
 =================
-* Mai 2023
+* 27 avril 2023
   
 3.2 Remise et présentation
 ===============
-* Juin 2023
+* 1er juin 2023
   
 4 Infrastructures
 *****************
