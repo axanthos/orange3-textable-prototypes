@@ -16,10 +16,10 @@ différents thèmes.
 1.2 Aperçu des etapes
 =====================
 
-* Première version des spécifications: 16 mars 2023
-* Remise des spécifications: 23 mars 2023
-* Version alpha du projet:
-* Version finale du projet:
+* Première version des spécifications: 23 mars 2023
+* Remise des spécifications: 30 mars 2023
+* Version alpha du projet: 27 avril 2023
+* Version finale du projet: 1er juin 2023
 
 
 1.3 Equipe et responsabilités
