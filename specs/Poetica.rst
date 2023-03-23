@@ -53,7 +53,7 @@ différents poèmes francophones trié par auteurs et par thèmes.
 
 * Orange Textable 3.1.8
 
-* poetica *.*
+* site de poetica: https://www.poetica.fr *.*
 
 
 2.2 Fonctionnalités minimales
