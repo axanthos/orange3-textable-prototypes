@@ -116,5 +116,4 @@ TODO
 4. Infrastructure
 =================
 
-Le projet est disponible sur GitHub à l'adresse `https://github.com/axanthos/orange3-textable-prototypes.git
-<https://github.com/axanthos/orange3-textable-prototypes.git>`_
+Le projet est disponible sur GitHub à l'adresse `https://github.com/leonienussbaum/orange3-textable-prototypes.git`
