@@ -12,8 +12,11 @@ Créer un widget pour Orange Textable (v3.1.8) permettant de rechercher
 des poèmes par le nom de leur auteur, leur année de publication ou par
 différents thèmes.
 
+Le site "Poetica" constitue notre source. C'est un site qui liste
+différents poèmes francophones trié par auteurs et par thèmes.
 
-1.2 Aperçu des etapes
+
+1.2 Aperçu des étapes
 =====================
 
 * Première version des spécifications: 23 mars 2023
@@ -53,16 +56,28 @@ différents thèmes.
 * poetica *.*
 
 
-2.2 Fonctionnalités principales
+2.2 Fonctionnalités minimales
+===============================
+
+* Permettre d'utiliser la recherche par auteur.
+
+* Possibilité de séléctionner un poème dans une liste donnée et de l'ajouter à notre sélection.
+
+* Supprimer un élément ou la liste complète dans notre sélection.
+
+* Traitement correct des exceptions (HTTPError etc).
+
+
+2.3 Fonctionnalités principales
 ===============================
 
 .. image:: images/poetica_maquette.png
 
-* Première box : afficher la liste des auteurs établie par Poetica. Les auteurs sont triés par ordre alphabétique.
+* Première combobox : afficher la liste des auteurs établie par Poetica. Les auteurs sont triés par ordre alphabétique.
 
-* Deuxième box : afficher la liste des dates établie par Poetica. Les dates sont triées par décénies, de manière croissante.
+* Deuxième combobox : afficher la liste des dates établie par Poetica. Les dates sont triées par décénies, de manière croissante.
 
-* Troisième box : afficher la liste des thèmes établie par Poetica. Les thèmes sont triés par ordre alphabétique.
+* Troisième combobox : afficher la liste des thèmes établie par Poetica. Les thèmes sont triés par ordre alphabétique.
 
 * Bouton search permet de sortir tous les différents poèmes par auteur, date ou thème.
 
@@ -71,10 +86,11 @@ NB :
     * Si un champ est rempli, les poèmes sortis sont ceux correspoondant au champ rempli.
     * Si plusieurs champs sont remplis, la recherche est affinée et les poèmes sortent spécifiquement.
 
-2.3 Fonctionnalités optionnelles
+
+2.4 Fonctionnalités optionnelles
 ================================
 
-* A voir...
+* Mettre à jour les données extraites du site Poetica.
 
 
 2.4 Tests
@@ -89,7 +105,9 @@ TODO
 3.1 Version alpha
 =================
 
+* L'interface graphique est terminée.
 
+* Les fonctionnalités minimales sont utilisables et testées.
 
 3.2 Remise et présentation
 ==========================
