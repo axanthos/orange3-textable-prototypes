@@ -13,7 +13,7 @@ des poèmes par le nom de leur auteur, leur année de publication ou par
 différents thèmes.
 
 Le site "Poetica" constitue notre source. C'est un site qui liste
-différents poèmes francophones trié par auteurs et par thèmes.
+différents poèmes francophones triés par auteurs et par thèmes.
 
 
 1.2 Aperçu des étapes
@@ -61,7 +61,7 @@ différents poèmes francophones trié par auteurs et par thèmes.
 
 * Permettre d'utiliser la recherche par auteur.
 
-* Possibilité de séléctionner un poème dans une liste donnée et de l'ajouter à notre sélection.
+* Possibilité de sélectionner un poème dans une liste donnée et de l'ajouter à notre sélection.
 
 * Supprimer un élément ou la liste complète dans notre sélection.
 
