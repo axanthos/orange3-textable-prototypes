@@ -66,9 +66,16 @@ class poetica(widget.OWWidget):
         self.inputSeg = None
         # newQuery = attribut box lineEdit (search something)
         self.authorQuery = ''
-        self.dateQuery = '1910-1920'
-        self.queryTopic = ''
-        self.nbr_results = 200
+        self.dateQuery = ''
+        self.topicQuery = ''
+        # Results box attributs
+        self.titleLabels = list()
+        self.selectedTitles = list()
+        # selections box attributs
+        self.myTitles = list()
+        self.mytitleLabels = list()
+        # stock all the inputs (texts) in a list
+        self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -83,9 +90,120 @@ class poetica(widget.OWWidget):
         #----------------------------------------------------------------------
         # User interface...
         # Create the working area
+queryBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Search poems",
+            orientation="vertical",
+        )
+        # Allows to choose the wanted results numberp (10 by 10)
+        queryAuthor = gui.comboBox(
+            widget=queryBox,
+            master=self,
+            value="name_author",
+            items=[
+                "ACKERMANN Louise", "AGRIPPA D’AUBIGNÉ Théodore", "ALLAIS Alphonse",
+                "APOLLINAIRE Guillaume","ARAGON Louis","ARVERS Félix",
+                "BANVILLE (de) Théodore","BAUDELAIRE Charles","BEAUCHEMIN Nérée",
+                "BELLAY (du) Joachim","BEN SLIMA Nadia","BENJELLOUN Rhita",
+                "BLANCHEMAIN Dominique","BOILEAU Nicolas","BREGAINT Christophe",
+                "BRETON Jules","CALLIS-SABOT Isabelle","CENDRARS Blaise",
+                "CHALINE Thomas","CHATEAUBRIAND (de) François-René","CHEDID Andrée",
+                "CHENIER André","COPPÉE François","CORBIÈRE Tristan","CORNEILLE Pierre",
+                "COUTÉ Gaston","CROS Charles","DAUDET Alphonse","DAVIN Sandrine",
+                "DELAVIGNE Casimir","DELAVIGNE Jules","DESBORDES-VALMORE Marceline",
+                "DESROSIERS Susy","DORGE Jean-Charles","DOUGLAS Chloe","DUFRENOY Adélaïde",
+                "ELSKAMP Max","ELUARD Paul","FABIÉ François","FOUREST Georges",
+                "GAUTIER Théophile","GEORGES Edgar","GRANEK Esther","BAUDELAIRE Charles",
+                "HEREDIA (de) José-Maria","HUGO Victor","JACOB Max","JAMMES Francis",
+                "JARRY Alfred","JOUY Ephraïm","KRYSINSKA Marie","LA FONTAINE (de) Jean",
+                "LABÉ Louise","LACAUSSADE Auguste","LACOSTE LAREYMONDIE (de) Guillaume",
+                "LAFORGUE Jules","LAMARTINE (de) Alphonse","LARRIEU Christine",
+                "LECONTE DE LISLE Charles","LERMAN ENRIQUEZ Alix","LERUTAN Isaac",
+                "LUEZIOR Claude","MALLARMÉ Stéphane","MATIN Jérôme","MAUNICK Edouard J.",
+                "MAUPASSANT (de) Guy","MÉGRELIS Christian","MÉNARD Louis",
+                "MUSSET (de) Alfred","NAIVIN Bertrand","NELLIGAN Emile","NERVAL (de) Gérard",
+                "NOAILLES (de) Anna","NOORMOHAMED Nashmia","NOUVEAU Germain",
+                "PEREZ Winston","PICARD Hélène","PROUST Marcel","PRUDHOMME Sully",
+                "QUENEAU Raymond","RACINE Jean","RANOUX Maëlle","RATEAU Grégory",
+                "REMBARD Sybille","RICHEPIN Jean","RIMBAUD Arthur","RONSARD (de) Pierre",
+                "SAMAIN Albert","SAND George","SANTOS Elodie","SAUVAGE Cécile",
+                "SELVE (de) Lazare","SICAUD Sabine","SIOEN Laetitia","TAILLEFER Richard",
+                "TASTU Amable","TOULET Paul-Jean","VALMORE Ondine","VENTURINI Didier",
+                "VERHAEREN Emile","VERLAINE Paul","VIALLEBESSET Jacques","VIAN Boris",
+                "VIGNY (de) Alfred","VILLEBRAMAR Jean-Pierre","VILLON François",
+                "VIVIEN Renée","VOLTAIRE","ZERDOUMI Kamal",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Author: ",
+            labelWidth=120,
+            tooltip=(
+                "Please select an author.\n"
+            ),
 
+        queryDate=gui.comboBox(
+            widget=queryBox,
+            master=self,
+            value="date",
+            items=[ "METTRE LES DATES"
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Date: ",
+            labelWidth=120,
+            tooltip=(
+                "Please select a date.\n"
+            ),
 
+        queryTopic=gui.comboBox(
+            widget=queryBox,
+            master=self,
+            value="topic:",
+            items=["METTRE LES THEMES"
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Topic: ",
+            labelWidth=120,
+            tooltip=(
+                "Please select a topic.\n"
+        )
 
+        # Refresh database button
+        self.refreshButton = gui.button(
+            widget=boxbutton,
+            master=self,
+            label=u'Refresh database',
+            callback=self.refresh,
+            tooltip=(
+                u" Cette action risque de prendre du temps"
+            ),
+        )
+        self.refreshButton.setDisabled(True)
+
+        # Reasearch button
+        # Uses "searchFunction" attribut
+        self.searchButton = gui.button(
+            widget=self.queryBox,
+            master=self,
+            label="Search",
+            callback=self.search,
+            tooltip="???",
+        )
+self.clearButton.setDisabled(True)
+gui.separator(widget=queryBox, height=3)
+        )
+        self.titleListbox = gui.listBox(
+            widget=queryBox,
+            master=self,
+            value="selectedTitles",  # setting (list)
+            labels="titleLabels",  # setting (list)
+            callback=lambda: self.addButton.setDisabled(
+                self.selectedTitles == list()),
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.titleListbox.setMinimumHeight(150)
+        self.titleListbox.setSelectionMode(3)
 
 
 if __name__ == "__main__" :
