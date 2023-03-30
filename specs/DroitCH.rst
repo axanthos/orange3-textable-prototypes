@@ -1,5 +1,5 @@
 #################################
-Specification Widget Addic7ed
+Specification Widget DroitCH
 #################################
 
 1 Introduction
@@ -62,8 +62,8 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 - Permettre à l'utilisateur de récupérer un texte de loi Suisse parmi deux documents:
 	-le code des obligations
 	-le code civil
-- Pouvoir faire une segmentation du document par titre ou Chapitre du texte légal
-- Ajouter les résultats de la recherche au corpus
+- Ajouter l'entier du document au corpus en Français
+- Avoir la possibilité d'envoyer automatiquement le corpus à l'output
 
 
 .. image:: images/DroitCHVM1.png
@@ -75,25 +75,21 @@ Le but du projet est de créer un widget dans Orange Textable capable de récup�
 	-Allemand
 	-Français
 	-Italien
-- Pouvoir faire une segmentation du document par Titre, Chapitre ou article du texte légal
-- Pouvoir ajouter ou supprimer des éléments du corpus
-- Avoir la possibilité d'envoyer automatiquement le corpus à l'output
+- Permettre à l'utilisateur de récupérer l'entier du document ou de faire une segmentation par Titre, Chapitre, article du texte légal
+
 
 
  .. image:: images/DroitCHVP1.png
 
-
  .. image:: images/DroitCHVP2.png
 
+ .. image:: images/DroitCHVP3.png
+ 
 
 
 2.4 Fonctionnalités optionnels
 ==========================
 - Permettre à l'utilisateur de récupérer n'importe quel texte de loi disponible sur le site https://www.fedlex.admin.ch/
-
-
- .. image:: images/DroitCHVOp.png
-
 
 
 2.5 Tests
@@ -113,7 +109,6 @@ TODO
 ===============
 * Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 * La documentation du logiciel est complète.
-* Le logiciel possède des routines de test de ses fonctionnalités (principales ou optionnelles).
   
 4 Infrastructures
 *****************
