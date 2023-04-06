@@ -95,7 +95,7 @@ class poetica(widget.OWWidget):
             box="Search poems",
             orientation="vertical",
         )
-    # Allows to choose the wanted results number (10 by 10)
+        # Allows to choose the wanted results number (10 by 10)
         queryAuthor = gui.comboBox(
             widget=queryBox,
             master=self,
@@ -140,6 +140,7 @@ class poetica(widget.OWWidget):
             tooltip=(
                 "Please select an author.\n"
             ),
+        )
 
         queryDate=gui.comboBox(
             widget=queryBox,
@@ -154,6 +155,7 @@ class poetica(widget.OWWidget):
             tooltip=(
                 "Please select a date.\n"
             ),
+        )
 
         queryTopic=gui.comboBox(
             widget=queryBox,
@@ -167,7 +169,8 @@ class poetica(widget.OWWidget):
             labelWidth=120,
             tooltip=(
                 "Please select a topic.\n"
-            ))
+            ),
+        )
 
         # Refresh database button
         self.refreshButton = gui.button(
@@ -192,7 +195,7 @@ class poetica(widget.OWWidget):
         )
 self.clearButton.setDisabled(True)
 gui.separator(widget=queryBox, height=3)
-        )
+
         self.titleListbox = gui.listBox(
             widget=queryBox,
             master=self,
