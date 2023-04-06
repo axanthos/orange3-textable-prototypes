@@ -196,17 +196,17 @@ class poetica(widget.OWWidget):
 self.clearButton.setDisabled(True)
 gui.separator(widget=queryBox, height=3)
 
-        self.titleListbox = gui.listBox(
-            widget=queryBox,
-            master=self,
-            value="selectedTitles",  # setting (list)
-            labels="titleLabels",  # setting (list)
-            callback=lambda: self.addButton.setDisabled(
-                self.selectedTitles == list()),
-            tooltip="The list of titles whose content will be imported",
-        )
-        self.titleListbox.setMinimumHeight(150)
-        self.titleListbox.setSelectionMode(3)
+self.titleListbox = gui.listBox(
+        widget=queryBox,
+        master=self,
+        value="selectedTitles",  # setting (list)
+        labels="titleLabels",  # setting (list)
+        callback=lambda: self.addButton.setDisabled(
+            self.selectedTitles == list()),
+        tooltip="The list of titles whose content will be imported",
+    )
+self.titleListbox.setMinimumHeight(150)
+self.titleListbox.setSelectionMode(3)
 
 
 if __name__ == "__main__":
