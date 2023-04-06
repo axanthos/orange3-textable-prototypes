@@ -115,74 +115,72 @@ class LyricsGenius(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search songs",
+            box="Search Law text",
             orientation="vertical",
         )
         # Allows to enter specific text to the research
-        #  Uses "newQuery" attribut
-        gui.lineEdit(
-            widget=queryBox,
-            master=self,
-            value='newQuery',
-            orientation='horizontal',
-            label=u"Query: ",
-            labelWidth=120,
-            tooltip=("Enter a string"),
-        )
-
-        # Allows to choose the wanted results numberp (10 by 10)
+        # Allows to choose the law document
         queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
             value="nbr_results",
             items=[
-                "10",
-                "20",
-                "30",
-                "40",
-                "50",
-                "60",
-                "70",
-                "80",
-                "90",
-                "100",
+                "text1",
+                "text2",
+                "text3",
+                "text4",
+                "text5",
+                "text6",
             ],
             sendSelectedValue=True,
             orientation="horizontal",
-            label="Number of results: ",
+            label="Law Document :",
             labelWidth=120,
             tooltip=(
                 "Please select the desired search.\n"
             ),
         )
 
-        # Reasearch button
-        # Uses "searchFunction" attribut
-        self.searchButton = gui.button(
+        # Allows to choose the segmentation
+        queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
-            label="Search",
-            callback=self.searchFunction,
-            tooltip="Connect Genius and make a research",
+            value="nbr_results",
+            items=[
+                "Segment into Title",
+                "Segment into Chapter",
+                "Segment into Article",
+                "No Segmentation",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Segmentation",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
         )
-        self.titleListbox = gui.listBox(
-            widget=queryBox,
-            master=self,
-            value="selectedTitles",    # setting (list)
-            labels="titleLabels",      # setting (list)
-            callback=lambda: self.addButton.setDisabled(
-                self.selectedTitles == list()),
-            tooltip="The list of titles whose content will be imported",
-        )
-        self.titleListbox.setMinimumHeight(150)
-        self.titleListbox.setSelectionMode(3)
 
-        boxbutton = gui.widgetBox(
+        # Allows to choose the language
+        queryNbr = gui.comboBox(
             widget=queryBox,
-            box=False,
-            orientation='horizontal',
+            master=self,
+            value="nbr_results",
+            items=[
+                "FR",
+                "DE",
+                "IT",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Language",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired Language.\n"
+            ),
         )
-        # Add songs button
+
+        # Add Law texts button
         self.addButton = gui.button(
             widget=boxbutton,
             master=self,
@@ -194,19 +192,7 @@ class LyricsGenius(OWTextableBaseWidget):
         )
         self.addButton.setDisabled(True)
 
-        # Clear button
-        # Uses "clearResults" function
-        self.clearButton = gui.button(
-            widget=boxbutton,
-            master=self,
-            label="Clear results",
-            callback=self.clearResults,
-            tooltip="Clear results",
-        )
-        self.clearButton.setDisabled(True)
-        gui.separator(widget=queryBox, height=3)
-
-        # area where confirmed songs are moved and stocked
+        # Corpus = area where confirmed law texts are moved and stocked
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
@@ -230,7 +216,7 @@ class LyricsGenius(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Remove songs button
+        # Remove law texts button
         self.removeButton = gui.button(
             widget=boxbutton2,
             master=self,
@@ -242,7 +228,7 @@ class LyricsGenius(OWTextableBaseWidget):
         )
         self.removeButton.setDisabled(True)
 
-        # Delete all confirmed songs button
+        # Delete all confirmed law texts button
         self.clearmyBasket = gui.button(
             widget=boxbutton2,
             master=self,
