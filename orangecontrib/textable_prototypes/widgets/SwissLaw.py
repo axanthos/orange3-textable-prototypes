@@ -44,7 +44,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
-class LyricsGenius(OWTextableBaseWidget):
+class SwissLaw(OWTextableBaseWidget):
     """Textable widget for importing Swiss law texts from
     https://www.fedlex.admin.ch/ (only the 21 most popular texts)
     """
