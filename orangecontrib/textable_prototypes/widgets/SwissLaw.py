@@ -147,10 +147,10 @@ class SwissLaw(OWTextableBaseWidget):
             master=self,
             value="nbr_results",
             items=[
+                "No Segmentation",
                 "Segment into Title",
                 "Segment into Chapter",
                 "Segment into Article",
-                "No Segmentation",
             ],
             sendSelectedValue=True,
             orientation="horizontal",
