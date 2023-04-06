@@ -524,10 +524,4 @@ class SwissLaw(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = LyricsGenius()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    WidgetPreview(SwissLaw).run()
