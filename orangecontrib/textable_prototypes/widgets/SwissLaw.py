@@ -252,7 +252,7 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Draw Info box and Send button
         self.sendButton.draw()
-        self.searchButton.setDefault(True)
+        #self.searchButton.setDefault(True)
         self.infoBox.draw()
 
         # Update the selections list
