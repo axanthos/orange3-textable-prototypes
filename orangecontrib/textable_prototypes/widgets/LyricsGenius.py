@@ -158,13 +158,13 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Reasearch button
         # Uses "searchFunction" attribut
-        #self.searchButton = gui.button(
-            #widget=queryBox,
-            #master=self,
-            #label="Search",
-            #callback=self.searchFunction,
-            #tooltip="Connect Genius and make a research",
-        #)
+        self.searchButton = gui.button(
+            widget=queryBox,
+            master=self,
+            label="Search",
+            callback=self.searchFunction,
+            tooltip="Connect Genius and make a research",
+        )
         self.titleListbox = gui.listBox(
             widget=queryBox,
             master=self,
@@ -260,7 +260,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
         # Draw Info box and Send button
         self.sendButton.draw()
-        #self.searchButton.setDefault(True)
+        self.searchButton.setDefault(True)
         self.infoBox.draw()
 
         # Update the selections list
