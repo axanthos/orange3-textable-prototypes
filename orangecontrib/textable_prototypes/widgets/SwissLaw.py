@@ -115,98 +115,90 @@ class SwissLaw(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search songs",
+            box="Search Law text",
             orientation="vertical",
         )
         # Allows to enter specific text to the research
-        #  Uses "newQuery" attribut
-        gui.lineEdit(
-            widget=queryBox,
-            master=self,
-            value='newQuery',
-            orientation='horizontal',
-            label=u"Query: ",
-            labelWidth=120,
-            tooltip=("Enter a string"),
-        )
-
-        # Allows to choose the wanted results numberp (10 by 10)
+        # Allows to choose the law document
         queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
             value="nbr_results",
             items=[
-                "10",
-                "20",
-                "30",
-                "40",
-                "50",
-                "60",
-                "70",
-                "80",
-                "90",
-                "100",
+                "text1",
+                "text2",
+                "text3",
+                "text4",
+                "text5",
+                "text6",
             ],
             sendSelectedValue=True,
             orientation="horizontal",
-            label="Number of results: ",
+            label="Law Document :",
             labelWidth=120,
             tooltip=(
                 "Please select the desired search.\n"
             ),
         )
 
-        # Reasearch button
-        # Uses "searchFunction" attribut
-        self.searchButton = gui.button(
+        # Allows to choose the segmentation
+        queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
-            label="Search",
-            callback=self.searchFunction,
-            tooltip="Connect Genius and make a research",
+            value="nbr_results",
+            items=[
+                "No Segmentation",
+                "Segment into Title",
+                "Segment into Chapter",
+                "Segment into Article",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Segmentation",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired search.\n"
+            ),
         )
-        self.titleListbox = gui.listBox(
+
+        # Allows to choose the language
+        queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
-            value="selectedTitles",    # setting (list)
-            labels="titleLabels",      # setting (list)
-            callback=lambda: self.addButton.setDisabled(
-                self.selectedTitles == list()),
-            tooltip="The list of titles whose content will be imported",
+            value="nbr_results",
+            items=[
+                "FR",
+                "DE",
+                "IT",
+            ],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Language",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired Language.\n"
+            ),
         )
-        self.titleListbox.setMinimumHeight(150)
-        self.titleListbox.setSelectionMode(3)
 
         boxbutton = gui.widgetBox(
             widget=queryBox,
             box=False,
             orientation='horizontal',
         )
-        # Add songs button
+
+        # Add Law texts button
         self.addButton = gui.button(
             widget=boxbutton,
             master=self,
             label=u'Add to corpus',
             callback=self.add,
             tooltip=(
-                u"Move the selected song downward in your corpus."
+                u"Move the selected text downward in your corpus."
             ),
         )
         self.addButton.setDisabled(True)
 
-        # Clear button
-        # Uses "clearResults" function
-        self.clearButton = gui.button(
-            widget=boxbutton,
-            master=self,
-            label="Clear results",
-            callback=self.clearResults,
-            tooltip="Clear results",
-        )
-        self.clearButton.setDisabled(True)
-        gui.separator(widget=queryBox, height=3)
-
-        # area where confirmed songs are moved and stocked
+        # Corpus = area where confirmed law texts are moved and stocked
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
@@ -230,26 +222,26 @@ class SwissLaw(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Remove songs button
+        # Remove law texts button
         self.removeButton = gui.button(
             widget=boxbutton2,
             master=self,
             label=u'Remove from corpus',
             callback=self.remove,
             tooltip=(
-                u"Remove the selected song from your corpus."
+                u"Remove the selected text from your corpus."
             ),
         )
         self.removeButton.setDisabled(True)
 
-        # Delete all confirmed songs button
+        # Delete all confirmed law texts button
         self.clearmyBasket = gui.button(
             widget=boxbutton2,
             master=self,
             label=u'Clear corpus',
             callback=self.clearmyBasket,
             tooltip=(
-                u"Remove all songs from your corpus."
+                u"Remove all texts from your corpus."
             ),
         )
         self.clearmyBasket.setDisabled(True)
@@ -260,7 +252,6 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Draw Info box and Send button
         self.sendButton.draw()
-        self.searchButton.setDefault(True)
         self.infoBox.draw()
 
         # Update the selections list
@@ -380,9 +371,9 @@ class SwissLaw(OWTextableBaseWidget):
         self.addButton.setDisabled(self.titleLabels == list())
 
 
-    # Add songs function
+    # Add texts function
     def add(self):
-        """Add songs in your selection """
+        """Add text in your selection """
         for selectedTitle in self.selectedTitles:
             songData = self.searchResults[selectedTitle+1]
             if songData not in self.myBasket:
@@ -405,7 +396,7 @@ class SwissLaw(OWTextableBaseWidget):
 
     # fonction qui retire la selection de notre panier
     def remove(self):
-        """Remove the selected songs in your selection """
+        """Remove the selected text in your selection """
         self.myBasket = [
             song for idx, song in enumerate(self.myBasket)
             if idx not in self.myTitles
@@ -416,7 +407,7 @@ class SwissLaw(OWTextableBaseWidget):
 
     # Clear selections function
     def clearmyBasket(self):
-        """Remove all songs in your selection """
+        """Remove all texts in your selection """
         self.mytitleLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
@@ -429,7 +420,7 @@ class SwissLaw(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty, please add some songs first",
+                "Your corpus is empty,  please add some law texts first",
                 "warning"
             )
             return
@@ -533,10 +524,4 @@ class SwissLaw(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = LyricsGenius()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    WidgetPreview(SwissLaw).run()
