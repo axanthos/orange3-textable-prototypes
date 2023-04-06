@@ -20,7 +20,7 @@ along with Orange-Textable-Prototypes. If not, see
 """
 
 __version__ = u"0.0.3"
-__author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
+__author__ = "Elijah Green, Thomas Rywalski, Samantha Allendes Bravo, Antoine Vigand"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
@@ -45,15 +45,15 @@ from _textable.widgets.TextableUtils import (
 )
 
 class LyricsGenius(OWTextableBaseWidget):
-    """Textable widget for importing JSON data from the website Genius
-    (https://genius.com/)
+    """Textable widget for importing Swiss law texts from
+    https://www.fedlex.admin.ch/ (only the 21 most popular texts)
     """
 
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Lyrics Genius"
-    description = "Lyrics importation"
+    name = "Swiss Law"
+    description = "Swiss law texts importation"
     icon = "icons/LyricsGenius.svg"
     priority = 10
 
