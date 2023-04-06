@@ -180,6 +180,12 @@ class SwissLaw(OWTextableBaseWidget):
             ),
         )
 
+        boxbutton = gui.widgetBox(
+            widget=queryBox,
+            box=False,
+            orientation='horizontal',
+        )
+
         # Add Law texts button
         self.addButton = gui.button(
             widget=boxbutton,
