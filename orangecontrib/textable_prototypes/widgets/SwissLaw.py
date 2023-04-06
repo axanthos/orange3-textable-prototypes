@@ -420,7 +420,7 @@ class SwissLaw(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty, please add some law texts first",
+                "Your corpus is empty,  please add some law texts first",
                 "warning"
             )
             return
