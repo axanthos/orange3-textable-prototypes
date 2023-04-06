@@ -54,7 +54,7 @@ class SwissLaw(OWTextableBaseWidget):
 
     name = "Swiss Law"
     description = "Swiss law texts importation"
-    icon = "icons/LyricsGenius.svg"
+    icon = "icons/balance-de-la-justice.png"
     priority = 10
 
     #----------------------------------------------------------------------
