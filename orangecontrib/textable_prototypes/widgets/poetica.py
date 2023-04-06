@@ -44,6 +44,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+
 class Poetica(OWTextableBaseWidget):
     """Textable widget for importing JSON data from the website Genius
     (https://genius.com/)
@@ -563,4 +565,4 @@ class Poetica(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    WidgetPreview(LyricsGenius).run()
+    WidgetPreview(Poetica).run()
