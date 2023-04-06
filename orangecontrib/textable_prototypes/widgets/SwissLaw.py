@@ -193,7 +193,7 @@ class SwissLaw(OWTextableBaseWidget):
             label=u'Add to corpus',
             callback=self.add,
             tooltip=(
-                u"Move the selected song downward in your corpus."
+                u"Move the selected text downward in your corpus."
             ),
         )
         self.addButton.setDisabled(True)
@@ -229,7 +229,7 @@ class SwissLaw(OWTextableBaseWidget):
             label=u'Remove from corpus',
             callback=self.remove,
             tooltip=(
-                u"Remove the selected song from your corpus."
+                u"Remove the selected text from your corpus."
             ),
         )
         self.removeButton.setDisabled(True)
@@ -241,7 +241,7 @@ class SwissLaw(OWTextableBaseWidget):
             label=u'Clear corpus',
             callback=self.clearmyBasket,
             tooltip=(
-                u"Remove all songs from your corpus."
+                u"Remove all texts from your corpus."
             ),
         )
         self.clearmyBasket.setDisabled(True)
@@ -371,9 +371,9 @@ class SwissLaw(OWTextableBaseWidget):
         self.addButton.setDisabled(self.titleLabels == list())
 
 
-    # Add songs function
+    # Add texts function
     def add(self):
-        """Add songs in your selection """
+        """Add text in your selection """
         for selectedTitle in self.selectedTitles:
             songData = self.searchResults[selectedTitle+1]
             if songData not in self.myBasket:
@@ -396,7 +396,7 @@ class SwissLaw(OWTextableBaseWidget):
 
     # fonction qui retire la selection de notre panier
     def remove(self):
-        """Remove the selected songs in your selection """
+        """Remove the selected text in your selection """
         self.myBasket = [
             song for idx, song in enumerate(self.myBasket)
             if idx not in self.myTitles
@@ -407,7 +407,7 @@ class SwissLaw(OWTextableBaseWidget):
 
     # Clear selections function
     def clearmyBasket(self):
-        """Remove all songs in your selection """
+        """Remove all texts in your selection """
         self.mytitleLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
@@ -420,7 +420,7 @@ class SwissLaw(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty, please add some songs first",
+                "Your corpus is empty, please add some law texts first",
                 "warning"
             )
             return
