@@ -405,7 +405,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.addButton.setDisabled(self.documentLabels == list())
 
     # update AddButton function
-    def update_addButton(selfself):
+    def update_addButton(self):
         self.addButton.setDisabled(len(self.selectedDocument) == 0)
 
     # Add documents function
