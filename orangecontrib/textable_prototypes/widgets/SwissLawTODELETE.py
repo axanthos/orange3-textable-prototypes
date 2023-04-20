@@ -1,11 +1,13 @@
 import csv
 from urllib.request import urlopen
 import requests
-from LTTL.input import input
-import LTTL.segmenter as segmenter
+from LTTL.Input import Input
+import LTTL.Segmenter as Segmenter
 
 documents = [(2,0,0),
-             (3,0,0)]
+             (3,0,0),
+             (7,0,0)
+             ]
 
 with open('DroitCH.csv', 'r') as file:
     reader = csv.reader(file)
@@ -80,5 +82,11 @@ def get_xml_contents(urls):
     return xml_contents
 
 xml_contents = get_xml_contents(elements2)
-print(xml_contents)
+#print(xml_contents)
 
+created_inputs = []
+for item in xml_contents:
+    created_inputs.append(Input(item))
+
+output_seg = Segmenter.concatenate(created_inputs, import_labels_as=None)
+print(output_seg.to_string())
