@@ -163,7 +163,7 @@ class SwissLaw(OWTextableBaseWidget):
         queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
-            value="document",
+            value="selectedDocument",
             items=self.database["law_text"],
             sendSelectedValue=True,
             callback=self.update_addButton,
@@ -447,6 +447,13 @@ class SwissLaw(OWTextableBaseWidget):
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
 
+    def get_xml_contents(self, urls):
+        xml_contents = []
+        for url in urls:
+            response = requests.get(url)
+            xml_content = response.content.decode('utf-8')
+            xml_contents.append(xml_content)
+        return xml_contents
 
     # Function computing results then sending them to the widget output
     def sendData(self):
@@ -454,7 +461,7 @@ class SwissLaw(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty,  please add some law texts first",
+                "Your corpus is empty, please add some law texts first",
                 "warning"
             )
             return
@@ -471,35 +478,11 @@ class SwissLaw(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-        # Attempt to connect to Genius and retrieve lyrics...
-        selectedSongs = list()
-        song_content = list()
-        annotations = list()
-        try:
-            for song in self.myBasket:
-                # song is a dict {'idx1':{'title':'song1'...},
-                # 'idx2':{'title':'song2'...}}
-                page_url = "http://genius.com" + song['path']
-                lyrics = self.html_to_text(page_url)
-                song_content.append(lyrics)
-                annotations.append(song.copy())
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
-
-        # If an error occurs (e.g. http error, or memory error)...
-        except:
-            # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't download data from Genius website.",
-                "error"
-            )
-            self.controlArea.setDisabled(False)
-            return
-
-        # Store downloaded lyrics strings in input objects...
-        for song in song_content:
-            newInput = Input(song, self.captionTitle)
-            self.createdInputs.append(newInput)
+        #Get the xml link
+        for item in myBasket:
+            content = self.get_xml_contents(self.database["url_fr"][item[0]])
+            self.created_inputs.append(Input(item))
+            progressBar.advance()
 
         # If there"s only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
@@ -514,9 +497,9 @@ class SwissLaw(OWTextableBaseWidget):
             )
 
         # Annotate segments...
-        for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update(annotations[idx])
-            self.segmentation[idx] = segment
+        #for idx, segment in enumerate(self.segmentation):
+            #segment.annotations.update(annotations[idx])
+            #self.segmentation[idx] = segment
 
         # Clear progress bar.
         progressBar.finish()
