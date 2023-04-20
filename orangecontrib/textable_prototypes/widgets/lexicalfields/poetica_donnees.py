@@ -26,21 +26,21 @@ def main():
         condition = dict()
         condition["id"]=re.compile(r"^menu-poemes-par-auteur$")
         xml_auteurs = Segmenter.import_xml(
-            segmentation = base_seg,
-            element = "<ul>",
+            segmentation=base_seg,
+            element="<ul>",
             conditions=condition,
         )
 
         # Recuperer le lien url vers la page de chaque auteur...
         xml_par_auteur = Segmenter.import_xml(
-            segmentation = xml_auteurs,
-            element = "<a>",
+            segmentation=xml_auteurs,
+            element="<a>",
         )
 
 
         # Acceder a la page de chaque auteur...
         for auteur in xml_par_auteur[:3]:
-            try :
+            try:
                 url_page_auteur = auteur.annotations["href"]
                 url_auteur = urlopen(url_page_auteur)
                 page_auteur = url_auteur.read()
@@ -60,20 +60,20 @@ def main():
                 condition_auteur = dict()
                 condition_auteur["class"]=re.compile(r"^entry-header$")
                 xml_poemes = Segmenter.import_xml(
-                    segmentation = seg_auteurs,
-                    element = "<header>",
+                    segmentation=seg_auteurs,
+                    element="<header>",
                     conditions=condition_auteur,
                 )
 
                 # Recuperer le lien url vers la page de chaque poeme...
                 xml_par_poeme = Segmenter.import_xml(
-                    segmentation = xml_poemes,
-                    element = "<a>",
+                    segmentation=xml_poemes,
+                    element="<a>",
                 )
 
                 # Acceder a la page de chaque poeme...
                 for poeme in xml_par_poeme[:3]:
-                    try :
+                    try:
                         url_page_poeme = poeme.annotations["href"]
                         url_poeme = urlopen(url_page_poeme)
                         page_poeme = url_poeme.read()
@@ -85,8 +85,8 @@ def main():
                         condition_poeme = dict()
                         condition_poeme["class"]=re.compile(r"^entry-content$")
                         xml_contenu_poeme = Segmenter.import_xml(
-                            segmentation = seg_poemes,
-                            element = "<div>",
+                            segmentation=seg_poemes,
+                            element="<div>",
                             conditions=condition_poeme,
                         )
 
