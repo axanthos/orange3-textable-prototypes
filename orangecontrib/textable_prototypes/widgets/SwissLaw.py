@@ -83,6 +83,10 @@ class SwissLaw(OWTextableBaseWidget):
     autoSend = settings.Setting(True)
     myBasket = settings.Setting([])
 
+#Note débug jeudi 20 Avril 14h14:
+#J'ai changé: ligne 142 -> avant la valeur était = None (bug), j'ai remplacé None par ""
+            # ligne 134 -> j'ai remis self.nbr_results = 10 (utilisé dans queryNbr2 et 3 pour values, à voir ce qu'il faut qu'on mette
+            # ligne 297 -> self.updateMyDocumentsLabels() en commentaire car pas défini (doit être défini comme méthode (fonction), voir lyricsgenius avec updatemytitleslabel
     def __init__(self):
         """Widget creator."""
 
@@ -128,6 +132,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.inputSeg = None
         # newQuery = attribut box lineEdit (search something)
         self.newQuery = ''
+        self.nbr_results = 10
         # Results box attributs
         self.documentLabels = list()
         # selections box attributs
@@ -136,7 +141,7 @@ class SwissLaw(OWTextableBaseWidget):
         # stock all the inputs (songs) in a list
         self.createdInputs = list()
         # list for each law document (tuples)
-        self.selectedDocument = None
+        self.selectedDocument = ""
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -289,7 +294,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.infoBox.draw()
 
         # Update the selections list
-        self.updateMyDocumentsLabels()
+        #self.updateMyDocumentsLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
