@@ -176,7 +176,7 @@ class SwissLaw(OWTextableBaseWidget):
         )
 
         # Allows to choose the segmentation
-        queryNbr = gui.comboBox(
+        queryNbr2 = gui.comboBox(
             widget=queryBox,
             master=self,
             value="nbr_results",
@@ -196,7 +196,7 @@ class SwissLaw(OWTextableBaseWidget):
         )
 
         # Allows to choose the language
-        queryNbr = gui.comboBox(
+        queryNbr3 = gui.comboBox(
             widget=queryBox,
             master=self,
             value="nbr_results",
