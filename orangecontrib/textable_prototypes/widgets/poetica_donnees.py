@@ -85,6 +85,10 @@ def main():
                         page_poeme = url_poeme.read()
                         print("Valid poem's URL")
                         page_poeme = page_poeme.decode("utf-8")
+
+                        # Recuperer le nom du poeme.
+                        nom_poeme = poeme.get_content()
+                        print(nom_poeme)
                 
                         # Extraire les poeme et ses donnees...
                         seg_poemes = Input(page_poeme)
@@ -106,7 +110,7 @@ def main():
                         poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
                         poeme = re.sub(r".+$", "", poeme)
                         #print(poeme)
-                        #database["title"][url_page_poeme] =
+                        database["title"][url_page_poeme] = nom_poeme
                         database["author"][url_page_poeme] = nom_auteur
 
                     # Avertir si l'url ne fonctionne pas...
