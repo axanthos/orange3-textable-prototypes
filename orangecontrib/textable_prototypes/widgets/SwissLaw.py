@@ -24,6 +24,8 @@ __author__ = "Elijah Green, Thomas Rywalski, Samantha Allendes Bravo, Antoine Vi
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
+from typing import List, Any
+
 from Orange.widgets import widget, gui, settings
 
 from LTTL.Segmentation import Segmentation
@@ -53,7 +55,7 @@ class SwissLaw(OWTextableBaseWidget):
     # Widget's metadata...
 
     name = "Swiss Law"
-    description = "Swiss law texts importation"
+    description = "Swiss Law Documents importation"
     icon = "icons/balance-de-la-justice.png"
     priority = 10
 
@@ -61,7 +63,7 @@ class SwissLaw(OWTextableBaseWidget):
     # Channel definitions...
 
     inputs = []
-    outputs = [("Lyrics importation", Segmentation)]
+    outputs = [("Law Documents importation", Segmentation)]
 
     #----------------------------------------------------------------------
     # Layout parameters...
@@ -90,15 +92,15 @@ class SwissLaw(OWTextableBaseWidget):
         self.inputSeg = None
         # newQuery = attribut box lineEdit (search something)
         self.newQuery = ''
-        self.nbr_results = 10
         # Results box attributs
-        self.titleLabels = list()
-        self.selectedTitles = list()
+        self.documentLabels = list()
         # selections box attributs
-        self.myTitles = list()
-        self.mytitleLabels = list()
+        self.myDocuments = list()
+        self.mydocumentLabels = list()
         # stock all the inputs (songs) in a list
         self.createdInputs = list()
+        # list for each law document (tuples)
+        self.selectedDocument = None
 
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
@@ -115,7 +117,7 @@ class SwissLaw(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search Law text",
+            box="Search Law Document",
             orientation="vertical",
         )
         # Allows to enter specific text to the research
@@ -123,7 +125,7 @@ class SwissLaw(OWTextableBaseWidget):
         queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
-            value="nbr_results",
+            value="document",
             items=[
                 "text1",
                 "text2",
@@ -133,6 +135,7 @@ class SwissLaw(OWTextableBaseWidget):
                 "text6",
             ],
             sendSelectedValue=True,
+            callback=self.update_addButton,
             orientation="horizontal",
             label="Law Document :",
             labelWidth=120,
@@ -148,9 +151,9 @@ class SwissLaw(OWTextableBaseWidget):
             value="nbr_results",
             items=[
                 "No Segmentation",
-                "Segment into Title",
-                "Segment into Chapter",
-                "Segment into Article",
+                "Into Title",
+                "Into Chapter",
+                "Into Article",
             ],
             sendSelectedValue=True,
             orientation="horizontal",
@@ -208,10 +211,10 @@ class SwissLaw(OWTextableBaseWidget):
         self.mytitleListbox = gui.listBox(
             widget=mytitleBox,
             master=self,
-            value="myTitles",
-            labels="mytitleLabels",
+            value="myDocuments",
+            labels="mydocumentLabels",
             callback=lambda: self.removeButton.setDisabled(
-                self.myTitles == list()),
+                self.myDocuments == list()),
             tooltip="The list of titles whose content will be imported",
         )
         self.mytitleListbox.setMinimumHeight(150)
@@ -255,7 +258,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.infoBox.draw()
 
         # Update the selections list
-        self.updateMytitleLabels()
+        self.updateMyDocumentsLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -308,18 +311,18 @@ class SwissLaw(OWTextableBaseWidget):
             self.searchResults = result_list
 
             # Reset and clear the visible widget list
-            del self.titleLabels[:]
+            del self.documentLabels[:]
 
             # Update the results list with the search results
             # in order to display them
             for idx in self.searchResults:
                 result_string = self.searchResults[idx]["title"] + " - " + \
                                 self.searchResults[idx]["artist"]
-                self.titleLabels.append(result_string)
+                self.documentLabels.append(result_string)
 
-            self.titleLabels = self.titleLabels
+            self.documentLabels = self.documentLabels
             self.clearButton.setDisabled(False)
-            self.addButton.setDisabled(self.selectedTitles == list())
+            self.addButton.setDisabled(self.selectedDocument == list())
 
 
             # Clear progress bar.
@@ -365,33 +368,33 @@ class SwissLaw(OWTextableBaseWidget):
     # Function clearing the results list
     def clearResults(self):
         """Clear the results list"""
-        del self.titleLabels[:]
-        self.titleLabels = self.titleLabels
+        del self.documentLabels[:]
+        self.documentLabels = self.titleLabels
         self.clearButton.setDisabled(True)
-        self.addButton.setDisabled(self.titleLabels == list())
+        self.addButton.setDisabled(self.documentLabels == list())
 
+    # update AddButton function
+    def update_addButton(selfself):
+        self.addButton.setDisabled(len(self.selectedDocument) == 0)
 
-    # Add texts function
+    # Add documents function
     def add(self):
-        """Add text in your selection """
-        for selectedTitle in self.selectedTitles:
-            songData = self.searchResults[selectedTitle+1]
-            if songData not in self.myBasket:
-                self.myBasket.append(songData)
-        self.updateMytitleLabels()
+        """Add document in your selection """
+        self.myBasket.append((self.selectedDocument,0,0))
+        self.updateMyDocumentLabels()
         self.sendButton.settingsChanged()
 
 
     # Update selections function
-    def updateMytitleLabels(self):
-        self.mytitleLabels = list()
-        for songData in self.myBasket:
-            result_string = songData["title"] + " - " + songData["artist"]
-            self.mytitleLabels.append(result_string)
-        self.mytitleLabels = self.mytitleLabels
+    def updateMyDocumentLabels(self):
+        self.mydocumentLabels = list()
+        for lawData in self.myBasket:
+            result_string = lawData["title"] + " - " + lawData["artist"]
+            self.mydocumentLabels.append(result_string)
+        self.mydocumentLabels = self.mytitleLabels
 
         self.clearmyBasket.setDisabled(self.myBasket == list())
-        self.removeButton.setDisabled(self.myTitles == list())
+        self.removeButton.setDisabled(self.myDocuments == list())
 
 
     # fonction qui retire la selection de notre panier
@@ -399,16 +402,16 @@ class SwissLaw(OWTextableBaseWidget):
         """Remove the selected text in your selection """
         self.myBasket = [
             song for idx, song in enumerate(self.myBasket)
-            if idx not in self.myTitles
+            if idx not in self.myDocuments
         ]
-        self.updateMytitleLabels()
+        self.updateMyDocumentLabels()Labels()
         self.sendButton.settingsChanged()
 
 
     # Clear selections function
     def clearmyBasket(self):
         """Remove all texts in your selection """
-        self.mytitleLabels = list()
+        self.mydocumentLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
