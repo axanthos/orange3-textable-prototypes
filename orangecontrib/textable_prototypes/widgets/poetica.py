@@ -1,6 +1,6 @@
 """
-Class LyricsGenius
-Copyright 2018-2019 University of Lausanne
+Class Poetica
+Copyright 2023 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.1"
 __author__ = "Sinem Kilic, Laure Margot, Leonie Nussbaum, Olivia Verbrugge"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -44,11 +44,9 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
-from Orange.widgets.utils.widgetpreview import WidgetPreview
-
 class Poetica(OWTextableBaseWidget):
-    """Textable widget for importing JSON data from the website Genius
-    (https://genius.com/)
+    """Textable widget for importing XML data from the website Poetica
+    (https://poetica.fr/)
     """
 
     #----------------------------------------------------------------------
@@ -56,7 +54,7 @@ class Poetica(OWTextableBaseWidget):
 
     name = "Poetica"
     description = "Poems importation from poetica.fr"
-    #icon = ""
+    icon = "icons/Poetica.svg"
     priority = 10
 
     #----------------------------------------------------------------------
@@ -78,7 +76,7 @@ class Poetica(OWTextableBaseWidget):
     )
 
     # Saved settings
-    autoSend = settings.Setting(False)
+    autoSend = settings.Setting(True)
     myBasket = settings.Setting([])
 
     def __init__(self):
@@ -97,10 +95,10 @@ class Poetica(OWTextableBaseWidget):
         # Results box attributs
         self.poemLabels = list()
         self.selectedPoems = list()
-        # selections box attributs
+        # Corpus box attributs
         self.corpusItems = list()
-        self.corpusItemLabels = list()
-        # stock all the inputs (songs) in a list
+        self.corpusItemsLabels = list()
+        # Stocks all the inputs (poems) in a list
         self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -121,447 +119,436 @@ class Poetica(OWTextableBaseWidget):
             box="Search poems",
             orientation="vertical",
         )
-        # Allows to enter specific text to the research
+        # Allows to select an author in a list
         #  Uses "authorQuery" attribut
-        # gui.lineEdit(
-        #     widget=queryBox,
-        #     master=self,
-        #     value='authorQuery',
-        #     orientation='horizontal',
-        #     label=u"Query: ",
-        #     labelWidth=120,
-        #     tooltip=("Enter a string"),
-        # )
-
-        # Allows to choose the wanted results numberp (10 by 10)
-        self.authorComboBox = gui.comboBox(
+        gui.comboBox(
             widget=queryBox,
             master=self,
-            value= "authorQuery",
-            items=["AUTEUR 1", "AUTEUR 2"],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Author",
+            value='authorQuery',
+            items=[
+                "author1",
+            ],
+            orientation='horizontal',
+            label=u"Author Query: ",
             labelWidth=120,
-            tooltip=(
-                "Please select an author.\n"
-            ),
+            tooltip=("Select an author"),
         )
 
-        self.dateComboBox = gui.comboBox(
+        # Allows to select a date in a list
+        #  Uses "dateQuery" attribut
+        gui.comboBox(
             widget=queryBox,
             master=self,
-            value="dateQuery",
-            items=["1800", "1900"],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Date",
+            value='dateQuery',
+            items=[
+                "1700",
+            ],
+            orientation='horizontal',
+            label=u"Date Query: ",
             labelWidth=120,
-            tooltip=(
-                "Please select a decade.\n"
-            ),
+            tooltip=("Select date"),
         )
 
-        self.topicComboBox = gui.comboBox(
+        # Allows to select a topic in a list
+        #  Uses "topicQuery" attribut
+        gui.comboBox(
             widget=queryBox,
             master=self,
-            value="topicQuery",
-            items=["Nature", "Love"],
-            sendSelectedValue=True,
-            orientation="horizontal",
-            label="Topic",
+            value='topicQuery',
+            items=[
+                "amour",
+                "amitié"
+            ],
+            orientation='horizontal',
+            label=u"Topic Query: ",
             labelWidth=120,
-            tooltip=(
-                "Please select a topic.\n"
-            ),
+            tooltip=("Select topic"),
         )
 
-        queryButtonBox = gui.widgetBox(
-           widget=queryBox,
-           box=False,
-           orientation="horizontal",
-        )
-
-        self.refreshButton = gui.button(
-            widget=queryButtonBox,
-            master=self,
-            label="Refresh",
-            #callback=self.searchFunction,
-            tooltip="Attention cela peut prendre un peu de temps !",
-        )
-
+        # Research button
+        # Uses "searchFunction" attribut
         self.searchButton = gui.button(
-            widget=queryButtonBox,
+            widget=queryBox,
             master=self,
             label="Search",
-            #callback=self.searchFunction,
-            tooltip="",
+            callback=self.searchFunction,
+            tooltip="Connecter Poetica et effectuer une recherche",
         )
-    #     self.titleListbox = gui.listBox(
-    #         widget=queryBox,
-    #         master=self,
-    #         value="selectedPoems",    # setting (list)
-    #         labels="poemLabels",      # setting (list)
-    #         callback=lambda: self.addButton.setDisabled(
-    #             self.selectedPoems == list()),
-    #         tooltip="The list of titles whose content will be imported",
-    #     )
-    #     # self.titleListbox.setMinimumHeight(150)
-    #     # self.titleListbox.setSelectionMode(3)
-    #
-    #     boxbutton = gui.widgetBox(
-    #         widget=queryBox,
-    #         box=False,
-    #         orientation='horizontal',
-    #     )
-    #     # Add songs button
-    #     self.addButton = gui.button(
-    #         widget=boxbutton,
-    #         master=self,
-    #         label=u'Add to corpus',
-    #         callback=self.add,
-    #         tooltip=(
-    #             u"Move the selected song downward in your corpus."
-    #         ),
-    #     )
-    #     self.addButton.setDisabled(True)
-    #
-    #     # Clear button
-    #     # Uses "clearResults" function
-    #     self.clearButton = gui.button(
-    #         widget=boxbutton,
-    #         master=self,
-    #         label="Clear results",
-    #         callback=self.clearResults,
-    #         tooltip="Clear results",
-    #     )
-    #     self.clearButton.setDisabled(True)
-    #     gui.separator(widget=queryBox, height=3)
-    #
-    #     # area where confirmed songs are moved and stocked
-    #     mytitleBox = gui.widgetBox(
-    #         widget=self.controlArea,
-    #         box="Corpus",
-    #         orientation="vertical",
-    #     )
-    #
-    #     self.mytitleListbox = gui.listBox(
-    #         widget=mytitleBox,
-    #         master=self,
-    #         value="corpusItems",
-    #         labels="corpusItemLabels",
-    #         callback=lambda: self.removeButton.setDisabled(
-    #             self.corpusItems == list()),
-    #         tooltip="The list of titles whose content will be imported",
-    #     )
-    #     self.mytitleListbox.setMinimumHeight(150)
-    #     self.mytitleListbox.setSelectionMode(3)
-    #
-    #     boxbutton2 = gui.widgetBox(
-    #         widget=mytitleBox,
-    #         box=False,
-    #         orientation='horizontal',
-    #     )
-    #     # Remove songs button
-    #     self.removeButton = gui.button(
-    #         widget=boxbutton2,
-    #         master=self,
-    #         label=u'Remove from corpus',
-    #         callback=self.remove,
-    #         tooltip=(
-    #             u"Remove the selected song from your corpus."
-    #         ),
-    #     )
-    #     self.removeButton.setDisabled(True)
-    #
-    #     # Delete all confirmed songs button
-    #     self.clearmyBasket = gui.button(
-    #         widget=boxbutton2,
-    #         master=self,
-    #         label=u'Clear corpus',
-    #         callback=self.clearmyBasket,
-    #         tooltip=(
-    #             u"Remove all songs from your corpus."
-    #         ),
-    #     )
-    #     self.clearmyBasket.setDisabled(True)
-    #
-    #     gui.separator(widget=mytitleBox, height=3)
-    #     gui.rubber(self.controlArea)
-    #     #----------------------------------------------------------------------
-    #
-    #     # Draw Info box and Send button
-    #     self.sendButton.draw()
-    #     self.searchButton.setDefault(True)
-    #     self.infoBox.draw()
-    #
-    #     # Update the selections list
-    #     self.updateMytitleLabels()
-    #
-    #     # Send data if autoSend.
-    #     self.sendButton.sendIf()
-    #
-    #
-    # # Search function which contacts the Genius API
-    # def searchFunction(self):
-    #     """Search from website Genius"""
-    #
-    #     result_list = {}
-    #     query_string = self.authorQuery
-    #
-    #     if query_string != "":
-    #         page = 1
-    #         page_max = int(self.nbr_results)/10
-    #         result_id = 0
-    #         result_artist = []
-    #
-    #         self.controlArea.setDisabled(True)
-    #
-    #         # Initialize progress bar.
-    #         progressBar = ProgressBar(
-    #             self,
-    #             iterations=page_max
-    #         )
-    #
-    #         while page <= page_max:
-    #             values = {'q':query_string, 'page':page}
-    #             data = urllib.parse.urlencode(values)
-    #             query_url = 'http://api.genius.com/search?' + data
-    #             json_obj = self.url_request(query_url)
-    #             body = json_obj["response"]["hits"]
-    #
-    #             # Each result is stored in a dictionnary with its title,
-    #             # artist's name, artist's ID and URL path
-    #             for result in body:
-    #                 result_id += 1
-    #                 title = result["result"]["title"]
-    #                 artist = result["result"]["primary_artist"]["name"]
-    #                 artist_id = result["result"]["primary_artist"]["id"]
-    #                 path = result["result"]["path"]
-    #                 result_list[result_id] = {'artist': artist,
-    #                                           'artist_id':artist_id,
-    #                                           'path':path, 'title':title}
-    #             page += 1
-    #
-    #             # 1 tick on the progress bar of the widget
-    #             progressBar.advance()
-    #         # Stored the results list in the "result_list" variable
-    #         self.searchResults = result_list
-    #
-    #         # Reset and clear the visible widget list
-    #         del self.poemLabels[:]
-    #
-    #         # Update the results list with the search results
-    #         # in order to display them
-    #         for idx in self.searchResults:
-    #             result_string = self.searchResults[idx]["title"] + " - " + \
-    #                             self.searchResults[idx]["artist"]
-    #             self.poemLabels.append(result_string)
-    #
-    #         self.poemLabels = self.poemLabels
-    #         self.clearButton.setDisabled(False)
-    #         self.addButton.setDisabled(self.selectedPoems == list())
-    #
-    #
-    #         # Clear progress bar.
-    #         progressBar.finish()
-    #         self.controlArea.setDisabled(False)
-    #
-    #     else:
-    #         self.infoBox.setText("You didn't search anything", "warning")
-    #
-    #
-    # # Function contacting the Genius API and returning JSON objects
-    # def url_request(self, url):
-    #     """Opens a URL and returns it as a JSON object"""
-    #
-    #     # Token to use the Genius API. DO NOT CHANGE.
-    #     ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
-    #                    "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
-    #     USER_AGENT = "CompuServe Classic/1.22"
-    #
-    #     request = urllib.request.Request(url, headers={
-    #         "Authorization" : "Bearer " + ACCESS_TOKEN,
-    #         "User-Agent" : USER_AGENT
-    #         })
-    #     response = urllib.request.urlopen(request)
-    #     raw = response.read().decode('utf-8')
-    #     json_obj = json.loads(raw)
-    #     # retourne un objet json
-    #     return json_obj
-    #
-    # # Function converting HTML to string
-    # def html_to_text(self, page_url):
-    #     """Extracts the lyrics (as a string) of the html page"""
-    #
-    #     page = requests.get(page_url)
-    #     html = BeautifulSoup(page.text, "html.parser")
-    #     [h.extract() for h in html('script')]
-    #     lyrics = html.find("div", class_="lyrics").get_text()
-    #     lyrics.replace('\\n', '\n')
-    #     # return a string
-    #     return lyrics
-    #
-    #
-    # # Function clearing the results list
-    # def clearResults(self):
-    #     """Clear the results list"""
-    #     del self.poemLabels[:]
-    #     self.poemLabels = self.poemLabels
-    #     self.clearButton.setDisabled(True)
-    #     self.addButton.setDisabled(self.poemLabels == list())
-    #
-    #
-    # # Add songs function
-    # def add(self):
-    #     """Add songs in your selection """
-    #     for selectedTitle in self.selectedPoems:
-    #         songData = self.searchResults[selectedTitle+1]
-    #         if songData not in self.myBasket:
-    #             self.myBasket.append(songData)
-    #     self.updateMytitleLabels()
-    #     self.sendButton.settingsChanged()
-    #
-    #
-    # # Update selections function
-    # def updateMytitleLabels(self):
-    #     self.corpusItemLabels = list()
-    #     for songData in self.myBasket:
-    #         result_string = songData["title"] + " - " + songData["artist"]
-    #         self.corpusItemLabels.append(result_string)
-    #     self.corpusItemLabels = self.corpusItemLabels
-    #
-    #     self.clearmyBasket.setDisabled(self.myBasket == list())
-    #     self.removeButton.setDisabled(self.corpusItems == list())
-    #
-    #
-    # # fonction qui retire la selection de notre panier
-    # def remove(self):
-    #     """Remove the selected songs in your selection """
-    #     self.myBasket = [
-    #         song for idx, song in enumerate(self.myBasket)
-    #         if idx not in self.corpusItems
-    #     ]
-    #     self.updateMytitleLabels()
-    #     self.sendButton.settingsChanged()
-    #
-    #
-    # # Clear selections function
-    # def clearmyBasket(self):
-    #     """Remove all songs in your selection """
-    #     self.corpusItemLabels = list()
-    #     self.myBasket = list()
-    #     self.sendButton.settingsChanged()
-    #     self.clearmyBasket.setDisabled(True)
-    #
-    #
-    # # Function computing results then sending them to the widget output
-    # def sendData(self):
-    #     """Compute result of widget processing and send to output"""
-    #     # Skip if title list is empty:
-    #     if self.myBasket == list():
-    #         self.infoBox.setText(
-    #             "Your corpus is empty, please add some songs first",
-    #             "warning"
-    #         )
-    #         return
-    #
-    #
-    #     # Clear created Inputs.
-    #     self.clearCreatedInputs()
-    #
-    #     self.controlArea.setDisabled(True)
-    #
-    #     # Initialize progress bar.
-    #     progressBar = ProgressBar(
-    #         self,
-    #         iterations=len(self.myBasket)
-    #     )
-    #
-    #     # Attempt to connect to Genius and retrieve lyrics...
-    #     selectedSongs = list()
-    #     song_content = list()
-    #     annotations = list()
-    #     try:
-    #         for song in self.myBasket:
-    #             # song is a dict {'idx1':{'title':'song1'...},
-    #             # 'idx2':{'title':'song2'...}}
-    #             page_url = "http://genius.com" + song['path']
-    #             lyrics = self.html_to_text(page_url)
-    #             song_content.append(lyrics)
-    #             annotations.append(song.copy())
-    #             # 1 tick on the progress bar of the widget
-    #             progressBar.advance()
-    #
-    #     # If an error occurs (e.g. http error, or memory error)...
-    #     except:
-    #         # Set Info box and widget to "error" state.
-    #         self.infoBox.setText(
-    #             "Couldn't download data from Genius website.",
-    #             "error"
-    #         )
-    #         self.controlArea.setDisabled(False)
-    #         return
-    #
-    #     # Store downloaded lyrics strings in input objects...
-    #     for song in song_content:
-    #         newInput = Input(song, self.captionTitle)
-    #         self.createdInputs.append(newInput)
-    #
-    #     # If there"s only one play, the widget"s output is the created Input.
-    #     if len(self.createdInputs) == 1:
-    #         self.segmentation = self.createdInputs[0]
-    #
-    #     # Otherwise the widget"s output is a concatenation...
-    #     else:
-    #         self.segmentation = Segmenter.concatenate(
-    #             self.createdInputs,
-    #             self.captionTitle,
-    #             import_labels_as=None,
-    #         )
-    #
-    #     # Annotate segments...
-    #     for idx, segment in enumerate(self.segmentation):
-    #         segment.annotations.update(annotations[idx])
-    #         self.segmentation[idx] = segment
-    #
-    #     # Clear progress bar.
-    #     progressBar.finish()
-    #
-    #     self.controlArea.setDisabled(False)
-    #
-    #     # Set status to OK and report data size...
-    #     message = "%i segment@p sent to output " % len(self.segmentation)
-    #     message = pluralize(message, len(self.segmentation))
-    #     numChars = 0
-    #     for segment in self.segmentation:
-    #         segmentLength = len(Segmentation.get_data(segment.str_index))
-    #         numChars += segmentLength
-    #     message += "(%i character@p)." % numChars
-    #     message = pluralize(message, numChars)
-    #     self.infoBox.setText(message)
-    #
-    #     self.send("Lyrics importation", self.segmentation, self)
-    #     self.sendButton.resetSettingsChangedFlag()
-    #
-    #
-    # def clearCreatedInputs(self):
-    #     """Delete all Input objects that have been created."""
-    #     for i in self.createdInputs:
-    #         Segmentation.set_data(i[0].str_index, None)
-    #     del self.createdInputs[:]
-    #
-    #
-    # # The following method needs to be copied verbatim in
-    # # every Textable widget that sends a segmentation...
-    # def setCaption(self, title):
-    #     if 'captionTitle' in dir(self):
-    #         changed = title != self.captionTitle
-    #         super().setCaption(title)
-    #         if changed:
-    #             self.sendButton.settingsChanged()
-    #     else:
-    #         super().setCaption(title)
+
+        # Refresh Button
+        self.refreshButton = gui.button(
+            widget=queryBox,
+            master=self,
+            label="Refresh database",
+            #callback=self.searchFunction,
+            tooltip="Attention ! Cela peut prendre un peu de temps…",
+        )
+
+        self.poemLabelsBox = gui.listBox(
+            widget=queryBox,
+            master=self,
+            value="selectedPoems",    # setting (list)
+            labels="poemLabels",      # setting (list)
+            callback=lambda: self.addButton.setDisabled(
+                self.selectedPoems == list()),
+            tooltip="The list of poems whose content will be imported",
+        )
+        self.poemLabelsBox.setMinimumHeight(150)
+        self.poemLabelsBox.setSelectionMode(3)
+
+        boxbutton = gui.widgetBox(
+            widget=queryBox,
+            box=False,
+            orientation='horizontal',
+        )
+        # Add songs button
+        self.addButton = gui.button(
+            widget=boxbutton,
+            master=self,
+            label=u'Add to corpus',
+            callback=self.add,
+            tooltip=(
+                u"Move the selected song downward in your corpus."
+            ),
+        )
+        self.addButton.setDisabled(True)
+
+        # Clear button
+        # Uses "clearResults" function
+        self.clearButton = gui.button(
+            widget=boxbutton,
+            master=self,
+            label="Clear results",
+            callback=self.clearResults,
+            tooltip="Clear results",
+        )
+        self.clearButton.setDisabled(True)
+        gui.separator(widget=queryBox, height=3)
+
+        # area where confirmed songs are moved and stocked
+        mytitleBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Corpus",
+            orientation="vertical",
+        )
+
+        self.mypoemLabelsBox = gui.listBox(
+            widget=mytitleBox,
+            master=self,
+            value="corpusItems",
+            labels="corpusItemsLabels",
+            callback=lambda: self.removeButton.setDisabled(
+                self.corpusItems == list()),
+            tooltip="The list of titles whose content will be imported",
+        )
+        self.mypoemLabelsBox.setMinimumHeight(150)
+        self.mypoemLabelsBox.setSelectionMode(3)
+
+        boxbutton2 = gui.widgetBox(
+            widget=mytitleBox,
+            box=False,
+            orientation='horizontal',
+        )
+        # Remove songs button
+        self.removeButton = gui.button(
+            widget=boxbutton2,
+            master=self,
+            label=u'Remove from corpus',
+            callback=self.remove,
+            tooltip=(
+                u"Remove the selected song from your corpus."
+            ),
+        )
+        self.removeButton.setDisabled(True)
+
+        # Delete all confirmed songs button
+        self.clearmyBasket = gui.button(
+            widget=boxbutton2,
+            master=self,
+            label=u'Clear corpus',
+            callback=self.clearmyBasket,
+            tooltip=(
+                u"Remove all songs from your corpus."
+            ),
+        )
+        self.clearmyBasket.setDisabled(True)
+
+        gui.separator(widget=mytitleBox, height=3)
+        gui.rubber(self.controlArea)
+        #----------------------------------------------------------------------
+
+        # Draw Info box and Send button
+        self.sendButton.draw()
+        self.searchButton.setDefault(True)
+        self.infoBox.draw()
+
+        # Update the selections list
+        self.updatecorpusItemsLabels()
+
+        # Send data if autoSend.
+        self.sendButton.sendIf()
+
+
+    # Search function which contacts the Genius API
+    def searchFunction(self):
+        """Search from website Genius"""
+
+        result_list = {}
+        query_string = self.authorQuery
+
+        if query_string != "":
+            page = 1
+            page_max = int(self.nbr_results)/10
+            result_id = 0
+            result_artist = []
+
+            self.controlArea.setDisabled(True)
+
+            # Initialize progress bar.
+            progressBar = ProgressBar(
+                self,
+                iterations=page_max
+            )
+
+            while page <= page_max:
+                values = {'q':query_string, 'page':page}
+                data = urllib.parse.urlencode(values)
+                query_url = 'http://api.genius.com/search?' + data
+                json_obj = self.url_request(query_url)
+                body = json_obj["response"]["hits"]
+
+                # Each result is stored in a dictionnary with its title,
+                # artist's name, artist's ID and URL path
+                for result in body:
+                    result_id += 1
+                    title = result["result"]["title"]
+                    artist = result["result"]["primary_artist"]["name"]
+                    artist_id = result["result"]["primary_artist"]["id"]
+                    path = result["result"]["path"]
+                    result_list[result_id] = {'artist': artist,
+                                              'artist_id':artist_id,
+                                              'path':path, 'title':title}
+                page += 1
+
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
+            # Stored the results list in the "result_list" variable
+            self.searchResults = result_list
+
+            # Reset and clear the visible widget list
+            del self.poemLabels[:]
+
+            # Update the results list with the search results
+            # in order to display them
+            for idx in self.searchResults:
+                result_string = self.searchResults[idx]["title"] + " - " + \
+                                self.searchResults[idx]["artist"]
+                self.poemLabels.append(result_string)
+
+            self.poemLabels = self.poemLabels
+            self.clearButton.setDisabled(False)
+            self.addButton.setDisabled(self.selectedPoems == list())
+
+
+            # Clear progress bar.
+            progressBar.finish()
+            self.controlArea.setDisabled(False)
+
+        else:
+            self.infoBox.setText("You didn't search anything", "warning")
+
+
+    # Function contacting the Genius API and returning JSON objects
+    def url_request(self, url):
+        """Opens a URL and returns it as a JSON object"""
+
+        # Token to use the Genius API. DO NOT CHANGE.
+        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
+                       "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
+        USER_AGENT = "CompuServe Classic/1.22"
+
+        request = urllib.request.Request(url, headers={
+            "Authorization" : "Bearer " + ACCESS_TOKEN,
+            "User-Agent" : USER_AGENT
+            })
+        response = urllib.request.urlopen(request)
+        raw = response.read().decode('utf-8')
+        json_obj = json.loads(raw)
+        # retourne un objet json
+        return json_obj
+
+    # Function converting HTML to string
+    def html_to_text(self, page_url):
+        """Extracts the lyrics (as a string) of the html page"""
+
+        page = requests.get(page_url)
+        html = BeautifulSoup(page.text, "html.parser")
+        [h.extract() for h in html('script')]
+        lyrics = html.find("div", class_="lyrics").get_text()
+        lyrics.replace('\\n', '\n')
+        # return a string
+        return lyrics
+
+
+    # Function clearing the results list
+    def clearResults(self):
+        """Clear the results list"""
+        del self.poemLabels[:]
+        self.poemLabels = self.poemLabels
+        self.clearButton.setDisabled(True)
+        self.addButton.setDisabled(self.poemLabels == list())
+
+
+    # Add songs function
+    def add(self):
+        """Add songs in your selection """
+        for selectedTitle in self.selectedPoems:
+            songData = self.searchResults[selectedTitle+1]
+            if songData not in self.myBasket:
+                self.myBasket.append(songData)
+        self.updatecorpusItemsLabels()
+        self.sendButton.settingsChanged()
+
+
+    # Update selections function
+    def updatecorpusItemsLabels(self):
+        self.corpusItemsLabels = list()
+        for songData in self.myBasket:
+            result_string = songData["title"] + " - " + songData["artist"]
+            self.corpusItemsLabels.append(result_string)
+        self.corpusItemsLabels = self.corpusItemsLabels
+
+        self.clearmyBasket.setDisabled(self.myBasket == list())
+        self.removeButton.setDisabled(self.corpusItems == list())
+
+
+    # fonction qui retire la selection de notre panier
+    def remove(self):
+        """Remove the selected songs in your selection """
+        self.myBasket = [
+            song for idx, song in enumerate(self.myBasket)
+            if idx not in self.corpusItems
+        ]
+        self.updatecorpusItemsLabels()
+        self.sendButton.settingsChanged()
+
+
+    # Clear selections function
+    def clearmyBasket(self):
+        """Remove all songs in your selection """
+        self.corpusItemsLabels = list()
+        self.myBasket = list()
+        self.sendButton.settingsChanged()
+        self.clearmyBasket.setDisabled(True)
+
+
+    # Function computing results then sending them to the widget output
+    def sendData(self):
+        """Compute result of widget processing and send to output"""
+        # Skip if title list is empty:
+        if self.myBasket == list():
+            self.infoBox.setText(
+                "Your corpus is empty, please add some songs first",
+                "warning"
+            )
+            return
+
+
+        # Clear created Inputs.
+        self.clearCreatedInputs()
+
+        self.controlArea.setDisabled(True)
+
+        # Initialize progress bar.
+        progressBar = ProgressBar(
+            self,
+            iterations=len(self.myBasket)
+        )
+
+        # Attempt to connect to Genius and retrieve lyrics...
+        selectedSongs = list()
+        song_content = list()
+        annotations = list()
+        try:
+            for song in self.myBasket:
+                # song is a dict {'idx1':{'title':'song1'...},
+                # 'idx2':{'title':'song2'...}}
+                page_url = "http://genius.com" + song['path']
+                lyrics = self.html_to_text(page_url)
+                song_content.append(lyrics)
+                annotations.append(song.copy())
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
+
+        # If an error occurs (e.g. http error, or memory error)...
+        except:
+            # Set Info box and widget to "error" state.
+            self.infoBox.setText(
+                "Couldn't download data from Genius website.",
+                "error"
+            )
+            self.controlArea.setDisabled(False)
+            return
+
+        # Store downloaded lyrics strings in input objects...
+        for song in song_content:
+            newInput = Input(song, self.captionTitle)
+            self.createdInputs.append(newInput)
+
+        # If there"s only one play, the widget"s output is the created Input.
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget"s output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                self.captionTitle,
+                import_labels_as=None,
+            )
+
+        # Annotate segments...
+        for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations[idx])
+            self.segmentation[idx] = segment
+
+        # Clear progress bar.
+        progressBar.finish()
+
+        self.controlArea.setDisabled(False)
+
+        # Set status to OK and report data size...
+        message = "%i segment@p sent to output " % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
+        numChars = 0
+        for segment in self.segmentation:
+            segmentLength = len(Segmentation.get_data(segment.str_index))
+            numChars += segmentLength
+        message += "(%i character@p)." % numChars
+        message = pluralize(message, numChars)
+        self.infoBox.setText(message)
+
+        self.send("Lyrics importation", self.segmentation, self)
+        self.sendButton.resetSettingsChangedFlag()
+
+
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created."""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
+
+    # The following method needs to be copied verbatim in
+    # every Textable widget that sends a segmentation...
+    def setCaption(self, title):
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
 
 if __name__ == "__main__":
