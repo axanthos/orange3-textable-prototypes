@@ -55,7 +55,7 @@ def main():
 
                 # Recuperer le nom de l'auteur.
                 nom_auteur = auteur.get_content()
-                print(nom_auteur)
+                #print(nom_auteur)
 
         #print(xml_par_auteur.to_string())
         #nom_auteur = auteur.get_content()
@@ -88,7 +88,7 @@ def main():
 
                         # Recuperer le nom du poeme.
                         nom_poeme = poeme.get_content()
-                        print(nom_poeme)
+                        #print(nom_poeme)
                 
                         # Extraire les poeme et ses donnees...
                         seg_poemes = Input(page_poeme)
@@ -126,11 +126,28 @@ def main():
         print("Invalid poetica's URL")
     print(database)
 
-    with open('database_poetica.pkl', 'rb') as db:
+    with open('poetica_cache.p', 'wb') as db:
         pickle.dump(database, db)
         print('dictionary saved successfully to file')
-        pickle.load(database)
-    pickle.dump(database, open('pickle_file_name.p', 'wb'))
+    with open('poetica_cache.p', 'rb') as db:
+        new_database = pickle.load(db)
+        print(new_database)
+        print("load ok")
 
 if __name__=="__main__":
     main()
+
+"""
+Pour le pickle
+# Try to open saved file in this module's directory...
+        path = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe()))
+        )
+        try:
+            file = open(os.path.join(path, "cached_title_list"),"rb")
+            self.titleSeg = pickle.load(file)
+            file.close()
+        # Else try to load list from Theatre-classique and build new seg...
+        except IOError:
+            self.titleSeg = self.getTitleListFromTheatreClassique()
+"""
