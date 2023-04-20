@@ -3,6 +3,7 @@
 
 # Importer les packages necessaires...
 import re
+import pickle
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 from urllib.request import urlopen
@@ -10,6 +11,11 @@ from urllib.request import urlopen
 
 def main():
     """Programme principal"""
+
+    database = {
+        "title": {},
+        "author": {},
+    }
 
     # Acceder a la page d'accueil de poetica...
     try:
@@ -99,8 +105,9 @@ def main():
                         # N'afficher que le contenu du poeme...
                         poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
                         poeme = re.sub(r".+$", "", poeme)
-                        print(poeme)
-
+                        #print(poeme)
+                        #database["title"][url_page_poeme] =
+                        database["author"][url_page_poeme] = nom_auteur
 
                     # Avertir si l'url ne fonctionne pas...
                     except IOError:
@@ -113,6 +120,7 @@ def main():
     # Avertir si l'url ne fonctionne pas...
     except IOError:
         print("Invalid poetica's URL")
+    print(database)
 
 
 if __name__=="__main__":
