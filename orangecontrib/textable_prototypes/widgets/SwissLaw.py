@@ -87,6 +87,7 @@ class SwissLaw(OWTextableBaseWidget):
 #J'ai changé: ligne 142 -> avant la valeur était = None (bug), j'ai remplacé None par ""
             # ligne 134 -> j'ai remis self.nbr_results = 10 (utilisé dans queryNbr2 et 3 pour values, à voir ce qu'il faut qu'on mette
             # ligne 297 -> self.updateMyDocumentsLabels() en commentaire car pas défini (doit être défini comme méthode (fonction), voir lyricsgenius avec updatemytitleslabel
+            # Send ne marche pas
     def __init__(self):
         """Widget creator."""
 
@@ -484,7 +485,7 @@ class SwissLaw(OWTextableBaseWidget):
         )
 
         #Get the xml link
-        for item in myBasket:
+        for item in self.myBasket:
             content = self.get_xml_contents(self.database["url_fr"][item[0]])
             self.created_inputs.append(Input(item))
             progressBar.advance()
