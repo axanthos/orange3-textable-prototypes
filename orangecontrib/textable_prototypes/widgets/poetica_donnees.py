@@ -126,6 +126,11 @@ def main():
         print("Invalid poetica's URL")
     print(database)
 
+    with open('database_poetica.pkl', 'rb') as db:
+        pickle.dump(database, db)
+        print('dictionary saved successfully to file')
+        pickle.load(database)
+    pickle.dump(database, open('pickle_file_name.p', 'wb'))
 
 if __name__=="__main__":
     main()
