@@ -24,14 +24,16 @@ __author__ = "Elijah Green, Thomas Rywalski, Samantha Allendes Bravo, Antoine Vi
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
-from typing import List, Any
-
 from Orange.widgets import widget, gui, settings
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
+import inspect
+import os
+import pickle
+import csv
 import urllib
 import urllib.request
 import urllib.parse
@@ -87,6 +89,40 @@ class SwissLaw(OWTextableBaseWidget):
         super().__init__()
 
         # ATTRIBUTS
+        #database for our csv
+        self.database = {
+            "law_text": [],
+            "url_fr": [],
+            "url_de": [],
+            "url_it": [],
+            "title": [],
+            "art": [],
+            "chap": [],
+        }
+
+        #Path to csv
+        path = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe()))
+        )
+
+        #Open the csv and add the content in our database
+        try:
+            with open(os.path.join(path, "DroitCH.csv"), "r") as file:
+                reader = csv.reader(file)
+                next(reader)  # skip the header row if present
+                for row in reader:
+                    self.database["law_text"].append(row[1])
+                    self.database["url_fr"].append(row[2])
+                    self.database["url_de"].append(row[3])
+                    self.database["url_it"].append(row[4])
+                    self.database["title"].append(row[5])
+                    self.database["art"].append(row[6])
+                    self.database["chap"].append(row[7])
+
+        # Else show error message
+        except IOError:
+            print("Failed to open csv file.")
+
         # searchFunction
         self.searchResults = None
         self.inputSeg = None
@@ -121,19 +157,14 @@ class SwissLaw(OWTextableBaseWidget):
             orientation="vertical",
         )
         # Allows to enter specific text to the research
+
         # Allows to choose the law document
+
         queryNbr = gui.comboBox(
             widget=queryBox,
             master=self,
             value="document",
-            items=[
-                "text1",
-                "text2",
-                "text3",
-                "text4",
-                "text5",
-                "text6",
-            ],
+            items=self.database["law_text"],
             sendSelectedValue=True,
             callback=self.update_addButton,
             orientation="horizontal",
@@ -404,7 +435,7 @@ class SwissLaw(OWTextableBaseWidget):
             song for idx, song in enumerate(self.myBasket)
             if idx not in self.myDocuments
         ]
-        self.updateMyDocumentLabels()Labels()
+        self.updateMyDocumentLabels()
         self.sendButton.settingsChanged()
 
 
