@@ -84,9 +84,9 @@ class SwissLaw(OWTextableBaseWidget):
     myBasket = settings.Setting([])
 
 #Note débug jeudi 20 Avril 14h14:
-#J'ai changé: ligne 142 -> avant la valeur était = None (bug), j'ai remplacé None par ""
-            # ligne 134 -> j'ai remis self.nbr_results = 10 (utilisé dans queryNbr2 et 3 pour values, à voir ce qu'il faut qu'on mette
-            # ligne 297 -> self.updateMyDocumentsLabels() en commentaire car pas défini (doit être défini comme méthode (fonction), voir lyricsgenius avec updatemytitleslabel
+#J'ai changé: ligne 147 -> avant la valeur était = None (bug), j'ai remplacé None par ""
+            # ligne 138 -> j'ai remis self.nbr_results = 10 (utilisé dans queryNbr2 et 3 pour values, à voir ce qu'il faut qu'on mette
+            # ligne 300 -> self.updateMyDocumentsLabels() en commentaire car pas défini (doit être défini comme méthode (fonction), voir lyricsgenius avec updatemytitleslabel
             # Send ne marche pas
     def __init__(self):
         """Widget creator."""
@@ -96,6 +96,7 @@ class SwissLaw(OWTextableBaseWidget):
         # ATTRIBUTS
         #database for our csv
         self.database = {
+            "id": [],
             "law_text": [],
             "url_fr": [],
             "url_de": [],
@@ -116,6 +117,7 @@ class SwissLaw(OWTextableBaseWidget):
                 reader = csv.reader(file)
                 next(reader)  # skip the header row if present
                 for row in reader:
+                    self.database["id"].append(row[0])
                     self.database["law_text"].append(row[1])
                     self.database["url_fr"].append(row[2])
                     self.database["url_de"].append(row[3])
@@ -425,10 +427,10 @@ class SwissLaw(OWTextableBaseWidget):
     # Update selections function
     def updateMyDocumentLabels(self):
         self.mydocumentLabels = list()
-        for lawData in self.myBasket:
-            result_string = lawData["title"] + " - " + lawData["artist"]
-            self.mydocumentLabels.append(result_string)
-        self.mydocumentLabels = self.mytitleLabels
+        for item in self.myBasket:
+            result_string = self.database["law_text"][0] #remplacer le 0 par item[0] normalement, mais là selectedDocument (=item[0] ligne 422) pas un integrer, donc ne marche pas
+            self.documentLabels.append(result_string)
+        self.mydocumentLabels = self.documentLabels
 
         self.clearmyBasket.setDisabled(self.myBasket == list())
         self.removeButton.setDisabled(self.myDocuments == list())
