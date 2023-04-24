@@ -131,6 +131,7 @@ class Poetica(OWTextableBaseWidget):
 
         # Store the list of authors...
         authors_list = list()
+        authors_list.append("None")
         previous_author = ""
         for key, value in i["author"].items():
             if i["author"][key] != previous_author:
