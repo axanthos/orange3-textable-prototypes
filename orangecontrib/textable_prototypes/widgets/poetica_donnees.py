@@ -18,7 +18,6 @@ def main():
         "title": {},
         "author": {},
         "poem": {},
-        "poem": {},
     }
 
     # Acceder a la page d'accueil de poetica...
