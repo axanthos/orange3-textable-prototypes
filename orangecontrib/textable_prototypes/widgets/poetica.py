@@ -435,6 +435,7 @@ class Poetica(OWTextableBaseWidget):
         except IOError:
             print("Can't save the dictionary")
 
+
     def openDatabase(self):
 
         # Definir un path pour situer par la suite le chemin d'acces pour la sauvegarde...
@@ -453,6 +454,7 @@ class Poetica(OWTextableBaseWidget):
             print("Can't load the dictionary")
 
         return new_database
+
 
     # Search function which contacts the Genius API
     def searchFunction(self):
