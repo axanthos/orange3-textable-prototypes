@@ -17,6 +17,8 @@ def main():
     database = {
         "title": {},
         "author": {},
+        "poem": {},
+        "poem": {},
     }
 
     # Acceder a la page d'accueil de poetica...
@@ -114,6 +116,7 @@ def main():
                         #print(poeme)
                         database["title"][url_page_poeme] = nom_poeme
                         database["author"][url_page_poeme] = nom_auteur
+                        database["poem"][url_page_poeme] = poeme
 
                     # Avertir si l'url ne fonctionne pas...
                     except IOError:
@@ -148,6 +151,15 @@ def main():
         file.close()
     except IOError:
         print("Can't load the dictionary")
+
+    #print(new_database)
+    #print(new_database["author"])
+    for key_author, value_author in new_database["author"].items():
+        print(f"Key : {key_author} and Value : {value_author}")
+        for key_title, value_title in new_database["title"].items():
+            for key_poem, value_poem in new_database["poem"].items():
+                if key_title == key_author and key_title == key_poem:
+                    print(f"The poem '{value_title}' has been written by {value_author} : {value_poem}")
 
 if __name__=="__main__":
     main()

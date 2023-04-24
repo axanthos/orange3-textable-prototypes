@@ -299,6 +299,7 @@ class Poetica(OWTextableBaseWidget):
         database = {
             "title": {},
             "author": {},
+            "poem": {},
         }
 
         # Acceder a la page d'accueil de poetica...
@@ -393,6 +394,7 @@ class Poetica(OWTextableBaseWidget):
                             # print(poeme)
                             database["title"][url_page_poeme] = nom_poeme
                             database["author"][url_page_poeme] = nom_auteur
+                            database["poem"][url_page_poeme] = poeme
 
                         # Avertir si l'url ne fonctionne pas...
                         except IOError:
