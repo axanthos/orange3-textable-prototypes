@@ -125,15 +125,17 @@ class Poetica(OWTextableBaseWidget):
             box="Search poems",
             orientation="vertical",
         )
+
+        # Import the poem's database.
+        i = self.openDatabase()
+
         # Allows to select an author in a list
         #  Uses "authorQuery" attribut
         gui.comboBox(
             widget=queryBox,
             master=self,
             value='authorQuery',
-            items=[
-                "author1",
-            ],
+            items=(i["author"][key] for key, value in i["author"].items()),
             orientation='horizontal',
             label=u"Author Query: ",
             labelWidth=120,
@@ -424,6 +426,13 @@ class Poetica(OWTextableBaseWidget):
         except IOError:
             print("Can't save the dictionary")
 
+    def openDatabase(self):
+
+        # Definir un path pour situer par la suite le chemin d'acces pour la sauvegarde...
+        path = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe()))
+        )
+
         # Ouvrir les dictionnaires avec pickle...
         try:
             file = open(os.path.join(path, "poetica_cache.p"), "rb")
@@ -433,6 +442,8 @@ class Poetica(OWTextableBaseWidget):
             file.close()
         except IOError:
             print("Can't load the dictionary")
+
+        return new_database
 
     # Search function which contacts the Genius API
     def searchFunction(self):
