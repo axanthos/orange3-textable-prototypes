@@ -2,8 +2,10 @@
 
 
 # Importer les packages necessaires...
-import re
+import inspect
+import os
 import pickle
+import re
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 from urllib.request import urlopen
@@ -124,15 +126,30 @@ def main():
     # Avertir si l'url ne fonctionne pas...
     except IOError:
         print("Invalid poetica's URL")
+
     print(database)
 
-    with open('poetica_cache.p', 'wb') as db:
-        pickle.dump(database, db)
-        print('dictionary saved successfully to file')
-    with open('poetica_cache.p', 'rb') as db:
-        new_database = pickle.load(db)
+    path = os.path.dirname(
+        os.path.abspath(inspect.getfile(inspect.currentframe()))
+    )
+    try:
+        file = open(os.path.join(path, "poetica_cache.p"), "wb")
+    #with open('poetica_cache.p', 'wb') as db:
+        pickle.dump(database, file)
+        print('The dictionary has successfully been saved to the file')
+        file.close()
+    except IOError:
+        print("Can't save the dictionary")
+
+    try:
+        file = open(os.path.join(path, "poetica_cache.p"), "rb")
+    #with open('poetica_cache.p', 'rb') as db:
+        new_database = pickle.load(file)
         print(new_database)
         print("load ok")
+        file.close()
+    except IOError:
+        print("Can't load the dictionary")
 
 if __name__=="__main__":
     main()
