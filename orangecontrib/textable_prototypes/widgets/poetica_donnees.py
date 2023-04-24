@@ -48,7 +48,7 @@ def main():
 
 
         # Acceder a la page de chaque auteur...
-        for auteur in xml_par_auteur[:3]:
+        for auteur in xml_par_auteur:
             try:
                 url_page_auteur = auteur.annotations["href"]
                 url_auteur = urlopen(url_page_auteur)
@@ -81,7 +81,7 @@ def main():
                 )
 
                 # Acceder a la page de chaque poeme...
-                for poeme in xml_par_poeme[:3]:
+                for poeme in xml_par_poeme:
                     try:
                         url_page_poeme = poeme.annotations["href"]
                         url_poeme = urlopen(url_page_poeme)
