@@ -129,13 +129,21 @@ class Poetica(OWTextableBaseWidget):
         # Import the poem's database.
         i = self.openDatabase()
 
+        # Store the list of authors...
+        authors_list = list()
+        previous_author = ""
+        for key, value in i["author"].items():
+            if i["author"][key] != previous_author:
+                authors_list.append(i["author"][key])
+            previous_author = i["author"][key]
+
         # Allows to select an author in a list
         #  Uses "authorQuery" attribut
         gui.comboBox(
             widget=queryBox,
             master=self,
             value='authorQuery',
-            items=(i["author"][key] for key, value in i["author"].items()),
+            items=authors_list,
             orientation='horizontal',
             label=u"Author Query: ",
             labelWidth=120,
