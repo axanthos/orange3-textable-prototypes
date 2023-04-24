@@ -127,14 +127,13 @@ def main():
     except IOError:
         print("Invalid poetica's URL")
 
-    print(database)
+    #print(database)
 
     path = os.path.dirname(
         os.path.abspath(inspect.getfile(inspect.currentframe()))
     )
     try:
         file = open(os.path.join(path, "poetica_cache.p"), "wb")
-    #with open('poetica_cache.p', 'wb') as db:
         pickle.dump(database, file)
         print('The dictionary has successfully been saved to the file')
         file.close()
@@ -143,28 +142,12 @@ def main():
 
     try:
         file = open(os.path.join(path, "poetica_cache.p"), "rb")
-    #with open('poetica_cache.p', 'rb') as db:
         new_database = pickle.load(file)
-        print(new_database)
-        print("load ok")
+        #print(new_database)
+        print("Dictionary correctly loaded")
         file.close()
     except IOError:
         print("Can't load the dictionary")
 
 if __name__=="__main__":
     main()
-
-"""
-Pour le pickle
-# Try to open saved file in this module's directory...
-        path = os.path.dirname(
-            os.path.abspath(inspect.getfile(inspect.currentframe()))
-        )
-        try:
-            file = open(os.path.join(path, "cached_title_list"),"rb")
-            self.titleSeg = pickle.load(file)
-            file.close()
-        # Else try to load list from Theatre-classique and build new seg...
-        except IOError:
-            self.titleSeg = self.getTitleListFromTheatreClassique()
-"""
