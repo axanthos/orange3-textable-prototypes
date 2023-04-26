@@ -456,8 +456,16 @@ class Poetica(OWTextableBaseWidget):
         return new_database
 
 
-    # Search function which contacts the Genius API
     def searchFunction(self):
+        author_query = self.authorQuery
+        if str(author_query) == "0":
+            self.infoBox.setText("You search NONE", "warning")
+        else:
+            self.infoBox.setText(f"You didn't search anything",
+                                 "warning")
+
+    # Search function which contacts the Genius API
+    def searchFunctionGenius(self):
         """Search from website Genius"""
 
         result_list = {}
