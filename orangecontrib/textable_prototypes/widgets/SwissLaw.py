@@ -272,10 +272,10 @@ class SwissLaw(OWTextableBaseWidget):
         self.removeButton = gui.button(
             widget=boxbutton2,
             master=self,
-            label=u'Remove from corpus',
+            label=u'Remove the last document from corpus',
             callback=self.remove,
             tooltip=(
-                u"Remove the selected text from your corpus."
+                u"Remove the last added text from your corpus."
             ),
         )
         self.removeButton.setDisabled(True)
@@ -442,8 +442,8 @@ class SwissLaw(OWTextableBaseWidget):
     def deleteMyDocumentLabels(self):
         self.mydocumentLabels = list()
         #for item in self.myBasket: (code précédent)
-        result_string = self.selectedDocument #self.database["law_text"][item[]0] (code précédent)
-        self.documentLabels.remove(result_string)
+        #result_string = self.selectedDocument #self.database["law_text"][item[]0] (code précédent)
+        self.documentLabels.pop()
         self.mydocumentLabels = self.documentLabels
 
         self.clearmyBasket.setDisabled(self.myBasket == list())
