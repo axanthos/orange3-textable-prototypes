@@ -439,6 +439,15 @@ class SwissLaw(OWTextableBaseWidget):
         self.clearmyBasket.setDisabled(self.myBasket == list())
         self.removeButton.setDisabled(self.myDocuments == list())
 
+    def deleteMyDocumentLabels(self):
+        self.mydocumentLabels = list()
+        #for item in self.myBasket: (code précédent)
+        result_string = self.selectedDocument #self.database["law_text"][item[]0] (code précédent)
+        self.documentLabels.remove(result_string)
+        self.mydocumentLabels = self.documentLabels
+
+        self.clearmyBasket.setDisabled(self.myBasket == list())
+        self.removeButton.setDisabled(self.myDocuments == list())
 
     # fonction qui retire la selection de notre panier
     def remove(self):
@@ -447,13 +456,14 @@ class SwissLaw(OWTextableBaseWidget):
             song for idx, song in enumerate(self.myBasket)
             if idx not in self.myDocuments
         ]
-        self.updateMyDocumentLabels()
+        self.deleteMyDocumentLabels()
         self.sendButton.settingsChanged()
 
 
     # Clear selections function
     def clearmyBasket(self):
         """Remove all texts in your selection """
+        self.documentLabels = list()
         self.mydocumentLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
