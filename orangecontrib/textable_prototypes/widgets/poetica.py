@@ -463,7 +463,7 @@ class Poetica(OWTextableBaseWidget):
             self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
             for key, value in self.db["author"].items():
                 if self.db["author"][key] == self.authors_list[index]:
-                    self.poemLabelsBox.addItem("a")
+                    self.poemLabelsBox.addItem(self.db["title"][key])
             else:
                 pass
         else:
