@@ -518,7 +518,6 @@ class SwissLaw(OWTextableBaseWidget):
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
-                self.captionTitle,
                 import_labels_as=None,
             )
 
@@ -543,7 +542,7 @@ class SwissLaw(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send(self.segmentation, self)
+        self.send(self.segmentation.to_string(), self)
         self.sendButton.resetSettingsChangedFlag()
 
 
