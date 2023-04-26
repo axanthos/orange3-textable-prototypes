@@ -461,6 +461,11 @@ class Poetica(OWTextableBaseWidget):
         if str(author_query) != "":
             index = int(self.authorQuery)
             self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
+            #            for key, value in i["author"].items():
+            #                if self.i["author"][key] == self.authors_list[index]:
+            #                else :
+            #                    pass
+            self.poemLabelsBox.addItem("a")
         else:
             self.infoBox.setText(f"You didn't search anything !",
                                  "warning")
