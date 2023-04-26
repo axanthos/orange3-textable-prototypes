@@ -431,9 +431,9 @@ class SwissLaw(OWTextableBaseWidget):
     # Update selections function
     def updateMyDocumentLabels(self):
         self.mydocumentLabels = list()
-        for item in self.myBasket:
-            result_string = self.database["law_text"][0] #remplacer le 0 par item[0] normalement, mais là selectedDocument (=item[0] ligne 422) pas un integrer, donc ne marche pas
-            self.documentLabels.append(result_string)
+        #for item in self.myBasket: (code précédent)
+        result_string = self.selectedDocument #self.database["law_text"][item[]0] (code précédent)
+        self.documentLabels.append(result_string)
         self.mydocumentLabels = self.documentLabels
 
         self.clearmyBasket.setDisabled(self.myBasket == list())
