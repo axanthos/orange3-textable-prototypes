@@ -169,7 +169,7 @@ class SwissLaw(OWTextableBaseWidget):
         # Allows to choose the law document
 
         
-        if len(self.selectedDocument) > 0:
+        if self.selectedDocument > 0:
             self.addButton.label=u'Add 1 item to corpus'
 
         queryNbr = gui.comboBox(
