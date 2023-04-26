@@ -492,6 +492,10 @@ class SwissLaw(OWTextableBaseWidget):
 
         #Get the xml link
         for item in self.myBasket:
+
+            #essai:
+            #content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(self.selectedDocument)])
+
             content = self.get_xml_contents(self.database["url_fr"][item[0]])
             self.created_inputs.append(Input(item))
             progressBar.advance()
