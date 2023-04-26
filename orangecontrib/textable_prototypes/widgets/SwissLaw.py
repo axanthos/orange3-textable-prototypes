@@ -427,7 +427,6 @@ class SwissLaw(OWTextableBaseWidget):
         self.updateMyDocumentLabels()
         self.sendButton.settingsChanged()
 
-
     # Update selections function
     def updateMyDocumentLabels(self):
         self.mydocumentLabels = list()
