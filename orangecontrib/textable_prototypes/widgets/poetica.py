@@ -127,16 +127,16 @@ class Poetica(OWTextableBaseWidget):
         )
 
         # Import the poem's database.
-        i = self.openDatabase()
+        self.db = self.openDatabase()
 
         # Store the list of authors...
         self.authors_list = list()
         self.authors_list.append("None")
         previous_author = ""
-        for key, value in i["author"].items():
-            if i["author"][key] != previous_author:
-                self.authors_list.append(i["author"][key])
-            previous_author = i["author"][key]
+        for key, value in self.db["author"].items():
+            if self.db["author"][key] != previous_author:
+                self.authors_list.append(self.db["author"][key])
+            previous_author = self.db["author"][key]
 
         # Allows to select an author in a list
         #  Uses "authorQuery" attribut
@@ -461,11 +461,11 @@ class Poetica(OWTextableBaseWidget):
         if str(author_query) != "":
             index = int(self.authorQuery)
             self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
-            #            for key, value in i["author"].items():
-            #                if self.i["author"][key] == self.authors_list[index]:
-            #                else :
-            #                    pass
-            self.poemLabelsBox.addItem("a")
+            for key, value in self.db["author"].items():
+                if self.db["author"][key] == self.authors_list[index]:
+                    self.poemLabelsBox.addItem("a")
+            else:
+                pass
         else:
             self.infoBox.setText(f"You didn't search anything !",
                                  "warning")
