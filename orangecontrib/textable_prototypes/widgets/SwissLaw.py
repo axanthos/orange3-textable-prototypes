@@ -471,10 +471,10 @@ class SwissLaw(OWTextableBaseWidget):
 
     def get_xml_contents(self, urls):
         xml_contents = []
-        for url in urls:
-            response = requests.get(url)
-            xml_content = response.content.decode('utf-8')
-            xml_contents.append(xml_content)
+        #for url in urls: #on le garde au cas ou
+        response = requests.get(urls)
+        xml_content = response.content.decode('utf-8')
+        xml_contents.append(xml_content)
         return xml_contents
 
     # Function computing results then sending them to the widget output
@@ -501,14 +501,14 @@ class SwissLaw(OWTextableBaseWidget):
         )
 
         #Get the xml link
-        for item in self.myBasket:
+        #for item in self.myBasket:
 
             #essai:
-            #content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(self.selectedDocument)])
+        content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(self.selectedDocument)])
 
-            content = self.get_xml_contents(self.database["url_fr"][item[0]])
-            self.created_inputs.append(Input(item))
-            progressBar.advance()
+            #content = self.get_xml_contents(self.database["url_fr"][item[0]])
+        self.createdInputs.append(Input(content))
+        progressBar.advance()
 
         # If there"s only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
@@ -543,7 +543,7 @@ class SwissLaw(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Lyrics importation", self.segmentation, self)
+        self.send(self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
