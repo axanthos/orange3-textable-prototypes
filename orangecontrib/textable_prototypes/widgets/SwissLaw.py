@@ -544,7 +544,7 @@ class SwissLaw(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send(self.segmentation.to_string(), self)
+        self.send("Law Documents importation", self.segmentation.to_string(), self)
         self.sendButton.resetSettingsChangedFlag()
 
 
