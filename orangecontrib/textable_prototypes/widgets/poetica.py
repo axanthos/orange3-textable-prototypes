@@ -488,39 +488,6 @@ class Poetica(OWTextableBaseWidget):
         else:
             self.infoBox.setText(f"Select a poem", "warning")
 
-
-    # Function contacting the Genius API and returning JSON objects
-    def url_request(self, url):
-        """Opens a URL and returns it as a JSON object"""
-
-        # Token to use the Genius API. DO NOT CHANGE.
-        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
-                       "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
-        USER_AGENT = "CompuServe Classic/1.22"
-
-        request = urllib.request.Request(url, headers={
-            "Authorization" : "Bearer " + ACCESS_TOKEN,
-            "User-Agent" : USER_AGENT
-            })
-        response = urllib.request.urlopen(request)
-        raw = response.read().decode('utf-8')
-        json_obj = json.loads(raw)
-        # retourne un objet json
-        return json_obj
-
-    # Function converting HTML to string
-    def html_to_text(self, page_url):
-        """Extracts the lyrics (as a string) of the html page"""
-
-        page = requests.get(page_url)
-        html = BeautifulSoup(page.text, "html.parser")
-        [h.extract() for h in html('script')]
-        lyrics = html.find("div", class_="lyrics").get_text()
-        lyrics.replace('\\n', '\n')
-        # return a string
-        return lyrics
-
-
     # Function clearing the results list
     def clearResults(self):
         """Clear the results list"""
@@ -585,30 +552,6 @@ class Poetica(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-        # Attempt to connect to Genius and retrieve lyrics...
-        selectedSongs = list()
-        song_content = list()
-        annotations = list()
-        try:
-            for song in self.myBasket:
-                # song is a dict {'idx1':{'title':'song1'...},
-                # 'idx2':{'title':'song2'...}}
-                page_url = "http://genius.com" + song['path']
-                lyrics = self.html_to_text(page_url)
-                song_content.append(lyrics)
-                annotations.append(song.copy())
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
-
-        # If an error occurs (e.g. http error, or memory error)...
-        except:
-            # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't download data from Genius website.",
-                "error"
-            )
-            self.controlArea.setDisabled(False)
-            return
 
         # Store downloaded lyrics strings in input objects...
         for song in song_content:
