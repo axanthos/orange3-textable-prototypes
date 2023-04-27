@@ -31,7 +31,16 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
+import urllib
+import urllib.request
+import urllib.parse
+import json
+import requests
 from urllib.request import urlopen
+from urllib import request
+from urllib import parse
+from bs4 import BeautifulSoup
+
 import inspect
 import re
 import pickle
@@ -114,7 +123,7 @@ class Poetica(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Select criterions",
+            box="Select criters",
             orientation="vertical",
         )
 
@@ -445,22 +454,30 @@ class Poetica(OWTextableBaseWidget):
 
         return new_database
 
-    # Fonction de recherche
+
     def searchFunction(self):
         author_query = self.authorQuery
         if str(author_query) != "":
             index = int(self.authorQuery)
             self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
+            self.poemLabels = list()
             for key, value in self.db["author"].items():
                 if self.db["author"][key] == self.authors_list[index]:
-                    self.poemLabelsBox.addItem(self.db["title"][key])
-            else:
-                pass
+                    self.poemLabels.append(self.db["title"][key])
+            self.poemLabels = self.poemLabels
         else:
             self.infoBox.setText(f"You didn't search anything !",
                                  "warning")
 
-
+    def add(self):
+        if self.selectedPoems:
+            self.corpusItemsLabels = list()
+            self.infoBox.setText(f"You add a poem {str(self.selectedPoems)}", "warning")
+            for poem_idx in self.selectedPoems:
+                self.corpusItemsLabels.append(self.poemLabels[poem_idx])
+            self.corpusItemsLabels = self.corpusItemsLabels
+        else:
+            self.infoBox.setText(f"Select a poem", "warning")
 
     # Function clearing the results list
     def clearResults(self):
@@ -469,17 +486,6 @@ class Poetica(OWTextableBaseWidget):
         self.poemLabels = self.poemLabels
         self.clearButton.setDisabled(True)
         self.addButton.setDisabled(self.poemLabels == list())
-
-
-    # Add songs function
-    def add(self):
-        """Add songs in your selection """
-        for selectedTitle in self.selectedPoems:
-            songData = self.searchResults[selectedTitle+1]
-            if songData not in self.myBasket:
-                self.myBasket.append(songData)
-        self.updatecorpusItemsLabels()
-        self.sendButton.settingsChanged()
 
 
     # Update selections function
@@ -537,30 +543,6 @@ class Poetica(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-        # Attempt to connect to Genius and retrieve lyrics...
-        selectedSongs = list()
-        song_content = list()
-        annotations = list()
-        try:
-            for song in self.myBasket:
-                # song is a dict {'idx1':{'title':'song1'...},
-                # 'idx2':{'title':'song2'...}}
-                page_url = "http://genius.com" + song['path']
-                lyrics = self.html_to_text(page_url)
-                song_content.append(lyrics)
-                annotations.append(song.copy())
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
-
-        # If an error occurs (e.g. http error, or memory error)...
-        except:
-            # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't download data from Genius website.",
-                "error"
-            )
-            self.controlArea.setDisabled(False)
-            return
 
         # Store downloaded lyrics strings in input objects...
         for song in song_content:
