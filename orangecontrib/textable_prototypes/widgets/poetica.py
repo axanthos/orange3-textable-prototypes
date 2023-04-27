@@ -122,7 +122,7 @@ class Poetica(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search poems",
+            box="Select criters",
             orientation="vertical",
         )
 
@@ -131,7 +131,7 @@ class Poetica(OWTextableBaseWidget):
 
         # Store the list of authors...
         self.authors_list = list()
-        self.authors_list.append("None")
+        self.authors_list.append("Select an author")
         previous_author = ""
         for key, value in self.db["author"].items():
             if self.db["author"][key] != previous_author:
@@ -146,7 +146,7 @@ class Poetica(OWTextableBaseWidget):
             value='authorQuery',
             items=self.authors_list,
             orientation='horizontal',
-            label=u"Author Query: ",
+            label=u"Author : ",
             labelWidth=120,
             tooltip=("Select an author"),
         )
@@ -161,7 +161,7 @@ class Poetica(OWTextableBaseWidget):
                 "1700",
             ],
             orientation='horizontal',
-            label=u"Date Query: ",
+            label=u"Date : ",
             labelWidth=120,
             tooltip=("Select date"),
         )
@@ -177,7 +177,7 @@ class Poetica(OWTextableBaseWidget):
                 "amitié"
             ],
             orientation='horizontal',
-            label=u"Topic Query: ",
+            label=u"Topic : ",
             labelWidth=120,
             tooltip=("Select topic"),
         )
@@ -418,8 +418,6 @@ class Poetica(OWTextableBaseWidget):
         # Avertir si l'url ne fonctionne pas...
         except IOError:
             print("Invalid poetica's URL")
-
-        # print(database)
 
         # Definir un path pour situer par la suite le chemin d'acces pour la sauvegarde...
         path = os.path.dirname(
