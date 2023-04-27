@@ -31,16 +31,7 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
-import urllib
-import urllib.request
-import urllib.parse
-import json
-import requests
 from urllib.request import urlopen
-from urllib import request
-from urllib import parse
-from bs4 import BeautifulSoup
-
 import inspect
 import re
 import pickle
@@ -123,7 +114,7 @@ class Poetica(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Select criters",
+            box="Select criterions",
             orientation="vertical",
         )
 
@@ -454,7 +445,7 @@ class Poetica(OWTextableBaseWidget):
 
         return new_database
 
-
+    # Fonction de recherche
     def searchFunction(self):
         author_query = self.authorQuery
         if str(author_query) != "":
@@ -469,105 +460,6 @@ class Poetica(OWTextableBaseWidget):
             self.infoBox.setText(f"You didn't search anything !",
                                  "warning")
 
-    # Search function which contacts the Genius API
-    def searchFunctionGenius(self):
-        """Search from website Genius"""
-
-        result_list = {}
-        query_string = self.authorQuery
-
-        if query_string != "":
-            page = 1
-            page_max = int(self.nbr_results)/10
-            result_id = 0
-            result_artist = []
-
-            self.controlArea.setDisabled(True)
-
-            # Initialize progress bar.
-            progressBar = ProgressBar(
-                self,
-                iterations=page_max
-            )
-
-            while page <= page_max:
-                values = {'q':query_string, 'page':page}
-                data = urllib.parse.urlencode(values)
-                query_url = 'http://api.genius.com/search?' + data
-                json_obj = self.url_request(query_url)
-                body = json_obj["response"]["hits"]
-
-                # Each result is stored in a dictionnary with its title,
-                # artist's name, artist's ID and URL path
-                for result in body:
-                    result_id += 1
-                    title = result["result"]["title"]
-                    artist = result["result"]["primary_artist"]["name"]
-                    artist_id = result["result"]["primary_artist"]["id"]
-                    path = result["result"]["path"]
-                    result_list[result_id] = {'artist': artist,
-                                              'artist_id':artist_id,
-                                              'path':path, 'title':title}
-                page += 1
-
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
-            # Stored the results list in the "result_list" variable
-            self.searchResults = result_list
-
-            # Reset and clear the visible widget list
-            del self.poemLabels[:]
-
-            # Update the results list with the search results
-            # in order to display them
-            for idx in self.searchResults:
-                result_string = self.searchResults[idx]["title"] + " - " + \
-                                self.searchResults[idx]["artist"]
-                self.poemLabels.append(result_string)
-
-            self.poemLabels = self.poemLabels
-            self.clearButton.setDisabled(False)
-            self.addButton.setDisabled(self.selectedPoems == list())
-
-
-            # Clear progress bar.
-            progressBar.finish()
-            self.controlArea.setDisabled(False)
-
-        else:
-            self.infoBox.setText("You didn't search anything", "warning")
-
-
-    # Function contacting the Genius API and returning JSON objects
-    def url_request(self, url):
-        """Opens a URL and returns it as a JSON object"""
-
-        # Token to use the Genius API. DO NOT CHANGE.
-        ACCESS_TOKEN = "PNlSRMxGK1NqOUBelK32gLirqAtWxPzTey" \
-                       "9pReIjzNiVKbHBrn3o59d5Zx7Yej8g"
-        USER_AGENT = "CompuServe Classic/1.22"
-
-        request = urllib.request.Request(url, headers={
-            "Authorization" : "Bearer " + ACCESS_TOKEN,
-            "User-Agent" : USER_AGENT
-            })
-        response = urllib.request.urlopen(request)
-        raw = response.read().decode('utf-8')
-        json_obj = json.loads(raw)
-        # retourne un objet json
-        return json_obj
-
-    # Function converting HTML to string
-    def html_to_text(self, page_url):
-        """Extracts the lyrics (as a string) of the html page"""
-
-        page = requests.get(page_url)
-        html = BeautifulSoup(page.text, "html.parser")
-        [h.extract() for h in html('script')]
-        lyrics = html.find("div", class_="lyrics").get_text()
-        lyrics.replace('\\n', '\n')
-        # return a string
-        return lyrics
 
 
     # Function clearing the results list
