@@ -163,7 +163,7 @@ class SwissLaw(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Search Law Document",
+            box="Select Law Document",
             orientation="vertical",
         )
         # Allows to enter specific text to the research
@@ -178,7 +178,7 @@ class SwissLaw(OWTextableBaseWidget):
             widget=queryBox,
             master=self,
             value="selectedDocument",
-            items=self.database["law_text"],
+            items=sorted(self.database["law_text"]),
             sendSelectedValue=True,
             callback=self.update_addButton,
             orientation="horizontal",
