@@ -193,14 +193,7 @@ class Poetica(OWTextableBaseWidget):
             tooltip="Connecter Poetica et effectuer une recherche",
         )
 
-        # Refresh Button
-        self.refreshButton = gui.button(
-            widget=queryBox,
-            master=self,
-            label="Refresh database",
-            #callback=self.searchFunction,
-            tooltip="Attention ! Cela peut prendre un peu de temps…",
-        )
+
 
         self.poemLabelsBox = gui.listBox(
             widget=queryBox,
@@ -289,10 +282,27 @@ class Poetica(OWTextableBaseWidget):
                 u"Remove all songs from your corpus."
             ),
         )
+
+        boxbutton3 = gui.widgetBox(
+            widget=mytitleBox,
+            box=False,
+            orientation='horizontal',
+        )
+
+        # Refresh Button
+        self.refreshButton = gui.button(
+            widget=boxbutton3,
+            master=self,
+            label="Refresh database",
+            #callback=self.searchFunction,
+            tooltip="Attention ! Cela peut prendre un peu de temps…",
+        )
+
         self.clearmyBasket.setDisabled(True)
 
         gui.separator(widget=mytitleBox, height=3)
         gui.rubber(self.controlArea)
+
         #----------------------------------------------------------------------
 
         # Draw Info box and Send button
