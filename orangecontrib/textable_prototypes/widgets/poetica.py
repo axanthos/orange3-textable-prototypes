@@ -446,19 +446,26 @@ class Poetica(OWTextableBaseWidget):
         return new_database
 
 
+    # Search button's features...
     def searchFunction(self):
         author_query = self.authorQuery
+        # If the selection isn't empty...
         if str(author_query) != "":
             index = int(self.authorQuery)
+            # Display a message.
             self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
             self.poemLabels = list()
+            # For each author in the authors dictionnary.
             for key, value in self.db["author"].items():
+                # If the dictionnary's author is equal to the selected author.
                 if self.db["author"][key] == self.authors_list[index]:
+                    # Store the poem's title...
                     self.poemLabels.append(self.db["title"][key])
             self.poemLabels = self.poemLabels
             self.clearButton.setDisabled(len(self.poemLabels) == 0)
+        # If the selection is empty...
         else:
-            self.infoBox.setText(f"You didn't search anything !",
+            self.infoBox.setText(f"You didn't select anything !",
                                  "warning")
 
     def add(self):
@@ -469,6 +476,7 @@ class Poetica(OWTextableBaseWidget):
             self.corpusItemsLabels = self.corpusItemsLabels
         else:
             self.infoBox.setText(f"Select a poem", "warning")
+
 
     # Function clearing the results list
     def clearResults(self):
