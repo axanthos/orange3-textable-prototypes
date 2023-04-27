@@ -30,6 +30,8 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+
 import inspect
 import os
 import pickle
