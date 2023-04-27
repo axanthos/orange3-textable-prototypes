@@ -31,16 +31,7 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
-import urllib
-import urllib.request
-import urllib.parse
-import json
-import requests
 from urllib.request import urlopen
-from urllib import request
-from urllib import parse
-from bs4 import BeautifulSoup
-
 import inspect
 import re
 import pickle
@@ -95,7 +86,7 @@ class Poetica(OWTextableBaseWidget):
         # searchFunction
         self.searchResults = None
         self.inputSeg = None
-        # authorQuery = attribut box lineEdit (search something)
+        # Query criterias
         self.authorQuery = ''
         self.dateQuery = ''
         self.topicQuery = ''
@@ -123,7 +114,7 @@ class Poetica(OWTextableBaseWidget):
         # Create the working area
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Select criters",
+            box="Select criteria",
             orientation="vertical",
         )
 
@@ -193,7 +184,14 @@ class Poetica(OWTextableBaseWidget):
             tooltip="Connecter Poetica et effectuer une recherche",
         )
 
-
+        # Refresh Button
+        self.refreshButton = gui.button(
+            widget=queryBox,
+            master=self,
+            label="Refresh database",
+            #callback=self.searchFunction,
+            tooltip="Attention ! Cela peut prendre un peu de temps…",
+        )
 
         self.poemLabelsBox = gui.listBox(
             widget=queryBox,
@@ -282,27 +280,10 @@ class Poetica(OWTextableBaseWidget):
                 u"Remove all songs from your corpus."
             ),
         )
-
-        boxbutton3 = gui.widgetBox(
-            widget=mytitleBox,
-            box=False,
-            orientation='horizontal',
-        )
-
-        # Refresh Button
-        self.refreshButton = gui.button(
-            widget=boxbutton3,
-            master=self,
-            label="Refresh database",
-            #callback=self.searchFunction,
-            tooltip="Attention ! Cela peut prendre un peu de temps…",
-        )
-
         self.clearmyBasket.setDisabled(True)
 
         gui.separator(widget=mytitleBox, height=3)
         gui.rubber(self.controlArea)
-
         #----------------------------------------------------------------------
 
         # Draw Info box and Send button
@@ -475,6 +456,7 @@ class Poetica(OWTextableBaseWidget):
                 if self.db["author"][key] == self.authors_list[index]:
                     self.poemLabels.append(self.db["title"][key])
             self.poemLabels = self.poemLabels
+            self.clearButton.setDisabled(len(self.poemLabels) == 0)
         else:
             self.infoBox.setText(f"You didn't search anything !",
                                  "warning")
