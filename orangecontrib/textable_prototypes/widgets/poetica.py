@@ -480,75 +480,6 @@ class Poetica(OWTextableBaseWidget):
             self.infoBox.setText(f"Select a poem", "warning")
 
 
-    # Search function which contacts the Genius API
-    def searchFunctionGenius(self):
-        """Search from website Genius"""
-
-        result_list = {}
-        query_string = self.authorQuery
-
-        if query_string != "":
-            page = 1
-            page_max = int(self.nbr_results)/10
-            result_id = 0
-            result_artist = []
-
-            self.controlArea.setDisabled(True)
-
-            # Initialize progress bar.
-            progressBar = ProgressBar(
-                self,
-                iterations=page_max
-            )
-
-            while page <= page_max:
-                values = {'q':query_string, 'page':page}
-                data = urllib.parse.urlencode(values)
-                query_url = 'http://api.genius.com/search?' + data
-                json_obj = self.url_request(query_url)
-                body = json_obj["response"]["hits"]
-
-                # Each result is stored in a dictionnary with its title,
-                # artist's name, artist's ID and URL path
-                for result in body:
-                    result_id += 1
-                    title = result["result"]["title"]
-                    artist = result["result"]["primary_artist"]["name"]
-                    artist_id = result["result"]["primary_artist"]["id"]
-                    path = result["result"]["path"]
-                    result_list[result_id] = {'artist': artist,
-                                              'artist_id':artist_id,
-                                              'path':path, 'title':title}
-                page += 1
-
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
-            # Stored the results list in the "result_list" variable
-            self.searchResults = result_list
-
-            # Reset and clear the visible widget list
-            del self.poemLabels[:]
-
-            # Update the results list with the search results
-            # in order to display them
-            for idx in self.searchResults:
-                result_string = self.searchResults[idx]["title"] + " - " + \
-                                self.searchResults[idx]["artist"]
-                self.poemLabels.append(result_string)
-
-            self.poemLabels = self.poemLabels
-            self.clearButton.setDisabled(False)
-            self.addButton.setDisabled(self.selectedPoems == list())
-
-
-            # Clear progress bar.
-            progressBar.finish()
-            self.controlArea.setDisabled(False)
-
-        else:
-            self.infoBox.setText("You didn't search anything", "warning")
-
-
     # Function contacting the Genius API and returning JSON objects
     def url_request(self, url):
         """Opens a URL and returns it as a JSON object"""
@@ -588,17 +519,6 @@ class Poetica(OWTextableBaseWidget):
         self.poemLabels = self.poemLabels
         self.clearButton.setDisabled(True)
         self.addButton.setDisabled(self.poemLabels == list())
-
-
-    # Add songs function
-    def addGenius(self):
-        """Add songs in your selection """
-        for selectedTitle in self.selectedPoems:
-            songData = self.searchResults[selectedTitle+1]
-            if songData not in self.myBasket:
-                self.myBasket.append(songData)
-        self.updatecorpusItemsLabels()
-        self.sendButton.settingsChanged()
 
 
     # Update selections function
