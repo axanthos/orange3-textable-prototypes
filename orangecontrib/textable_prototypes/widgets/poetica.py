@@ -289,7 +289,7 @@ class Poetica(OWTextableBaseWidget):
             orientation='horizontal',
         )
 
-        # Refresh Button
+        # Refresh database Button
         self.refreshButton = gui.button(
             widget=boxbutton3,
             master=self,
