@@ -506,11 +506,12 @@ class SwissLaw(OWTextableBaseWidget):
         #for item in self.myBasket:
 
             #essai:
-        content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(self.selectedDocument)])
+        xml_file_contents = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(self.selectedDocument)])
 
             #content = self.get_xml_contents(self.database["url_fr"][item[0]])
-        self.createdInputs.append(Input(content))
-        progressBar.advance()
+        for content in xml_file_contents:
+            self.createdInputs.append(Input(content))
+            progressBar.advance()
 
         # If there"s only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
@@ -544,7 +545,8 @@ class SwissLaw(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Law Documents importation", self.segmentation.to_string(), self)
+        print(type(self.segmentation))
+        self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
