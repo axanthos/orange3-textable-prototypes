@@ -474,6 +474,7 @@ class Poetica(OWTextableBaseWidget):
             for poem_idx in self.selectedPoems:
                 self.corpusItemsLabels.append(self.poemLabels[poem_idx])
             self.corpusItemsLabels = self.corpusItemsLabels
+            self.clearmyBasket.setDisabled(len(self.corpusItemsLabels) == 0)
         else:
             self.infoBox.setText(f"Select a poem", "warning")
 
