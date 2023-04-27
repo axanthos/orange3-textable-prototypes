@@ -407,6 +407,11 @@ class SwissLaw(OWTextableBaseWidget):
         #for item in self.myBasket:
 
             #essai:
+        """xml_file_contents = []
+                for myDocu in self.mydocumentLabels:
+                    xml_file_content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(myDocu)])
+                    xml_file_contents.append(xml_file_content)"""
+
         xml_file_contents = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(self.selectedDocument)])
 
             #content = self.get_xml_contents(self.database["url_fr"][item[0]])
