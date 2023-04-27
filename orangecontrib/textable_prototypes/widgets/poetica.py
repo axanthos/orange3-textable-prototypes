@@ -461,14 +461,25 @@ class Poetica(OWTextableBaseWidget):
         if str(author_query) != "":
             index = int(self.authorQuery)
             self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
+            self.poemLabels = list()
             for key, value in self.db["author"].items():
                 if self.db["author"][key] == self.authors_list[index]:
-                    self.poemLabelsBox.addItem(self.db["title"][key])
-            else:
-                pass
+                    self.poemLabels.append(self.db["title"][key])
+            self.poemLabels = self.poemLabels
         else:
             self.infoBox.setText(f"You didn't search anything !",
                                  "warning")
+
+    def add(self):
+        if self.selectedPoems:
+            self.corpusItemsLabels = list()
+            self.infoBox.setText(f"You add a poem {str(self.selectedPoems)}", "warning")
+            for poem_idx in self.selectedPoems:
+                self.corpusItemsLabels.append(self.poemLabels[poem_idx])
+            self.corpusItemsLabels = self.corpusItemsLabels
+        else:
+            self.infoBox.setText(f"Select a poem", "warning")
+
 
     # Search function which contacts the Genius API
     def searchFunctionGenius(self):
@@ -581,7 +592,7 @@ class Poetica(OWTextableBaseWidget):
 
 
     # Add songs function
-    def add(self):
+    def addGenius(self):
         """Add songs in your selection """
         for selectedTitle in self.selectedPoems:
             songData = self.searchResults[selectedTitle+1]
