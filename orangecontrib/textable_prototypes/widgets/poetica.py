@@ -468,15 +468,20 @@ class Poetica(OWTextableBaseWidget):
             self.infoBox.setText(f"You didn't select anything !",
                                  "warning")
 
+    # Add button's features...
     def add(self):
+        # If there is a selected poem...
         if self.selectedPoems:
             self.infoBox.setText(f"You add a poem", "warning")
             for poem_idx in self.selectedPoems:
+                # Check if the poem is already in the basket or not...
                 if self.poemLabels[poem_idx] in self.corpusItemsLabels:
                     self.infoBox.setText(f"The poem '{self.poemLabels[poem_idx]}' is already in your basket", "warning")
                 else:
+                    # Add the poem to the list "corpusItemsLabels"...
                     self.corpusItemsLabels.append(self.poemLabels[poem_idx])
             self.corpusItemsLabels = self.corpusItemsLabels
+            # Make the "clear" button usable.
             self.clearmyBasket.setDisabled(len(self.corpusItemsLabels) == 0)
         else:
             self.infoBox.setText(f"Select a poem", "warning")
