@@ -470,10 +470,10 @@ class Poetica(OWTextableBaseWidget):
 
     def add(self):
         if self.selectedPoems:
-            self.infoBox.setText(f"You add a poem {str(self.selectedPoems)}", "warning")
+            self.infoBox.setText(f"You add a poem", "warning")
             for poem_idx in self.selectedPoems:
                 if self.poemLabels[poem_idx] in self.corpusItemsLabels:
-                    self.infoBox.setText(f"The poem {str(self.selectedPoems)} is already in your basket", "warning")
+                    self.infoBox.setText(f"The poem {self.poemLabels[poem_idx]} is already in your basket", "warning")
                 else:
                     self.corpusItemsLabels.append(self.poemLabels[poem_idx])
             self.corpusItemsLabels = self.corpusItemsLabels
