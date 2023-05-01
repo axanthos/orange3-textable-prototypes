@@ -297,6 +297,7 @@ class Poetica(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
+    # Function to extract data...
     def dataExtraction(self):
 
         database = {
@@ -305,17 +306,16 @@ class Poetica(OWTextableBaseWidget):
             "poem": {},
         }
 
-        # Acceder a la page d'accueil de poetica...
+        # Go to poetica's homepage...
         try:
             poetica_url = 'https://www.poetica.fr/'
             url_accueil = urlopen(poetica_url)
             page_accueil = url_accueil.read()
-            # print(page_accueil)
             print("Valid poetica's URL")
             page_accueil = page_accueil.decode("utf-8")
             # url_accueil.close()
 
-            # Extraire la liste d'auteurs...
+            # Extract list of authors...
             base_seg = Input(page_accueil)
             condition = dict()
             condition["id"] = re.compile(r"^menu-poemes-par-auteur$")
@@ -325,13 +325,13 @@ class Poetica(OWTextableBaseWidget):
                 conditions=condition,
             )
 
-            # Recuperer le lien url vers la page de chaque auteur...
+            # Retrieve the url link to each author's page...
             xml_par_auteur = Segmenter.import_xml(
                 segmentation=xml_auteurs,
                 element="<a>",
             )
 
-            # Acceder a la page de chaque auteur...
+            # Go to each author's page...
             for auteur in xml_par_auteur:
                 try:
                     url_page_auteur = auteur.annotations["href"]
@@ -340,14 +340,10 @@ class Poetica(OWTextableBaseWidget):
                     print("Valid author's URL")
                     page_auteur = page_auteur.decode("utf-8")
 
-                    # Recuperer le nom de l'auteur.
+                    # Recover the author's name.
                     nom_auteur = auteur.get_content()
-                    # print(nom_auteur)
 
-                    # print(xml_par_auteur.to_string())
-                    # nom_auteur = auteur.get_content()
-
-                    # Extraire la liste de poemes...
+                    # Extract the list of poems...
                     seg_auteurs = Input(page_auteur)
                     condition_auteur = dict()
                     condition_auteur["class"] = re.compile(r"^entry-header$")
@@ -357,13 +353,13 @@ class Poetica(OWTextableBaseWidget):
                         conditions=condition_auteur,
                     )
 
-                    # Recuperer le lien url vers la page de chaque poeme...
+                    # Retrieve the url link to each poem's page...
                     xml_par_poeme = Segmenter.import_xml(
                         segmentation=xml_poemes,
                         element="<a>",
                     )
 
-                    # Acceder a la page de chaque poeme...
+                    # Go to each poem's page...
                     for poeme in xml_par_poeme:
                         try:
                             url_page_poeme = poeme.annotations["href"]
@@ -372,11 +368,10 @@ class Poetica(OWTextableBaseWidget):
                             print("Valid poem's URL")
                             page_poeme = page_poeme.decode("utf-8")
 
-                            # Recuperer le nom du poeme.
+                            # Recover the poem's name.
                             nom_poeme = poeme.get_content()
-                            # print(nom_poeme)
 
-                            # Extraire les poeme et ses donnees...
+                            # Extract the poem and its data...
                             seg_poemes = Input(page_poeme)
                             condition_poeme = dict()
                             condition_poeme["class"] = re.compile(r"^entry-content$")
@@ -386,37 +381,36 @@ class Poetica(OWTextableBaseWidget):
                                 conditions=condition_poeme,
                             )
 
-                            # Recuperer le poeme avec ses propres balises.
+                            # Retrieve the poem with its own tags.
                             poeme_balises = xml_contenu_poeme[0].get_content()
 
                             # Recuperer et associer la date de parution du poeme si elle est connue...
 
-                            # N'afficher que le contenu du poeme...
+                            # Display only the contents of the poem...
                             poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
                             poeme = re.sub(r".+$", "", poeme)
-                            # print(poeme)
                             database["title"][url_page_poeme] = nom_poeme
                             database["author"][url_page_poeme] = nom_auteur
                             database["poem"][url_page_poeme] = poeme
 
-                        # Avertir si l'url ne fonctionne pas...
+                        # Warn if the url doesn't work...
                         except IOError:
                             print("Invalid poem's URL")
 
-                # Avertir si l'url ne fonctionne pas...
+                # Warn if the url doesn't work...
                 except IOError:
                     print("Invalid author's URL")
 
-        # Avertir si l'url ne fonctionne pas...
+        # Warn if the url doesn't work...
         except IOError:
             print("Invalid poetica's URL")
 
-        # Definir un path pour situer par la suite le chemin d'acces pour la sauvegarde...
+        # Define a path to later locate the access path for the backup...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
 
-        # Sauvegarder les dictionnaires avec pickle...
+        # Back up dictionaries with pickle...
         try:
             file = open(os.path.join(path, "poetica_cache.p"), "wb")
             pickle.dump(database, file)
@@ -425,24 +419,24 @@ class Poetica(OWTextableBaseWidget):
         except IOError:
             print("Can't save the dictionary")
 
-
+    # Function to open the database...
     def openDatabase(self):
 
-        # Definir un path pour situer par la suite le chemin d'acces pour la sauvegarde...
+        # Define a path to later locate the access path for the backup...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
 
-        # Ouvrir les dictionnaires avec pickle...
+        # Open dictionaries with pickle...
         try:
             file = open(os.path.join(path, "poetica_cache.p"), "rb")
             new_database = pickle.load(file)
-            # print(new_database)
             print("Dictionary correctly loaded")
             file.close()
         except IOError:
             print("Can't load the dictionary")
 
+        # Return the stored dictionary.
         return new_database
 
 
