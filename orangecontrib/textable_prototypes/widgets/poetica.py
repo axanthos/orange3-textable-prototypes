@@ -525,7 +525,7 @@ class Poetica(OWTextableBaseWidget):
     def sendData(self):
         """Compute result of widget processing and send to output"""
         # Skip if title list is empty:
-        if self.corpusItemsLabels == list():
+        if self.corpusLabels == list():
             self.infoBox.setText(
                 "Your corpus is empty, please add some poems first",
                 "warning"
