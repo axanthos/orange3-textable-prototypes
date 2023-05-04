@@ -493,8 +493,8 @@ class Poetica(OWTextableBaseWidget):
     # Update selections function
     def updatecorpusItemsLabels(self):
         self.corpusItemsLabels = list()
-        for songData in self.myBasket:
-            result_string = songData["title"] + " - " + songData["artist"]
+        for poemData in self.myBasket:
+            result_string = poemData["title"] + " - " + poemData["artist"]
             self.corpusItemsLabels.append(result_string)
         self.corpusItemsLabels = self.corpusItemsLabels
 
@@ -506,7 +506,7 @@ class Poetica(OWTextableBaseWidget):
     def remove(self):
         """Remove the selected poems in your selection """
         self.myBasket = [
-            song for idx, song in enumerate(self.myBasket)
+            poem for idx, poem in enumerate(self.myBasket)
             if idx not in self.corpusItems
         ]
         self.updatecorpusItemsLabels()
@@ -547,8 +547,8 @@ class Poetica(OWTextableBaseWidget):
 
 
         # Store downloaded lyrics strings in input objects...
-        for song in song_content:
-            newInput = Input(song, self.captionTitle)
+        for poem in poem_content:
+            newInput = Input(poem, self.captionTitle)
             self.createdInputs.append(newInput)
 
         # If there"s only one play, the widget"s output is the created Input.
