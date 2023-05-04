@@ -291,8 +291,6 @@ class Poetica(OWTextableBaseWidget):
         self.searchButton.setDefault(True)
         self.infoBox.draw()
 
-        # Update the selections list
-        self.updateCorpusLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -476,7 +474,7 @@ class Poetica(OWTextableBaseWidget):
                     self.corpusLabels.append(self.resultLabels[poem_idx])
             self.corpusLabels = self.corpusLabels
             # Make the "clear" button usable.
-            self.clearCorpus.setDisabled(len(self.corpusLabels) == 0)
+            self.clearCorpusButton.setDisabled(len(self.corpusLabels) == 0)
         else:
             self.infoBox.setText(f"Select a poem", "warning")
 
@@ -490,16 +488,17 @@ class Poetica(OWTextableBaseWidget):
         self.addButton.setDisabled(self.resultLabels == list())
 
 
-    # Update selections function
-    def updateCorpusLabels(self):
-        self.corpusLabels = list()
-        for poemData in self.corpusLabels:
-            result_string = poemData["title"] + " - " + poemData["artist"]
-            self.corpusLabels.append(result_string)
-        self.corpusLabels = self.corpusLabels
-
-        self.clearCorpusButton.setDisabled(self.corpusLabels == list())
-        self.removeButton.setDisabled(self.corpusSelectedItems == list())
+    # # Update selections function
+    # def updateCorpusLabels(self):
+    #     return
+    #     self.corpusLabels = list()
+    #     for poemData in self.corpusLabels:
+    #         result_string = poemData["title"] + " - " + poemData["artist"]
+    #         self.corpusLabels.append(result_string)
+    #     self.corpusLabels = self.corpusLabels
+    #
+    #     self.clearCorpusButton.setDisabled(self.corpusLabels == list())
+    #     self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
 
     # fonction qui retire la selection de notre panier
@@ -509,7 +508,6 @@ class Poetica(OWTextableBaseWidget):
             poem for idx, poem in enumerate(self.corpusLabels)
             if idx not in self.corpusSelectedItems
         ]
-        self.updateCorpusLabels()
         self.sendButton.settingsChanged()
 
 
