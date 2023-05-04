@@ -544,16 +544,16 @@ class Poetica(OWTextableBaseWidget):
         )
 
         # Attempt to connect to Genius and retrieve lyrics...
-        selectedSongs = list()
-        song_content = list()
+        selectedPoems = list()
+        poem_content = list()
         annotations = list()
         try:
-            for song in self.corpusItemsLabels:
+            for poem in self.corpusItemsLabels:
                 # song is a dict {'idx1':{'title':'song1'...},
                 # 'idx2':{'title':'song2'...}}
                 # page_url = "http://genius.com" + song['path']
                 # lyrics = self.html_to_text(page_url)
-                song_content.append(song)
+                poem_content.append(poem)
                 # annotations.append(song.copy())
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
