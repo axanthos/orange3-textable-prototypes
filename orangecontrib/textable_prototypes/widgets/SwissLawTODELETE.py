@@ -5,8 +5,6 @@ from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
 documents = [(2,0,0),
-             (3,0,0),
-             (7,0,0)
              ]
 
 # for urls in segment:
@@ -54,3 +52,7 @@ for item in xml_contents:
 
 output_seg = Segmenter.concatenate(created_inputs, import_labels_as=None)
 print(output_seg.to_string())
+
+if self.seg == "Into Article":
+    new_segmentation = Segmenter.import_xml(self.segmentation, "article") #peut=etre ajouer <>
+    self.segmentation = new_segmentation
