@@ -270,17 +270,17 @@ class Poetica(OWTextableBaseWidget):
         )
         self.removeButton.setDisabled(True)
 
-        # Delete all confirmed poems button
-        self.clearmyBasket = gui.button(
+        # Delete all
+        self.clearCorpusButton = gui.button(
             widget=boxbutton2,
             master=self,
             label=u'Clear corpus',
-            callback=self.clearmyCorpus,
+            callback=self.clearCorpus,
             tooltip=(
                 u"Remove all poems from your corpus."
             ),
         )
-        self.clearmyBasket.setDisabled(True)
+        self.clearCorpusButton.setDisabled(True)
 
         gui.separator(widget=mytitleBox, height=3)
         gui.rubber(self.controlArea)
@@ -476,7 +476,7 @@ class Poetica(OWTextableBaseWidget):
                     self.corpusLabels.append(self.resultLabels[poem_idx])
             self.corpusLabels = self.corpusLabels
             # Make the "clear" button usable.
-            self.clearmyBasket.setDisabled(len(self.corpusLabels) == 0)
+            self.clearCorpus.setDisabled(len(self.corpusLabels) == 0)
         else:
             self.infoBox.setText(f"Select a poem", "warning")
 
@@ -498,7 +498,7 @@ class Poetica(OWTextableBaseWidget):
             self.corpusLabels.append(result_string)
         self.corpusLabels = self.corpusLabels
 
-        self.clearmyBasket.setDisabled(self.corpusLabels == list())
+        self.clearCorpusButton.setDisabled(self.corpusLabels == list())
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
 
@@ -514,12 +514,12 @@ class Poetica(OWTextableBaseWidget):
 
 
     # Clear selections function
-    def clearmyCorpus(self):
+    def clearCorpus(self):
         """Remove all poems in your selection """
         self.corpusLabels = list()
         self.corpusLabels = list()
         self.sendButton.settingsChanged()
-        self.clearmyBasket.setDisabled(True)
+        self.clearCorpus.setDisabled(True)
 
     # Function computing results then sending them to the widget output
     def sendData(self):
