@@ -210,14 +210,14 @@ class Poetica(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Add songs button
+        # Add poems button
         self.addButton = gui.button(
             widget=boxbutton,
             master=self,
             label=u'Add to corpus',
             callback=self.add,
             tooltip=(
-                u"Move the selected song downward in your corpus."
+                u"Move the selected poem downward in your corpus."
             ),
         )
         self.addButton.setDisabled(True)
@@ -234,7 +234,7 @@ class Poetica(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        # area where confirmed songs are moved and stocked
+        # area where confirmed poems are moved and stocked
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
@@ -258,26 +258,26 @@ class Poetica(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Remove songs button
+        # Remove poems button
         self.removeButton = gui.button(
             widget=boxbutton2,
             master=self,
             label=u'Remove from corpus',
             callback=self.remove,
             tooltip=(
-                u"Remove the selected song from your corpus."
+                u"Remove the selected poem from your corpus."
             ),
         )
         self.removeButton.setDisabled(True)
 
-        # Delete all confirmed songs button
+        # Delete all confirmed poems button
         self.clearmyBasket = gui.button(
             widget=boxbutton2,
             master=self,
             label=u'Clear corpus',
             callback=self.clearmyBasket,
             tooltip=(
-                u"Remove all songs from your corpus."
+                u"Remove all poems from your corpus."
             ),
         )
         self.clearmyBasket.setDisabled(True)
@@ -504,7 +504,7 @@ class Poetica(OWTextableBaseWidget):
 
     # fonction qui retire la selection de notre panier
     def remove(self):
-        """Remove the selected songs in your selection """
+        """Remove the selected poems in your selection """
         self.myBasket = [
             song for idx, song in enumerate(self.myBasket)
             if idx not in self.corpusItems
@@ -515,7 +515,7 @@ class Poetica(OWTextableBaseWidget):
 
     # Clear selections function
     def clearmyBasket(self):
-        """Remove all songs in your selection """
+        """Remove all poems in your selection """
         self.corpusItemsLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
@@ -528,7 +528,7 @@ class Poetica(OWTextableBaseWidget):
         # Skip if title list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
-                "Your corpus is empty, please add some songs first",
+                "Your corpus is empty, please add some poems first",
                 "warning"
             )
             return
