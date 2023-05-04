@@ -521,18 +521,16 @@ class Poetica(OWTextableBaseWidget):
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
 
-
     # Function computing results then sending them to the widget output
     def sendData(self):
         """Compute result of widget processing and send to output"""
         # Skip if title list is empty:
-        if self.myBasket == list():
+        if self.corpusItemsLabels == list():
             self.infoBox.setText(
                 "Your corpus is empty, please add some poems first",
                 "warning"
             )
             return
-
 
         # Clear created Inputs.
         self.clearCreatedInputs()
@@ -542,9 +540,33 @@ class Poetica(OWTextableBaseWidget):
         # Initialize progress bar.
         progressBar = ProgressBar(
             self,
-            iterations=len(self.myBasket)
+            iterations=len(self.corpusItemsLabels)
         )
 
+        # Attempt to connect to Genius and retrieve lyrics...
+        selectedSongs = list()
+        song_content = list()
+        annotations = list()
+        try:
+            for song in self.corpusItemsLabels:
+                # song is a dict {'idx1':{'title':'song1'...},
+                # 'idx2':{'title':'song2'...}}
+                # page_url = "http://genius.com" + song['path']
+                # lyrics = self.html_to_text(page_url)
+                song_content.append(song)
+                # annotations.append(song.copy())
+                # 1 tick on the progress bar of the widget
+                progressBar.advance()
+
+        # If an error occurs (e.g. http error, or memory error)...
+        except:
+            # Set Info box and widget to "error" state.
+            self.infoBox.setText(
+                "Couldn't download data from Genius website.",
+                "error"
+            )
+            self.controlArea.setDisabled(False)
+            return
 
         # Store downloaded lyrics strings in input objects...
         for poem in poem_content:
@@ -564,9 +586,9 @@ class Poetica(OWTextableBaseWidget):
             )
 
         # Annotate segments...
-        for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update(annotations[idx])
-            self.segmentation[idx] = segment
+        # for idx, segment in enumerate(self.segmentation):
+        #    segment.annotations.update(annotations[idx])
+        #    self.segmentation[idx] = segment
 
         # Clear progress bar.
         progressBar.finish()
@@ -584,7 +606,7 @@ class Poetica(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Lyrics importation", self.segmentation, self)
+        self.send("Poems importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
