@@ -548,12 +548,48 @@ class Poetica(OWTextableBaseWidget):
         song_content = list()
         annotations = list()
         try:
-            for song in self.corpusItemsLabels:
+            for song in self.corpusLabels:
                 # song is a dict {'idx1':{'title':'song1'...},
                 # 'idx2':{'title':'song2'...}}
                 # page_url = "http://genius.com" + song['path']
                 # lyrics = self.html_to_text(page_url)
-                song_content.append(song)
+                for key, value in self.db["title"].items():
+                    if self.db["title"][key] == song:
+                        try:
+                            url_poeme = urlopen(key)
+                            page_poeme = url_poeme.read()
+                            print("Valid poem's URL")
+                            page_poeme = page_poeme.decode("utf-8")
+
+                            # Recuperer le nom du poeme.
+                            # nom_poeme = poeme.get_content()
+                            # print(nom_poeme)
+
+                            # Extraire les poeme et ses donnees...
+                            seg_poemes = Input(page_poeme)
+                            condition_poeme = dict()
+                            condition_poeme["class"] = re.compile(r"^entry-content$")
+                            xml_contenu_poeme = Segmenter.import_xml(
+                                segmentation=seg_poemes,
+                                element="<div>",
+                                conditions=condition_poeme,
+                            )
+
+                            # Recuperer le poeme avec ses propres balises.
+                            poeme_balises = xml_contenu_poeme[0].get_content()
+
+                            # Recuperer et associer la date de parution du poeme si elle est connue...
+
+                            # N'afficher que le contenu du poeme...
+                            poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
+                            poeme = re.sub(r".+$", "", poeme)
+                            # print(poeme)
+                            song_content.append(poeme)
+
+                        # Avertir si l'url ne fonctionne pas...
+                        except IOError:
+                            print("Invalid poem's URL")
+
                 # annotations.append(song.copy())
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
