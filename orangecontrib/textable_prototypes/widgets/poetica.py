@@ -224,14 +224,14 @@ class Poetica(OWTextableBaseWidget):
 
         # Clear button
         # Uses "clearResults" function
-        self.clearButton = gui.button(
+        self.clearResultsButton = gui.button(
             widget=boxbutton,
             master=self,
             label="Clear results",
             callback=self.clearResults,
             tooltip="Clear results",
         )
-        self.clearButton.setDisabled(True)
+        self.clearResultsButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
         # area where confirmed poems are moved and stocked
@@ -454,7 +454,7 @@ class Poetica(OWTextableBaseWidget):
                     # Store the poem's title...
                     self.resultLabels.append(self.db["title"][key])
             self.resultLabels = self.resultLabels
-            self.clearButton.setDisabled(len(self.resultLabels) == 0)
+            self.clearResultsButton.setDisabled(len(self.resultLabels) == 0)
         # If the selection is empty...
         else:
             self.infoBox.setText(f"You didn't select anything !",
@@ -484,7 +484,7 @@ class Poetica(OWTextableBaseWidget):
         """Clear the results list"""
         del self.resultLabels[:]
         self.resultLabels = self.resultLabels
-        self.clearButton.setDisabled(True)
+        self.clearResultsButton.setDisabled(True)
         self.addButton.setDisabled(self.resultLabels == list())
 
 
@@ -515,9 +515,8 @@ class Poetica(OWTextableBaseWidget):
     def clearCorpus(self):
         """Remove all poems in your selection """
         self.corpusLabels = list()
-        self.corpusLabels = list()
         self.sendButton.settingsChanged()
-        self.clearCorpus.setDisabled(True)
+        self.clearCorpus.setDisabled(len(self.corpusLabels) == 0)
 
     # Function computing results then sending them to the widget output
     def sendData(self):
