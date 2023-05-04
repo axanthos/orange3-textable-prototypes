@@ -75,7 +75,7 @@ class Poetica(OWTextableBaseWidget):
 
     # Saved settings
     autoSend = settings.Setting(True)
-    myBasket = settings.Setting([])
+    corpusLabels = settings.Setting([])
 
     def __init__(self):
         """Widget creator."""
@@ -275,7 +275,7 @@ class Poetica(OWTextableBaseWidget):
             widget=boxbutton2,
             master=self,
             label=u'Clear corpus',
-            callback=self.clearmyBasket,
+            callback=self.clearmyCorpus,
             tooltip=(
                 u"Remove all poems from your corpus."
             ),
@@ -292,7 +292,7 @@ class Poetica(OWTextableBaseWidget):
         self.infoBox.draw()
 
         # Update the selections list
-        self.updatecorpusItemsLabels()
+        self.updateCorpusLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -491,33 +491,33 @@ class Poetica(OWTextableBaseWidget):
 
 
     # Update selections function
-    def updatecorpusItemsLabels(self):
+    def updateCorpusLabels(self):
         self.corpusLabels = list()
-        for poemData in self.myBasket:
+        for poemData in self.corpusLabels:
             result_string = poemData["title"] + " - " + poemData["artist"]
             self.corpusLabels.append(result_string)
         self.corpusLabels = self.corpusLabels
 
-        self.clearmyBasket.setDisabled(self.myBasket == list())
+        self.clearmyBasket.setDisabled(self.corpusLabels == list())
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
 
     # fonction qui retire la selection de notre panier
     def remove(self):
         """Remove the selected poems in your selection """
-        self.myBasket = [
-            poem for idx, poem in enumerate(self.myBasket)
+        self.corpusLabels = [
+            poem for idx, poem in enumerate(self.corpusLabels)
             if idx not in self.corpusSelectedItems
         ]
-        self.updatecorpusItemsLabels()
+        self.updateCorpusLabels()
         self.sendButton.settingsChanged()
 
 
     # Clear selections function
-    def clearmyBasket(self):
+    def clearmyCorpus(self):
         """Remove all poems in your selection """
         self.corpusLabels = list()
-        self.myBasket = list()
+        self.corpusLabels = list()
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
 
@@ -540,15 +540,15 @@ class Poetica(OWTextableBaseWidget):
         # Initialize progress bar.
         progressBar = ProgressBar(
             self,
-            iterations=len(self.corpusItemsLabels)
+            iterations=len(self.corpusLabels)
         )
 
         # Attempt to connect to Genius and retrieve lyrics...
-        selectedPoems = list()
-        poem_content = list()
-        annotations = list()
+        # selectedPoems = list()
+        # poem_content = list()
+        # annotations = list()
         try:
-            for poem in self.corpusItemsLabels:
+            for poem in self.corpusLabels:
                 # song is a dict {'idx1':{'title':'song1'...},
                 # 'idx2':{'title':'song2'...}}
                 # page_url = "http://genius.com" + song['path']
