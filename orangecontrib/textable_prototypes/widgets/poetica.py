@@ -91,11 +91,11 @@ class Poetica(OWTextableBaseWidget):
         self.dateQuery = ''
         self.topicQuery = ''
         # Results box attributs
-        self.poemLabels = list()
-        self.selectedPoems = list()
+        self.resultLabels = list()
+        self.resultSelectedItems = list()
         # Corpus box attributs
-        self.corpusItems = list()
-        self.corpusItemsLabels = list()
+        self.corpusSelectedItems = list()
+        self.corpusLabels = list()
         # Stocks all the inputs (poems) in a list
         self.createdInputs = list()
 
@@ -193,17 +193,17 @@ class Poetica(OWTextableBaseWidget):
             tooltip="Attention ! Cela peut prendre un peu de temps…",
         )
 
-        self.poemLabelsBox = gui.listBox(
+        self.resultBox = gui.listBox(
             widget=queryBox,
             master=self,
-            value="selectedPoems",    # setting (list)
-            labels="poemLabels",      # setting (list)
+            value="resultSelectedItems",    # setting (list)
+            labels="resultLabels",      # setting (list)
             callback=lambda: self.addButton.setDisabled(
-                self.selectedPoems == list()),
+                self.resultSelectedItems == list()),
             tooltip="The list of poems whose content will be imported",
         )
-        self.poemLabelsBox.setMinimumHeight(150)
-        self.poemLabelsBox.setSelectionMode(3)
+        self.resultBox.setMinimumHeight(150)
+        self.resultBox.setSelectionMode(3)
 
         boxbutton = gui.widgetBox(
             widget=queryBox,
@@ -241,17 +241,17 @@ class Poetica(OWTextableBaseWidget):
             orientation="vertical",
         )
 
-        self.mypoemLabelsBox = gui.listBox(
+        self.corpusBox = gui.listBox(
             widget=mytitleBox,
             master=self,
-            value="corpusItems",
-            labels="corpusItemsLabels",
+            value="corpusSelectedItems",
+            labels="corpusLabels",
             callback=lambda: self.removeButton.setDisabled(
-                self.corpusItems == list()),
+                self.corpusSelectedItems == list()),
             tooltip="The list of titles whose content will be imported",
         )
-        self.mypoemLabelsBox.setMinimumHeight(150)
-        self.mypoemLabelsBox.setSelectionMode(3)
+        self.corpusBox.setMinimumHeight(150)
+        self.corpusBox.setSelectionMode(3)
 
         boxbutton2 = gui.widgetBox(
             widget=mytitleBox,
@@ -448,15 +448,15 @@ class Poetica(OWTextableBaseWidget):
             index = int(self.authorQuery)
             # Display a message.
             self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
-            self.poemLabels = list()
+            self.resultLabels = list()
             # For each author in the authors dictionnary.
             for key, value in self.db["author"].items():
                 # If the dictionnary's author is equal to the selected author.
                 if self.db["author"][key] == self.authors_list[index]:
                     # Store the poem's title...
-                    self.poemLabels.append(self.db["title"][key])
-            self.poemLabels = self.poemLabels
-            self.clearButton.setDisabled(len(self.poemLabels) == 0)
+                    self.resultLabels.append(self.db["title"][key])
+            self.resultLabels = self.resultLabels
+            self.clearButton.setDisabled(len(self.resultLabels) == 0)
         # If the selection is empty...
         else:
             self.infoBox.setText(f"You didn't select anything !",
@@ -465,18 +465,18 @@ class Poetica(OWTextableBaseWidget):
     # Add button's features...
     def add(self):
         # If there is a selected poem...
-        if self.selectedPoems:
+        if self.resultSelectedItems:
             self.infoBox.setText(f"You add a poem", "warning")
-            for poem_idx in self.selectedPoems:
+            for poem_idx in self.resultSelectedItems:
                 # Check if the poem is already in the basket or not...
-                if self.poemLabels[poem_idx] in self.corpusItemsLabels:
-                    self.infoBox.setText(f"The poem '{self.poemLabels[poem_idx]}' is already in your basket", "warning")
+                if self.resultLabels[poem_idx] in self.corpusLabels:
+                    self.infoBox.setText(f"The poem '{self.resultLabels[poem_idx]}' is already in your basket", "warning")
                 else:
-                    # Add the poem to the list "corpusItemsLabels"...
-                    self.corpusItemsLabels.append(self.poemLabels[poem_idx])
-            self.corpusItemsLabels = self.corpusItemsLabels
+                    # Add the poem to the list "corpusLabels"...
+                    self.corpusLabels.append(self.resultLabels[poem_idx])
+            self.corpusLabels = self.corpusLabels
             # Make the "clear" button usable.
-            self.clearmyBasket.setDisabled(len(self.corpusItemsLabels) == 0)
+            self.clearmyBasket.setDisabled(len(self.corpusLabels) == 0)
         else:
             self.infoBox.setText(f"Select a poem", "warning")
 
@@ -484,30 +484,30 @@ class Poetica(OWTextableBaseWidget):
     # Function clearing the results list
     def clearResults(self):
         """Clear the results list"""
-        del self.poemLabels[:]
-        self.poemLabels = self.poemLabels
+        del self.resultLabels[:]
+        self.resultLabels = self.resultLabels
         self.clearButton.setDisabled(True)
-        self.addButton.setDisabled(self.poemLabels == list())
+        self.addButton.setDisabled(self.resultLabels == list())
 
 
     # Update selections function
     def updatecorpusItemsLabels(self):
-        self.corpusItemsLabels = list()
-        for songData in self.myBasket:
-            result_string = songData["title"] + " - " + songData["artist"]
-            self.corpusItemsLabels.append(result_string)
-        self.corpusItemsLabels = self.corpusItemsLabels
+        self.corpusLabels = list()
+        for poemData in self.myBasket:
+            result_string = poemData["title"] + " - " + poemData["artist"]
+            self.corpusLabels.append(result_string)
+        self.corpusLabels = self.corpusLabels
 
         self.clearmyBasket.setDisabled(self.myBasket == list())
-        self.removeButton.setDisabled(self.corpusItems == list())
+        self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
 
     # fonction qui retire la selection de notre panier
     def remove(self):
         """Remove the selected poems in your selection """
         self.myBasket = [
-            song for idx, song in enumerate(self.myBasket)
-            if idx not in self.corpusItems
+            poem for idx, poem in enumerate(self.myBasket)
+            if idx not in self.corpusSelectedItems
         ]
         self.updatecorpusItemsLabels()
         self.sendButton.settingsChanged()
@@ -516,7 +516,7 @@ class Poetica(OWTextableBaseWidget):
     # Clear selections function
     def clearmyBasket(self):
         """Remove all poems in your selection """
-        self.corpusItemsLabels = list()
+        self.corpusLabels = list()
         self.myBasket = list()
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
@@ -525,7 +525,7 @@ class Poetica(OWTextableBaseWidget):
     def sendData(self):
         """Compute result of widget processing and send to output"""
         # Skip if title list is empty:
-        if self.corpusItemsLabels == list():
+        if self.corpusLabels == list():
             self.infoBox.setText(
                 "Your corpus is empty, please add some poems first",
                 "warning"
@@ -544,52 +544,16 @@ class Poetica(OWTextableBaseWidget):
         )
 
         # Attempt to connect to Genius and retrieve lyrics...
-        selectedSongs = list()
-        song_content = list()
+        selectedPoems = list()
+        poem_content = list()
         annotations = list()
         try:
-            for song in self.corpusLabels:
+            for poem in self.corpusItemsLabels:
                 # song is a dict {'idx1':{'title':'song1'...},
                 # 'idx2':{'title':'song2'...}}
                 # page_url = "http://genius.com" + song['path']
                 # lyrics = self.html_to_text(page_url)
-                for key, value in self.db["title"].items():
-                    if self.db["title"][key] == song:
-                        try:
-                            url_poeme = urlopen(key)
-                            page_poeme = url_poeme.read()
-                            print("Valid poem's URL")
-                            page_poeme = page_poeme.decode("utf-8")
-
-                            # Recuperer le nom du poeme.
-                            # nom_poeme = poeme.get_content()
-                            # print(nom_poeme)
-
-                            # Extraire les poeme et ses donnees...
-                            seg_poemes = Input(page_poeme)
-                            condition_poeme = dict()
-                            condition_poeme["class"] = re.compile(r"^entry-content$")
-                            xml_contenu_poeme = Segmenter.import_xml(
-                                segmentation=seg_poemes,
-                                element="<div>",
-                                conditions=condition_poeme,
-                            )
-
-                            # Recuperer le poeme avec ses propres balises.
-                            poeme_balises = xml_contenu_poeme[0].get_content()
-
-                            # Recuperer et associer la date de parution du poeme si elle est connue...
-
-                            # N'afficher que le contenu du poeme...
-                            poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
-                            poeme = re.sub(r".+$", "", poeme)
-                            # print(poeme)
-                            song_content.append(poeme)
-
-                        # Avertir si l'url ne fonctionne pas...
-                        except IOError:
-                            print("Invalid poem's URL")
-
+                poem_content.append(poem)
                 # annotations.append(song.copy())
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -605,8 +569,8 @@ class Poetica(OWTextableBaseWidget):
             return
 
         # Store downloaded lyrics strings in input objects...
-        for song in song_content:
-            newInput = Input(song, self.captionTitle)
+        for poem in poem_content:
+            newInput = Input(poem, self.captionTitle)
             self.createdInputs.append(newInput)
 
         # If there"s only one play, the widget"s output is the created Input.
