@@ -167,12 +167,9 @@ class SwissLaw(OWTextableBaseWidget):
         self.language = ""
         self.addButton = None
         self.segmentations = [
-                "",
-                "No Segmentation",
-                "Into Title",
-                "Into Chapter",
-                "Into Article"
-            ]
+            "",
+            "No Segmentation"
+        ]
         self.languages = [
                 "",
                 "FR",
@@ -193,7 +190,7 @@ class SwissLaw(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
         # Create the working area
-        queryBox = gui.widgetBox(
+        self.queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Select Law Document",
             orientation="vertical",
@@ -207,7 +204,7 @@ class SwissLaw(OWTextableBaseWidget):
             self.addButton.label=u'Add 1 item to corpus'
 
         queryNbr = gui.comboBox(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value="selectedDocument",
             items=sorted(self.database["law_text"]),
@@ -222,8 +219,9 @@ class SwissLaw(OWTextableBaseWidget):
         )
 
         # Allows to choose the segmentation
-        queryNbr2 = gui.comboBox(
-            widget=queryBox,
+
+        self.queryNbr2 = gui.comboBox(
+            widget=self.queryBox,
             master=self,
             value="seg",
             items=self.segmentations,
@@ -238,7 +236,7 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Allows to choose the language
         queryNbr3 = gui.comboBox(
-            widget=queryBox,
+            widget=self.queryBox,
             master=self,
             value="language",
             items=self.languages,
@@ -252,7 +250,7 @@ class SwissLaw(OWTextableBaseWidget):
         )
 
         boxbutton = gui.widgetBox(
-            widget=queryBox,
+            widget=self.queryBox,
             box=False,
             orientation='horizontal',
         )
@@ -326,13 +324,10 @@ class SwissLaw(OWTextableBaseWidget):
         self.infoBox.draw()
 
         # Update the selections list
-        #self.updateMyDocumentsLabels()
+        self.updateMyDocumentLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
-
-
-
 
     # Function clearing the results list
     def clearResults(self):
@@ -346,7 +341,22 @@ class SwissLaw(OWTextableBaseWidget):
     def update_addButton(self):
         self.addButton.setDisabled(len(self.selectedDocument) == 0)
 
-    # Add documents function
+        self.segmentations=list()
+        self.segmentations.append("")
+        self.segmentations.append("No Segmentation")
+
+        if len(self.database["title"][self.database["law_text"].index(self.selectedDocument)]) > 0:
+            self.segmentations.append("Title")
+
+        if len(self.database["art"][self.database["law_text"].index(self.selectedDocument)]) > 0:
+            self.segmentations.append("Into Article")
+
+        if len(self.database["chap"][self.database["law_text"].index(self.selectedDocument)]) > 0:
+            self.segmentations.append("Into Chapter")
+
+        self.queryNbr2.addItems(self.segmentations)
+
+        # Add documents function
     def add(self):
         """Add document in your selection """
         if self.selectedDocument!="":
@@ -357,14 +367,15 @@ class SwissLaw(OWTextableBaseWidget):
 
     # Update selections function
     def updateMyDocumentLabels(self):
-        self.mydocumentLabels = list()
+        #self.mydocumentLabels = list()
         #for item in self.myBasket: (code précédent)
-        result_string = self.selectedDocument +" - "+self.seg+" - "+self.language #self.database["law_text"][item[]0] (code précédent)
-        self.documentLabels.append(result_string)
-        self.mydocumentLabels = self.documentLabels
+        if self.selectedDocument!="":
+            result_string = self.selectedDocument +" - "+self.seg+" - "+self.language #self.database["law_text"][item[]0] (code précédent)
+            self.documentLabels.append(result_string)
+            self.mydocumentLabels = self.documentLabels
 
-        self.clearmyBasket.setDisabled(self.myBasket == list())
-        self.removeButton.setDisabled(self.myDocuments == list())
+            self.clearmyBasket.setDisabled(self.myBasket == list())
+            self.removeButton.setDisabled(self.myDocuments == list())
 
     def deleteMyDocumentLabels(self):
         self.mydocumentLabels = list()
@@ -418,7 +429,7 @@ class SwissLaw(OWTextableBaseWidget):
         Document_list=list()
 
         # Clear created Inputs.
-        self.clearCreatedInputs()
+        #self.clearCreatedInputs()
 
         self.controlArea.setDisabled(True)
 
