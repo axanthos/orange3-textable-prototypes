@@ -543,8 +543,10 @@ class Poetica(OWTextableBaseWidget):
         # Attempt to connect to Genius and retrieve lyrics...
         # selectedPoems = list()
         poem_content = list()
+        annotations_list_authors = list()
         annotations_list_tiles = list()
         annotations__list_urls = list()
+        annotations_author = dict()
         annotations_title = dict()
         annotations_url = dict()
         try:
@@ -582,9 +584,11 @@ class Poetica(OWTextableBaseWidget):
                         except IOError:
                             print("Invalid poem's URL")
 
+                        annotations_author["Author"] = self.db["author"][key]
                         annotations_title["Title"] = poem
                         annotations_url["URL"] = key
 
+                        annotations_list_authors.append(annotations_author.copy())
                         annotations_list_tiles.append(annotations_title.copy())
                         annotations__list_urls.append(annotations_url.copy())
 
@@ -620,6 +624,7 @@ class Poetica(OWTextableBaseWidget):
 
         # Annotate segments...
         for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations_list_authors[idx])
             segment.annotations.update(annotations_list_tiles[idx])
             segment.annotations.update(annotations__list_urls[idx])
             self.segmentation[idx] = segment
