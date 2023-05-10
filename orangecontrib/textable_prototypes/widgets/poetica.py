@@ -543,8 +543,10 @@ class Poetica(OWTextableBaseWidget):
         # Attempt to connect to Genius and retrieve lyrics...
         # selectedPoems = list()
         poem_content = list()
-        annotations = list()
+        annotations_list_tiles = list()
+        annotations__list_urls = list()
         annotations_title = dict()
+        annotations_url = dict()
         try:
             for poem in self.corpusLabels:
                 for key, value in self.db["title"].items():
@@ -581,8 +583,10 @@ class Poetica(OWTextableBaseWidget):
                             print("Invalid poem's URL")
 
                         annotations_title["Title"] = poem
+                        annotations_url["URL"] = key
 
-                        annotations.append(annotations_title.copy())
+                        annotations_list_tiles.append(annotations_title.copy())
+                        annotations__list_urls.append(annotations_url.copy())
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -616,7 +620,8 @@ class Poetica(OWTextableBaseWidget):
 
         # Annotate segments...
         for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update(annotations[idx])
+            segment.annotations.update(annotations_list_tiles[idx])
+            segment.annotations.update(annotations__list_urls[idx])
             self.segmentation[idx] = segment
 
         # Clear progress bar.
