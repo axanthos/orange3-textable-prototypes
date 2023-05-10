@@ -160,7 +160,8 @@ class SwissLaw(OWTextableBaseWidget):
         self.myDocuments = list()
         self.mydocumentLabels = list()
         # stock all the inputs (songs) in a list
-        self.createdInputs = list()
+        #self.createdInputs = list()
+        self.createdInputs = Segmentation()
         # list for each law document (tuples)
         self.selectedDocument = ""
         self.seg = ""
@@ -190,7 +191,7 @@ class SwissLaw(OWTextableBaseWidget):
         #----------------------------------------------------------------------
         # User interface...
         # Create the working area
-        self.queryBox = gui.widgetBox(
+        queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Select Law Document",
             orientation="vertical",
@@ -199,18 +200,15 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Allows to choose the law document
 
-        
-        if len(self.selectedDocument) > 0:
-            self.addButton.label=u'Add 1 item to corpus'
-
         queryNbr = gui.comboBox(
-            widget=self.queryBox,
+            widget=queryBox,
             master=self,
             value="selectedDocument",
             items=sorted(self.database["law_text"]),
             sendSelectedValue=True,
             callback=self.update_addButton,
             orientation="horizontal",
+            emptyString="",
             label="Law Document :",
             labelWidth=120,
             tooltip=(
@@ -221,13 +219,14 @@ class SwissLaw(OWTextableBaseWidget):
         # Allows to choose the segmentation
 
         self.queryNbr2 = gui.comboBox(
-            widget=self.queryBox,
+            widget=queryBox,
             master=self,
             value="seg",
             items=self.segmentations,
             sendSelectedValue=True,
             orientation="horizontal",
             label="Segmentation",
+            emptyString="",
             labelWidth=120,
             tooltip=(
                 "Please select the desired search.\n"
@@ -236,13 +235,14 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Allows to choose the language
         queryNbr3 = gui.comboBox(
-            widget=self.queryBox,
+            widget=queryBox,
             master=self,
             value="language",
             items=self.languages,
             sendSelectedValue=True,
             orientation="horizontal",
             label="Language",
+            emptyString="",
             labelWidth=120,
             tooltip=(
                 "Please select the desired Language.\n"
@@ -250,7 +250,7 @@ class SwissLaw(OWTextableBaseWidget):
         )
 
         boxbutton = gui.widgetBox(
-            widget=self.queryBox,
+            widget=queryBox,
             box=False,
             orientation='horizontal',
         )
@@ -341,20 +341,27 @@ class SwissLaw(OWTextableBaseWidget):
     def update_addButton(self):
         self.addButton.setDisabled(len(self.selectedDocument) == 0)
 
-        self.segmentations=list()
+        self.queryNbr2.clear()
+
+        self.segmentations = list()
         self.segmentations.append("")
         self.segmentations.append("No Segmentation")
 
-        if len(self.database["title"][self.database["law_text"].index(self.selectedDocument)]) > 0:
+        if int(self.database["title"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segmentations.append("Title")
 
-        if len(self.database["art"][self.database["law_text"].index(self.selectedDocument)]) > 0:
+        if int(self.database["art"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segmentations.append("Into Article")
 
-        if len(self.database["chap"][self.database["law_text"].index(self.selectedDocument)]) > 0:
+        if int(self.database["chap"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segmentations.append("Into Chapter")
 
         self.queryNbr2.addItems(self.segmentations)
+
+        #self.sendButton.sendIf()
+        self.updateMyDocumentLabels()
+
+
 
         # Add documents function
     def add(self):
@@ -369,13 +376,18 @@ class SwissLaw(OWTextableBaseWidget):
     def updateMyDocumentLabels(self):
         #self.mydocumentLabels = list()
         #for item in self.myBasket: (code précédent)
-        if self.selectedDocument!="":
+        if self.selectedDocument!="" and self.seg!="" and self.language!="":
             result_string = self.selectedDocument +" - "+self.seg+" - "+self.language #self.database["law_text"][item[]0] (code précédent)
             self.documentLabels.append(result_string)
             self.mydocumentLabels = self.documentLabels
 
             self.clearmyBasket.setDisabled(self.myBasket == list())
             self.removeButton.setDisabled(self.myDocuments == list())
+
+            self.selectedDocument=""
+            self.seg=""
+            self.language=""
+            self.queryNbr2.clear()
 
     def deleteMyDocumentLabels(self):
         self.mydocumentLabels = list()
@@ -407,7 +419,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
 
-    def get_xml_contents(self, urls):
+    def get_xml_contents(self, urls) -> str:
         xml_contents = []
         #for url in urls: #on le garde au cas ou
         response = requests.get(urls)
@@ -429,7 +441,7 @@ class SwissLaw(OWTextableBaseWidget):
         Document_list=list()
 
         # Clear created Inputs.
-        #self.clearCreatedInputs()
+        self.clearCreatedInputs()
 
         self.controlArea.setDisabled(True)
 
@@ -450,7 +462,8 @@ class SwissLaw(OWTextableBaseWidget):
 
         for item in self.myBasket:
             content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][item[2]])
-            self.createdInputs.append(content)
+            #self.createdInputs.append(content)
+            self.createdInputs.set_data(-1, content)
             progressBar.advance()
 
         for script in Document_list:
@@ -459,14 +472,14 @@ class SwissLaw(OWTextableBaseWidget):
 
         # If there"s only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
-            self.segmentation = self.createdInputs[0]
+            self.segmentation = self.createdInputs
 
         # Otherwise the widget"s output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
                 self.captionTitle,
-                import_labels_as=None,
+                import_labels_as=None
             )
 
         # Annotate segments...
@@ -480,14 +493,19 @@ class SwissLaw(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
 
         # Set status to OK and report data size...
-        message = "%i segment@p sent to output " % len(self.segmentation)
-        message = pluralize(message, len(self.segmentation))
+        message = "%i segment@p sent to output " % self.segmentation.__len__()
+        message = pluralize(message, self.segmentation.__len__())
         numChars = 0
-        """for segment in self.segmentation:
-            segmentLength = len(Segmentation.get_data(segment.str_index))"""
-        for i in range(len(self.segmentation)-1):
-            segmentLength = len(Segmentation.get_data(i))
+        for segment in self.segmentation:
+            segmentLength = len(segment.get_content)
             numChars += segmentLength
+
+        """for i in range(self.segmentation.__len__()):
+            segment=Segmentation[i]
+            segmentLength = len(Segmentation.get_data(i))
+            numChars += segmentLength"""
+        """segmentLength = self.segmentation.__len__()
+        numChars = segmentLength"""
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
 
@@ -499,10 +517,7 @@ class SwissLaw(OWTextableBaseWidget):
 
 
     def clearCreatedInputs(self):
-        """Delete all Input objects that have been created."""
-        for segment in self.createdInputs:
-            Segmentation.set_data(segment[0].str_index, None)
-        del self.createdInputs[:]
+        self.createdInputs.__del__()
 
 
     # The following method needs to be copied verbatim in
