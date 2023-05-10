@@ -367,8 +367,9 @@ class SwissLaw(OWTextableBaseWidget):
         # Add documents function
     def add(self):
         """Add document in your selection """
+        segmentation_list = ["", "title", "article", "chapter"]
         if self.selectedDocument!="":
-            self.myBasket.append((self.selectedDocument, (self.segmentations.index(self.seg)-1), (self.languages.index(self.language)-1)))
+            self.myBasket.append((self.selectedDocument, segmentation_list[(self.segmentations.index(self.seg)-1)], (self.languages.index(self.language)-1)))
             self.updateMyDocumentLabels()
             self.sendButton.settingsChanged()
 
@@ -460,11 +461,12 @@ class SwissLaw(OWTextableBaseWidget):
                     xml_file_contents.append(xml_file_content)"""
 
         Document_list = list()
-        annotations = list()
+        segmentations_list = list()
 
         for item in self.myBasket:
             content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][item[2]])
             Document_list.append(content)
+            segmentations_list.append(item[1])
             #annotations.append(self.database["law_text"][self.database["law_text"].index(item[0])].annotations.copy())
             #self.createdInputs.append(content)
             #self.createdInputs.set_data(-1, content)
@@ -519,7 +521,10 @@ class SwissLaw(OWTextableBaseWidget):
         progressBar.finish()
         self.controlArea.setDisabled(False)
 
-        print(type(self.segmentation))
+        #print(segmentations_list[0])
+
+        self.segmentation = Segmenter.import_xml(self.segmentation, segmentations_list[0], label=segmentations_list[0])
+        #print(type(self.segmentation))
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
