@@ -82,8 +82,10 @@ class SwissLaw(OWTextableBaseWidget):
     )
 
     # Saved settings
-    autoSend = settings.Setting(True)
+    autoSend = settings.Setting(False)
     myBasket = settings.Setting([])
+    importedURLs = settings.Setting([])
+
 
 #Note débug jeudi 20 Avril 14h14:
 #J'ai changé: ligne 147 -> avant la valeur était = None (bug), j'ai remplacé None par ""
@@ -160,8 +162,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.myDocuments = list()
         self.mydocumentLabels = list()
         # stock all the inputs (songs) in a list
-        #self.createdInputs = list()
-        self.createdInputs = Segmentation()
+        self.createdInputs = list()
         # list for each law document (tuples)
         self.selectedDocument = ""
         self.seg = ""
@@ -438,8 +439,6 @@ class SwissLaw(OWTextableBaseWidget):
             )
             return
 
-        Document_list=list()
-
         # Clear created Inputs.
         self.clearCreatedInputs()
 
@@ -460,19 +459,32 @@ class SwissLaw(OWTextableBaseWidget):
                     xml_file_content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(myDocu)])
                     xml_file_contents.append(xml_file_content)"""
 
+        Document_list = list()
+        annotations = list()
+
         for item in self.myBasket:
             content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][item[2]])
+            Document_list.append(content)
+            #annotations.append(self.database["law_text"][self.database["law_text"].index(item[0])].annotations.copy())
             #self.createdInputs.append(content)
-            self.createdInputs.set_data(-1, content)
+            #self.createdInputs.set_data(-1, content)
             progressBar.advance()
 
+        """self.send("XML-TEI data", None, self)
+        self.controlArea.setDisabled(False)
+        return"""
+
+        """for script in Document_list:
+            newInput = Input(script, self.captionTitle)
+            self.createdInputs.append(newInput)
+"""
         for script in Document_list:
             newInput = Input(script, self.captionTitle)
             self.createdInputs.append(newInput)
 
         # If there"s only one play, the widget"s output is the created Input.
         if len(self.createdInputs) == 1:
-            self.segmentation = self.createdInputs
+            self.segmentation = self.createdInputs[0]
 
         # Otherwise the widget"s output is a concatenation...
         else:
@@ -485,31 +497,27 @@ class SwissLaw(OWTextableBaseWidget):
         # Annotate segments...
         """for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations[idx])
-            self.segmentation[idx] = segment
-"""
-        # Clear progress bar.
-        progressBar.finish()
+            self.segmentation[idx] = segment"""
 
-        self.controlArea.setDisabled(False)
+        # Store imported URLs as setting.
+        """self.importedURLs = [
+            self.searchResults[self.myBasket[0]].annotations["urls"]
+        ]"""
 
         # Set status to OK and report data size...
-        message = "%i segment@p sent to output " % self.segmentation.__len__()
-        message = pluralize(message, self.segmentation.__len__())
+        message = "%i segment@p sent to output " % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
         numChars = 0
         for segment in self.segmentation:
-            segmentLength = len(segment.get_content)
+            segmentLength = len(Segmentation.get_data(segment.str_index))
             numChars += segmentLength
-
-        """for i in range(self.segmentation.__len__()):
-            segment=Segmentation[i]
-            segmentLength = len(Segmentation.get_data(i))
-            numChars += segmentLength"""
-        """segmentLength = self.segmentation.__len__()
-        numChars = segmentLength"""
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
-
         self.infoBox.setText(message)
+
+        # Clear progress bar.
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
 
         print(type(self.segmentation))
         self.send("Law Documents importation", self.segmentation, self)
@@ -517,7 +525,9 @@ class SwissLaw(OWTextableBaseWidget):
 
 
     def clearCreatedInputs(self):
-        self.createdInputs.__del__()
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
 
 
     # The following method needs to be copied verbatim in
