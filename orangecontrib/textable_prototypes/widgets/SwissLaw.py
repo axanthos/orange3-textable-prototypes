@@ -451,11 +451,11 @@ class SwissLaw(OWTextableBaseWidget):
             newInput = Input(script, self.captionTitle)
             self.createdInputs.append(newInput)
 
-        # If there"s only one play, the widget"s output is the created Input.
+        # If there's only one play, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = self.createdInputs[0]
 
-        # Otherwise the widget"s output is a concatenation...
+        # Otherwise the widget's output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
