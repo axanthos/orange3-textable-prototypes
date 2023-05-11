@@ -144,21 +144,6 @@ class Poetica(OWTextableBaseWidget):
             tooltip=("Select an author"),
         )
 
-        # # Allows to select a date in a list
-        # # Uses "dateQuery" attribut
-        # gui.comboBox(
-        #     widget=queryBox,
-        #     master=self,
-        #     value='dateQuery',
-        #     items=[
-        #         "1700",
-        #     ],
-        #     orientation='horizontal',
-        #     label=u"Date : ",
-        #     labelWidth=120,
-        #     tooltip=("Select date"),
-        # )
-
         # Allows to select a topic in a list
         # Uses "topicQuery" attribut
         gui.comboBox(
