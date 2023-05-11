@@ -89,7 +89,6 @@ class Poetica(OWTextableBaseWidget):
         self.inputSeg = None
         # Query criterias
         self.authorQuery = ''
-        self.dateQuery = ''
         self.topicQuery = ''
         # Results box attributs
         self.resultLabels = list()
@@ -368,7 +367,6 @@ class Poetica(OWTextableBaseWidget):
                             # Retrieve the poem with its own tags.
                             poeme_balises = xml_contenu_poeme[0].get_content()
 
-                            # Recuperer et associer la date de parution du poeme si elle est connue...
 
                             # Display only the contents of the poem...
                             poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
@@ -558,8 +556,6 @@ class Poetica(OWTextableBaseWidget):
 
                             # Recuperer le poeme avec ses propres balises.
                             poeme_balises = xml_contenu_poeme[0].get_content()
-
-                            # Recuperer et associer la date de parution du poeme si elle est connue...
 
                             # N'afficher que le contenu du poeme...
                             poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
