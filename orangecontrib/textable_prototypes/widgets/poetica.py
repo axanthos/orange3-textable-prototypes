@@ -90,7 +90,6 @@ class Poetica(OWTextableBaseWidget):
         self.inputSeg = None
         # Query criterias
         self.authorQuery = ''
-        self.dateQuery = ''
         self.topicQuery = ''
         # Results box attributs
         self.resultLabels = list()
@@ -143,21 +142,6 @@ class Poetica(OWTextableBaseWidget):
             label=u"Author : ",
             labelWidth=120,
             tooltip=("Select an author"),
-        )
-
-        # Allows to select a date in a list
-        # Uses "dateQuery" attribut
-        gui.comboBox(
-            widget=queryBox,
-            master=self,
-            value='dateQuery',
-            items=[
-                "1700",
-            ],
-            orientation='horizontal',
-            label=u"Date : ",
-            labelWidth=120,
-            tooltip=("Select date"),
         )
 
         # Allows to select a topic in a list
@@ -393,8 +377,6 @@ class Poetica(OWTextableBaseWidget):
                             # Retrieve the poem with its own tags.
                             poeme_balises = xml_contenu_poeme[0].get_content()
 
-                            # Recuperer et associer la date de parution du poeme si elle est connue...
-
                             # Display only the contents of the poem...
                             poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
                             poeme = re.sub(r".+$", "", poeme)
@@ -583,8 +565,6 @@ class Poetica(OWTextableBaseWidget):
 
                             # Recuperer le poeme avec ses propres balises.
                             poeme_balises = xml_contenu_poeme[0].get_content()
-
-                            # Recuperer et associer la date de parution du poeme si elle est connue...
 
                             # N'afficher que le contenu du poeme...
                             poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
