@@ -144,7 +144,7 @@ class Poetica(OWTextableBaseWidget):
         )
 
         # Allows to select a date in a list
-        #  Uses "dateQuery" attribut
+        # Uses "dateQuery" attribut
         gui.comboBox(
             widget=queryBox,
             master=self,
@@ -159,7 +159,7 @@ class Poetica(OWTextableBaseWidget):
         )
 
         # Allows to select a topic in a list
-        #  Uses "topicQuery" attribut
+        # Uses "topicQuery" attribut
         gui.comboBox(
             widget=queryBox,
             master=self,
@@ -513,10 +513,11 @@ class Poetica(OWTextableBaseWidget):
 
     # Clear selections function
     def clearCorpus(self):
-        """Remove all poems in your selection """
-        self.corpusLabels = list()
-        self.sendButton.settingsChanged()
-        self.clearCorpus.setDisabled(len(self.corpusLabels) == 0)
+        """Clear the results list"""
+        del self.corpusLabels[:]
+        self.corpusLabels = self.corpusLabels
+        self.clearCorpusButton.setDisabled(True)
+        self.addButton.setDisabled(self.corpusLabels == list())
 
     # Function computing results then sending them to the widget output
     def sendData(self):
