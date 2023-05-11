@@ -461,15 +461,14 @@ class SwissLaw(OWTextableBaseWidget):
                     xml_file_contents.append(xml_file_content)"""
 
         Document_list = list()
+        annotations = list()
         segmentations_list = list()
 
         for item in self.myBasket:
             content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][item[2]])
             Document_list.append(content)
             segmentations_list.append(item[1])
-            #annotations.append(self.database["law_text"][self.database["law_text"].index(item[0])].annotations.copy())
-            #self.createdInputs.append(content)
-            #self.createdInputs.set_data(-1, content)
+            #annotations.append(item[0])
             progressBar.advance()
 
         """self.send("XML-TEI data", None, self)
@@ -498,7 +497,7 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Annotate segments...
         """for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update(annotations[idx])
+            segment.annotations.update({idx: annotations[idx]})
             self.segmentation[idx] = segment"""
 
         # Store imported URLs as setting.
@@ -520,8 +519,6 @@ class SwissLaw(OWTextableBaseWidget):
         # Clear progress bar.
         progressBar.finish()
         self.controlArea.setDisabled(False)
-
-        #print(segmentations_list[0])
 
         self.segmentation = Segmenter.import_xml(self.segmentation, segmentations_list[0], label=segmentations_list[0])
         #print(type(self.segmentation))
