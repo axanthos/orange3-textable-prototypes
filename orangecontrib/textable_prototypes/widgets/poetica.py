@@ -31,6 +31,7 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
+from PyQt5.QtWidgets import QMessageBox
 
 from urllib.request import urlopen
 import inspect
@@ -190,9 +191,18 @@ class Poetica(OWTextableBaseWidget):
             widget=queryBox,
             master=self,
             label="Refresh database",
-            callback=self.msg,
+            callback=self.alertMessage,
             tooltip="Attention ! Cela peut prendre un peu de temps…",
         )
+
+    def alertMessage(self):
+        QMessageBox.information(
+            None,
+            'Textable',
+            'Segmentation correctly copied to clipboard',
+            QMessageBox.Ok
+        )
+        print("hello")
 
         self.resultBox = gui.listBox(
             widget=queryBox,
