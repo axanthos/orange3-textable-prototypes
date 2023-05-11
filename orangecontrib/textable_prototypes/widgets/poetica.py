@@ -195,14 +195,6 @@ class Poetica(OWTextableBaseWidget):
             tooltip="Attention ! Cela peut prendre un peu de temps…",
         )
 
-    def alertMessage(self):
-        QMessageBox.information(
-            None,
-            'Textable',
-            'Segmentation correctly copied to clipboard',
-            QMessageBox.Ok
-        )
-        print("hello")
 
         self.resultBox = gui.listBox(
             widget=queryBox,
@@ -306,6 +298,14 @@ class Poetica(OWTextableBaseWidget):
         # Send data if autoSend.
         self.sendButton.sendIf()
 
+    def alertMessage(self):
+        QMessageBox.information(
+            None,
+            'Textable',
+            'Segmentation correctly copied to clipboard',
+            QMessageBox.Ok
+        )
+        print("hello")
     # Function to extract data...
     def dataExtraction(self):
 
