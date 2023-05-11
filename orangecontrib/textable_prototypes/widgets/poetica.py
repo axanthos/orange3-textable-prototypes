@@ -31,8 +31,6 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
-from tkinter import *
-from tkinter import messagebox
 
 from urllib.request import urlopen
 import inspect
@@ -195,20 +193,6 @@ class Poetica(OWTextableBaseWidget):
             callback=self.msg,
             tooltip="Attention ! Cela peut prendre un peu de temps…",
         )
-
-
-        #gui = Tk()
-
-        def msg():
-            messagebox.showinfo("Info", "êtes-vous sûr de vouloir mettre à jour la base de donnés ? "
-            "Cela risque de prendre un peu de temps! ")
-
-        btn = Button(root, text="Fermer", command=root.destroy)
-        btn.pack(pady=10)
-        root.mainloop()
-        gui.mainloop()
-
-
 
         self.resultBox = gui.listBox(
             widget=queryBox,
