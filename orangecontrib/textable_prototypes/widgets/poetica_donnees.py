@@ -17,7 +17,9 @@ def main():
     database = {
         "title": {},
         "author": {},
-        "poem": {},
+        #"date": {},
+        "topic": {},
+        #"poem": {},
     }
 
     # Acceder a la page d'accueil de poetica...
@@ -40,12 +42,27 @@ def main():
             conditions=condition,
         )
 
+        # Extraire la liste des themes...
+        seg_themes = Input(page_accueil)
+        condition_themes = dict()
+        condition_themes["id"] = re.compile(r"^menu-poemes-par-theme$")
+        xml_themes = Segmenter.import_xml(
+            segmentation=seg_themes,
+            element="<ul>",
+            conditions=condition_themes,
+        )
+
         # Recuperer le lien url vers la page de chaque auteur...
         xml_par_auteur = Segmenter.import_xml(
             segmentation=xml_auteurs,
             element="<a>",
         )
 
+        # Recuperer le lien url vers la page de chaque theme...
+        xml_par_theme = Segmenter.import_xml(
+            segmentation=xml_themes,
+            element="<a>",
+        )
 
         # Acceder a la page de chaque auteur...
         for auteur in xml_par_auteur:
@@ -94,28 +111,35 @@ def main():
                         #print(nom_poeme)
                 
                         # Extraire les poeme et ses donnees...
-                        seg_poemes = Input(page_poeme)
-                        condition_poeme = dict()
-                        condition_poeme["class"]=re.compile(r"^entry-content$")
-                        xml_contenu_poeme = Segmenter.import_xml(
-                            segmentation=seg_poemes,
-                            element="<div>",
-                            conditions=condition_poeme,
-                        )
+                        #seg_poemes = Input(page_poeme)
+                        #condition_poeme = dict()
+                        #condition_poeme["class"]=re.compile(r"^entry-content$")
+                        #xml_contenu_poeme = Segmenter.import_xml(
+                        #    segmentation=seg_poemes,
+                        #    element="<div>",
+                        #    conditions=condition_poeme,
+                        #)
 
                         # Recuperer le poeme avec ses propres balises.
-                        poeme_balises = xml_contenu_poeme[0].get_content()
+                        #poeme_balises = xml_contenu_poeme[0].get_content()
 
                         # Recuperer et associer la date de parution du poeme si elle est connue...
-
+                        #regex_date = re.compile(r"(1|2)\d{3}")
+                        #date_poeme_intermediaire = regex_date.search(poeme_balises)
+                        #if date_poeme_intermediaire == None:
+                        #    date_poeme = str(date_poeme_intermediaire)
+                        #else:
+                        #    date_poeme = str(date_poeme_intermediaire.group())
+                        #print(date_poeme)
 
                         # N'afficher que le contenu du poeme...
-                        poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
-                        poeme = re.sub(r".+$", "", poeme)
+                        #poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
+                        #poeme = re.sub(r".+$", "", poeme)
                         #print(poeme)
                         database["title"][url_page_poeme] = nom_poeme
                         database["author"][url_page_poeme] = nom_auteur
-                        database["poem"][url_page_poeme] = poeme
+                        #database["date"][url_page_poeme] = date_poeme
+                        #database["poem"][url_page_poeme] = poeme
 
                     # Avertir si l'url ne fonctionne pas...
                     except IOError:
@@ -124,6 +148,59 @@ def main():
             # Avertir si l'url ne fonctionne pas...
             except IOError:
                 print("Invalid author's URL")
+
+        # Acceder a la page de chaque theme...
+        for theme in xml_par_theme:
+            try:
+                url_page_theme = theme.annotations["href"]
+                url_theme = urlopen(url_page_theme)
+                page_theme = url_theme.read()
+                print("Valid topic's URL")
+                page_theme = page_theme.decode("utf-8")
+
+                # Recuperer le nom de l'auteur.
+                nom_theme = theme.get_content()
+                # print(nom_auteur)
+
+                # print(xml_par_auteur.to_string())
+                # nom_auteur = auteur.get_content()
+
+                # Extraire la liste de poemes...
+                seg_auteurs = Input(page_auteur)
+                condition_auteur = dict()
+                condition_auteur["class"] = re.compile(r"^entry-header$")
+                xml_poemes = Segmenter.import_xml(
+                    segmentation=seg_auteurs,
+                    element="<header>",
+                    conditions=condition_auteur,
+                )
+
+                # Recuperer le lien url vers la page de chaque poeme...
+                xml_par_poeme = Segmenter.import_xml(
+                    segmentation=xml_poemes,
+                    element="<a>",
+                )
+
+                # Acceder a la page de chaque poeme...
+                for poeme_theme in xml_par_theme:
+                    try:
+                        url_page_poeme_theme = poeme_theme.annotations["href"]
+                        #url_poeme_theme = urlopen(url_page_poeme_theme)
+                        #page_poeme_theme = url_poeme_theme.read()
+                        #print("Valid poem's URL")
+                        #page_poeme_theme = page_poeme_theme.decode("utf-8")
+
+                        database["topic"][url_page_poeme_theme] = nom_theme
+                        # database["poem"][url_page_poeme] = poeme
+                        print(nom_theme)
+
+                    # Avertir si l'url ne fonctionne pas...
+                    except IOError:
+                        print("Invalid poem's URL")
+
+            # Avertir si l'url ne fonctionne pas...
+            except IOError:
+                print("Invalid topic's URL")
 
     # Avertir si l'url ne fonctionne pas...
     except IOError:
@@ -153,12 +230,12 @@ def main():
 
     #print(new_database)
     #print(new_database["author"])
-    for key_author, value_author in new_database["author"].items():
-        print(f"Key : {key_author} and Value : {value_author}")
-        for key_title, value_title in new_database["title"].items():
-            for key_poem, value_poem in new_database["poem"].items():
-                if key_title == key_author and key_title == key_poem:
-                    print(f"The poem '{value_title}' has been written by {value_author} : {value_poem}")
+    #for key_author, value_author in new_database["author"].items():
+    #    print(f"Key : {key_author} and Value : {value_author}")
+    #    for key_title, value_title in new_database["title"].items():
+    #        for key_poem, value_poem in new_database["poem"].items():
+    #            if key_title == key_author and key_title == key_poem:
+    #                print(f"The poem '{value_title}' has been written by {value_author} : {value_poem}")
 
 if __name__=="__main__":
     main()
