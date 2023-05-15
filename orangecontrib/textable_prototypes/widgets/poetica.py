@@ -135,7 +135,7 @@ class Poetica(OWTextableBaseWidget):
         self.topics_list = list()
         self.sorted_topics_list = list()
         self.final_topics_list = list()
-        self.topics_list.append("Select a topic")
+        self.final_topics_list.append("Select a topic")
         previous_topic = ""
         for key, value in self.db["topic"].items():
             self.topics_list.append(str(self.db["topic"][key]))
