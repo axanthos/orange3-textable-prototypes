@@ -166,18 +166,18 @@ def main():
                 # nom_auteur = auteur.get_content()
 
                 # Extraire la liste de poemes...
-                seg_auteurs = Input(page_auteur)
-                condition_auteur = dict()
-                condition_auteur["class"] = re.compile(r"^entry-header$")
-                xml_poemes = Segmenter.import_xml(
-                    segmentation=seg_auteurs,
+                seg_themes = Input(page_theme)
+                condition_themes = dict()
+                condition_themes["class"] = re.compile(r"^entry-header$")
+                xml_poemes_themes = Segmenter.import_xml(
+                    segmentation=seg_themes,
                     element="<header>",
-                    conditions=condition_auteur,
+                    conditions=condition_themes,
                 )
 
                 # Recuperer le lien url vers la page de chaque poeme...
-                xml_par_poeme = Segmenter.import_xml(
-                    segmentation=xml_poemes,
+                xml_par_theme = Segmenter.import_xml(
+                    segmentation=xml_poemes_themes,
                     element="<a>",
                 )
 
@@ -193,6 +193,7 @@ def main():
                         database["topic"][url_page_poeme_theme] = nom_theme
                         # database["poem"][url_page_poeme] = poeme
                         print(nom_theme)
+                        print(database["topic"])
 
                     # Avertir si l'url ne fonctionne pas...
                     except IOError:
@@ -224,6 +225,7 @@ def main():
         new_database = pickle.load(file)
         #print(new_database)
         print("Dictionary correctly loaded")
+        print(new_database)
         file.close()
     except IOError:
         print("Can't load the dictionary")

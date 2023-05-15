@@ -131,6 +131,20 @@ class Poetica(OWTextableBaseWidget):
                 self.authors_list.append(self.db["author"][key])
             previous_author = self.db["author"][key]
 
+        # Store the list of topics...
+        self.topics_list = list()
+        self.sorted_topics_list = list()
+        self.final_topics_list = list()
+        self.topics_list.append("Select a topic")
+        previous_topic = ""
+        for key, value in self.db["topic"].items():
+            self.topics_list.append(str(self.db["topic"][key]))
+        self.sorted_topics_list = sorted(self.topics_list)
+        for topic in self.sorted_topics_list:
+            if topic != previous_topic:
+                self.final_topics_list.append(topic)
+            previous_topic = topic
+
         # Allows to select an author in a list
         #  Uses "authorQuery" attribut
         gui.comboBox(
@@ -285,8 +299,8 @@ class Poetica(OWTextableBaseWidget):
     def alertMessage(self):
         QMessageBox.information(
             None,
-            'Textable',
-            'Segmentation correctly copied to clipboard',
+            'Poetica',
+            'Are you sure you want to refresh the database ? This may take some time.',
             QMessageBox.Ok
         )
         print("hello")
@@ -296,19 +310,18 @@ class Poetica(OWTextableBaseWidget):
         database = {
             "title": {},
             "author": {},
-            "poem": {},
+            "topic": {},
         }
 
-        # Go to poetica's homepage...
+        # Acceder a la page d'accueil de poetica...
         try:
             poetica_url = 'https://www.poetica.fr/'
             url_accueil = urlopen(poetica_url)
             page_accueil = url_accueil.read()
             print("Valid poetica's URL")
             page_accueil = page_accueil.decode("utf-8")
-            # url_accueil.close()
 
-            # Extract list of authors...
+            # Extraire la liste d'auteurs...
             base_seg = Input(page_accueil)
             condition = dict()
             condition["id"] = re.compile(r"^menu-poemes-par-auteur$")
@@ -318,13 +331,29 @@ class Poetica(OWTextableBaseWidget):
                 conditions=condition,
             )
 
-            # Retrieve the url link to each author's page...
+            # Extraire la liste des themes...
+            seg_themes = Input(page_accueil)
+            condition_themes = dict()
+            condition_themes["id"] = re.compile(r"^menu-poemes-par-theme$")
+            xml_themes = Segmenter.import_xml(
+                segmentation=seg_themes,
+                element="<ul>",
+                conditions=condition_themes,
+            )
+
+            # Recuperer le lien url vers la page de chaque auteur...
             xml_par_auteur = Segmenter.import_xml(
                 segmentation=xml_auteurs,
                 element="<a>",
             )
 
-            # Go to each author's page...
+            # Recuperer le lien url vers la page de chaque theme...
+            xml_par_theme = Segmenter.import_xml(
+                segmentation=xml_themes,
+                element="<a>",
+            )
+
+            # Acceder a la page de chaque auteur...
             for auteur in xml_par_auteur:
                 try:
                     url_page_auteur = auteur.annotations["href"]
@@ -333,10 +362,10 @@ class Poetica(OWTextableBaseWidget):
                     print("Valid author's URL")
                     page_auteur = page_auteur.decode("utf-8")
 
-                    # Recover the author's name.
+                    # Recuperer le nom de l'auteur.
                     nom_auteur = auteur.get_content()
 
-                    # Extract the list of poems...
+                    # Extraire la liste de poemes...
                     seg_auteurs = Input(page_auteur)
                     condition_auteur = dict()
                     condition_auteur["class"] = re.compile(r"^entry-header$")
@@ -346,13 +375,13 @@ class Poetica(OWTextableBaseWidget):
                         conditions=condition_auteur,
                     )
 
-                    # Retrieve the url link to each poem's page...
+                    # Recuperer le lien url vers la page de chaque poeme...
                     xml_par_poeme = Segmenter.import_xml(
                         segmentation=xml_poemes,
                         element="<a>",
                     )
 
-                    # Go to each poem's page...
+                    # Acceder a la page de chaque poeme...
                     for poeme in xml_par_poeme:
                         try:
                             url_page_poeme = poeme.annotations["href"]
@@ -361,38 +390,66 @@ class Poetica(OWTextableBaseWidget):
                             print("Valid poem's URL")
                             page_poeme = page_poeme.decode("utf-8")
 
-                            # Recover the poem's name.
+                            # Recuperer le nom du poeme.
                             nom_poeme = poeme.get_content()
 
-                            # Extract the poem and its data...
-                            seg_poemes = Input(page_poeme)
-                            condition_poeme = dict()
-                            condition_poeme["class"] = re.compile(r"^entry-content$")
-                            xml_contenu_poeme = Segmenter.import_xml(
-                                segmentation=seg_poemes,
-                                element="<div>",
-                                conditions=condition_poeme,
-                            )
-
-                            # Retrieve the poem with its own tags.
-                            poeme_balises = xml_contenu_poeme[0].get_content()
-
-                            # Display only the contents of the poem...
-                            poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
-                            poeme = re.sub(r".+$", "", poeme)
                             database["title"][url_page_poeme] = nom_poeme
                             database["author"][url_page_poeme] = nom_auteur
-                            database["poem"][url_page_poeme] = poeme
+                            # database["date"][url_page_poeme] = date_poeme
+                            # database["poem"][url_page_poeme] = poeme
 
-                        # Warn if the url doesn't work...
+                        # Avertir si l'url ne fonctionne pas...
                         except IOError:
                             print("Invalid poem's URL")
 
-                # Warn if the url doesn't work...
+                # Avertir si l'url ne fonctionne pas...
                 except IOError:
                     print("Invalid author's URL")
 
-        # Warn if the url doesn't work...
+            # Acceder a la page de chaque theme...
+            for theme in xml_par_theme:
+                try:
+                    url_page_theme = theme.annotations["href"]
+                    url_theme = urlopen(url_page_theme)
+                    page_theme = url_theme.read()
+                    print("Valid topic's URL")
+                    page_theme = page_theme.decode("utf-8")
+
+                    # Recuperer le nom du theme.
+                    nom_theme = theme.get_content()
+
+                    # Extraire la liste de poemes...
+                    seg_themes = Input(page_theme)
+                    condition_themes = dict()
+                    condition_themes["class"] = re.compile(r"^entry-header$")
+                    xml_poemes_themes = Segmenter.import_xml(
+                        segmentation=seg_themes,
+                        element="<header>",
+                        conditions=condition_themes,
+                    )
+
+                    # Recuperer le lien url vers la page de chaque poeme...
+                    xml_par_theme = Segmenter.import_xml(
+                        segmentation=xml_poemes_themes,
+                        element="<a>",
+                    )
+
+                    # Acceder a la page de chaque poeme...
+                    for poeme_theme in xml_par_theme:
+                        try:
+                            url_page_poeme_theme = poeme_theme.annotations["href"]
+
+                            database["topic"][url_page_poeme_theme] = nom_theme
+
+                        # Avertir si l'url ne fonctionne pas...
+                        except IOError:
+                            print("Invalid poem's URL")
+
+                # Avertir si l'url ne fonctionne pas...
+                except IOError:
+                    print("Invalid topic's URL")
+
+        # Avertir si l'url ne fonctionne pas...
         except IOError:
             print("Invalid poetica's URL")
 
