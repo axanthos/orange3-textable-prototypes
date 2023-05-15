@@ -164,10 +164,7 @@ class Poetica(OWTextableBaseWidget):
             widget=queryBox,
             master=self,
             value='topicQuery',
-            items=[
-                "amour",
-                "amitié"
-            ],
+            items=self.final_topics_list,
             orientation='horizontal',
             label=u"Topic : ",
             labelWidth=120,
