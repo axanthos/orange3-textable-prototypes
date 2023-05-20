@@ -86,12 +86,6 @@ class SwissLaw(OWTextableBaseWidget):
     myBasket = settings.Setting([])
     importedURLs = settings.Setting([])
 
-
-#Note débug jeudi 20 Avril 14h14:
-#J'ai changé: ligne 147 -> avant la valeur était = None (bug), j'ai remplacé None par ""
-            # ligne 138 -> j'ai remis self.nbr_results = 10 (utilisé dans segLevelComboBox et 3 pour values, à voir ce qu'il faut qu'on mette
-            # ligne 300 -> self.updateMyDocumentsLabels() en commentaire car pas défini (doit être défini comme méthode (fonction), voir lyricsgenius avec updatemytitleslabel
-            # Send ne marche pas
     def __init__(self):
         """Widget creator."""
 
@@ -313,7 +307,6 @@ class SwissLaw(OWTextableBaseWidget):
     # update AddButton function
     def updateSegLevelsComboBox(self):
         self.segLevelComboBox.clear()
-        print(self.segLevels)
         self.segLevels = list()
         self.segLevels.append("No Segmentation")
 
@@ -326,59 +319,49 @@ class SwissLaw(OWTextableBaseWidget):
         if int(self.database["chap"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segLevels.append("Into Chapter")
 
+        self.selectedSegLevel = self.segLevels[0]
         self.segLevelComboBox.addItems(self.segLevels)
-        print(self.segLevels)
-
-        #self.updateMyDocumentLabels()
-
-
 
         # Add documents function
     def add(self):
         """Add document in your selection """
         segmentation_list = ["", "title", "article", "chapter"]
         if self.selectedDocument!="":
-            self.myBasket.append((self.selectedDocument, segmentation_list[(self.segLevels.index(self.selectedSegLevel) - 1)], (self.languages.index(self.selectedLanguage) - 1)))
+            self.myBasket.append((self.selectedDocument, self.selectedSegLevel, self.selectedLanguage))
             self.updateMyDocumentLabels()
             self.sendButton.settingsChanged()
 
+        self.selectedDocument = self.documents[0]
+        self.updateSegLevelsComboBox()
+        self.selectedLanguage = "FR"
+
     # Update selections function
     def updateMyDocumentLabels(self):
-        #self.corpusLabels = list()
-        #for item in self.myBasket: (code précédent)
-        if self.selectedDocument!="" and self.selectedSegLevel!="" and self.selectedLanguage!="":
-            result_string = self.selectedDocument +" - "+self.selectedSegLevel+" - "+self.selectedLanguage #self.database["law_text"][item[]0] (code précédent)
-            self.corpusLabels.append(result_string)
-            self.corpusLabels = self.corpusLabels
-
-            self.clearCorpusButton.setDisabled(self.corpusLabels == list())
-            self.removeButton.setDisabled(self.corpusSelectedItems == list())
-
-            self.selectedDocument=self.documents[0]
-            self.selectedSegLevel="No segmentation"
-            self.selectedLanguage="FR"
-            self.segLevelComboBox.clear()
-
-    def deleteMyDocumentLabels(self):
         self.corpusLabels = list()
-        #for item in self.myBasket: (code précédent)
-        #result_string = self.selectedDocument #self.database["law_text"][item[]0] (code précédent)
-        self.corpusLabels.pop()
+        for item in self.myBasket:
+            result_string = item[0] + " - " + item[1] + " - " + item[2]
+            self.corpusLabels.append(result_string)
         self.corpusLabels = self.corpusLabels
 
-        self.clearCorpusButton.setDisabled(self.myBasket == list())
+        self.clearCorpusButton.setDisabled(self.corpusLabels == list())
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
+
+
+        self.segLevelComboBox.clear()
 
     # fonction qui retire la selection de notre panier
     def remove(self):
         """Remove the selected text in your selection """
         self.myBasket = [
-            song for idx, song in enumerate(self.myBasket)
+            text_law for idx, text_law in enumerate(self.myBasket)
             if idx not in self.corpusSelectedItems
         ]
-        self.deleteMyDocumentLabels()
+        self.updateMyDocumentLabels()
         self.sendButton.settingsChanged()
 
+        self.selectedDocument = self.documents[0]
+        self.updateSegLevelsComboBox()
+        self.selectedLanguage = "FR"
 
     # Clear selections function
     def clearCorpus(self):
@@ -388,6 +371,10 @@ class SwissLaw(OWTextableBaseWidget):
         self.myBasket = list()
         self.sendButton.settingsChanged()
         self.clearCorpusButton.setDisabled(True)
+
+        self.selectedDocument = self.documents[0]
+        self.updateSegLevelsComboBox()
+        self.selectedLanguage = "FR"
 
     def get_xml_contents(self, urls) -> str:
         xml_contents = []
@@ -400,7 +387,7 @@ class SwissLaw(OWTextableBaseWidget):
     # Function computing results then sending them to the widget output
     def sendData(self):
         """Compute result of widget processing and send to output"""
-        # Skip if title list is empty:
+        # Skip if document list is empty:
         if self.myBasket == list():
             self.infoBox.setText(
                 "Your corpus is empty, please add some law texts first",
@@ -419,9 +406,6 @@ class SwissLaw(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-        #Get the xml link
-        #for item in self.myBasket:
-
             #essai:
         """xml_file_contents = []
                 for myDocu in self.corpusLabels:
@@ -433,7 +417,7 @@ class SwissLaw(OWTextableBaseWidget):
         segmentations_list = list()
 
         for item in self.myBasket:
-            content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][item[2]])
+            content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])])
             Document_list.append(content)
             segmentations_list.append(item[1])
             #annotations.append(item[0])
