@@ -325,11 +325,13 @@ class SwissLaw(OWTextableBaseWidget):
         # Add documents function
     def add(self):
         """Add document in your selection """
-        segmentation_list = ["", "title", "article", "chapter"]
-        if self.selectedDocument!="":
-            self.myBasket.append((self.selectedDocument, self.selectedSegLevel, self.selectedLanguage))
-            self.updateMyDocumentLabels()
-            self.sendButton.settingsChanged()
+        if (self.selectedDocument, self.selectedSegLevel, self.selectedLanguage) not in self.myBasket:
+                self.myBasket.append((self.selectedDocument, self.selectedSegLevel, self.selectedLanguage))
+        else:
+            pass
+
+        self.updateMyDocumentLabels()
+        self.sendButton.settingsChanged()
 
         self.selectedDocument = self.documents[0]
         self.updateSegLevelsComboBox()
@@ -341,6 +343,7 @@ class SwissLaw(OWTextableBaseWidget):
         for item in self.myBasket:
             result_string = item[0] + " - " + item[1] + " - " + item[2]
             self.corpusLabels.append(result_string)
+
         self.corpusLabels = self.corpusLabels
 
         self.clearCorpusButton.setDisabled(self.corpusLabels == list())
