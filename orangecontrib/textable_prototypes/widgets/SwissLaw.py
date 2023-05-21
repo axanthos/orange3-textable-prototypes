@@ -311,7 +311,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.segLevels.append("No Segmentation")
 
         if int(self.database["title"][self.database["law_text"].index(self.selectedDocument)]) > 0:
-            self.segLevels.append("Title")
+            self.segLevels.append("Into Title")
 
         if int(self.database["art"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segLevels.append("Into Article")
