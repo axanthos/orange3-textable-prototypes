@@ -423,7 +423,7 @@ class SwissLaw(OWTextableBaseWidget):
             content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])])
             Document_list.append(content)
             segmentations_list.append(item[1])
-            #annotations.append(item[0])
+            annotations.append({"Document": item[0], "Language": item[2]})
             progressBar.advance()
 
         """self.send("XML-TEI data", None, self)
@@ -451,9 +451,14 @@ class SwissLaw(OWTextableBaseWidget):
             )
 
         # Annotate segments...
-        """for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update({idx: annotations[idx]})
-            self.segmentation[idx] = segment"""
+        for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations[idx])
+            self.segmentation[idx] = segment
+
+        # Clear progress bar.
+        progressBar.finish()
+
+        self.controlArea.setDisabled(False)
 
         # Store imported URLs as setting.
         """self.importedURLs = [
@@ -473,13 +478,13 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Clear progress bar.
         progressBar.finish()
+
         self.controlArea.setDisabled(False)
 
-        self.segmentation = Segmenter.import_xml(self.segmentation, segmentations_list[0], label=segmentations_list[0])
+        #self.segmentation = Segmenter.import_xml(self.segmentation, segmentations_list[0], label=segmentations_list[0])
         #print(type(self.segmentation))
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
-
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
