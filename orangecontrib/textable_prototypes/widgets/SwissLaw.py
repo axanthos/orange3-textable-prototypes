@@ -430,10 +430,6 @@ class SwissLaw(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
         return"""
 
-        """for script in Document_list:
-            newInput = Input(script, self.captionTitle)
-            self.createdInputs.append(newInput)
-"""
         for script in Document_list:
             newInput = Input(script, self.captionTitle)
             self.createdInputs.append(newInput)
