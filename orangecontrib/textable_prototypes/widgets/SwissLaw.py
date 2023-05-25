@@ -130,6 +130,8 @@ class SwissLaw(OWTextableBaseWidget):
 
         # reset the setting myBasket
         self.myBasket = list()
+        # dict stocking the documents
+        self.cached = dict()
         # stock all the documents names
         self.documents = sorted(self.database["law_text"])
         self.selectedDocument = self.documents[0]
@@ -403,9 +405,14 @@ class SwissLaw(OWTextableBaseWidget):
         segmentation_levels = list()
 
         for item in self.myBasket:
-            content = self.get_xml_contents(
-                self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]
-            )
+            if self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])] in self.cached:
+                content = self.cached[self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]]
+            else:
+                content = self.get_xml_contents(
+                    self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]
+                )
+                self.cached[self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]] = content
+
             documents.append(content)
             segmentation_levels.append(item[1].replace("Into ", ""))
             annotations.append({"Document": item[0], "Language": item[2]})
@@ -458,6 +465,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
+        print(self.cached)
     def clearCreatedInputs(self):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
