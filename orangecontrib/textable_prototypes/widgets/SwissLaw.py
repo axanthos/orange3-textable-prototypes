@@ -1,5 +1,5 @@
 """
-Class LyricsGenius
+Class Swiss Law
 Copyright 2018-2019 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
