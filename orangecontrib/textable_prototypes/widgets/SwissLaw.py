@@ -129,8 +129,8 @@ class SwissLaw(OWTextableBaseWidget):
                     self.database["law_text"].append(row[1])
                     self.database["Urls"].append((row[2], row[3], row[4]))
                     self.database["title"].append(row[5])
-                    self.database["art"].append(row[6])
-                    self.database["chap"].append(row[7])
+                    self.database["chap"].append(row[6])
+                    self.database["art"].append(row[7])
 
         # Else show error message
         except IOError:
@@ -313,13 +313,13 @@ class SwissLaw(OWTextableBaseWidget):
         self.segLevels.append("No Segmentation")
 
         if int(self.database["title"][self.database["law_text"].index(self.selectedDocument)]) > 0:
-            self.segLevels.append("Into Title")
+            self.segLevels.append("Into title")
 
         if int(self.database["art"][self.database["law_text"].index(self.selectedDocument)]) > 0:
-            self.segLevels.append("Into Article")
+            self.segLevels.append("Into article")
 
         if int(self.database["chap"][self.database["law_text"].index(self.selectedDocument)]) > 0:
-            self.segLevels.append("Into Chapter")
+            self.segLevels.append("Into chapter")
 
         self.selectedSegLevel = self.segLevels[0]
         self.segLevelComboBox.addItems(self.segLevels)
@@ -417,41 +417,53 @@ class SwissLaw(OWTextableBaseWidget):
                     xml_file_content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(myDocu)])
                     xml_file_contents.append(xml_file_content)"""
 
-        Document_list = list()
+        documents = list()
         annotations = list()
-        segmentations_list = list()
+        segmentation_levels = list()
 
         for item in self.myBasket:
             content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])])
-            Document_list.append(content)
-            segmentations_list.append(item[1])
+            documents.append(content)
+            segmentation_levels.append(item[1].replace("Into ", ""))
             annotations.append({"Document": item[0], "Language": item[2]})
             progressBar.advance()
+
 
         """self.send("XML-TEI data", None, self)
         self.controlArea.setDisabled(False)
         return"""
 
-        for script in Document_list:
-            newInput = Input(script, self.captionTitle)
+        segmentations = []
+
+        for doc_idx, document in enumerate(documents):
+            newInput = Input(document, self.captionTitle)
             self.createdInputs.append(newInput)
 
-        # If there's only one play, the widget's output is the created Input.
-        if len(self.createdInputs) == 1:
-            self.segmentation = self.createdInputs[0]
+            if segmentation_levels[doc_idx] == "No Segmentation":
+                current_segmentation = newInput
+            else:
+                current_segmentation = Segmenter.import_xml(newInput, segmentation_levels[doc_idx])
+            # Annotate segments...
+            for idx, segment in enumerate(current_segmentation):
+                segment.annotations.update(annotations[doc_idx])
+                current_segmentation[idx] = segment
+            segmentations.append(current_segmentation)
 
-        # Otherwise the widget's output is a concatenation...
+
+        # If there"s only one document, the widget's output is the created Input.
+        if len(self.createdInputs) == 1:
+            self.segmentation = segmentations[0]
+
+        # Otherwise the widget"s output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
-                self.createdInputs,
+                segmentations,
                 self.captionTitle,
                 import_labels_as=None
             )
 
-        # Annotate segments...
-        for idx, segment in enumerate(self.segmentation):
-            segment.annotations.update(annotations[idx])
-            self.segmentation[idx] = segment
+
+
 
         # Clear progress bar.
         progressBar.finish()
@@ -479,8 +491,8 @@ class SwissLaw(OWTextableBaseWidget):
 
         self.controlArea.setDisabled(False)
 
-        #self.segmentation = Segmenter.import_xml(self.segmentation, segmentations_list[0], label=segmentations_list[0])
-        #print(type(self.segmentation))
+        # xmlElement = segmentation_levels[0]
+
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
