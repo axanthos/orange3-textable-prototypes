@@ -136,6 +136,8 @@ class SwissLaw(OWTextableBaseWidget):
         except IOError:
             print("Failed to open csv file.")
 
+        # reset the setting myBasket
+        self.myBasket = list()
         # stock all the documents names
         self.documents = sorted(self.database["law_text"])
         self.selectedDocument = self.documents[0]
