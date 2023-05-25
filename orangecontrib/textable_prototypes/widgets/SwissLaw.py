@@ -24,7 +24,7 @@ __author__ = "Elijah Green, Thomas Rywalski, Samantha Allendes Bravo, Antoine Vi
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
-from Orange.widgets import widget, gui, settings
+from Orange.widgets import gui, settings
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
@@ -34,16 +34,9 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 import inspect
 import os
-import pickle
 import csv
-import urllib
-import urllib.request
-import urllib.parse
-import json
 import requests
-from urllib import request
-from urllib import parse
-from bs4 import BeautifulSoup
+
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
@@ -55,7 +48,7 @@ class SwissLaw(OWTextableBaseWidget):
     https://www.fedlex.admin.ch/ (only the 21 most popular texts)
     """
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     # Widget's metadata...
 
     name = "Swiss Law"
@@ -63,18 +56,18 @@ class SwissLaw(OWTextableBaseWidget):
     icon = "icons/balance-de-la-justice.png"
     priority = 10
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     # Channel definitions...
 
     inputs = []
     outputs = [("Law Documents importation", Segmentation)]
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     # Layout parameters...
 
     want_main_area = False
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     # Settings...
 
     settingsHandler = VersionedSettingsHandler(
@@ -92,7 +85,7 @@ class SwissLaw(OWTextableBaseWidget):
         super().__init__()
 
         # ATTRIBUTS
-        #database for our csv
+        # database for our csv
         self.segmentation = list()
         """self.database = {
             "id": [],
@@ -114,12 +107,12 @@ class SwissLaw(OWTextableBaseWidget):
             "chap": [],
         }
 
-        #Path to csv
+        # Path to csv
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
 
-        #Open the csv and add the content in our database
+        # Open the csv and add the content in our database
         try:
             with open(os.path.join(path, "DroitCH.csv"), "r") as file:
                 reader = csv.reader(file)
@@ -148,7 +141,7 @@ class SwissLaw(OWTextableBaseWidget):
         # selections box attributs
         self.corpusSelectedItems = list()
         self.corpusLabels = list()
-        # stock all the inputs (songs) in a list
+        # stock all the inputs (law documents) in a list
         self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -161,7 +154,7 @@ class SwissLaw(OWTextableBaseWidget):
             callback=self.sendData,
             infoBoxAttribute="infoBox",
         )
-        #----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
         # User interface...
         # Create the working area
         queryBox = gui.widgetBox(
@@ -195,7 +188,6 @@ class SwissLaw(OWTextableBaseWidget):
             widget=queryBox,
             master=self,
             value="selectedSegLevel",
-            #items=self.segLevels,
             sendSelectedValue=True,
             orientation="horizontal",
             label="Segmentation",
@@ -282,14 +274,14 @@ class SwissLaw(OWTextableBaseWidget):
 
         gui.separator(widget=corpusBox, height=3)
         gui.rubber(self.controlArea)
-        #----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
 
         # Draw Info box and Send button
         self.sendButton.draw()
         self.infoBox.draw()
 
         # Update the selections list
-        #self.updateMyDocumentLabels()
+        # self.updateMyDocumentLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
@@ -328,7 +320,7 @@ class SwissLaw(OWTextableBaseWidget):
     def add(self):
         """Add document in your selection """
         if (self.selectedDocument, self.selectedSegLevel, self.selectedLanguage) not in self.myBasket:
-                self.myBasket.append((self.selectedDocument, self.selectedSegLevel, self.selectedLanguage))
+            self.myBasket.append((self.selectedDocument, self.selectedSegLevel, self.selectedLanguage))
         else:
             pass
 
@@ -350,7 +342,6 @@ class SwissLaw(OWTextableBaseWidget):
 
         self.clearCorpusButton.setDisabled(self.corpusLabels == list())
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
-
 
         self.segLevelComboBox.clear()
 
@@ -382,11 +373,8 @@ class SwissLaw(OWTextableBaseWidget):
         self.selectedLanguage = "FR"
 
     def get_xml_contents(self, urls) -> str:
-        xml_contents = []
-        #for url in urls: #on le garde au cas ou
         response = requests.get(urls)
         xml_content = response.content.decode('utf-8')
-        #xml_contents.append(xml_content)
         return xml_content
 
     # Function computing results then sending them to the widget output
@@ -411,27 +399,18 @@ class SwissLaw(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
-            #essai:
-        """xml_file_contents = []
-                for myDocu in self.corpusLabels:
-                    xml_file_content = self.get_xml_contents(self.database["url_fr"][self.database["law_text"].index(myDocu)])
-                    xml_file_contents.append(xml_file_content)"""
-
         documents = list()
         annotations = list()
         segmentation_levels = list()
 
         for item in self.myBasket:
-            content = self.get_xml_contents(self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])])
+            content = self.get_xml_contents(
+                self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]
+            )
             documents.append(content)
             segmentation_levels.append(item[1].replace("Into ", ""))
             annotations.append({"Document": item[0], "Language": item[2]})
             progressBar.advance()
-
-
-        """self.send("XML-TEI data", None, self)
-        self.controlArea.setDisabled(False)
-        return"""
 
         segmentations = []
 
@@ -449,12 +428,11 @@ class SwissLaw(OWTextableBaseWidget):
                 current_segmentation[idx] = segment
             segmentations.append(current_segmentation)
 
-
-        # If there"s only one document, the widget's output is the created Input.
+        # If there's only one document, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = segmentations[0]
 
-        # Otherwise the widget"s output is a concatenation...
+        # Otherwise the widget's output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
                 segmentations,
@@ -462,18 +440,10 @@ class SwissLaw(OWTextableBaseWidget):
                 import_labels_as=None
             )
 
-
-
-
         # Clear progress bar.
         progressBar.finish()
 
         self.controlArea.setDisabled(False)
-
-        # Store imported URLs as setting.
-        """self.importedURLs = [
-            self.searchResults[self.myBasket[0]].annotations["urls"]
-        ]"""
 
         # Set status to OK and report data size...
         message = "%i segment@p sent to output " % len(self.segmentation)
@@ -486,13 +456,6 @@ class SwissLaw(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        # Clear progress bar.
-        progressBar.finish()
-
-        self.controlArea.setDisabled(False)
-
-        # xmlElement = segmentation_levels[0]
-
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
@@ -500,7 +463,6 @@ class SwissLaw(OWTextableBaseWidget):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
-
 
     # The following method needs to be copied verbatim in
     # every Textable widget that sends a segmentation...
