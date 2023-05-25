@@ -428,7 +428,6 @@ class SwissLaw(OWTextableBaseWidget):
             annotations.append({"Document": item[0], "Language": item[2]})
             progressBar.advance()
 
-        print("hello")
 
         """self.send("XML-TEI data", None, self)
         self.controlArea.setDisabled(False)
@@ -437,7 +436,6 @@ class SwissLaw(OWTextableBaseWidget):
         segmentations = []
 
         for doc_idx, document in enumerate(documents):
-            print("test")
             newInput = Input(document, self.captionTitle)
             self.createdInputs.append(newInput)
 
@@ -445,20 +443,14 @@ class SwissLaw(OWTextableBaseWidget):
                 current_segmentation = newInput
             else:
                 current_segmentation = Segmenter.import_xml(newInput, segmentation_levels[doc_idx])
-            print(segmentation_levels[doc_idx])
             # Annotate segments...
             for idx, segment in enumerate(current_segmentation):
                 segment.annotations.update(annotations[doc_idx])
                 current_segmentation[idx] = segment
-                print("test2")
             segmentations.append(current_segmentation)
-            print(current_segmentation.to_string())
 
 
-        print("coucou")
-
-
-        # If there"s only one play, the widget"s output is the created Input.
+        # If there"s only one document, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
             self.segmentation = segmentations[0]
 
@@ -501,7 +493,6 @@ class SwissLaw(OWTextableBaseWidget):
 
         # xmlElement = segmentation_levels[0]
 
-        #print(type(self.segmentation))
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
