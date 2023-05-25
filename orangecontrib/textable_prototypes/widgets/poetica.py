@@ -125,25 +125,29 @@ class Poetica(OWTextableBaseWidget):
         # Store the list of authors...
         self.authors_list = list()
         self.authors_list.append("Select an author")
-        previous_author = ""
-        for key, value in self.db["author"].items():
-            if self.db["author"][key] != previous_author:
-                self.authors_list.append(self.db["author"][key])
-            previous_author = self.db["author"][key]
+        for author in sorted(set(self.db["author"].values())):
+            self.authors_list.append(author)
+        # #previous_author = ""
+        # for key, value in self.db["author"].items():
+        #   if self.db["author"][key] != previous_author:
+        #        self.authors_list.append(self.db["author"][key])
+        #     previous_author = self.db["author"][key]
 
         # Store the list of topics...
         self.topics_list = list()
         self.sorted_topics_list = list()
         self.final_topics_list = list()
         self.final_topics_list.append("Select a topic")
-        previous_topic = ""
-        for key, value in self.db["topic"].items():
-            self.topics_list.append(str(self.db["topic"][key]))
-        self.sorted_topics_list = sorted(self.topics_list)
-        for topic in self.sorted_topics_list:
-            if topic != previous_topic:
-                self.final_topics_list.append(topic)
-            previous_topic = topic
+        # previous_topic = ""
+        # for key, value in self.db["topic"].items():
+        #    self.topics_list.append(str(self.db["topic"][key]))
+        # self.sorted_topics_list = sorted(self.topics_list)
+        # for topic in self.sorted_topics_list:
+        #    if topic != previous_topic:
+        #        self.final_topics_list.append(topic)
+        #    previous_topic = topic
+        for topic in sorted(set(self.db["topic"].values())):
+            self.final_topics_list.append(topic)
 
         # Allows to select an author in a list
         #  Uses "authorQuery" attribut
@@ -156,6 +160,8 @@ class Poetica(OWTextableBaseWidget):
             label=u"Author : ",
             labelWidth=120,
             tooltip=("Select an author"),
+            sendSelectedValue=True,
+
         )
 
         # Allows to select a topic in a list
@@ -169,6 +175,8 @@ class Poetica(OWTextableBaseWidget):
             label=u"Topic : ",
             labelWidth=120,
             tooltip=("Select topic"),
+            sendSelectedValue=True,
+
         )
 
         # Research button
@@ -487,25 +495,35 @@ class Poetica(OWTextableBaseWidget):
 
     # Search button's features...
     def searchFunction(self):
-        author_query = self.authorQuery
-        # If the selection isn't empty...
-        if str(author_query) != "":
-            index = int(self.authorQuery)
-            # Display a message.
-            self.infoBox.setText(f"You search {self.authors_list[index]}. Select a poem", "warning")
-            self.resultLabels = list()
-            # For each author in the authors dictionnary.
-            for key, value in self.db["author"].items():
-                # If the dictionnary's author is equal to the selected author.
-                if self.db["author"][key] == self.authors_list[index]:
-                    # Store the poem's title...
-                    self.resultLabels.append(self.db["title"][key])
-            self.resultLabels = self.resultLabels
-            self.clearResultsButton.setDisabled(len(self.resultLabels) == 0)
         # If the selection is empty...
-        else:
-            self.infoBox.setText(f"You didn't select anything !",
-                                 "warning")
+        if not (self.authorQuery or self.topicQuery):
+            self.infoBox.setText(f"You didn't select anything !", "warning")
+            return
+
+        all_urls = self.db["author"].keys()
+
+        selected_urls = list()
+        if self.authorQuery:
+            for url in all_urls:
+                if self.db["author"][url] == self.authorQuery:
+                    selected_urls.append(url)
+            all_urls = selected_urls
+
+        if self.topicQuery:
+            print("test")
+            selected_urls = list()
+            for url in all_urls:
+                try:
+                    if self.db["topic"][url] == self.topicQuery:
+                        selected_urls.append(url)
+                except KeyError:
+                    pass
+
+        self.resultLabels = list()
+        for url in selected_urls:
+            self.resultLabels.append(self.db["title"][url])
+        self.resultLabels = self.resultLabels
+        self.clearResultsButton.setDisabled(len(self.resultLabels) == 0)
 
     # Add button's features...
     def add(self):
