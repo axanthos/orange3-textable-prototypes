@@ -84,19 +84,9 @@ class SwissLaw(OWTextableBaseWidget):
         super().__init__()
 
         # ATTRIBUTS
-        # database for our csv
         self.segmentation = list()
-        """self.database = {
-            "id": [],
-            "law_text": [],
-            "url_fr": [],
-            "url_de": [],
-            "url_it": [],
-            "title": [],
-            "art": [],
-            "chap": [],
-        }"""
 
+        # database for our csv
         self.database = {
             "id": [],
             "law_text": [],
@@ -465,7 +455,6 @@ class SwissLaw(OWTextableBaseWidget):
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
-        print(self.cached)
     def clearCreatedInputs(self):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
