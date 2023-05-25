@@ -89,8 +89,8 @@ class Poetica(OWTextableBaseWidget):
         self.searchResults = None
         self.inputSeg = None
         # Query criterias
-        self.authorQuery = ''
-        self.topicQuery = ''
+        self.authorQuery = 'Select an author'
+        self.topicQuery = 'Select a topic'
         # Results box attributs
         self.resultLabels = list()
         self.resultSelectedItems = list()
@@ -496,21 +496,20 @@ class Poetica(OWTextableBaseWidget):
     # Search button's features...
     def searchFunction(self):
         # If the selection is empty...
-        if not (self.authorQuery or self.topicQuery):
+        if self.authorQuery == "Select an author" and self.topicQuery == "Select a topic":
             self.infoBox.setText(f"You didn't select anything !", "warning")
             return
 
         all_urls = self.db["author"].keys()
 
         selected_urls = list()
-        if self.authorQuery:
+        if self.authorQuery != "Select an author":
             for url in all_urls:
                 if self.db["author"][url] == self.authorQuery:
                     selected_urls.append(url)
             all_urls = selected_urls
 
-        if self.topicQuery:
-            print("test")
+        if self.topicQuery != "Select a topic":
             selected_urls = list()
             for url in all_urls:
                 try:
