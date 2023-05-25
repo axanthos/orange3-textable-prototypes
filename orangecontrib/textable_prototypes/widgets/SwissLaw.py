@@ -118,8 +118,6 @@ class SwissLaw(OWTextableBaseWidget):
         except IOError:
             print("Failed to open csv file.")
 
-        # reset the setting myBasket
-        self.myBasket = list()
         # dict stocking the documents
         self.cached = dict()
         # stock all the documents names
@@ -272,12 +270,14 @@ class SwissLaw(OWTextableBaseWidget):
         self.infoBox.draw()
 
         # Update the selections list
-        # self.updateMyDocumentLabels()
+        self.updateMyDocumentLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
 
         self.updateSegLevelsComboBox()
+
+
     def updateRemoveButton(self):
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
