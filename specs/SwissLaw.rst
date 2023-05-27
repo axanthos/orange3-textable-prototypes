@@ -119,7 +119,7 @@ Suivez les instructions ci-dessous pour installer le widget :
 
 * La documentation du logiciel est complète.
 
-* Les fonctionnalités principales (et, le cas échéant, optionnelles) sont implémentées et ont été testées.
+* Les fonctionnalités principales (et, le cas échéant, optionnelles) sont implémentées.
 
 4. Infrastructure
 =================
