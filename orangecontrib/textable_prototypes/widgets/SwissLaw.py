@@ -84,19 +84,9 @@ class SwissLaw(OWTextableBaseWidget):
         super().__init__()
 
         # ATTRIBUTS
-        # database for our csv
         self.segmentation = list()
-        """self.database = {
-            "id": [],
-            "law_text": [],
-            "url_fr": [],
-            "url_de": [],
-            "url_it": [],
-            "title": [],
-            "art": [],
-            "chap": [],
-        }"""
 
+        # database for our csv
         self.database = {
             "id": [],
             "law_text": [],
@@ -128,8 +118,6 @@ class SwissLaw(OWTextableBaseWidget):
         except IOError:
             print("Failed to open csv file.")
 
-        # reset the setting myBasket
-        self.myBasket = list()
         # dict stocking the documents
         self.cached = dict()
         # stock all the documents names
@@ -282,12 +270,14 @@ class SwissLaw(OWTextableBaseWidget):
         self.infoBox.draw()
 
         # Update the selections list
-        # self.updateMyDocumentLabels()
+        self.updateMyDocumentLabels()
 
         # Send data if autoSend.
         self.sendButton.sendIf()
 
         self.updateSegLevelsComboBox()
+
+
     def updateRemoveButton(self):
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
@@ -465,7 +455,6 @@ class SwissLaw(OWTextableBaseWidget):
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
-        print(self.cached)
     def clearCreatedInputs(self):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
