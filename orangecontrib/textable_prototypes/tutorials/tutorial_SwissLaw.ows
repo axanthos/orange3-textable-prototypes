@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="Swiss Law" qualified_name="orangecontrib.textable_prototypes.widgets.SwissLaw.SwissLaw" project_name="Orange3-Textable-Prototypes" version="" title="Swiss Law" position="(134.0, 257.0)" />
+		<node id="1" name="Data Table" qualified_name="Orange.widgets.obsolete.owtable.OWDataTable" project_name="" version="" title="Data Table" position="(584.0, 257.0)" />
+		<node id="2" name="Extract XML" qualified_name="_textable.widgets.OWTextableExtractXML.OWTextableExtractXML" project_name="Orange3-Textable" version="" title="Extract XML" position="(283.0, 257.0)" />
+		<node id="3" name="Count" qualified_name="_textable.widgets.OWTextableCount.OWTextableCount" project_name="Orange3-Textable" version="" title="Count" position="(436.0, 257.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="2" source_channel="Law Documents importation" sink_channel="Segmentation" enabled="true" />
+		<link id="1" source_node_id="2" sink_node_id="3" source_channel="Extracted data" sink_channel="Segmentation" enabled="true" />
+		<link id="2" source_node_id="3" sink_node_id="1" source_channel="Orange table" sink_channel="Data" enabled="true" sink_channel_id="data" />
+	</links>
+	<annotations>
+		<arrow id="0" start="(133.99999999999994, 103.00000000000004)" end="(134.99999999999994, 191.00000000000006)" fill="#C1272D" />
+		<text id="1" type="text/plain" rect="(54.0, -160.0, 238.0, 259.0)" font-family=".AppleSystemUIFont" font-size="16">Create a corpus of Swiss law documents here.
+
+1.  Select the legal document you are interested in.
+
+2.  Choose a segmentation.
+
+3.  Select the language
+
+4.  Add to corpus
+
+5.  Click on "Send".</text>
+		<arrow id="2" start="(281.0, 410.0)" end="(281.0, 328.0)" fill="#C1272D" />
+		<text id="3" type="text/plain" rect="(212.0, 417.0, 150.0, 88.0)" font-family=".AppleSystemUIFont" font-size="16">Segmentation into articles and reading the xml document.</text>
+		<arrow id="4" start="(433.0, 98.0)" end="(433.0, 187.0)" fill="#C1272D" />
+		<text id="5" type="text/plain" rect="(373.0, 17.0, 150.0, 69.0)" font-family=".AppleSystemUIFont" font-size="16">Count the number of articles per document.</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoSend': True, 'controlAreaVisible': True, 'importedURLs': [], 'myBasket': [('Federal Act on Data Protection', 'No Segmentation', 'FR')], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x04\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'uuid': 'c5a37ecf-0892-45b8-9867-25e847511d92', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties node_id="1" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'select_rows': True, 'selected_cols': [], 'selected_rows': [], 'show_attribute_labels': True, 'show_distributions': False, '__version__': 2}</properties>
+		<properties node_id="2" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'conditions': [], 'controlAreaVisible': True, 'deleteMarkup': False, 'displayAdvancedSettings': False, 'element': 'article', 'importAnnotations': True, 'importElementAs': '', 'mergeDuplicates': False, 'preserveLeaves': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x04\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'uuid': 'e896f500-2d45-490c-aa22-ae766e7bca00', '__version__': 1, '_TextableUtils_settings_version__': (0, 15)}</properties>
+		<properties node_id="3" format="pickle">gASVvgIAAAAAAAB9lCiMCGF1dG9TZW5klIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjA1pbnRyYVNl
+cURlbGltlIwBI5SMDW1lcmdlQ29udGV4dHOUiYwMbWVyZ2VTdHJpbmdzlImME3NhdmVkV2lkZ2V0
+R2VvbWV0cnmUQ0IB2dDLAAMAAAAAAAAAAAAAAAAFnwAAA4MAAAAAAAAAAAAABZ8AAAODAAAAAAAA
+AAAFoAAAAAAAAAAAAAAFnwAAA4OUjA5zZXF1ZW5jZUxlbmd0aJRLAYwNdW5pdFBvc01hcmtlcpSM
+AV+UjAR1dWlklIwkNGFiMTBiYmMtMDk5My00NTZjLWE1NTYtMzhjMWI1YWY2OTgwlIwLX192ZXJz
+aW9uX1+USwGMEGNvbnRleHRfc2V0dGluZ3OUXZSMFW9yYW5nZXdpZGdldC5zZXR0aW5nc5SMB0Nv
+bnRleHSUk5QpgZR9lCiMBnZhbHVlc5R9lCiMCV9jb250ZXh0c5RLAIwUY29udGV4dEFubm90YXRp
+b25LZXmUjAhEb2N1bWVudJSMD2xlZnRDb250ZXh0U2l6ZZRLAIwEbW9kZZSMF0NvbnRhaW5pbmcg
+c2VnbWVudGF0aW9ulIwQcmlnaHRDb250ZXh0U2l6ZZRLAIwRdW5pdEFubm90YXRpb25LZXmUjANl
+SWSUjAV1bml0c5RLAIwKd2luZG93U2l6ZZRLAYwNc2VnbWVudGF0aW9uc5RdlIwLRXh0cmFjdCBY
+TUyUjAhEb2N1bWVudJSMCExhbmd1YWdllIwDZUlklIeUjCRlODk2ZjUwMC0yZDQ1LTQ5MGMtYWEy
+Mi1hZTc2NmU3YmNhMDCUh5RhaA5LAXWMB2VuY29kZWSUaA1oJIaUdWJhjCFfVGV4dGFibGVVdGls
+c19zZXR0aW5nc192ZXJzaW9uX1+USwBLFYaUdS4=
+</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
