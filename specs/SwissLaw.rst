@@ -14,36 +14,38 @@ le logiciel Orange 3 en utilisant le langage Python.
 
 1.2 Aperçu des étapes
 =====================
-* Premiere version de la spécification: 15 mars 2018
-* Remise de la specification: 22 mars 2018
-* Version alpha du projet:  27 avril 2023
-* Version finale du projet:  1 juin 2023
+* Première version des spécifications: 23 mars 2023
+* Remise des spécifications: 30 mars 2023
+* Version alpha du projet: 27 avril 2023
+* Version finale du projet: 1 juin 2023
 
 1.3 Equipe et responsabilitées
 ==============================
 * Mainteneur :
-    - Aris Xanthos
-    - Email : aris.xanthos@unil.ch
-* Auteur(e)s :
-    - Antoine Vigand :
-    - Elijah Green :
-    - Samantha Allendes Bravo :
-    - Thomas Rywalski :
+    - Aris Xanthos (aris.xanthos@unil.ch)
 
-  - spécification
-  - code: Backend, module "recherche"
-  - tests
-  - github
-
-  - tests
-  - documentation
-  - github
-
-  - code: Backend, module "gestion corpus"
-  - spécification
-  - interface
-  - tests
-  - github
+* Antoine Vigand (antoine.vigand@unil.ch)
+ - specification
+ - interface
+ - code
+ - tests
+ - Github
+* Elijah Green (elijah.green@unil.ch)
+ - specification
+ - code
+ - tests
+ - Github
+* Samantha Allendes (samantha.allendesbravo@unil.ch)
+ - specification
+ - documentation
+ - interface
+ - code
+ - Github
+* Thomas Rywalski (thomas.rywalski@unil.ch)
+ - specification
+ - documentation
+ - interface
+ - code
 
 2. Technique
 ************
@@ -54,21 +56,25 @@ le logiciel Orange 3 en utilisant le langage Python.
 
 * Orange Textable 3.1.11
 
+* https://www.fedlex.admin.ch/ (29.03.2023)
+
 2.2 Fonctionnalités minimales
 =============================
-.. image:: images/LyricsGenius_minimal_version.png
+.. image:: images/DroitCHVM1.png
 
-* Télécharger les documents de loi suisse
+* Permettre à l'utilisateur de récupérer un texte de loi Suisse parmi deux documents: le code des obligations et le code civil
+* Ajouter l'entier du document au corpus en Français
+* Avoir la possibilité d'envoyer automatiquement le corpus à l'output
 
-* Segmenter les documents par Titre
-
-* Télécharger les documents en français
-
-* Ajouter, retirer les documents dans un panier
 
 2.3 Fonctionnalités principales
 ===============================
-.. image:: images/LyricsGenius_basic_version.png
+
+ .. image:: images/DroitCHVP1.png
+
+ .. image:: images/DroitCHVP2.png
+
+ .. image:: images/DroitCHVP3.png
 
 * Télécharger les documents de loi suisse
 
@@ -80,9 +86,15 @@ le logiciel Orange 3 en utilisant le langage Python.
 
 * Séléctionner les documents du panier qui nous intéressent
 
+* Permettre à l'utilisateur de récupérer un texte de loi Suisse parmi une liste des 20 documents de loi les plus consultés.
+* Permettre à l'utilisateur de séléctionner la langue nationale dans laquelle il souhaite récupérer le texte de loi: en
+Allemand, Français ou Italien.
+* Permettre à l'utilisateur de récupérer l'entier du document ou de faire une segmentation par Titre, Chapitre ou article.
+
+
 2.4 Fonctionnalités optionnelles
 ================================
-* permettre une recherche par artiste
+* Permettre à l'utilisateur de récupérer n'importe quel texte de loi disponible sur le site https://www.fedlex.admin.ch/
 
 2.5 Tests
 =========
@@ -109,9 +121,11 @@ Suivez les instructions ci-dessous pour installer le widget :
 
 3.1 Version alpha
 =================
-* L'interface graphique est complètement construite.
+* L'interface graphique est complétement construite.
 
-* Les fonctionnalités minimales sont prises en charge par le logiciel et ont été testées.
+* La séléction de document au corpus était ajoutée.
+
+* Le téléchargement des textes de loi en Français au format XML était fonctionnel.
 
 3.2 Remise et présentation
 ==========================
@@ -119,10 +133,7 @@ Suivez les instructions ci-dessous pour installer le widget :
 
 * La documentation du logiciel est complète.
 
-* Les fonctionnalités principales (et, le cas échéant, optionnelles) sont implémentées.
-
 4. Infrastructure
 =================
-Le projet est disponible sur GitHub à l'adresse `https://github.com/solliryc/orange3-textable-prototypes
-
-<https://github.com/solliryc/orange3-textable-prototypest>`_
+Le projet est disponible sur GitHub avec le lien suivant `SwissLaw Github
+<https://github.com/axanthos/TextablePrototypes.git>`_
