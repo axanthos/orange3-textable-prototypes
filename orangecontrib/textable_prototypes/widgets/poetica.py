@@ -612,10 +612,12 @@ class Poetica(OWTextableBaseWidget):
         poem_content = list()
         annotations_list_authors = list()
         annotations_list_tiles = list()
-        annotations__list_urls = list()
+        annotations_list_urls = list()
+        annotations_list_topics = list()
         annotations_author = dict()
         annotations_title = dict()
         annotations_url = dict()
+        annotations_topic = dict()
         try:
             for poem in self.corpusLabels:
                 for key, value in self.db["title"].items():
@@ -626,10 +628,15 @@ class Poetica(OWTextableBaseWidget):
                             annotations_author["Author"] = self.db["author"][key]
                             annotations_title["Title"] = poem
                             annotations_url["URL"] = key
+                            if self.topicQuery != "Select a topic":
+                                annotations_topic["Topic"] = self.topicQuery
+                            else:
+                                annotations_topic["Topic"] = self.db["topic"][key]
 
                             annotations_list_authors.append(annotations_author.copy())
                             annotations_list_tiles.append(annotations_title.copy())
-                            annotations__list_urls.append(annotations_url.copy())
+                            annotations_list_urls.append(annotations_url.copy())
+                            annotations_list_topics.append(annotations_topic.copy())
                         else:
                             try:
                                 url_poeme = urlopen(key)
@@ -664,10 +671,15 @@ class Poetica(OWTextableBaseWidget):
                             annotations_author["Author"] = self.db["author"][key]
                             annotations_title["Title"] = poem
                             annotations_url["URL"] = key
+                            if self.topicQuery != "Select a topic":
+                                annotations_topic["Topic"] = self.topicQuery
+                            else:
+                                annotations_topic["Topic"] = self.db["topic"][key]
 
                             annotations_list_authors.append(annotations_author.copy())
                             annotations_list_tiles.append(annotations_title.copy())
-                            annotations__list_urls.append(annotations_url.copy())
+                            annotations_list_urls.append(annotations_url.copy())
+                            annotations_list_topics.append(annotations_topic.copy())
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
@@ -703,7 +715,8 @@ class Poetica(OWTextableBaseWidget):
         for idx, segment in enumerate(self.segmentation):
             segment.annotations.update(annotations_list_authors[idx])
             segment.annotations.update(annotations_list_tiles[idx])
-            segment.annotations.update(annotations__list_urls[idx])
+            segment.annotations.update(annotations_list_urls[idx])
+            segment.annotations.update(annotations_list_topics[idx])
             self.segmentation[idx] = segment
 
         # Clear progress bar.
