@@ -24,8 +24,14 @@ __author__ = "Sinem Kilic, Laure Margot, Leonie Nussbaum, Olivia Verbrugge"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
+# Import the useful packages...
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
+
+from _textable.widgets.TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
+    InfoBox, SendButton, ProgressBar,
+)
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
@@ -34,15 +40,11 @@ from LTTL.Input import Input
 from PyQt5.QtWidgets import QMessageBox
 
 from urllib.request import urlopen
+
 import inspect
 import re
 import pickle
 import os
-
-from _textable.widgets.TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton, ProgressBar,
-)
 
 class Poetica(OWTextableBaseWidget):
     """Textable widget for importing XML data from the website Poetica
@@ -85,21 +87,21 @@ class Poetica(OWTextableBaseWidget):
         super().__init__()
 
         # ATTRIBUTS
-        # searchFunction
+        # searchFunction...
         self.searchResults = None
         self.inputSeg = None
-        # Query criterias
+        # Query criterias...
         self.authorQuery = 'Select an author'
         self.topicQuery = 'Select a topic'
-        # Results box attributs
+        # Results box attributs...
         self.resultLabels = list()
         self.resultSelectedItems = list()
-        # Corpus box attributs
+        # Corpus box attributs...
         self.corpusSelectedItems = list()
         self.corpusLabels = list()
-        # Stocks all the inputs (poems) in a list
+        # Stocks all the inputs (poems) in a list.
         self.createdInputs = list()
-
+        # Cache dictionnary.
         self.cache = dict()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -114,7 +116,7 @@ class Poetica(OWTextableBaseWidget):
         )
         #----------------------------------------------------------------------
         # User interface...
-        # Create the working area
+        # Create the working area...
         queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Select criteria",
@@ -129,30 +131,17 @@ class Poetica(OWTextableBaseWidget):
         self.authors_list.append("Select an author")
         for author in sorted(set(self.db["author"].values())):
             self.authors_list.append(author)
-        # #previous_author = ""
-        # for key, value in self.db["author"].items():
-        #   if self.db["author"][key] != previous_author:
-        #        self.authors_list.append(self.db["author"][key])
-        #     previous_author = self.db["author"][key]
 
         # Store the list of topics...
         self.topics_list = list()
         self.sorted_topics_list = list()
         self.final_topics_list = list()
         self.final_topics_list.append("Select a topic")
-        # previous_topic = ""
-        # for key, value in self.db["topic"].items():
-        #    self.topics_list.append(str(self.db["topic"][key]))
-        # self.sorted_topics_list = sorted(self.topics_list)
-        # for topic in self.sorted_topics_list:
-        #    if topic != previous_topic:
-        #        self.final_topics_list.append(topic)
-        #    previous_topic = topic
         for topic in sorted(set(self.db["topic"].values())):
             self.final_topics_list.append(topic)
 
-        # Allows to select an author in a list
-        #  Uses "authorQuery" attribut
+        # Allows to select an author in a list...
+        # Uses "authorQuery" attribut...
         gui.comboBox(
             widget=queryBox,
             master=self,
@@ -166,8 +155,8 @@ class Poetica(OWTextableBaseWidget):
 
         )
 
-        # Allows to select a topic in a list
-        # Uses "topicQuery" attribut
+        # Allows to select a topic in a list...
+        # Uses "topicQuery" attribut...
         gui.comboBox(
             widget=queryBox,
             master=self,
@@ -181,8 +170,8 @@ class Poetica(OWTextableBaseWidget):
 
         )
 
-        # Research button
-        # Uses "searchFunction" attribut
+        # Research button...
+        # Uses "searchFunction" attribut...
         self.searchButton = gui.button(
             widget=queryBox,
             master=self,
@@ -191,7 +180,7 @@ class Poetica(OWTextableBaseWidget):
             tooltip="Connecter Poetica et effectuer une recherche",
         )
 
-        # Refresh Button
+        # Refresh Button...
         self.refreshButton = gui.button(
             widget=queryBox,
             master=self,
@@ -200,7 +189,7 @@ class Poetica(OWTextableBaseWidget):
             tooltip="Attention ! Cela peut prendre un peu de temps…",
         )
 
-
+        # Basket of found items...
         self.resultBox = gui.listBox(
             widget=queryBox,
             master=self,
@@ -218,7 +207,8 @@ class Poetica(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Add poems button
+
+        # Add poems button...
         self.addButton = gui.button(
             widget=boxbutton,
             master=self,
@@ -230,8 +220,8 @@ class Poetica(OWTextableBaseWidget):
         )
         self.addButton.setDisabled(True)
 
-        # Clear button
-        # Uses "clearResults" function
+        # Clear button...
+        # Uses "clearResults" function...
         self.clearResultsButton = gui.button(
             widget=boxbutton,
             master=self,
@@ -242,13 +232,14 @@ class Poetica(OWTextableBaseWidget):
         self.clearResultsButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        # area where confirmed poems are moved and stocked
+        # area where confirmed poems are moved and stocked...
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
             orientation="vertical",
         )
 
+        # Basket of selected items...
         self.corpusBox = gui.listBox(
             widget=mytitleBox,
             master=self,
@@ -266,7 +257,7 @@ class Poetica(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
-        # Remove poems button
+        # Remove poems button...
         self.removeButton = gui.button(
             widget=boxbutton2,
             master=self,
@@ -278,7 +269,7 @@ class Poetica(OWTextableBaseWidget):
         )
         self.removeButton.setDisabled(True)
 
-        # Delete all
+        # Delete all button...
         self.clearCorpusButton = gui.button(
             widget=boxbutton2,
             master=self,
@@ -294,7 +285,7 @@ class Poetica(OWTextableBaseWidget):
         gui.rubber(self.controlArea)
         #----------------------------------------------------------------------
 
-        # Draw Info box and Send button
+        # Draw Info box and Send button...
         self.sendButton.draw()
         self.searchButton.setDefault(True)
         self.infoBox.draw()
@@ -304,15 +295,20 @@ class Poetica(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def alertMessage(self):
+        """
+        Confirmation request message to refresh the database
+        """
         QMessageBox.information(
             None,
             'Poetica',
             'Are you sure you want to refresh the database ? This may take some time.',
             QMessageBox.Ok
         )
-        print("hello")
-    # Function to extract data...
+
     def dataExtraction(self):
+        """
+        Function to extract data
+        """
 
         database = {
             "title": {},
@@ -320,7 +316,7 @@ class Poetica(OWTextableBaseWidget):
             "topic": {},
         }
 
-        # Acceder a la page d'accueil de poetica...
+        # Go to Poetica's homepage...
         try:
             poetica_url = 'https://www.poetica.fr/'
             url_accueil = urlopen(poetica_url)
@@ -328,7 +324,7 @@ class Poetica(OWTextableBaseWidget):
             print("Valid poetica's URL")
             page_accueil = page_accueil.decode("utf-8")
 
-            # Extraire la liste d'auteurs...
+            # Extract the list of authors...
             base_seg = Input(page_accueil)
             condition = dict()
             condition["id"] = re.compile(r"^menu-poemes-par-auteur$")
@@ -338,7 +334,7 @@ class Poetica(OWTextableBaseWidget):
                 conditions=condition,
             )
 
-            # Extraire la liste des themes...
+            # Extract the list of topics...
             seg_themes = Input(page_accueil)
             condition_themes = dict()
             condition_themes["id"] = re.compile(r"^menu-poemes-par-theme$")
@@ -348,19 +344,19 @@ class Poetica(OWTextableBaseWidget):
                 conditions=condition_themes,
             )
 
-            # Recuperer le lien url vers la page de chaque auteur...
+            # Recover the url ink to each author's page...
             xml_par_auteur = Segmenter.import_xml(
                 segmentation=xml_auteurs,
                 element="<a>",
             )
 
-            # Recuperer le lien url vers la page de chaque theme...
+            # Recover the url ink to each topic's page...
             xml_par_theme = Segmenter.import_xml(
                 segmentation=xml_themes,
                 element="<a>",
             )
 
-            # Acceder a la page de chaque auteur...
+            # Go to each author's page...
             for auteur in xml_par_auteur:
                 try:
                     url_page_auteur = auteur.annotations["href"]
@@ -369,10 +365,10 @@ class Poetica(OWTextableBaseWidget):
                     print("Valid author's URL")
                     page_auteur = page_auteur.decode("utf-8")
 
-                    # Recuperer le nom de l'auteur.
+                    # Recover the author's name.
                     nom_auteur = auteur.get_content()
 
-                    # Extraire la liste de poemes...
+                    # Extract the list poems...
                     seg_auteurs = Input(page_auteur)
                     condition_auteur = dict()
                     condition_auteur["class"] = re.compile(r"^entry-header$")
@@ -382,13 +378,13 @@ class Poetica(OWTextableBaseWidget):
                         conditions=condition_auteur,
                     )
 
-                    # Recuperer le lien url vers la page de chaque poeme...
+                    # Recover the url link to each poem's page...
                     xml_par_poeme = Segmenter.import_xml(
                         segmentation=xml_poemes,
                         element="<a>",
                     )
 
-                    # Acceder a la page de chaque poeme...
+                    # Go to each poem's page...
                     for poeme in xml_par_poeme:
                         try:
                             url_page_poeme = poeme.annotations["href"]
@@ -402,18 +398,16 @@ class Poetica(OWTextableBaseWidget):
 
                             database["title"][url_page_poeme] = nom_poeme
                             database["author"][url_page_poeme] = nom_auteur
-                            # database["date"][url_page_poeme] = date_poeme
-                            # database["poem"][url_page_poeme] = poeme
 
-                        # Avertir si l'url ne fonctionne pas...
+                        # Warn if the url doesn't work...
                         except IOError:
                             print("Invalid poem's URL")
 
-                # Avertir si l'url ne fonctionne pas...
+                # Warn if the url doesn't work...
                 except IOError:
                     print("Invalid author's URL")
 
-            # Acceder a la page de chaque theme...
+            # Go to each topic's page...
             for theme in xml_par_theme:
                 try:
                     url_page_theme = theme.annotations["href"]
@@ -422,10 +416,10 @@ class Poetica(OWTextableBaseWidget):
                     print("Valid topic's URL")
                     page_theme = page_theme.decode("utf-8")
 
-                    # Recuperer le nom du theme.
+                    # Recover the topic's name.
                     nom_theme = theme.get_content()
 
-                    # Extraire la liste de poemes...
+                    # Extract the list of poems...
                     seg_themes = Input(page_theme)
                     condition_themes = dict()
                     condition_themes["class"] = re.compile(r"^entry-header$")
@@ -435,28 +429,28 @@ class Poetica(OWTextableBaseWidget):
                         conditions=condition_themes,
                     )
 
-                    # Recuperer le lien url vers la page de chaque poeme...
+                    # Recover the url link to each poem's page...
                     xml_par_theme = Segmenter.import_xml(
                         segmentation=xml_poemes_themes,
                         element="<a>",
                     )
 
-                    # Acceder a la page de chaque poeme...
+                    # Go to each poem's page...
                     for poeme_theme in xml_par_theme:
                         try:
                             url_page_poeme_theme = poeme_theme.annotations["href"]
 
                             database["topic"][url_page_poeme_theme] = nom_theme
 
-                        # Avertir si l'url ne fonctionne pas...
+                        # Warn if the url doesn't work...
                         except IOError:
                             print("Invalid poem's URL")
 
-                # Avertir si l'url ne fonctionne pas...
+                # Warn if the url doesn't work...
                 except IOError:
                     print("Invalid topic's URL")
 
-        # Avertir si l'url ne fonctionne pas...
+        # Warn if the url doesn't work...
         except IOError:
             print("Invalid poetica's URL")
 
@@ -474,8 +468,10 @@ class Poetica(OWTextableBaseWidget):
         except IOError:
             print("Can't save the dictionary")
 
-    # Function to open the database...
     def openDatabase(self):
+        """
+        Function to open the database
+        """
 
         # Define a path to later locate the access path for the backup...
         path = os.path.dirname(
@@ -494,9 +490,11 @@ class Poetica(OWTextableBaseWidget):
         # Return the stored dictionary.
         return new_database
 
-
-    # Search button's features...
     def searchFunction(self):
+        """
+        Search button's features
+        """
+
         # If the selection is empty...
         if self.authorQuery == "Select an author" and self.topicQuery == "Select a topic":
             self.infoBox.setText(f"You didn't select anything !", "warning")
