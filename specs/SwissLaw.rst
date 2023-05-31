@@ -114,12 +114,10 @@ Suivez les instructions ci-dessous pour installer le widget :
 1. Lancez Orange 3 et accéder à la section "Textable Prototypes".
 2. Faites glisser et déposez le widget "Swiss Law" sur la zone de travail.
 3. Configurez le widget en sélectionnant les options souhaitées.
-	3a. Séléctionner le document de lois souhaité selon les documents présent sur la liste déroulante
-		ainsi que le niveau de segmentation et langue du document.
+	3a. Séléctionner le document de lois souhaité selon les documents présent sur la liste déroulante ainsi que le niveau de segmentation et langue du document.
 		.. image:: images/SwissLaw1.png
 		
-	3b. Cliquer sur "Add to corpus" pour ajouter l'éléments au corpus (possibilité d'effacer un élément du corpus
-		ou de nettoyer l'ensemble du corupus)
+	3b. Cliquer sur "Add to corpus" pour ajouter l'éléments au corpus (possibilité d'effacer un élément du corpus ou de nettoyer l'ensemble du corupus)
 		.. image:: images/SwissLaw2.png
 		
 	3c. Cliquer sur "send" pour envoyer la segmentation.
