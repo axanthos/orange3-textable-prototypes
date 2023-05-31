@@ -100,6 +100,8 @@ class Poetica(OWTextableBaseWidget):
         # Stocks all the inputs (poems) in a list
         self.createdInputs = list()
 
+        self.cache = dict()
+
         # Next two instructions are helpers from TextableUtils. Corresponding
         # interface elements are declared here and actually drawn below (at
         # their position in the UI)...
@@ -618,47 +620,59 @@ class Poetica(OWTextableBaseWidget):
             for poem in self.corpusLabels:
                 for key, value in self.db["title"].items():
                     if self.db["title"][key] == poem:
-                        try:
-                            url_poeme = urlopen(key)
-                            page_poeme = url_poeme.read()
-                            print("Valid poem's URL")
-                            page_poeme = page_poeme.decode("utf-8")
+                        if key in self.cache:
+                            poem_content.append(self.cache[key])
 
-                            # Extraire les poeme et ses donnees...
-                            seg_poemes = Input(page_poeme)
-                            condition_poeme = dict()
-                            condition_poeme["class"] = re.compile(r"^entry-content$")
-                            xml_contenu_poeme = Segmenter.import_xml(
-                                segmentation=seg_poemes,
-                                element="<div>",
-                                conditions=condition_poeme,
-                            )
+                            annotations_author["Author"] = self.db["author"][key]
+                            annotations_title["Title"] = poem
+                            annotations_url["URL"] = key
 
-                            # Recuperer le poeme avec ses propres balises.
-                            poeme_balises = xml_contenu_poeme[0].get_content()
+                            annotations_list_authors.append(annotations_author.copy())
+                            annotations_list_tiles.append(annotations_title.copy())
+                            annotations__list_urls.append(annotations_url.copy())
+                        else:
+                            try:
+                                url_poeme = urlopen(key)
+                                page_poeme = url_poeme.read()
+                                print("Valid poem's URL")
+                                page_poeme = page_poeme.decode("utf-8")
 
-                            # N'afficher que le contenu du poeme...
-                            poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
-                            poeme = re.sub(r".+$", "", poeme)
-                            # print(poeme)
-                            poem_content.append(poeme)
+                                # Extraire les poeme et ses donnees...
+                                seg_poemes = Input(page_poeme)
+                                condition_poeme = dict()
+                                condition_poeme["class"] = re.compile(r"^entry-content$")
+                                xml_contenu_poeme = Segmenter.import_xml(
+                                    segmentation=seg_poemes,
+                                    element="<div>",
+                                    conditions=condition_poeme,
+                                )
 
-                        # Avertir si l'url ne fonctionne pas...
-                        except IOError:
-                            print("Invalid poem's URL")
+                                # Recuperer le poeme avec ses propres balises.
+                                poeme_balises = xml_contenu_poeme[0].get_content()
 
-                        annotations_author["Author"] = self.db["author"][key]
-                        annotations_title["Title"] = poem
-                        annotations_url["URL"] = key
+                                # N'afficher que le contenu du poeme...
+                                poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
+                                poeme = re.sub(r".+$", "", poeme)
+                                # print(poeme)
+                                poem_content.append(poeme)
+                                self.cache[key] = poeme
 
-                        annotations_list_authors.append(annotations_author.copy())
-                        annotations_list_tiles.append(annotations_title.copy())
-                        annotations__list_urls.append(annotations_url.copy())
+                            # Avertir si l'url ne fonctionne pas...
+                            except IOError:
+                                print("Invalid poem's URL")
+
+                            annotations_author["Author"] = self.db["author"][key]
+                            annotations_title["Title"] = poem
+                            annotations_url["URL"] = key
+
+                            annotations_list_authors.append(annotations_author.copy())
+                            annotations_list_tiles.append(annotations_title.copy())
+                            annotations__list_urls.append(annotations_url.copy())
 
                 # 1 tick on the progress bar of the widget
                 progressBar.advance()
 
-            # If an error occurs (e.g. http error, or memory error)...
+        # If an error occurs (e.g. http error, or memory error)...
         except:
             # Set Info box and widget to "error" state.
             self.infoBox.setText(
