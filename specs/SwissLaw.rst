@@ -95,6 +95,7 @@ Allemand, Français ou Italien.
 2.4 Fonctionnalités optionnelles
 ================================
 * Permettre à l'utilisateur de récupérer n'importe quel texte de loi disponible sur le site https://www.fedlex.admin.ch/
+* Permettre à l'utilisateur de nettoyer le texte en enlevant les balises xml sans devoir passer par le widget extact XML
 
 2.5 Tests
 =========
@@ -113,6 +114,17 @@ Suivez les instructions ci-dessous pour installer le widget :
 1. Lancez Orange 3 et accéder à la section "Textable Prototypes".
 2. Faites glisser et déposez le widget "Swiss Law" sur la zone de travail.
 3. Configurez le widget en sélectionnant les options souhaitées.
+	3a. Séléctionner le document de lois souhaité selon les documents présent sur la liste déroulante
+		ainsi que le niveau de segmentation et langue du document.
+		.. image:: images/SwissLaw1.png
+		
+	3b. Cliquer sur "Add to corpus" pour ajouter l'éléments au corpus (possibilité d'effacer un élément du corpus
+		ou de nettoyer l'ensemble du corupus)
+		.. image:: images/SwissLaw2.png
+		
+	3c. Cliquer sur "send" pour envoyer la segmentation.
+		.. image:: images/SwissLaw3.png
+
 4. Connectez le widget SwissLaw à d'autres widgets ou composants de votre flux de travail.
 5. Exécutez le flux de travail pour accéder et analyser les documents de loi suisse.
 
