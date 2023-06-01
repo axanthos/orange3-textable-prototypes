@@ -9,7 +9,8 @@
 Swiss Law
 =============
 
-.. image:: doc/widgets/figures/SwissLaw.png
+.. image:: figures/SwissLaw.png
+
 
 Make a corpus with Swiss law documents.
 
@@ -42,7 +43,8 @@ Interface
 
 .. _SwissLaw3.png:
 
-.. figure:: doc/widgets/figures/SwissLaw3.png
+.. image:: figures/SwissLaw3.png
+
     :align: center
     :scale: 50 %
     :alt: Interface of the Swiss Law widget
