@@ -34,6 +34,7 @@ différents poèmes francophones triés par auteurs et par thèmes.
 * Sinem Kilic :
     - maquette
     - code
+    - readme
 * Leonie Nussbaum :
     - code
     - documentation
