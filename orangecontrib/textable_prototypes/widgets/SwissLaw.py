@@ -42,6 +42,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
+
 class SwissLaw(OWTextableBaseWidget):
     """Textable widget for importing Swiss law texts from
     https://www.fedlex.admin.ch/ (only the 21 most popular texts)
@@ -86,7 +87,7 @@ class SwissLaw(OWTextableBaseWidget):
         # ATTRIBUTS
         self.segmentation = list()
 
-        # database for our csv
+        # Database for our csv
         self.database = {
             "id": [],
             "law_text": [],
@@ -103,7 +104,7 @@ class SwissLaw(OWTextableBaseWidget):
 
         # Open the csv and add the content in our database
         try:
-            with open(os.path.join(path, "DroitCH.csv"), "r") as file:
+            with open(os.path.join(path, "SwissLaw.csv"), "r") as file:
                 reader = csv.reader(file)
                 next(reader)  # skip the header row if present
                 for row in reader:
@@ -118,19 +119,19 @@ class SwissLaw(OWTextableBaseWidget):
         except IOError:
             print("Failed to open csv file.")
 
-        # dict stocking the documents
+        # Dict stocking the documents (avoid re-download)
         self.cached = dict()
-        # stock all the documents names
+        # Stock all the documents names and parameters
         self.documents = sorted(self.database["law_text"])
         self.selectedDocument = self.documents[0]
         self.segLevels = list()
         self.selectedSegLevel = "No segmentation"
         self.languages = ["FR", "DE", "IT"]
         self.selectedLanguage = "FR"
-        # selections box attributs
+        # Selections box attributs
         self.corpusSelectedItems = list()
         self.corpusLabels = list()
-        # stock all the inputs (law documents) in a list
+        # Stock all the inputs (law documents) in a list
         self.createdInputs = list()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -151,10 +152,8 @@ class SwissLaw(OWTextableBaseWidget):
             box="Select Law Document",
             orientation="vertical",
         )
-        # Allows to enter specific text to the research
 
         # Allows to choose the law document
-
         gui.comboBox(
             widget=queryBox,
             master=self,
@@ -172,7 +171,6 @@ class SwissLaw(OWTextableBaseWidget):
         self.selectedDocument = self.selectedDocument
 
         # Allows to choose the segmentation
-
         self.segLevelComboBox = gui.comboBox(
             widget=queryBox,
             master=self,
@@ -232,6 +230,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.corpusListbox.setMinimumHeight(150)
         self.corpusListbox.setSelectionMode(3)
 
+        # Buttons in the corpus area
         buttonBox = gui.widgetBox(
             widget=corpusBox,
             box=False,
@@ -277,7 +276,7 @@ class SwissLaw(OWTextableBaseWidget):
 
         self.updateSegLevelsComboBox()
 
-
+    # Update the remove button if a law text is selected in the corpus
     def updateRemoveButton(self):
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
@@ -289,12 +288,13 @@ class SwissLaw(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         self.addButton.setDisabled(self.corpusLabels == list())
 
-    # update AddButton function
+    # Function updating available segmentation
     def updateSegLevelsComboBox(self):
         self.segLevelComboBox.clear()
         self.segLevels = list()
         self.segLevels.append("No Segmentation")
 
+        # Check if the selected law text has title, article or chapter
         if int(self.database["title"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segLevels.append("Into title")
 
@@ -307,7 +307,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.selectedSegLevel = self.segLevels[0]
         self.segLevelComboBox.addItems(self.segLevels)
 
-        # Add documents function
+    # Add documents to corpus function
     def add(self):
         """Add document in your selection """
         if (self.selectedDocument, self.selectedSegLevel, self.selectedLanguage) not in self.myBasket:
@@ -336,7 +336,7 @@ class SwissLaw(OWTextableBaseWidget):
 
         self.segLevelComboBox.clear()
 
-    # fonction qui retire la selection de notre panier
+    # Function to remove selected law text from the corpus
     def remove(self):
         """Remove the selected text in your selection """
         self.myBasket = [
@@ -350,7 +350,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.updateSegLevelsComboBox()
         self.selectedLanguage = "FR"
 
-    # Clear selections function
+    # Clear selections (all corpus) function
     def clearCorpus(self):
         """Remove all texts in your selection """
         self.corpusLabels = list()
@@ -363,6 +363,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.updateSegLevelsComboBox()
         self.selectedLanguage = "FR"
 
+    # Function that download xml law text based on the url
     def get_xml_contents(self, urls) -> str:
         response = requests.get(urls)
         xml_content = response.content.decode('utf-8')
@@ -390,13 +391,19 @@ class SwissLaw(OWTextableBaseWidget):
             iterations=len(self.myBasket)
         )
 
+        # Lists to stock the necessary information
         documents = list()
         annotations = list()
         segmentation_levels = list()
 
+        # Get the xml law text...
         for item in self.myBasket:
-            if self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])] in self.cached:
+
+            # ...from the self.cached dict if already downloaded
+            if self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]\
+                    in self.cached:
                 content = self.cached[self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]]
+            # ...with the get_xml_function if not already downloaded
             else:
                 content = self.get_xml_contents(
                     self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]
@@ -404,10 +411,15 @@ class SwissLaw(OWTextableBaseWidget):
                 self.cached[self.database["Urls"][self.database["law_text"].index(item[0])][self.languages.index(item[2])]] = content
 
             documents.append(content)
+
+            # Get the desired segmentation
             segmentation_levels.append(item[1].replace("Into ", ""))
+
+            # Add segment annotations
             annotations.append({"Document": item[0], "Language": item[2]})
             progressBar.advance()
 
+        # Segment the text with the desired segmentation (using import_xml)
         segmentations = []
 
         for doc_idx, document in enumerate(documents):
@@ -452,6 +464,7 @@ class SwissLaw(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
+        # Final send
         self.send("Law Documents importation", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
