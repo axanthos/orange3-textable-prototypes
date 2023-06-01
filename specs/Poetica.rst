@@ -75,9 +75,7 @@ différents poèmes francophones triés par auteurs et par thèmes.
 
 * Première combobox : afficher la liste des auteurs établie par Poetica. Les auteurs sont triés par ordre alphabétique.
 
-* Deuxième combobox : afficher la liste des dates établie par Poetica. Les dates sont triées par décénies, de manière croissante.
-
-* Troisième combobox : afficher la liste des thèmes établie par Poetica. Les thèmes sont triés par ordre alphabétique.
+* Deuxième combobox : afficher la liste des thèmes établie par Poetica. Les thèmes sont triés par ordre alphabétique.
 
 * Bouton search permet de sortir tous les différents poèmes par auteur, date ou thème.
 
