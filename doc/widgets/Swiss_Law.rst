@@ -69,17 +69,13 @@ Follow the instructions below to install the widget:
 2. Drag and drop the "Swiss Law" widget onto the work area.
 3. Configure the widget by selecting the desired options.
     3a. Select the desired legal document. The **Select Law Document** section allows the user to choose a law document, a segmentation and a language.
-		.. image:: images/SwissLaw1.png
+		.. figure:: figures/SwissLaw1.png
 
-	3b. Click on "Add to corpus" to add the item to the corpus, the **Corpus** section allows the user to clear or remove selected document from
-the corpus.
-		.. image:: images/SwissLaw2.png
+	3b. Click on "Add to corpus" to add the item to the corpus, the **Corpus** section allows the user to clear or remove selected document from the corpus.
+		.. figure:: figures/SwissLaw2.png
 
-	3c. Click on "send" to send the segmentation. The **Send** button triggers the emission of a segmentation to the output
-    connection(s). When selected, the **Send automatically** checkbox
-    disables the button and the widget attempts to automatically emit a
-    segmentation at every modification of its interface.
-		.. image:: images/SwissLaw3.png
+	3c. Click on "send" to send the segmentation. The **Send** button triggers the emission of a segmentation to the output connection(s). When selected, the **Send automatically** checkbox disables the button and the widget attempts to automatically emit a segmentation at every modification of its interface.
+		.. figure:: figures/SwissLaw3.png
 
 4. Connect the SwissLaw widget to other widgets or components in your workflow.
 5. Run the workflow to access and analyse SwissLaw documents.
