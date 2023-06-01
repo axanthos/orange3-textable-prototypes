@@ -56,7 +56,7 @@ class Poetica(OWTextableBaseWidget):
 
     name = "Poetica"
     description = "Poems importation from poetica.fr"
-    icon = "icons/Poetica.svg"
+    icon = "icons/poetica.png"
     priority = 10
 
     #----------------------------------------------------------------------
