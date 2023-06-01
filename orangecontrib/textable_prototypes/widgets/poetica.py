@@ -79,7 +79,7 @@ class Poetica(OWTextableBaseWidget):
 
     # Saved settings
     autoSend = settings.Setting(True)
-    corpusLabels = settings.Setting([])
+    corpus = settings.Setting([])
 
     def __init__(self):
         """
@@ -96,6 +96,7 @@ class Poetica(OWTextableBaseWidget):
         self.authorQuery = 'Select an author'
         self.topicQuery = 'Select a topic'
         # Results box attributs...
+        self.results = list()
         self.resultLabels = list()
         self.resultSelectedItems = list()
         # Corpus box attributs...
@@ -103,7 +104,7 @@ class Poetica(OWTextableBaseWidget):
         self.corpusLabels = list()
         # Stocks all the inputs (poems) in a list.
         self.createdInputs = list()
-        # Cache dictionary.
+        # Cache dictionnary.
         self.cache = dict()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -234,7 +235,7 @@ class Poetica(OWTextableBaseWidget):
         self.clearResultsButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        # Area where confirmed poems are moved and stocked...
+        # area where confirmed poems are moved and stocked...
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
@@ -285,6 +286,7 @@ class Poetica(OWTextableBaseWidget):
 
         gui.separator(widget=mytitleBox, height=3)
         gui.rubber(self.controlArea)
+
         #----------------------------------------------------------------------
 
         # Draw Info box and Send button...
@@ -292,9 +294,8 @@ class Poetica(OWTextableBaseWidget):
         self.searchButton.setDefault(True)
         self.infoBox.draw()
 
-
-        # Send data if autoSend.
-        self.sendButton.sendIf()
+        self.updateCorpusLabels()
+        self.updateResultLabels()
 
     def alertMessage(self):
         """
@@ -348,13 +349,13 @@ class Poetica(OWTextableBaseWidget):
                 conditions=condition_themes,
             )
 
-            # Recover the url link to each author's page...
+            # Recover the url ink to each author's page...
             xml_par_auteur = Segmenter.import_xml(
                 segmentation=xml_auteurs,
                 element="<a>",
             )
 
-            # Recover the url link to each topic's page...
+            # Recover the url ink to each topic's page...
             xml_par_theme = Segmenter.import_xml(
                 segmentation=xml_themes,
                 element="<a>",
@@ -397,7 +398,7 @@ class Poetica(OWTextableBaseWidget):
                             print("Valid poem's URL")
                             page_poeme = page_poeme.decode("utf-8")
 
-                            # Get poem's title.
+                            # Recuperer le nom du poeme.
                             nom_poeme = poeme.get_content()
 
                             database["title"][url_page_poeme] = nom_poeme
@@ -519,17 +520,26 @@ class Poetica(OWTextableBaseWidget):
             selected_urls = list()
             for url in all_urls:
                 try:
-                    if self.db["topic"][url] == self.topicQuery:
+                    if self.topicQuery in self.db["topic"][url]:
                         selected_urls.append(url)
                 except KeyError:
                     pass
 
         # Show results found in the first basket...
+        self.results = selected_urls[:]
+        self.updateResultLabels()
+
+    def updateResultLabels(self):
+        """
+        TO DO
+        """
+
         self.resultLabels = list()
-        for url in selected_urls:
-            self.resultLabels.append(self.db["title"][url])
+        for url in self.results :
+            self.resultLabels.append(f"{self.db['title'][url]} ({self.db['author'][url]})")
         self.resultLabels = self.resultLabels
         self.clearResultsButton.setDisabled(len(self.resultLabels) == 0)
+        self.addButton.setDisabled(self.resultLabels == list())
 
     def add(self):
         """
@@ -541,37 +551,49 @@ class Poetica(OWTextableBaseWidget):
             self.infoBox.setText(f"You add a poem", "warning")
             for poem_idx in self.resultSelectedItems:
                 # Check if the poem is already in the basket or not...
-                if self.resultLabels[poem_idx] in self.corpusLabels:
-                    self.infoBox.setText(f"The poem '{self.resultLabels[poem_idx]}' is already in your basket", "warning")
+                print(self.results[poem_idx], self.corpus)
+                if self.results[poem_idx] in self.corpus:
+                    pass
                 else:
                     # Add the poem to the list "corpusLabels"...
-                    self.corpusLabels.append(self.resultLabels[poem_idx])
-            self.corpusLabels = self.corpusLabels
-            # Make the "clear" button usable.
-            self.clearCorpusButton.setDisabled(len(self.corpusLabels) == 0)
+                    self.corpus.append(self.results[poem_idx])
+            self.updateCorpusLabels()
         else:
             self.infoBox.setText(f"Select a poem", "warning")
+
+    def updateCorpusLabels(self):
+        """
+        TO DO
+        """
+
+        self.corpusLabels = list()
+        for url in self.corpus :
+            self.corpusLabels.append(f"{self.db['title'][url]} ({self.db['author'][url]})")
+        self.corpusLabels = self.corpusLabels
+        self.clearCorpusButton.setDisabled(len(self.corpusLabels) == 0)
+        self.sendButton.settingsChanged()
+
+        # Send data if autoSend.
+        self.sendButton.sendIf()
 
     def clearResults(self):
         """
         Clear the results list
         """
 
-        del self.resultLabels[:]
-        self.resultLabels = self.resultLabels
-        self.clearResultsButton.setDisabled(True)
-        self.addButton.setDisabled(self.resultLabels == list())
+        self.results = list()
+        self.updateResultLabels()
 
     def remove(self):
         """
         Remove the selected poems in the selection
         """
 
-        self.corpusLabels = [
-            poem for idx, poem in enumerate(self.corpusLabels)
+        self.corpus = [
+            poem for idx, poem in enumerate(self.corpus)
             if idx not in self.corpusSelectedItems
         ]
-        self.sendButton.settingsChanged()
+        self.updateCorpusLabels()
 
     # Clear selections function
     def clearCorpus(self):
@@ -579,10 +601,8 @@ class Poetica(OWTextableBaseWidget):
         Clear the selected poems list in the basket
         """
 
-        del self.corpusLabels[:]
-        self.corpusLabels = self.corpusLabels
-        self.clearCorpusButton.setDisabled(True)
-        self.addButton.setDisabled(self.corpusLabels == list())
+        self.corpus = list()
+        self.updateCorpusLabels()
 
     def sendData(self):
         """
@@ -590,7 +610,7 @@ class Poetica(OWTextableBaseWidget):
         """
 
         # Skip if title list is empty...
-        if self.corpusLabels == list():
+        if self.corpus == list():
             self.infoBox.setText(
                 "Your corpus is empty, please add some poems first",
                 "warning"
@@ -605,7 +625,7 @@ class Poetica(OWTextableBaseWidget):
         # Initialize progress bar...
         progressBar = ProgressBar(
             self,
-            iterations=len(self.corpusLabels)
+            iterations=len(self.corpus)
         )
 
         # Attempt to connect to Poetica and retrieve poems...
@@ -621,92 +641,78 @@ class Poetica(OWTextableBaseWidget):
         annotations_url = dict()
         annotations_topic = dict()
 
-        try:
-            for poem in self.corpusLabels:
-                for key, value in self.db["title"].items():
-                    if self.db["title"][key] == poem:
-                        # If the poem is already in the cache...
-                        if key in self.cache:
-                            poem_content.append(self.cache[key])
+        #try:
+        for url in self.corpus:
+            # If the poem is already in the cache...
+            if url in self.cache:
+                poem_content.append(self.cache[url])
 
-                            # Annotate the poem...
-                            annotations_author["Author"] = self.db["author"][key]
-                            annotations_title["Title"] = poem
-                            annotations_url["URL"] = key
-                            if self.topicQuery != "Select a topic":
-                                annotations_topic["Topic"] = self.topicQuery
-                            else:
-                                if key in self.db["topic"] :
-                                    annotations_topic["Topic"] = self.db["topic"][key]
-                                else :
-                                    annotations_topic["Topic"] = "None"
+            # If the poem isn't already in the cache...
+            else:
+                try:
+                    url_poeme = urlopen(url)
+                    page_poeme = url_poeme.read()
+                    print("Valid poem's URL")
+                    page_poeme = page_poeme.decode("utf-8")
 
-                            annotations_list_authors.append(annotations_author.copy())
-                            annotations_list_tiles.append(annotations_title.copy())
-                            annotations_list_urls.append(annotations_url.copy())
-                            annotations_list_topics.append(annotations_topic.copy())
+                    # Extraire les poeme et ses donnees...
+                    seg_poemes = Input(page_poeme)
+                    condition_poeme = dict()
+                    condition_poeme["class"] = re.compile(r"^entry-content$")
+                    xml_contenu_poeme = Segmenter.import_xml(
+                        segmentation=seg_poemes,
+                        element="<div>",
+                        conditions=condition_poeme,
+                    )
 
-                        # If the poem isn't already in the cache...
-                        else:
-                            try:
-                                url_poeme = urlopen(key)
-                                page_poeme = url_poeme.read()
-                                print("Valid poem's URL")
-                                page_poeme = page_poeme.decode("utf-8")
+                    # Recuperer le poeme avec ses propres balises.
+                    poeme_balises = xml_contenu_poeme[0].get_content()
 
-                                # Extract the poems and its data...
-                                seg_poemes = Input(page_poeme)
-                                condition_poeme = dict()
-                                condition_poeme["class"] = re.compile(r"^entry-content$")
-                                xml_contenu_poeme = Segmenter.import_xml(
-                                    segmentation=seg_poemes,
-                                    element="<div>",
-                                    conditions=condition_poeme,
-                                )
+                    # N'afficher que le contenu du poeme...
+                    poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
+                    poeme = re.sub(r".+$", "", poeme)
+                    # print(poeme)
+                    poem_content.append(poeme)
+                    self.cache[url] = poeme
 
-                                # Get the poem with his own tags.
-                                poeme_balises = xml_contenu_poeme[0].get_content()
+                # Avertir si l'url ne fonctionne pas...
+                except IOError:
+                    print("Invalid poem's URL")
 
-                                # Show the poem's content...
-                                poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
-                                poeme = re.sub(r".+$", "", poeme)
-                                # print(poeme)
-                                poem_content.append(poeme)
-                                self.cache[key] = poeme
+            # Annotate the poem...
+            annotations_author["Author"] = self.db["author"][url]
+            annotations_title["Title"] = self.db["title"][url]
+            annotations_url["URL"] = url
+            try:
+                annotations_topic["Topic"] = self.db["topic"][url]
+            except KeyError:
+                pass
 
-                            # If the url doesn't work...
-                            except IOError:
-                                print("Invalid poem's URL")
+            # if self.topicQuery != "Select a topic":
+            #     annotations_topic["Topic"] = self.topicQuery
+            # else:
+            #     if key in self.db["topic"] :
+            #         annotations_topic["Topic"] = self.db["topic"][key]
+            #     else :
+            #         annotations_topic["Topic"] = "None"
 
-                            # Annotate the poem...
-                            annotations_author["Author"] = self.db["author"][key]
-                            annotations_title["Title"] = poem
-                            annotations_url["URL"] = key
-                            if self.topicQuery != "Select a topic":
-                                annotations_topic["Topic"] = self.topicQuery
-                            else:
-                                if key in self.db["topic"] :
-                                    annotations_topic["Topic"] = self.db["topic"][key]
-                                else :
-                                    annotations_topic["Topic"] = "None"
+            annotations_list_authors.append(annotations_author.copy())
+            annotations_list_tiles.append(annotations_title.copy())
+            annotations_list_urls.append(annotations_url.copy())
+            annotations_list_topics.append(annotations_topic.copy())
 
-                            annotations_list_authors.append(annotations_author.copy())
-                            annotations_list_tiles.append(annotations_title.copy())
-                            annotations_list_urls.append(annotations_url.copy())
-                            annotations_list_topics.append(annotations_topic.copy())
-
-                # 1 tick on the progress bar of the widget
-                progressBar.advance()
+            # 1 tick on the progress bar of the widget
+            progressBar.advance()
 
         # If an error occurs (e.g. http error, or memory error)...
-        except:
-            # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't download data from Poetica's website.",
-                "error"
-            )
-            self.controlArea.setDisabled(False)
-            return
+        # except:
+        #     # Set Info box and widget to "error" state.
+        #     self.infoBox.setText(
+        #         "Couldn't download data from Poetica's website.",
+        #         "error"
+        #     )
+        #     self.controlArea.setDisabled(False)
+        #     return
 
         # Store downloaded poems strings in input objects...
         for poem in poem_content:
