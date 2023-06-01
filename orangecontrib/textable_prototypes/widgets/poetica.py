@@ -103,7 +103,7 @@ class Poetica(OWTextableBaseWidget):
         self.corpusLabels = list()
         # Stocks all the inputs (poems) in a list.
         self.createdInputs = list()
-        # Cache dictionnary.
+        # Cache dictionary.
         self.cache = dict()
 
         # Next two instructions are helpers from TextableUtils. Corresponding
@@ -234,7 +234,7 @@ class Poetica(OWTextableBaseWidget):
         self.clearResultsButton.setDisabled(True)
         gui.separator(widget=queryBox, height=3)
 
-        # area where confirmed poems are moved and stocked...
+        # Area where confirmed poems are moved and stocked...
         mytitleBox = gui.widgetBox(
             widget=self.controlArea,
             box="Corpus",
@@ -346,13 +346,13 @@ class Poetica(OWTextableBaseWidget):
                 conditions=condition_themes,
             )
 
-            # Recover the url ink to each author's page...
+            # Recover the url link to each author's page...
             xml_par_auteur = Segmenter.import_xml(
                 segmentation=xml_auteurs,
                 element="<a>",
             )
 
-            # Recover the url ink to each topic's page...
+            # Recover the url link to each topic's page...
             xml_par_theme = Segmenter.import_xml(
                 segmentation=xml_themes,
                 element="<a>",
@@ -395,7 +395,7 @@ class Poetica(OWTextableBaseWidget):
                             print("Valid poem's URL")
                             page_poeme = page_poeme.decode("utf-8")
 
-                            # Recuperer le nom du poeme.
+                            # Get poem's title.
                             nom_poeme = poeme.get_content()
 
                             database["title"][url_page_poeme] = nom_poeme
@@ -649,7 +649,7 @@ class Poetica(OWTextableBaseWidget):
                                 print("Valid poem's URL")
                                 page_poeme = page_poeme.decode("utf-8")
 
-                                # Extraire les poeme et ses donnees...
+                                # Extract the poems and its data...
                                 seg_poemes = Input(page_poeme)
                                 condition_poeme = dict()
                                 condition_poeme["class"] = re.compile(r"^entry-content$")
@@ -659,17 +659,17 @@ class Poetica(OWTextableBaseWidget):
                                     conditions=condition_poeme,
                                 )
 
-                                # Recuperer le poeme avec ses propres balises.
+                                # Get the poem with his own tags.
                                 poeme_balises = xml_contenu_poeme[0].get_content()
 
-                                # N'afficher que le contenu du poeme...
+                                # Show the poem's content...
                                 poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
                                 poeme = re.sub(r".+$", "", poeme)
                                 # print(poeme)
                                 poem_content.append(poeme)
                                 self.cache[key] = poeme
 
-                            # Avertir si l'url ne fonctionne pas...
+                            # If the url doesn't work...
                             except IOError:
                                 print("Invalid poem's URL")
 

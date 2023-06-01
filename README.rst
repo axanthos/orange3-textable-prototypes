@@ -7,7 +7,7 @@ Le widget Poetica_LOLS recherche des poèmes dans le site de Poetica.fr via le n
 
 Le documentation est disponible sur .....
 
-# Fonctionnalités
+Fonctionnalités
 -------
 - Dans la fenêtre du widget, vous avez deux parties : - Select criteria et - Corpus.
 - La partie de "Select criteria" vous permet d'introduire les informations sur les poèmes dont vous voulez analyser,
