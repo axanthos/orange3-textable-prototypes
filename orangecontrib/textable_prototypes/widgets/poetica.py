@@ -634,7 +634,10 @@ class Poetica(OWTextableBaseWidget):
                             if self.topicQuery != "Select a topic":
                                 annotations_topic["Topic"] = self.topicQuery
                             else:
-                                annotations_topic["Topic"] = self.db["topic"][key]
+                                if key in self.db["topic"] :
+                                    annotations_topic["Topic"] = self.db["topic"][key]
+                                else :
+                                    annotations_topic["Topic"] = "None"
 
                             annotations_list_authors.append(annotations_author.copy())
                             annotations_list_tiles.append(annotations_title.copy())
@@ -680,7 +683,10 @@ class Poetica(OWTextableBaseWidget):
                             if self.topicQuery != "Select a topic":
                                 annotations_topic["Topic"] = self.topicQuery
                             else:
-                                annotations_topic["Topic"] = self.db["topic"][key]
+                                if key in self.db["topic"] :
+                                    annotations_topic["Topic"] = self.db["topic"][key]
+                                else :
+                                    annotations_topic["Topic"] = "None"
 
                             annotations_list_authors.append(annotations_author.copy())
                             annotations_list_tiles.append(annotations_title.copy())
