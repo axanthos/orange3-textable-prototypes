@@ -76,7 +76,7 @@ le logiciel Orange 3 en utilisant le langage Python.
 
  .. image:: images/DroitCHVP3.png
 
-* Télécharger les documents de loi suisse
+* Télécharger les documents de loi Suisse
 
 * Segmenter les documents par Titre, Chapitre ou Article
 
@@ -88,14 +88,14 @@ le logiciel Orange 3 en utilisant le langage Python.
 
 * Permettre à l'utilisateur de récupérer un texte de loi Suisse parmi une liste des 20 documents de loi les plus consultés.
 * Permettre à l'utilisateur de séléctionner la langue nationale dans laquelle il souhaite récupérer le texte de loi: en
-Allemand, Français ou Italien.
+allemand, français ou italien.
 * Permettre à l'utilisateur de récupérer l'entier du document ou de faire une segmentation par Titre, Chapitre ou article.
 
 
 2.4 Fonctionnalités optionnelles
 ================================
 * Permettre à l'utilisateur de récupérer n'importe quel texte de loi disponible sur le site https://www.fedlex.admin.ch/
-* Permettre à l'utilisateur de nettoyer le texte en enlevant les balises xml sans devoir passer par le widget extact XML
+* Permettre à l'utilisateur de nettoyer le texte en enlevant les balises xml sans devoir passer par le widget extract XML
 
 2.5 Tests
 =========
@@ -111,16 +111,16 @@ Suivez les instructions ci-dessous pour installer le widget :
 
 2.7 Utilisation
 ===========
-1. Lancez Orange 3 et accéder à la section "Textable Prototypes".
+1. Lancez Orange 3 et accédez à la section "Textable Prototypes".
 2. Faites glisser et déposez le widget "Swiss Law" sur la zone de travail.
 3. Configurez le widget en sélectionnant les options souhaitées.
-	3a. Séléctionner le document de lois souhaité selon les documents présent sur la liste déroulante ainsi que le niveau de segmentation et langue du document.
+	3a. Séléctionnez le document de loi souhaité selon les documents présents sur la liste déroulante ainsi que le niveau de segmentation et langue du document.
 		.. image:: images/SwissLaw1.png
 		
-	3b. Cliquer sur "Add to corpus" pour ajouter l'éléments au corpus (possibilité d'effacer un élément du corpus ou de nettoyer l'ensemble du corupus)
+	3b. Cliquez sur "Add to corpus" pour ajouter l'élément au corpus (possibilité d'effacer un élément du corpus ou de nettoyer l'ensemble du corpus)
 		.. image:: images/SwissLaw2.png
 		
-	3c. Cliquer sur "send" pour envoyer la segmentation.
+	3c. Cliquzr sur "send" pour envoyer la segmentation.
 		.. image:: images/SwissLaw3.png
 
 4. Connectez le widget SwissLaw à d'autres widgets ou composants de votre flux de travail.
@@ -133,13 +133,13 @@ Suivez les instructions ci-dessous pour installer le widget :
 =================
 * L'interface graphique est complétement construite.
 
-* La séléction de document au corpus était ajoutée.
+* La sélection de document au corpus était ajoutée.
 
-* Le téléchargement des textes de loi en Français au format XML était fonctionnel.
+* Le téléchargement des textes de loi en français au format XML était fonctionnel.
 
 3.2 Remise et présentation
 ==========================
-* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
+* Les fonctionnalités principales sont complètement prises en charge par le logiciel.
 
 * La documentation du logiciel est complète.
 
