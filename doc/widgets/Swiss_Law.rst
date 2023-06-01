@@ -9,7 +9,7 @@
 Swiss Law
 =============
 
-.. image:: orangecontrib/textable_prototypes/widgets/icons/SwissLaw.png
+.. image:: doc/widgets/figures/SwissLaw.png
 
 Make a corpus with Swiss law documents.
 
@@ -45,11 +45,11 @@ Interface
 .. figure:: doc/widgets/figures/SwissLaw3.png
     :align: center
     :scale: 50 %
-    :alt: Interface of the Lyrics Genius widget
+    :alt: Interface of the Swiss Law widget
 
-    Figure 1: **Lyrics Genius** widget interface.
+    Figure 1: **Swiss Law** widget interface.
 
-The **SwissLaw** widget simply lets the user make a search on the
+The **Swiss Law** widget simply lets the user make a search on the
 https://www.fedlex.admin.ch/ website from a list of the 20 most consulted legal documents.
 
 The **Select Law Document** section allows the user to choose a law document, a segmentation and a language.
@@ -82,4 +82,4 @@ Warnings
     emission to proceed.
 
 *Your corpus is empty, please add some law texts first.*
-    The corpus is empty, so the user have to add some songs before sending.
+    The corpus is empty, so the user have to add some law documents before sending.
