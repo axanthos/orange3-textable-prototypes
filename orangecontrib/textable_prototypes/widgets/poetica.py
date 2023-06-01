@@ -299,14 +299,16 @@ class Poetica(OWTextableBaseWidget):
 
     def alertMessage(self):
         """
-        Confirmation request message to refresh the database
+        Confirmation request message to refresh the database or cancel
         """
-        QMessageBox.information(
+        result = QMessageBox.information(
             None,
             'Poetica',
             'Are you sure you want to refresh the database ? This may take some time.',
-            QMessageBox.Ok
+            QMessageBox.Ok | QMessageBox.Cancel
         )
+        if result == QMessageBox.Ok:
+            self.dataExtraction()
 
     def dataExtraction(self):
         """
