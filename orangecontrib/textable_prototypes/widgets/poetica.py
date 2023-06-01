@@ -299,7 +299,7 @@ class Poetica(OWTextableBaseWidget):
 
     def alertMessage(self):
         """
-        Confirmation request message to refresh the database
+        Confirmation request message to refresh the database or cancel
         """
         result = QMessageBox.information(
             None,
