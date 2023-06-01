@@ -101,31 +101,6 @@ allemand, français ou italien.
 =========
 TODO
 
-2.6 Installation
-============
-Pour utiliser le widget SwissLaw, vous devez avoir Orange 3 et Orange3-Textable-Prototypes installés.
-Suivez les instructions ci-dessous pour installer le widget :
-
-1. Installez Orange 3 : `Guide d'installation Orange 3 <https://orangedatamining.com/download/#macos>`_
-2. Installez Textable Prototypes : `Guide d'installation Textable Prototypes <https://pypi.org/project/Orange3-Textable-Prototypes/>`_
-
-2.7 Utilisation
-===========
-1. Lancez Orange 3 et accédez à la section "Textable Prototypes".
-2. Faites glisser et déposez le widget "Swiss Law" sur la zone de travail.
-3. Configurez le widget en sélectionnant les options souhaitées.
-	3a. Séléctionnez le document de loi souhaité selon les documents présents sur la liste déroulante ainsi que le niveau de segmentation et langue du document.
-		.. image:: images/SwissLaw1.png
-		
-	3b. Cliquez sur "Add to corpus" pour ajouter l'élément au corpus (possibilité d'effacer un élément du corpus ou de nettoyer l'ensemble du corpus)
-		.. image:: images/SwissLaw2.png
-		
-	3c. Cliquzr sur "send" pour envoyer la segmentation.
-		.. image:: images/SwissLaw3.png
-
-4. Connectez le widget SwissLaw à d'autres widgets ou composants de votre flux de travail.
-5. Exécutez le flux de travail pour accéder et analyser les documents de loi suisse.
-
 3. Etapes
 *********
 
