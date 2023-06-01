@@ -41,10 +41,9 @@ Orange 3 software using the Python language.
 Interface
 ~~~~~~~~~
 
-.. _SwissLaw3.png:
+.. _SwissLaw3_fig1:
 
-.. image:: figures/SwissLaw3.png
-
+.. figure:: figures/SwissLaw3.png
     :align: center
     :scale: 50 %
     :alt: Interface of the Swiss Law widget
