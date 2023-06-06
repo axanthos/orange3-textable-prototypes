@@ -675,7 +675,8 @@ class Poetica(OWTextableBaseWidget):
                     # Show only the poem's content...
                     poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
                     poeme = re.sub(r".+$", "", poeme)
-                    # print(poeme)
+                    poeme = poeme.replace("&rsquo;", "'")
+
                     poem_content.append(poeme)
                     self.cache[url] = poeme
 
