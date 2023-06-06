@@ -372,6 +372,7 @@ class Poetica(OWTextableBaseWidget):
 
                     # Recover the author's name.
                     nom_auteur = auteur.get_content()
+                    nom_auteur_ok = nom_auteur.replace("&rsquo;", "'")
 
                     # Extract the list poems...
                     seg_auteurs = Input(page_auteur)
@@ -400,9 +401,10 @@ class Poetica(OWTextableBaseWidget):
 
                             # Get poem's title.
                             nom_poeme = poeme.get_content()
+                            nom_poeme_ok = nom_poeme.replace("&rsquo;", "'")
 
-                            database["title"][url_page_poeme] = nom_poeme
-                            database["author"][url_page_poeme] = nom_auteur
+                            database["title"][url_page_poeme] = nom_poeme_ok
+                            database["author"][url_page_poeme] = nom_auteur_ok
 
                         # Warn if the url doesn't work...
                         except IOError:
@@ -423,6 +425,7 @@ class Poetica(OWTextableBaseWidget):
 
                     # Recover the topic's name.
                     nom_theme = theme.get_content()
+                    nom_theme_ok = nom_theme.replace("&rsquo;", "'")
 
                     # Extract the list of poems...
                     seg_themes = Input(page_theme)
@@ -445,7 +448,7 @@ class Poetica(OWTextableBaseWidget):
                         try:
                             url_page_poeme_theme = poeme_theme.annotations["href"]
 
-                            database["topic"][url_page_poeme_theme] = nom_theme
+                            database["topic"][url_page_poeme_theme] = nom_theme_ok
 
                         # Warn if the url doesn't work...
                         except IOError:
@@ -466,7 +469,7 @@ class Poetica(OWTextableBaseWidget):
 
         # Back up dictionaries with pickle...
         try:
-            file = open(os.path.join(path, "poetica_cache.p"), "wb")
+            file = open(os.path.join(path, "poetica_cache_ok.p"), "wb")
             pickle.dump(database, file)
             print('The dictionary has successfully been saved to the file')
             file.close()
@@ -485,7 +488,7 @@ class Poetica(OWTextableBaseWidget):
 
         # Open dictionaries with pickle...
         try:
-            file = open(os.path.join(path, "poetica_cache.p"), "rb")
+            file = open(os.path.join(path, "poetica_cache_ok.p"), "rb")
             new_database = pickle.load(file)
             print("Dictionary correctly loaded")
             file.close()
