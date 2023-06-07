@@ -500,9 +500,10 @@ class Poetica(OWTextableBaseWidget):
         Search button's features
         """
 
-        # If the selection is empty...
+        # If both authorQuery and topicQuery are empty...
         if self.authorQuery == "Select an author" and self.topicQuery == "Select a topic":
-            self.infoBox.setText(f"You didn't select anything !", "warning")
+            self.infoBox.setText(f"You didn't select anything!", "warning")
+            self.searchButton.setDisabled(True)  # Disable the search button
             return
 
         all_urls = self.db["author"].keys()
@@ -511,6 +512,7 @@ class Poetica(OWTextableBaseWidget):
 
         # If an author has been selected...
         if self.authorQuery != "Select an author":
+            self.searchButton.setDisabled(False)  # Enable the search button
             for url in all_urls:
                 if self.db["author"][url] == self.authorQuery:
                     selected_urls.append(url)
@@ -518,6 +520,7 @@ class Poetica(OWTextableBaseWidget):
 
         # If a topic has been selected...
         if self.topicQuery != "Select a topic":
+            self.searchButton.setDisabled(False)  # Enable the search button
             selected_urls = list()
             for url in all_urls:
                 try:
