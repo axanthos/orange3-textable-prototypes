@@ -75,6 +75,7 @@ def main():
 
                 # Recuperer le nom de l'auteur.
                 nom_auteur = auteur.get_content()
+                nom_auteur_ok = nom_auteur.replace("&rsquo;", "'")
                 #print(nom_auteur)
 
         #print(xml_par_auteur.to_string())
@@ -108,6 +109,7 @@ def main():
 
                         # Recuperer le nom du poeme.
                         nom_poeme = poeme.get_content()
+                        nom_poeme_ok = nom_poeme.replace("&rsquo;", "'")
                         #print(nom_poeme)
                 
                         # Extraire les poeme et ses donnees...
@@ -136,8 +138,8 @@ def main():
                         #poeme = re.sub(r"((</?p.*?>)|(<br />))|(<em>.*</em>)|(</p>)", "", poeme_balises)
                         #poeme = re.sub(r".+$", "", poeme)
                         #print(poeme)
-                        database["title"][url_page_poeme] = nom_poeme
-                        database["author"][url_page_poeme] = nom_auteur
+                        database["title"][url_page_poeme] = nom_poeme_ok
+                        database["author"][url_page_poeme] = nom_auteur_ok
                         #database["date"][url_page_poeme] = date_poeme
                         #database["poem"][url_page_poeme] = poeme
 
@@ -160,6 +162,7 @@ def main():
 
                 # Recuperer le nom de l'auteur.
                 nom_theme = theme.get_content()
+                nom_theme_ok = nom_theme.replace("&rsquo;", "'")
                 # print(nom_auteur)
 
                 # print(xml_par_auteur.to_string())
@@ -190,10 +193,10 @@ def main():
                         #print("Valid poem's URL")
                         #page_poeme_theme = page_poeme_theme.decode("utf-8")
 
-                        database["topic"][url_page_poeme_theme] = nom_theme
+                        database["topic"][url_page_poeme_theme] = nom_theme_ok
                         # database["poem"][url_page_poeme] = poeme
-                        print(nom_theme)
-                        print(database["topic"])
+                        #print(nom_theme)
+                        #print(database["topic"])
 
                     # Avertir si l'url ne fonctionne pas...
                     except IOError:
@@ -213,7 +216,7 @@ def main():
         os.path.abspath(inspect.getfile(inspect.currentframe()))
     )
     try:
-        file = open(os.path.join(path, "poetica_cache.p"), "wb")
+        file = open(os.path.join(path, "poetica_cache_ok.p"), "wb")
         pickle.dump(database, file)
         print('The dictionary has successfully been saved to the file')
         file.close()
@@ -221,7 +224,7 @@ def main():
         print("Can't save the dictionary")
 
     try:
-        file = open(os.path.join(path, "poetica_cache.p"), "rb")
+        file = open(os.path.join(path, "poetica_cache_ok.p"), "rb")
         new_database = pickle.load(file)
         #print(new_database)
         print("Dictionary correctly loaded")
