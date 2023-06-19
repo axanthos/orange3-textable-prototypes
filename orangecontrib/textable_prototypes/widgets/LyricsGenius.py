@@ -92,7 +92,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.newQuery = ''
         self.nbr_results = 10
         # Results box attributs
-        self.titleLabels = list()
+        self.documentLabels = list()
         self.selectedTitles = list()
         # selections box attributs
         self.myTitles = list()

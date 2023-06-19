@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="Swiss Law" qualified_name="orangecontrib.textable_prototypes.widgets.SwissLaw.SwissLaw" project_name="Orange3-Textable-Prototypes" version="" title="Swiss Law" position="(134.0, 292.0)" />
+		<node id="1" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(432.0, 293.0)" />
+		<node id="2" name="Swiss Law" qualified_name="orangecontrib.textable_prototypes.widgets.SwissLaw.SwissLaw" project_name="Orange3-Textable-Prototypes" version="" title="Swiss Law (1)" position="(136.0, 826.0)" />
+		<node id="3" name="Extract XML" qualified_name="_textable.widgets.OWTextableExtractXML.OWTextableExtractXML" project_name="Orange3-Textable" version="" title="Extract XML" position="(356.0, 823.0)" />
+		<node id="4" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display (1)" position="(553.0, 822.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Law Documents importation" sink_channel="Segmentation" enabled="true" />
+		<link id="1" source_node_id="2" sink_node_id="3" source_channel="Law Documents importation" sink_channel="Segmentation" enabled="true" />
+		<link id="2" source_node_id="3" sink_node_id="4" source_channel="Extracted data" sink_channel="Segmentation" enabled="true" />
+	</links>
+	<annotations>
+		<arrow id="0" start="(132.99999999999994, 159.00000000000003)" end="(133.99999999999994, 247.00000000000006)" fill="#C1272D" />
+		<text id="1" type="text/plain" rect="(34.0, -197.0, 238.0, 316.0)" font-family=".AppleSystemUIFont" font-size="16">Create a corpus of Swiss law documents here.
+
+1.  Select the legal document you are interested in.
+
+2.  Choose a segmentation.
+
+3.  Select the language
+
+4.  Add to corpus
+
+5. Repeat if you want to add another documnent 
+
+6.  Click on "Send".</text>
+		<arrow id="2" start="(357.0000000000001, 973.0)" end="(357.0000000000001, 891.0)" fill="#C1272D" />
+		<text id="3" type="text/plain" rect="(254.0, 983.0, 281.0, 145.0)" font-family=".AppleSystemUIFont" font-size="16">Chose your segmentation (either "article",  "chapter" or "title")  and select "Remove markup".  
+
+!! Can't remove the markup for  No Segmented text with this method !!</text>
+		<arrow id="4" start="(435.0, 159.0)" end="(435.0, 248.0)" fill="#C1272D" />
+		<text id="5" type="text/plain" rect="(362.0, 109.0, 186.0, 69.0)" font-family=".AppleSystemUIFont" font-size="16">Display the segmented documents</text>
+		<text id="6" type="text/plain" rect="(18.0, 412.0, 286.0, 326.0)" font-family=".AppleSystemUIFont" font-size="16">If you want to remove the xml markup,  here are the steps to follow:
+
+1.  Select the legal document you are interested in.
+
+2.  Choose  NO SEGMENTATION.
+
+3.  Select the language
+
+4.  Add to corpus
+
+5. Repeat if you want to add another documnent 
+
+5.  Click on "Send".</text>
+		<arrow id="7" start="(137.0, 729.0)" end="(137.0, 793.0)" fill="#C1272D" />
+		<text id="8" type="text/plain" rect="(501.0, 667.0, 142.0, 39.0)" font-family=".AppleSystemUIFont" font-size="16">Display the result</text>
+		<arrow id="9" start="(550.0, 721.0000000000001)" end="(549.0, 784.0000000000001)" fill="#C1272D" />
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoSend': True, 'controlAreaVisible': True, 'importedURLs': [], 'myBasket': [('Federal Act on Data Protection', 'Into article', 'FR'), ('Federal Act on Data Protection', 'No Segmentation', 'IT'), ('Ordinance on Technical Requirements for Road Vehicles', 'Into chapter', 'DE')], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00-\x00\x00\x05\x9f\x00\x00\x03\xb0\x00\x00\x00\x00\x00\x04\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'uuid': 'c5a37ecf-0892-45b8-9867-25e847511d92', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties node_id="1" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00-\x00\x00\x05\x9f\x00\x00\x03\xb0\x00\x00\x00\x00\x00\x04\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'segmentDelimiter': '\\n', 'uuid': 'e3764572-ad01-45ff-866a-c0dd5d8f418f', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties node_id="2" format="literal">{'autoSend': True, 'controlAreaVisible': True, 'importedURLs': [], 'myBasket': [('Federal Act on Data Protection', 'No Segmentation', 'FR')], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00-\x00\x00\x05\x9f\x00\x00\x03\xb0\x00\x00\x00\x00\x00\x04\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'uuid': 'c5a37ecf-0892-45b8-9867-25e847511d92', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties node_id="3" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'conditions': [], 'controlAreaVisible': True, 'deleteMarkup': True, 'displayAdvancedSettings': False, 'element': 'article', 'importAnnotations': True, 'importElementAs': '', 'mergeDuplicates': False, 'preserveLeaves': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00-\x00\x00\x05\x9f\x00\x00\x03\xb0\x00\x00\x00\x00\x00\x04\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'uuid': 'f10105fb-ff57-4667-819b-8ec50119effc', '__version__': 1, '_TextableUtils_settings_version__': (0, 15)}</properties>
+		<properties node_id="4" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83\x00\x00\x00\x00\x00\x00\x00-\x00\x00\x05\x9f\x00\x00\x03\xb0\x00\x00\x00\x00\x00\x04\x00\x00\x05\xa0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x9f\x00\x00\x03\x83', 'segmentDelimiter': '\\n', 'uuid': '619cf719-16a8-4460-ae19-9950d9b452fc', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
