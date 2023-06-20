@@ -132,14 +132,14 @@ AVAILABLE_MODELS = {
     "Swedish news (medium)": "sv_core_news_md",
     "Swedish news (large)": "sv_core_news_lg",
 }
-MODEL_VERSION_NUM = "3.1.0"
+MODEL_VERSION_NUM = "3.5.0"
 DOWNLOAD_URL = "https://github.com/explosion/spacy-models/releases/download/"
 
 # Determine which language models are installed...
 INSTALLED_MODELS = list()
 DOWNLOADABLE_MODELS = list()
 for model, package in AVAILABLE_MODELS.items():
-    if importlib.util.find_spec(package.replace("-", ".")):
+    if importlib.util.find_spec(package.replace("-", "_")):
         INSTALLED_MODELS.append(model)
     else:
         DOWNLOADABLE_MODELS.append(model)
@@ -757,7 +757,7 @@ def spacyItemsToSegments(items, parentSegment):
                 k: getattr(item, k) for k in RELEVANT_KEYS
                 if hasattr(item, k)
                 and getattr(item, k) is not None 
-                and getattr(item, k) != ""
+                and getattr(item, k) is not ""
                 
             }
         )
@@ -787,7 +787,7 @@ def download_spacy_model(model):
     pip_args = ["--no-cache-dir"]
     if platform.system() == "Windows":
         executable = sys.executable.replace("pythonw", "python")
-        pip_args.append("--user")
+        #pip_args.append("--user")
         cmd = [executable, "-m", "pip", "install"] + pip_args + [download_url]
     elif platform.system() == "Darwin":
         executable = sys.executable.replace("MacOS/python", "MacOS/pip")

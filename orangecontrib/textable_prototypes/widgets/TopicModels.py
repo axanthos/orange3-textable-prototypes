@@ -213,6 +213,11 @@ class TopicModels(OWTextableBaseWidget):
                 num_topics=self.numTopics,
             )
             
+            import pyLDAvis
+            import pyLDAvis.gensim
+            viz = pyLDAvis.gensim.prepare(model, corpus, dictionary)
+            pyLDAvis.save_html(viz, r"D:\Documents\output.html")
+            
             # Create segment-topic PivotCrosstab table.
             values = dict()
             terms = list()
