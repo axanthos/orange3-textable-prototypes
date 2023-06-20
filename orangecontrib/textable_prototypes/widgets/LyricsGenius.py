@@ -92,7 +92,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.newQuery = ''
         self.nbr_results = 10
         # Results box attributs
-        self.titleLabels = list()
+        self.documentLabels = list()
         self.selectedTitles = list()
         # selections box attributs
         self.myTitles = list()
@@ -533,10 +533,4 @@ class LyricsGenius(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = LyricsGenius()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    WidgetPreview(LyricsGenius).run()
