@@ -110,7 +110,11 @@ TODO
 
 3.2 Remise et présentation
 ==========================
+* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 
+* La documentation du logiciel est complète.
+
+* Les fonctionnalités principales sont implémentées et ont été testées.
 
 4. Infrastructure
 =================
