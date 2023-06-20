@@ -298,11 +298,11 @@ class SwissLaw(OWTextableBaseWidget):
         if int(self.database["title"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segLevels.append("Into title")
 
-        if int(self.database["art"][self.database["law_text"].index(self.selectedDocument)]) > 0:
-            self.segLevels.append("Into article")
-
         if int(self.database["chap"][self.database["law_text"].index(self.selectedDocument)]) > 0:
             self.segLevels.append("Into chapter")
+
+        if int(self.database["art"][self.database["law_text"].index(self.selectedDocument)]) > 0:
+            self.segLevels.append("Into article")
 
         self.selectedSegLevel = self.segLevels[0]
         self.segLevelComboBox.addItems(self.segLevels)
