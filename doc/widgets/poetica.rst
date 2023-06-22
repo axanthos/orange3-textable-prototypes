@@ -69,14 +69,27 @@ Messages
 Information
 ~~~~~~~~~~~
 
-A MODIFIER CI-DESSOUS
+*You add a poem*
+    Informs that one or more poems have been added.
 
-*<n> segments sent to output (<m> characters).*
-    This confirms that the widget has operated properly.
+*Select a poem*
+    Informs the user if he hasn't selected any poems to add.
+
+*Your corpus is empty, please add some poems first*
+    Informs the user if he wants to send his results but that his basket is empty.
+
+*Settings were changed, please click 'Send' when ready.*
+    Informs the user that the settings where changed. He can send his basket to have his new selection as output.
+
+*<n> segment sent to output (<m> characters).*
+    Confirms that the widget has operated properly.
 
 
 Warnings
 ~~~~~~~~
+
+
+A MODIFIER CI-DESSOUS
 
 *Settings were changed, please click 'Send' when ready.*
     Settings have changed but the **Send automatically** checkbox
