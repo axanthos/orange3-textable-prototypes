@@ -1,54 +1,69 @@
 Orange3 Textable Prototypes - Poetica
 ===========================
+# README
+## Poetica Widget by LOLS
 
-README Widget Poetica by LOLS
+Le widget Poetica_LOLS recherche des poèmes dans le site de Poetica.fr via le nom des auteurs ou des thèmes pour permettre aux utilisateurs de Orange d'analyser les poèmes.
 
-The Poetica widget searches for poems on the Poetica.fr website using author names or themes, allowing Orange users to analyze poems.
+Le documentation est disponible sur .....
 
-The documentation is available `here <http://orange3-textable-prototypes.readthedocs.io/>`_
-
-Features
+# Fonctionnalités
 -------
-- The widget window consists of two parts: "Criteria Selection" and "Corpus".
-- The "Criteria Selection" part allows you to enter information about the poems you want to analyze.
-- In this part, there are two subsections that allow you to search by author name and/or theme.
+- Dans la fenêtre du widget, vous avez deux parties : - Select criteria et - Corpus.
+- La partie de "Select criteria" vous permet d'introduire les informations sur les poèmes dont vous voulez analyser,
+- Dans cette partie, vous avez tout d'abord deux sections qui vous permettent de faire la recherche par le nom d'auteur et/ou par le thème.
+- En cliquant sur l'onglet d'Author, vous pouvez choisir un auteur dans la liste déroulante.
+- Une fois que vous avez choisi un auteur et cliqué sur "Search", vous aurez dans le premier box, tous les poèmes écrits par cet auteur choisi.
+- Vous pouvez effectuer la même demarche pour choisir des poèmes en fonction de leur thème. Alors dans ce cas là, vous pouvez seulement choisir un thème dans liste puis les afficher.
+- Vous avez également la possibilité de choisir un auteur et un thème et le widget Poetica va vous afficher les poèmes de cet auteur dans le thème choisi.
+- Une fois que vous avez fait votre recherche, vous pouvez sélectionner les poèmes affichés dans le premier box en cliquant sur le bouton " Add to corpus".
+- Cette fonctionne permet d'ajouter les poèmes sélectionnés au corpus, donc la deuxième partie de la fenêtre.
+- À partir de là, vous pouvez cliquer sur "Send" et envoyer les poèmes à un autre widget à la sortie afin de réaliser des analyses que vous voulez.
+- Vous pouvez en cliquant sur le bouton de "Clear result" de supprimer tous les poèmes affiché dans le box et supprimer également les poèmes que vous avez ajoutés dans le corpus en cliquant sur le bouton de "clear corpus".
+- Le "refresh database" est une fonction qui efface toute la data dans le cas des changements sur le site.
 
-- By clicking on the "Author" tab, you can choose an author from the dropdown list.
-- Once you have chosen an author and clicked "Search," all poems written by that author will appear in the first box.
-- You can perform the same procedure to choose poems based on their theme. In this case, you can select a theme from the list and display the corresponding poems.
-- You also have the option to choose both an author and a theme. The Poetica widget will display poems by that author in the selected theme.
-- After performing your search, you can select the displayed poems in the first box by clicking the "Add to Corpus" button.
-- This feature allows you to add the selected poems to the corpus displayed in the second part of the window.
-- From there, you can click "Send" to send the poems to another widget for further analysis.
-- You can clear the displayed poems in the results by clicking the "Clear Results" button and remove the poems added to the corpus by clicking the "Clear Corpus" button.
-- The "Refresh Database" button updates the widget's cache, which may take some time.
-
-Interoperability
+# Interopérabilité
 ------
-- Import data from the Poetica.fr website.
-- Process imported XML-formatted texts from the website.
-- Easy interface with the --Text Mining extension in Orange--?
+- Importez des données à partir du site web Poetica.fr,
+- Traitez les textes de format XML importés à partir du site,
+- Interface facile avec l'extension --Text Mining d'Orange--?
 
-Code Execution
+_ Execution du code
 -----
-Poetica.py:
+ Poetice.py :
 
-- The code imports necessary packages from the Orange library and other packages such as PyQt5.QtWidgets, urllib.request, inspect, re, pickle, and os.
-- The class called "Poetica" is a subclass of the OWTextableBaseWidget class from the Orange library. This class represents the Poetica widget.
-- Certain properties and methods handle the widget's functionality:
-- Properties such as name, description, icon, priority, inputs, and outputs define the widget's metadata.
-- The __init__() method initializes the widget by creating UI elements such as search areas, result and corpus lists, add and remove buttons, etc.
-- The dataExtraction() method is responsible for extracting data from the Poetica.fr website. It uses the segmentation and import modules provided by the LTTL library to extract information about authors, themes, and poems from different pages of the website.
-- The searchFunction() method is called when the search button is clicked. It performs a search based on the selected criteria (author and/or theme) and displays the results in the result list.
-- The add() and remove() methods are used to add or remove items from the corpus list.
+- Le code importe les packages nécessaires provenant de la bibliothèque Orange et d'autres packages tels que PyQt5.QtWidgets, urllib.request, inspect, re, pickle et os.
+- La classe appelée "Poetica" est un sous-classe de la classe OWTextableBaseWidget de la bibliothèque Orange. Cette classe représente le widget Poetica.
+- Certains propriétés et méthodes pour gérer le fonctionnement du widget :
+  - Les propriétés telles que le nom, la description, l'icône, la priorité, les entrées et les sorties définissent les métadonnées du widget.
+  - La méthode __init__() initialise le widget en créant les éléments de l'interface utilisateur, tels que les zones de recherche, les listes de résultats et de corpus, les boutons d'ajout et de suppression, etc.
+  - La méthode dataExtraction() est responsable de l'extraction des données à partir du site web Poetica.fr. Elle utilise les modules de segmentation et d'importation fournis par la bibliothèque LTTL pour extraire les informations sur les auteurs, les thèmes et les poèmes à partir de différentes pages du site web.
+  - La méthode searchFunction() est appelée lorsque le bouton de recherche est cliqué. Elle effectue une recherche en fonction des critères sélectionnés (auteur et/ou thème) et affiche les résultats dans la liste des résultats.
+  - Les méthodes add() et remove() sont utilisées pour ajouter ou supprimer des éléments de la liste de corpus.
 
-About Poetica:
------
-Poetica is a project developed by the LOLS group in 2023. We created this software to help Orange users analyze poems more easily.
+***
+À propos de Poetica;
+
+Poetica est un projet développé par le groupe LOLS en 2023. Nous avons créé ce logiciel dans le but d'aider les utilisateurs à faire des analyses sur les poèmes plus facilement.
+
 
 Olivia VERBRUGGE
 Leonie NUSSBAUM
 Laure MARGOT
 Sinem KILIC
 
-Textable Prototypes is an open-source extension for Orange Canvas 3. It includes text analysis widgets that could not be included in the main distribution of Textable for various reasons (including introducing dependencies on third-party packages or simply because they are not
+
+Textable Prototypes is an open-source add-on for Orange Canvas 3. It
+collects text analysis widgets that couldn't be included in the core
+Textable distribution for various reasons (notably because they introduce
+dependencies to third-party packages, or simply because they're not yet
+production-ready), but that may still be found useful by Orange
+Canvas/Textable users.
+
+
+The project is brought to the community by the `department of language and
+information sciences (SLI) <http://www.unil.ch/sli>`_ at the `University of
+Lausanne <http://www.unil.ch>`_. It is hosted at 
+`<https://github.com/axanthos/orange3-textable-prototypes>`_, and the 
+documentation can be found at 
+`<http://orange3-textable-prototypes.readthedocs.io/>`_.
