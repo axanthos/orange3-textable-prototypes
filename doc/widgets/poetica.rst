@@ -73,7 +73,7 @@ He can add his favorite results to his basket.
 
 * ``Refresh database``
 
-    Update the database of topics, authors and titles of the poems.
+    Update the database of urls, titles, authors and topics of the poems.
     This action may take some time. This is why a pop-up asks the user to confirm the update when the button has been clicked.
 
 * ``Add to corpus``
