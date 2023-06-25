@@ -13,10 +13,12 @@ Poetica
 
 Make a corpus with selected poems.
 
+
 Author
 ------
 
 Sinem Kilic, Laure Margot, Leonie Nussbaum, Olivia Verbrugge
+
 
 Signals
 -------
@@ -29,6 +31,7 @@ Outputs:
 
     A segmentation with the texts of the selected poems.
 
+
 Description
 -----------
 
@@ -37,6 +40,7 @@ The poems are imported from the site `<https://poetica.fr/>`_. The output is a
 segmentation containing a segment for each imported poem.
 Each segment has different annotations with keys *Author*,
 *Title*, *URL* and eventually *Topic*.
+
 
 Interface
 ~~~~~~~~~
@@ -95,6 +99,7 @@ The **Send** button manages the emission of a segmentation to the output
 connection(s). When selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface.
+
 
 Messages
 --------
