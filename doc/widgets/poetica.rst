@@ -9,8 +9,7 @@
 Poetica
 =============
 
-.. image:: figures/poetica.png
-A MODIFIER IMAGE CI-DESSUS
+.. image:: figures/poetica_logo.png
 
 Make a corpus with selected poems.
 
