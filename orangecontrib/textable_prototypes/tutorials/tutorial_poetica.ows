@@ -1,44 +1,5 @@
-<Class>
-    <Name>Poetica</Name>
-    <Copyright>2023 University of Lausanne</Copyright>
-    <Description>Poems importation from poetica.fr</Description>
-    <Icon>icons/poetica.png</Icon>
-    <Priority>10</Priority>
-    <Inputs></Inputs>
-    <Outputs>
-        <Output>Poems importation</Output>
-        <Type>Segmentation</Type>
-    </Outputs>
-    <Settings>
-        <AutoSend>True</AutoSend>
-        <Corpus></Corpus>
-    </Settings>
-    <Author>Sinem Kilic, Laure Margot, Leonie Nussbaum, Olivia Verbrugge</Author>
-    <Maintainer>Aris Xanthos</Maintainer>
-    <Email>aris.xanthos@unil.ch</Email>
-    <Dependencies>
-        <Dependency>Orange.widgets</Dependency>
-        <Dependency>gui</Dependency>
-        <Dependency>settings</Dependency>
-        <Dependency>Orange.widgets.utils.widgetpreview</Dependency>
-        <Dependency>_textable.widgets.TextableUtils</Dependency>
-        <Dependency>LTTL.Segmentation</Dependency>
-        <Dependency>LTTL.Segmenter</Dependency>
-        <Dependency>LTTL.Input</Dependency>
-        <Dependency>PyQt5.QtWidgets</Dependency>
-        <Dependency>QMessageBox</Dependency>
-        <Dependency>urlopen</Dependency>
-        <Dependency>inspect</Dependency>
-        <Dependency>re</Dependency>
-        <Dependency>pickle</Dependency>
-        <Dependency>os</Dependency>
-    </Dependencies>
-</Class>
-
-
-
 CI-DESSOUS A MODIFIER : STRUCTURE EN GROS
-(CI-DESSUS : A SUPPRIMER ?)
+
 
 <?xml version='1.0' encoding='utf-8'?>
 <scheme description="" title="Counting poems words" version="2.0">
