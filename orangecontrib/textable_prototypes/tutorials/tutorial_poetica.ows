@@ -1,29 +1,28 @@
 <?xml version='1.0' encoding='utf-8'?>
-<scheme description="" title="Counting poems words" version="2.0">
+<scheme version="2.0" title="" description="">
 	<nodes>
-		<node id="0" name="Poetica" position="(152.0, 257.0)" project_name="Orange3-Textable-Prototypes" qualified_name="orangecontrib.textable_prototypes.widgets.poetica.Poetica" title="Poetica" version="" />
-		<node id="1" name="Display" position="(306.0, 215.0)" project_name="Orange3-Textable" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" title="Display" version="" />
+		<node id="0" name="Poetica" qualified_name="orangecontrib.textable_prototypes.widgets.poetica.Poetica" project_name="Orange3-Textable-Prototypes" version="" title="Poetica" position="(120.0, 179.0)" />
+		<node id="1" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(291.0, 179.0)" />
 	</nodes>
 	<links>
-		<link enabled="true" id="0" sink_channel="Segmentation" sink_node_id="1" source_channel="Poetica importation" source_node_id="0" />
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Poems importation" sink_channel="Segmentation" enabled="true" />
 	</links>
 	<annotations>
-		<arrow end="(143.99999999999994, 320.0)" fill="#C1272D" id="0" start="(129.99999999999994, 436.0)" />
-		<text font-family="Helvetica" font-size="16" id="1" rect="(64.0, 437.0, 150.0, 60.0)" type="text/plain">Build a corpus of poems.
+		<arrow id="0" start="(88.5, 313.5)" end="(114.5, 236.5)" fill="#C1272D" />
+		<arrow id="1" start="(378.0, 277.5)" end="(323.0, 226.0)" fill="#C1272D" />
+		<text id="2" type="text/plain" rect="(-14.0, 315.0, 226.0, 472.0)" font-family="MS Shell Dlg 2" font-size="16">Build a corpus of poems.
 
 1) Select an author and/or a topic and click on "Search"
-2) Select one ore more poems from those proposed and add them by clicking on "Add to corpus"
-3) Send your corpus by clicking on "Send"
-</text>
 
-		<arrow id="1" start="(464.0, 177.0)" end="(465.0, 234.0)" fill="#C1272D" />
-		<text id="2" type="text/plain" rect="(710.0, 99.0, 208.0, 67.0)" font-family="MS Shell Dlg 2" font-size="16">The widget creates a text segmentation for each poem.</text>
-		<arrow id="3" start="(794.0, 178.0)" end="(796.0, 232.0)" fill="#C1272D" />
+2) Select one ore more poems from those proposed and add them by clicking on "Add to corpus"
+
+3) Send your corpus by clicking on "Send"</text>
+		<text id="3" type="text/plain" rect="(387.5, 257.5, 180.0, 200.0)" font-family="MS Shell Dlg 2" font-size="16">You can see the output result here</text>
 	</annotations>
-	<thumbnail />
+<thumbnail />
 	<node_properties>
-		<properties node_id="0" format="literal">{'autoSend': False, 'controlAreaVisible': True, 'myBasket': [['APOLLINAIRE Guillaume', 'Le hibou', 'Animaux', 'https://www.poetica.fr/poeme-4037/guillaume-apollinaire-le-hibou/'],['ELUARD Paul', 'Sur la maison du rire', 'Bonheur', 'https://www.poetica.fr/poeme-7961/paul-eluard-sur-la-maison-du-rire/']], 'savedWidgetGeometry': b"\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03'\x00\x00\x00\x7f\x00\x00\x05W\x00\x00\x03\xb2\x00\x00\x030\x00\x00\x00\xa5\x00\x00\x05N\x00\x00\x03\xa9\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80", 'uuid': '19e08cac-7e6c-4672-b221-9c6f2249e876', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
-		<properties node_id="1" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x03?\x00\x00\x00&lt;\x00\x00\x06f\x00\x00\x03\xe3\x00\x00\x03H\x00\x00\x00b\x00\x00\x06]\x00\x00\x03\xda\x00\x00\x00\x00\x00\x00\x00\x00\x07\x80', 'segmentDelimiter': ' ', 'uuid': 'aa1e7ee2-e573-4c90-b2c5-f379f6841f59', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties node_id="0" format="literal">{'autoSend': False, 'controlAreaVisible': True, 'corpus': ['https://www.poetica.fr/poeme-4037/guillaume-apollinaire-le-hibou/', 'https://www.poetica.fr/poeme-7961/paul-eluard-sur-la-maison-du-rire/'], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\xff\xff\xff\xff\xff\xff\xff\xfa\x00\x00\x03\xc0\x00\x00\x01\xfe\x00\x00\x00\x00\x00\x00\x00\x14\x00\x00\x03\xbf\x00\x00\x02e\x00\x00\x00\x00\x02\x00\x00\x00\x03\xc0\x00\x00\x00\x00\x00\x00\x00\x11\x00\x00\x03\xbf\x00\x00\x01\xfd', 'uuid': 'dc4e4d30-24bf-4b8f-9135-5afbf0af8ade', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties node_id="1" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\xac\x00\x00\x00A\x00\x00\x03\x1d\x00\x00\x01\xd6\x00\x00\x00\xb1\x00\x00\x00W\x00\x00\x03\x18\x00\x00\x01\xd1\x00\x00\x00\x00\x00\x00\x00\x00\x03\xc0', 'segmentDelimiter': '\\n', 'uuid': 'df7c430e-b948-483c-b6f2-9ba6b131cd00', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
 	</node_properties>
 	<session_state>
 		<window_groups />
