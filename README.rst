@@ -32,7 +32,7 @@ Interoperability
 
 Code Execution
 -----
- Poetice.py :
+ poetica.py :
 
 - The code imports necessary packages from the Orange library and other packages such as PyQt5.QtWidgets, urllib.request, inspect, re, pickle, and os.
 - The class called "Poetica" is a subclass of the OWTextableBaseWidget class from the Orange library. This class represents the Poetica widget.
