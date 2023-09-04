@@ -1,0 +1,6 @@
+{
+  "(^aha+$|^ahem+|^a+h+$|^a+r+g+$|^a+r+g+h+$|^a+w+$|^blah+$|^boo+$|^br{2,}$|^du+h+$|^e+k+$|^e+h+$|^h+m+$|^m+h+$|^m+h+m+$|^h+m+h+$|^h+u+h+$|^humph$|^o+h+$|^o+u+c+h+$|^o+w+$|^p+h+e+w+$|^s+h+$|^w+o+w+$|^y+e+a+h$)": ["VS", "vsp", "voc_seg", "re.IGNORECASE"],
+  "^(a|e|i|o)*(?:(h+(a+)|h+e+|hi|h+o+))+$": ["VS", "vsp", "voc_seg", "re.IGNORECASE"],
+  "(^l+o+l$|^l+m+a+o+$|^l+f+m+a+o$|^r+o+f+l$|,^r+o+t+f+l+o+l$)": ["VS", "acro", "laugh", "re.IGNORECASE"],
+  "^o+m+f*g+$": ["VS", "acro", "exclaim", "re.IGNORECASE"]
+}

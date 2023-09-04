@@ -290,12 +290,13 @@ class AudioFile(OWTextableBaseWidget):
         except speech_recognition.UnknownValueError as err:
             self.infoBox.setText(u"You seem to have overuseed the built-in API key, refer to the documentation for further informations.", "warning")
             self.send('Text data', None, self)
-            return 
+            return
+        print(transcription)
 
         # Checks if there is a transcription
         if transcription is None:
             self.infoBox.setText(u"You must use mp3 or wav audio files.", "warning")
-            self.send('Text data', None, self)
+            self.send('Text data', None)
             return 
 
         # Regex to get the name of the input file

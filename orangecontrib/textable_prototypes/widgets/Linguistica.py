@@ -41,7 +41,7 @@ from _textable.widgets.TextableUtils import (
 import lxa5crab
 
 # Constants...
-LOWER_MIN_STEM_LEN = 4
+LOWER_MIN_STEM_LEN = 3
 MAX_MORPH_LEN = 50
 
 
