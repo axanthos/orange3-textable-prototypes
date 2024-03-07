@@ -52,7 +52,7 @@ class TheatreClassique(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Widget's metadata...
 
-    name = "Theatre Classique"
+    name = "Cot cot I am a chicken"
     description = "Import XML-TEI data from theatre-classique website"
     icon = "icons/theatre_classique.svg"
     priority = 12
