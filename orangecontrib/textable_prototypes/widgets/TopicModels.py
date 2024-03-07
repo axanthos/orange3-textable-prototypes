@@ -53,7 +53,7 @@ class TopicModels(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Widget"s metadata...
 
-    name = "Topic Models"
+    name = "Salt and Pepper"
     description = "Build topic models based on term-document matrices"
     icon = "icons/topic_models.svg"
     priority = 30
