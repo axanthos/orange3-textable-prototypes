@@ -1,4 +1,4 @@
-Specification widget SwissLaw
+Specification widget Mastodon-Scraping 
 1 Introduction
 1.1 But du projet
 
