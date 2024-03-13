@@ -10,7 +10,7 @@ Fonctionnalités de base :
 
 Fonctionnalités principales :
     * Inputs : texte, langue d'entrée ou automatique, langue de sortie, service de traduction
-	* Outputs : texte traduit
+    * Outputs : texte traduit
 
 Fonctionnalités additionelles :
     * Inputs :
