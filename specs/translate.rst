@@ -25,13 +25,13 @@ le logiciel Orange 3 en utilisant le langage Python et la librairie deep-transla
 * Sébastien Franzone (sebastien.franzone@unil.ch)
  - specification
  - design interface
- - 
+ - code interface
  - 
  - 
 * André Da Glória Santiago (andre.dagloriasantiago@unil.ch)
  - specification
  - design interface
- - 
+ - architecture
  - 
 * Klisman Kodra (klisman.kodra@unil.ch)
  - specification
@@ -42,7 +42,7 @@ le logiciel Orange 3 en utilisant le langage Python et la librairie deep-transla
 * Marie Fasel (marie.fasel@unil.ch)
  - specification
  - design interface
- - 
+ - code interface
  - 
 
 2. Technique
@@ -84,7 +84,9 @@ le logiciel Orange 3 en utilisant le langage Python et la librairie deep-transla
 2.4 Fonctionnalités optionnelles
 ================================
 * Afficher sur l'interface le nombre de caractères maximum pris en charge par le service choisi
+* Découper le texte d'entrée en unités plus petites pour pallier au problème du nombre de caractères maximal par requête
 * Fiche explicative qui introduit les services proposés
+* Proposer d'autres services de traduction
 
 2.5 Tests
 =========
@@ -97,7 +99,7 @@ TODO
 =================
 * L'interface graphique est complétement construite.
 
-* 
+* Les fonctionnalités du MVP sont implémentées.
 
 * 
 
