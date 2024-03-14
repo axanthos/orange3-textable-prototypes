@@ -22,7 +22,7 @@ Créer un widget pour Orange Textable (v3.1.11) permettant le scraping de donné
 
     Prototypages et documentations
 
-    Tache 2 
+    Interface utilisateurs 
 
     Tache 3 
 
@@ -30,7 +30,7 @@ Créer un widget pour Orange Textable (v3.1.11) permettant le scraping de donné
 
     Recherches et documentations
 
-    Tache 2 
+    Récupération des données
 
     Tache 3 
 
@@ -38,7 +38,7 @@ Créer un widget pour Orange Textable (v3.1.11) permettant le scraping de donné
 
     Recherches et documentations
 
-    Tache 2 
+    Récupération des données
 
     Tache 3 
 
@@ -46,7 +46,7 @@ Créer un widget pour Orange Textable (v3.1.11) permettant le scraping de donné
 
     Recherches et documentations
 
-    Tache 2 
+    Liaison Mastodon - Orange 
 
     Tache 3 
 
@@ -54,7 +54,7 @@ Créer un widget pour Orange Textable (v3.1.11) permettant le scraping de donné
 
     Prototypages et documentations
 
-    Tache 2 
+    Interface utilisateurs
 
     Tache 3 
 
@@ -79,11 +79,12 @@ Créer un widget pour Orange Textable (v3.1.11) permettant le scraping de donné
 
     - Récupérer les messages d'une instance fédérées de manière structurée
 
-
+    - Filtres de temps de traitement et limitation de messages récupérés
 
 2.4 Fonctionnalités optionnelles
 
     - Condition d'ajout des messages au corpus en fonctions de conditions arbitraires (Présence de médias/Interactivité)
+    - Filtres: nombre d'interactions, likes, reposts et images
 
 2.5 Tests
 
