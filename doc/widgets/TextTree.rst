@@ -44,7 +44,7 @@ to whether or not the **Advanced Settings** checkbox is selected.
 Basic interface
 ~~~~~~~~~~~~~~~
 
-In its basic version (see :ref:`figure 1<_text_tree_fig1>` below), the 
+In its basic version (see :ref:`figure 1<text_tree_fig1>`_ below), the 
 **Text Tree** widget lets the user browse at once all the files contained
 in the selected folder.
 
