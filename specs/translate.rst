@@ -110,5 +110,5 @@ TODO
 * La documentation du logiciel est complète.
 
 4. Infrastructure
-=================
+*****************
 Le projet est disponible sur GitHub avec le lien suivant
