@@ -18,9 +18,12 @@ along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
 __version__ = '0.1.0'
+__author__ = "Mathieu Mercapide, Augustin Maillefer & Olivier Cavaleri"
+__maintainer__ = "Aris Xanthos"
+__email__ = "aris.xanthos@unil.ch"
 
-import codecs, io, os, re, json, chardet
 from unicodedata import normalize
+import codecs, io, os, re, json, chardet
 import random
 import math
 

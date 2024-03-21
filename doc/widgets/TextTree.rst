@@ -23,13 +23,13 @@ Augustin Maillefer
 Signals
 -------
 
-Inputs: None.
+Inputs: None
 
 Outputs:
 
 * ``Text data``
 
-  Segmentation covering the content of files filtered in a tree of files.
+  Segmentation covering the content of files filtered in a tree of files
 
 Description
 -----------
