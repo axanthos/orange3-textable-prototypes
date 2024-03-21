@@ -315,7 +315,7 @@ class ECP(OWTextableBaseWidget):
     def getTitleSeg(self):
         """Get title segmentation, either saved locally or online"""
 
-        # Try to open saved file in this module"s directory...
+        # Try to open saved file in this module's directory...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )

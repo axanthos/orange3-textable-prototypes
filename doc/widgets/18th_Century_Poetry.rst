@@ -57,7 +57,7 @@ select multiple files use either control/command-click or shift-click.
 
 .. figure:: figures/18thCenturyPoetry_Basic.png
     :align: center
-    :alt: Basic interface of the 18th Century Poetryy widget
+    :alt: Basic interface of the 18th Century Poetry widget
 
     Figure 1: **18th Century Poetry** widget (basic interface).
 
