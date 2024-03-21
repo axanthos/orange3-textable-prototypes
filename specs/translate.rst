@@ -1,5 +1,5 @@
 ######################################
-Specification widget NOM DU PROJET
+Specification widget Translate
 ######################################
 
 1 Introduction
@@ -7,7 +7,7 @@ Specification widget NOM DU PROJET
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v3.7) permettant la traduction d'un texte donné. NOM DU WIDGET est un widget inclus dans Orange3-Textable-Prototypes, un outil développé avec
+Créer un widget pour Orange Textable (v3.35) permettant la traduction d'un texte donné. Translate est un widget inclus dans Orange3-Textable-Prototypes, un outil développé avec
 le logiciel Orange 3 en utilisant le langage Python et la librairie deep-translator.
 
 1.2 Aperçu des étapes
@@ -26,24 +26,21 @@ le logiciel Orange 3 en utilisant le langage Python et la librairie deep-transla
  - specification
  - design interface
  - code interface
- - 
- - 
+ 
 * André Da Glória Santiago (andre.dagloriasantiago@unil.ch)
  - specification
  - design interface
  - architecture
- - 
+
 * Klisman Kodra (klisman.kodra@unil.ch)
  - specification
- - 
- - 
- - 
- - 
+ - design interface
+ - code interface
+
 * Marie Fasel (marie.fasel@unil.ch)
  - specification
  - design interface
  - code interface
- - 
 
 2. Technique
 ************
@@ -54,39 +51,38 @@ le logiciel Orange 3 en utilisant le langage Python et la librairie deep-transla
 
 * Orange Textable 3.1.11
 
-* Deep-translator
+* Deep-translator 1.11.4
 
 2.2 Fonctionnalités minimales
 =============================
-.. image::
+.. image:: images/translate_minimal.png
 
+* Utilisation par défaut du service de traduction Mymemory Translator
 * Détection automatique de la langue d'entrée
-* Choix de la langue de sortie
+* Choix de la langue de sortie parmi les langues proposées par le service
 * Envoi du texte traduit en sortie
-
 
 2.3 Fonctionnalités principales
 ===============================
 
- .. image:: 
+ .. image:: images/translate_principal.png
 
- .. image:: 
-
- .. image:: 
-
-* Choix du service de traduction
-* Entrer la clé API si nécessaire
-* Choix de la langue d'entrée, avec possibilité de détection automatique
+* Détection et sélection automatique de la langue d'entrée par défaut 
+* Choix de la langue d'entrée si la détection automatique ne satisfait pas l'utilisateur
 * Choix de la langue de sortie
-* Envoi du texte traduit en sortie
+* Choix du service de traduction parmi les services qui traitent la paire de langues sélectionnées
+* Entrer la clé API si nécessaire
+* Envoi du texte traduit en sortie sous la même structure qu'en entrée
+* Dans le cas d'une segmentation multilingue en entrée, la détection automatique se base sur le premier segment et traite le reste de manière similaire
 
 
 2.4 Fonctionnalités optionnelles
 ================================
-* Afficher sur l'interface le nombre de caractères maximum pris en charge par le service choisi
+* Afficher dans l'interface le nombre de caractères maximum pris en charge par le service choisi
 * Découper le texte d'entrée en unités plus petites pour pallier au problème du nombre de caractères maximal par requête
 * Fiche explicative qui introduit les services proposés
 * Proposer d'autres services de traduction
+* Régler le problème de la segmentation multilingue
 
 2.5 Tests
 =========
@@ -100,8 +96,6 @@ TODO
 * L'interface graphique est complétement construite.
 
 * Les fonctionnalités du MVP sont implémentées.
-
-* 
 
 3.2 Remise et présentation
 ==========================
