@@ -1,7 +1,7 @@
 ===================
 Spécification widget Scratodon (Mastodon-Scraping)
 ===================
-
+-----------
 1. Introduction
 -----------
 1.1 But du projet
@@ -61,6 +61,7 @@ Equipe de developpement :
 
 
 
+-----------
 2. Technique
 -----------
 2.1 Dépendances
@@ -89,6 +90,7 @@ Equipe de developpement :
 
 
 
+-----------
 TODO
 3. Etapes
 -----------
@@ -103,6 +105,7 @@ TODO
     Les fonctionnalités principales sont complètement prises en charge par le logiciel. TBD
     La documentation du logiciel est complète. TBD
 
+-----------
 4. Infrastructure
 -----------
 
