@@ -1,9 +1,9 @@
 ===================
 Spécification widget Scratodon (Mastodon-Scraping)
 ===================
------------
+
 1. Introduction
------------
+
 1.1 But du projet
 
     Créer un widget pour Orange Textable (v3.1.11) permettant le scraping de données de la plateforme Mastodon, afin de traiter les messages récupérés via les différents widgets disponibles sur Orange Textable.
@@ -60,10 +60,8 @@ Equipe de developpement :
     Liaison Mastodon - Orange 
 
 
-
------------
 2. Technique
------------
+
 2.1 Dépendances
 
     Orange 3.36.2 (https://orangedatamining.com/)
@@ -89,11 +87,9 @@ Equipe de developpement :
     - Filtres: reposts, nombre d'interactions, likes et images
 
 
-
------------
 TODO
 3. Etapes
------------
+
 3.1 Version alpha
 
     L'interface graphique est complétement construite. IN PROGRESS
@@ -105,8 +101,8 @@ TODO
     Les fonctionnalités principales sont complètement prises en charge par le logiciel. TBD
     La documentation du logiciel est complète. TBD
 
------------
+
 4. Infrastructure
------------
+=========
 
     Le projet est disponible sur GitHub avec le lien suivant : https://github.com/Olipper/orange3-textable-prototypes
