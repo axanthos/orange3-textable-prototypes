@@ -763,22 +763,23 @@ class WidgetEditList(OWTextableBaseWidget):
         exportContent = self.tempDict[exportTitle]
 
         # Saving lexic content
-        if filePath:
-            outputFile = open(
-                filePath,
-                encoding='utf8',
-                mode='w+',
-                errors='xmlcharrefreplace',
-            )
+        for file in filePath:
+            if file:
+                outputFile = open(
+                    file,
+                    encoding='utf8',
+                    mode='w+',
+                    errors='xmlcharrefreplace',
+                )
 
-            outputFile.write('\n'.join(exportContent))
-            outputFile.close()
-            QMessageBox.information(
-                None,
-                'Textable',
-                'Lexical file correctly exported',
-                QMessageBox.Ok
-            )
+                outputFile.write('\n'.join(exportContent))
+                outputFile.close()
+                QMessageBox.information(
+                    None,
+                    'Textable',
+                    'Lexical file correctly exported',
+                    QMessageBox.Ok
+                )
 
     def exportAllLexics(self):
         """Lets the user export all the lexics"""
