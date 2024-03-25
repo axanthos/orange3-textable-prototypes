@@ -76,7 +76,7 @@ segmentation at every modification of its interface.
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of **Lexical Hunter**  (see :ref:`figure 2<lexicalhunter_fig2>` below) lets the user edit, delete, add, import 
+The advanced version of **Lexical Hunter**  (see :ref:`figure 2 <lexicalhunter_fig2>` below) lets the user edit, delete, add, import 
 or export lists.
 
 .. _lexicalhunter_fig2:
