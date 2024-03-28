@@ -95,6 +95,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.documentLabels = list()
         self.selectedTitles = list()
         # selections box attributs
+        self.titleLabels = list()
         self.myTitles = list()
         self.mytitleLabels = list()
         # stock all the inputs (songs) in a list
@@ -365,10 +366,12 @@ class LyricsGenius(OWTextableBaseWidget):
         page = requests.get(page_url)
         html = BeautifulSoup(page.text, "html.parser")
         [h.extract() for h in html('script')]
-        lyrics = html.find("div", class_="lyrics").get_text()
+        #lyrics = html.find("div", class_="lyrics").get_text()
+        lyrics = html.get_text()
         lyrics.replace('\\n', '\n')
         # return a string
         return lyrics
+        
 
 
     # Function clearing the results list
