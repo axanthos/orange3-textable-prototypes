@@ -25,6 +25,8 @@ import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     InfoBox, SendButton, pluralize
@@ -147,7 +149,7 @@ class Translate(OWTextableBaseWidget):
 
         # Input language
         
-        optionsBox = gui.widgetBox(
+        """ optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Input language',
             orientation='vertical',
@@ -167,7 +169,7 @@ class Translate(OWTextableBaseWidget):
             tooltip=(
                 u"Choose language input."
             ),
-        )
+        ) """
 
         # Output language
         optionsBox = gui.widgetBox(
@@ -194,7 +196,7 @@ class Translate(OWTextableBaseWidget):
 
 
         # Translation service
-        optionsBox = gui.widgetBox(
+        """ optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Translation service',
             orientation='vertical',
@@ -220,10 +222,10 @@ class Translate(OWTextableBaseWidget):
         self.inputLanguage.setMinimumWidth(120)
         gui.separator(widget=optionsBox, height=3)
 
-        gui.rubber(self.controlArea)
+        gui.rubber(self.controlArea) """
 
         # Text Field API key
-        optionsBox = gui.widgetBox(
+        """ optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'',
             orientation='vertical',
@@ -253,9 +255,10 @@ class Translate(OWTextableBaseWidget):
             tooltip=(
                 u"Spot to put API key if needed"
             ),
-        )
+        ) """
 
-        
+        # Space in between
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -354,10 +357,8 @@ class Translate(OWTextableBaseWidget):
     
 
 if __name__ == '__main__':
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextablePreprocess()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    from LTTL.Input import Input
+    input1 = Input("Mary said hello to John and Mike.")
+    input2 = Input("Lucy told Johnny to say hello in return.")
+    input = Segmenter.concatenate([input1, input2])
+    WidgetPreview(Translate).run(inputData=input)
