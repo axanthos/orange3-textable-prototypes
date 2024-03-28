@@ -269,9 +269,9 @@ class Translate(OWTextableBaseWidget):
     def inputData(self, newInput):
         """Process incoming data."""
         self.segmentation = newInput
+        self.detectInputLanguage()
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
-        self.detect_input_language()
 
     def sendData(self):
         """Preprocess and send data"""
