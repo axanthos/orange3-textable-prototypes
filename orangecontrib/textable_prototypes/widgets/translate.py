@@ -36,6 +36,7 @@ from PyQt5.QtWidgets import QPlainTextEdit
 
 from Orange.widgets import gui, settings
 
+from langdetect import detect
 
 class Translate(OWTextableBaseWidget):
     """Orange widget for standard text preprocessing"""
@@ -344,9 +345,10 @@ class Translate(OWTextableBaseWidget):
     def onDeleteWidget(self):
         self.clearCreatedInputIndices()
 
-    def detect_input_language(self):
+    def detectInputLanguage(self):
         #detect the language
-        return "fr"
+        text = self.segmentation[0].get_content()
+        self.detectedInputLanguage = detect(text)
     
     def translate(self):
         #change segmentation
