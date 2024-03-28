@@ -23,8 +23,9 @@ __version__ = '0.11.3'
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
+from LTTL.Input import Input
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     InfoBox, SendButton, pluralize
 )
@@ -37,8 +38,8 @@ from Orange.widgets import gui, settings
 class OWTextablePreprocess(OWTextableBaseWidget):
     """Orange widget for standard text preprocessing"""
 
-    name = "Test"
-    description = "Basic text preprocessing"
+    name = "Translate"
+    description = "Text translator"
     icon = "icons/Context_54.png"
     priority = 2001
 
@@ -331,7 +332,6 @@ class OWTextablePreprocess(OWTextableBaseWidget):
         else:
             self.caseTransformCombo1.setDisabled(True)
 
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
@@ -344,6 +344,14 @@ class OWTextablePreprocess(OWTextableBaseWidget):
     def onDeleteWidget(self):
         self.clearCreatedInputIndices()
 
+    def detect_input_language(self):
+        #detect the language
+        return "fr"
+    
+    def translate(self):
+        #change segmentation
+        return Input("Ce texte a été traduit (ou pas (encore))")
+    
 
 if __name__ == '__main__':
     import sys
