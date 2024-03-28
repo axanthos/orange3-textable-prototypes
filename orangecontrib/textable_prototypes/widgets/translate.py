@@ -350,8 +350,8 @@ class Translate(OWTextableBaseWidget):
 
     def detectInputLanguage(self):
         #detect the language
-        text = "This text has been translated (or not (yet))"
-        return detect(text)
+        text = self.segmentation[0].get_content()
+        self.detectedInputLanguage = detect(text)
     
     def translate(self):
         #change segmentation
