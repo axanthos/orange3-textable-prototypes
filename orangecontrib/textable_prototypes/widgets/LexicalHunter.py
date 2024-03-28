@@ -714,39 +714,41 @@ class WidgetEditList(OWTextableBaseWidget):
         )
         if not filePath:
             return
-        self.file = os.path.normpath(filePath)
-        self.baseLocation = os.path.dirname(filePath)
-        # Gets txt file name and substracts .txt extension
-        fileName = os.path.join(self.baseLocation, self.file);
+        for f in filePath:
+            if f:
+                self.file = os.path.normpath(f)
+                self.baseLocation = os.path.dirname(f)
+                # Gets txt file name and substracts .txt extension
+                fileName = os.path.join(self.baseLocation, self.file);
 
-        # Cutting the path to get the name
-        if platform.system() == "Windows":
-            listLexicName = fileName.split('\\')
+                # Cutting the path to get the name
+                if platform.system() == "Windows":
+                    listLexicName = fileName.split('\\')
 
-        else:
-            listLexicName = fileName.split('/')
+                else:
+                    listLexicName = fileName.split('/')
 
-        # Getting file name
-        lexicName = listLexicName[-1]
-        lexicName = re.sub('\.txt$', '', lexicName)
+                # Getting file name
+                lexicName = listLexicName[-1]
+                lexicName = re.sub('\.txt$', '', lexicName)
 
 
-        # Trying to open the files and store their content in a dictionnary
-        # then store all of theses in a list
-        try:
-            fileHandle = open(fileName, encoding='utf-8')
-            content = fileHandle.readlines()
-            # Deleting spaces
-            self.tempDict[lexicName] = [re.sub(r'\s', "", i) for i in content]
-            fileHandle.close()
-            self.setTitleList()
-        except IOError:
-            QMessageBox.warning(
-                None,
-                'Textable',
-                "Couldn't open file.",
-                QMessageBox.Ok
-            )
+                # Trying to open the files and store their content in a dictionnary
+                # then store all of theses in a list
+                try:
+                    fileHandle = open(fileName, encoding='utf-8')
+                    content = fileHandle.readlines()
+                    # Deleting spaces
+                    self.tempDict[lexicName] = [re.sub(r'\s', "", i) for i in content]
+                    fileHandle.close()
+                    self.setTitleList()
+                except IOError:
+                    QMessageBox.warning(
+                        None,
+                        'Textable',
+                        "Couldn't open file.",
+                        QMessageBox.Ok
+                    )
             return
 
     def exportOneLexic(self):
