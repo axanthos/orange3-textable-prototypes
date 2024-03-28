@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.11.3'
+__version__ = '0.0.1'
 
 
 import LTTL.Segmenter as Segmenter
@@ -35,7 +35,7 @@ from PyQt5.QtWidgets import QPlainTextEdit
 from Orange.widgets import gui, settings
 
 
-class OWTextablePreprocess(OWTextableBaseWidget):
+class Translate(OWTextableBaseWidget):
     """Orange widget for standard text preprocessing"""
 
     name = "Translate"
