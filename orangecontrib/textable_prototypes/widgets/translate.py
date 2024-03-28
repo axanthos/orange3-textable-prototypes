@@ -45,12 +45,8 @@ class Translate(OWTextableBaseWidget):
     icon = "icons/Context_54.png"
     priority = 2001
 
-    inputs = [('Segmentation', Segmentation, "inputData",)]
-    outputs = [('Preprocessed data', Segmentation)]
-
-    # Settings...
-    textFieldContent = settings.Setting(u''.encode('utf-8'))
-    encoding = settings.Setting(u'utf-8')
+    inputs = [('Segmentation', Segmentation, "inputData")]
+    outputs = [('Translated data', Segmentation)]
 
     want_main_area = False
 
@@ -59,13 +55,11 @@ class Translate(OWTextableBaseWidget):
     )
 
     # Settings...
-    copyAnnotations = settings.Setting(True)
-    enableAPI = settings.Setting(False)
-    inputLanguage = settings.Setting('chosenInputLanguage')
-    outputLanguage = settings.Setting('chosenOutputLanguage')
-    translator = settings.Setting('chosenTranslator')
-    removeAccents = settings.Setting(False)
-    labelKey = settings.Setting(u'Entrez votre API key')
+    #enableAPI = settings.Setting(False)
+    #inputLanguage = settings.Setting('chosenInputLanguage')
+    outputLanguage = settings.Setting('English')
+    #translator = settings.Setting('chosenTranslator')
+    #labelKey = settings.Setting(u'Entrez votre API key')
 
     want_main_area = False
 
@@ -82,10 +76,7 @@ class Translate(OWTextableBaseWidget):
             master=self,
             callback=self.sendData,
             infoBoxAttribute='infoBox',
-            #sendIfPreCallback=self.updateGUI,
         )
-
-        # GUI...
 
         # Options box
         """ optionsBox = gui.widgetBox(
@@ -186,9 +177,9 @@ class Translate(OWTextableBaseWidget):
             widget=self.testBox2,
             master=self,
             value='outputLanguage',
-            items=[u'Anglais', u'Portuguais', u'Français', u'Allemand', u'Russe'],
+            items=[u'English', u'Portuguese', u'French', u'German', u'Russian'],
             sendSelectedValue=True,
-            callback=self.sendButton.settingsChanged,
+            callback=self.outputLanguageChanged, 
             tooltip=(
                 u"Choose language output."
             ),
@@ -267,13 +258,19 @@ class Translate(OWTextableBaseWidget):
         self.infoBox.draw()
 
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
+
+    
+    def outputLanguageChanged(self):
+        """ Method for change in Output Language """
+        self.sendButton.settingsChanged()
+
 
     def inputData(self, newInput):
         """Process incoming data."""
         self.segmentation = newInput
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
+        self.detect_input_language()
 
     def sendData(self):
         """Preprocess and send data"""
