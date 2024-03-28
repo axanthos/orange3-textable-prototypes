@@ -366,7 +366,7 @@ class LyricsGenius(OWTextableBaseWidget):
         page = requests.get(page_url)
         html = BeautifulSoup(page.text, "html.parser")
         [h.extract() for h in html('script')]
-        #lyrics = html.find("div", class_="lyrics").get_text()
+        #lyrics = html.find("div", class_="Lyrics__Container-sc-1ynbvzw-1 kUgSbL").get_text()
         lyrics = html.get_text()
         lyrics.replace('\\n', '\n')
         # return a string
