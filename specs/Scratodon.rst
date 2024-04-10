@@ -70,7 +70,9 @@ Equipe de developpement :
 
 2.2 Prototypage
 
-    (Schéma)
+    .. image:: images/scratodon_example01.png
+    .. image:: images/scratodon_example02.png
+    .. image:: images/scratodon_example03.png
 
 2.3 Fonctionnalités principales
 
