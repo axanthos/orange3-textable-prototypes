@@ -44,6 +44,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar,
 )
 
+import re
+
 class LyricsGenius(OWTextableBaseWidget):
     """Textable widget for importing JSON data from the website Genius
     (https://genius.com/)
@@ -366,8 +368,10 @@ class LyricsGenius(OWTextableBaseWidget):
         page = requests.get(page_url)
         html = BeautifulSoup(page.text, "html.parser")
         [h.extract() for h in html('script')]
-        #lyrics = html.find("div", class_="Lyrics__Container-sc-1ynbvzw-1 kUgSbL").get_text()
-        lyrics = html.get_text()
+        lyrics = ""
+        for element in html.find_all("div", class_=re.compile(r"^Lyrics__Container")):
+            lyrics_part = element.get_text()
+            lyrics = lyrics + lyrics_part
         lyrics.replace('\\n', '\n')
         # return a string
         return lyrics
