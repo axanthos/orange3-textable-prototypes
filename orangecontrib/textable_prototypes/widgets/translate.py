@@ -38,6 +38,8 @@ from Orange.widgets import gui, settings
 
 from langdetect import detect
 
+import deep_translator as dt
+
 class Translate(OWTextableBaseWidget):
     """Orange widget for standard text preprocessing"""
 
@@ -350,9 +352,12 @@ class Translate(OWTextableBaseWidget):
         text = self.segmentation[0].get_content()
         self.detectedInputLanguage = detect(text)
     
-    def translate(self):
-        #change segmentation
-        return Input("Ce texte a été traduit (ou pas (encore))")
+    def translate(self, untranslated_text):
+        try:
+            translated_text = dt.MyMemoryTranslator(self.detectedInputLanguage, self.outputLanguage).translate(untranslated_text)
+            return Input(translated_text)
+        except:
+            print("Translation process did not work")
     
 
 if __name__ == '__main__':
