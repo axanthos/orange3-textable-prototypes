@@ -15,15 +15,12 @@ QUERY ATTRIBUTES [EXCLUDE-REPOSTS:BOOL,ONLY-REPOSTS:BOOL,EXCLUDE-IMAGES:BOOL,ONL
 
 ADDITION THRESHOLDS[T-REPOSTS:INT,T-LIKE:INT] 
 
-Q: Faut il regrouper les discriminants existentiels et les numériques sachant qu'il existe des dépendances mutuelles entre les types, le tout par souci de lisibilité et d'ergonomie ? Et quand nous parlons des reposts à exclure ou à uniquement inclure. Il s'agit alors bien d'exclure et d'inclure uniqement des documents ayant ces caractéristiques ou s'agit il d'ajouter leurs contenus également ?
-
 ---
 
 DONNEE TYPE
 
 [TARGET:STR,CONTENT:STR,hasREPOSTS:BOOL,nREPOSTS:INT,hasLIKES:BOOL,nLIKES:INT,nREPOSTS:INT,hasIMAGE,refIMAGE:STR]
 
-Il s'agit ici de formuler le dict qui stockera l'information fournie par l'api sous ses différentes formes. TARGET est ici l'utilisateur/serveur/fédération, conservé par souci de réutilisabilité. L'on résout alors le problème de la classifictioncar il devient possible d'effectuer les opérations logiques nécessaires à la discrimination de l'information transmise à la ségmentation sans regex. S'agit d'un processus en deux temps, POPULATION de la DICT et ENVOI de la segmentation.
 
 Q!!: Serait il intéressant d'appondre une fonction de cache avec un historique des dernières recherches dirigées dans ? Histoire de conserver dans la mémoire du widget lui même différentes recherches ? Si oui, CSV / Dict, quel moyen utiliser pour rendre l'objet facile.
 
