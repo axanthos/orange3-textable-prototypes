@@ -154,4 +154,3 @@ Errors
 Note
 ~~~~
 The widget still has a problem with the edit window on Windows. You have to close it twice or click twice the "Save changes" or "Cancel changes" button to close it.
-The widget also has a problem with the **Export selected** option. It may give an error message, but the file is exported correctly.
