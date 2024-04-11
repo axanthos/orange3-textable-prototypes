@@ -70,7 +70,9 @@ REGLAGES
     - [ ] TBD
 
 
+GROSSE QUESTION A RESOUDRE:
 
+Les choix tels que je les ai décrits ici partent du principe d'une récupération d'un modèle de donnée standardisé depuis l'api mastodon, modulée par des réglages au niveau de l'envoi de la segmentation, sommes nous bien d'accord sur ce point ?
 
 
 
