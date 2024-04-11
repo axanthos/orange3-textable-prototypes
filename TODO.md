@@ -43,7 +43,7 @@ Parameters:
         tL (string): Stands for 'Threshold Likes', defines a numerical value of the key pair value nLIKES, under which the given post will not be added to the output segmentation.
         
 
-
+Q: Si vous pouvez expliciter les fonctions des différents paramètes histoire de ne plus avoir d'ambiguité. Si vous le faite en logique formelle, vous êtes des crèmes.s
 
 ## TODO [SAMUEL] [ROSE] [OLIVIER] [LAURE] [DIMETRA]
 ---
