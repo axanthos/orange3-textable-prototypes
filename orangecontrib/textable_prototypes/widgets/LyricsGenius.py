@@ -400,6 +400,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
     # Update selections function
     def updateMytitleLabels(self):
+        """Update the selctions"""
         self.mytitleLabels = list()
         for songData in self.myBasket:
             result_string = songData["title"] + " - " + songData["artist"]
