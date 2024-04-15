@@ -372,7 +372,7 @@ class LyricsGenius(OWTextableBaseWidget):
         for element in html.find_all("div", class_=re.compile(r"^Lyrics__Container")):
             lyrics_part = element.get_text()
             lyrics = lyrics + lyrics_part
-        lyrics.replace('\\n', '\n')
+        lyrics = re.sub(r"(?<=\S)(\[|\(|[A-Z])", r" \1", lyrics)
         # return a string
         return lyrics
         
