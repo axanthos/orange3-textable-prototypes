@@ -709,14 +709,6 @@ class Poetica(OWTextableBaseWidget):
             except KeyError:
                 pass
 
-            # if self.topicQuery != "Select a topic":
-            #     annotations_topic["Topic"] = self.topicQuery
-            # else:
-            #     if key in self.db["topic"] :
-            #         annotations_topic["Topic"] = self.db["topic"][key]
-            #     else :
-            #         annotations_topic["Topic"] = "None"
-
             annotations_list_authors.append(annotations_author.copy())
             annotations_list_tiles.append(annotations_title.copy())
             annotations_list_urls.append(annotations_url.copy())
@@ -724,16 +716,6 @@ class Poetica(OWTextableBaseWidget):
 
             # 1 tick on the progress bar of the widget
             progressBar.advance()
-
-        # If an error occurs (e.g. http error, or memory error)...
-        # except:
-        #     # Set Info box and widget to "error" state.
-        #     self.infoBox.setText(
-        #         "Couldn't download data from Poetica's website.",
-        #         "error"
-        #     )
-        #     self.controlArea.setDisabled(False)
-        #     return
 
         # Store downloaded poems strings in input objects...
         for poem in poem_content:
