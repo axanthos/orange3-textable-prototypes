@@ -686,6 +686,7 @@ class WidgetEditList(OWTextableBaseWidget):
         self.updateGUI()
     
     def cancelListChanges(self):
+        """Cancel the list changes"""
         # Reset textfields values
         self.titleEdit.setText("")
         self.editor.setPlainText("")
