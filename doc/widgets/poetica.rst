@@ -75,6 +75,7 @@ He can add his favorite results to his basket.
 
     Update the database of urls, titles, authors and topics of the poems.
     This action may take some time. This is why a pop-up asks the user to confirm the update when the button has been clicked.
+    Once the database is updated, it may be necessary to restart the Orange software to use the latest version of the database.
 
 * ``Add to corpus``
 
