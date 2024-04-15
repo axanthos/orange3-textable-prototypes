@@ -878,6 +878,7 @@ class Childes(OWTextableBaseWidget):
         self.updateBrowseBoxButtons()
             
     def getFolderContent(self, folder):
+        """Get the folder content"""
         folderContent = self.database[self.__class__.baseUrl]
         folder = folder[len(self.__class__.baseUrl)-1:]
         steps = folder[:-1].split("/")[1:]
