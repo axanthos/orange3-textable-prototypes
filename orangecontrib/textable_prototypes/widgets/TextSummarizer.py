@@ -154,7 +154,7 @@ class TextSummarizer(OWTextableBaseWidget):
             orientation="horizontal",
             label="Input's language:",
             labelWidth=135,
-            # Appeler autre méthode
+            # Call other method
             callback=self.languageChanged,
             tooltip=(
                 "Please select the text's language.\n"
