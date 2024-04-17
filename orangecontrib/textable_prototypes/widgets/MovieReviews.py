@@ -78,6 +78,7 @@ class MovieReviews(OWTextableBaseWidget):
     want_main_area = False
 
     def __init__(self):
+        """Widget creator."""
         super().__init__()
 
         # Search filters attributs
@@ -375,6 +376,7 @@ class MovieReviews(OWTextableBaseWidget):
 
 
     def mode_changed(self):
+        """Define the possible actions according to the type of search"""
         self.sendButton.settingsChanged()
         if self.type_results == "Title": # 0 = subreddit selected
             # Hide Genre box
