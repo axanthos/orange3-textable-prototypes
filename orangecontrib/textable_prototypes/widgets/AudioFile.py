@@ -64,6 +64,7 @@ class AudioFile(OWTextableBaseWidget):
     }
   
     def __init__(self):
+        """Widget creator."""
         super().__init__()
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
@@ -275,6 +276,7 @@ class AudioFile(OWTextableBaseWidget):
             return whole_text
 
     def sendData(self):
+        """Send data"""
             
         if not self.file:
             self.infoBox.setText(u"Please select input file.", "warning")
@@ -332,6 +334,7 @@ class AudioFile(OWTextableBaseWidget):
             super().setCaption(title)
 
     def browse(self):
+        """Browse"""
         audioPath, _ = QFileDialog.getOpenFileName(
             self,
             u"open Text File",
@@ -345,6 +348,7 @@ class AudioFile(OWTextableBaseWidget):
         self.sendButton.settingsChanged()
 
     def showAdvancedSettings(self):
+        """Make advanced settings visible"""
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
