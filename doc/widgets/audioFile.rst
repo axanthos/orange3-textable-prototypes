@@ -41,7 +41,7 @@ The user can transcript any audio file, and the output is a segmentation. Each s
 
 
 Basic interface
-~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 In this basic interface (see :ref:"figure 1 <audioFile_fig1>" below), the **Audio File** widget simply lets the user import an audio file and transcript it into a segmentation. The user must also pick the corresponding language. 
 
