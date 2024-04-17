@@ -37,14 +37,13 @@ Description
 
 This widget is designed to summarize a text segmentation. It takes a text segmentation as an input and summarizes it.  
 Supported languages are dutch, english, french, german, greek, italian, lithuanian, norwegian, portuguese and spanish. 
-It allows the user to chose the length of the summary by defining either the total number of sentences or the percentage of the input's length. When a segmentation with multiple segment is give as the input, the percetage is estimated according to the shortest segment. All created summaries will have the same number of sentences.
+It allows the user to choose the length of the summary by defining either the total number of sentences or the percentage of the input's length. When a segmentation with multiple segment is given as the input, the percentage is estimated according to the shortest segment. All created summaries will have the same number of sentences.
 
 The widget can take a single segment to summarize or a segmentation with more than one segment. In the later situation, the widget can summarize each segment individually or consider all segments as one text input.
 
 This widget has two types of outputs, one being the summary in itself, the other being the text input with its most important sentences highlighted. The ouput can be changed in the link interface.
 
-.. note::
-   When having several segments as input, please note that the segments must be in the same language to have an intelligible summary.
+.. note:: When having several segments as input, please note that the segments must be in the same language to have an intelligible summary.
 
 Interface
 ~~~~~~~~~
