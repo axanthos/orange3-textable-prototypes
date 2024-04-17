@@ -43,7 +43,8 @@ The widget can take a single segment to summarize or a segmentation with more th
 
 This widget has two types of outputs, one being the summary in itself, the other being the text input with its most important sentences highlighted. The ouput can be changed in the link interface.
 
-.. note:: When having several segments as input, please note that the segments must be in the same language to have an intelligible summary.
+.. note:: 
+    When having several segments as input, please note that the segments must be in the same language to have an intelligible summary.
 
 Interface
 ~~~~~~~~~
@@ -54,7 +55,7 @@ The **widget** interface displays :
 
 *Only installed models will be in this list. To use a model that is not installed, it must be downloaded with the spaCy widget first.*
 
-- A dropdown list to define how to chose the summary's length
+- A dropdown list to define how to choose the summary's length
 - An input field in which the user can set the number of sentences of the summary **OR** an input field that lets the user choose the summary's in percentage of the input's length
 - An option to summarize all segments as one or each segment separately 
 
