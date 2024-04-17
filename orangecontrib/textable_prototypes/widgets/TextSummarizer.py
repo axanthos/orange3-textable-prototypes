@@ -271,7 +271,7 @@ class TextSummarizer(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def noLanguageModelWarning(self):
-        """"Warn user that a spaCy model must be installed and disable GUI."""
+        """Warn user that a spaCy model must be installed and disable GUI."""
         self.infoBox.setText(
             "Please use the spaCy widget to download a language "
             "model first.",
@@ -436,7 +436,7 @@ class TextSummarizer(OWTextableBaseWidget):
     ################################################################
 
     def summarize(self, cv, content):
-        "Main function that summarize the text"
+        """Main function that summarize the text"""
 
         progressBar = ProgressBar(self, iterations=3)
 
