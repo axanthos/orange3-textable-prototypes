@@ -355,7 +355,7 @@ class Translate(OWTextableBaseWidget):
     def translate(self, untranslated_text):
         try:
             translated_text = dt.MyMemoryTranslator(self.detectedInputLanguage, self.outputLanguage).translate(untranslated_text)
-            return Input(translated_text)
+            return translated_text
         except:
             print("Translation process did not work")
     
