@@ -5,7 +5,8 @@ Will be integrated to the main Scraptodon.py module file
 """
 
 from mastodon import Mastodon
-import csv
+from LTTL.Input import Input
+from LTTL.Utils import tuple_to_simple_dict, sample_dict
 
 def fetch_user_posts(username_at_instance):
     "Takes a string like ' (@)user@instance.net ' and returns a dictionnary of all posts from the user"
@@ -29,5 +30,11 @@ def fetch_user_posts(username_at_instance):
     all_posts = MyMastodon.account_statuses(user_id)
     return all_posts
 
+def segmentation(posts):
+    "Takes a dictionary of posts, and create an input of each of their content. Concatenate it in a single output"
+    #TODO for later: annotate (like, username, hasPhoto...) each post (easy and useful)
+    pass    
+
 if __name__ == "__main__":
-    print(fetch_user_posts("macron@rivals.space")) 
+    posts = fetch_user_posts("@macron@rivals.space")
+    print(annotate(posts))
