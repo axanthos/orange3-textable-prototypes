@@ -57,7 +57,8 @@ class Translate(OWTextableBaseWidget):
     # Settings...
     #enableAPI = settings.Setting(False)
     #inputLanguage = settings.Setting('chosenInputLanguage')
-    outputLanguage = settings.Setting('English')
+    outputLanguageKey = settings.Setting('french')
+    
     #translator = settings.Setting('chosenTranslator')
     #labelKey = settings.Setting(u'Entrez votre API key')
 
@@ -187,11 +188,11 @@ class Translate(OWTextableBaseWidget):
             widget=optionsBox,
             orientation='horizontal',
         )
-        self.outputLanguage = gui.comboBox(
+        self.outputLanguageBox = gui.comboBox(
             widget=self.testBox2,
             master=self,
-            value='outputLanguage',
-            items=self.available_languages_dict["MyMemoryTranslator"].keys(),
+            value='outputLanguageKey',
+            items=list(self.available_languages_dict["MyMemoryTranslator"].keys()),
             sendSelectedValue=True,
             callback=self.outputLanguageChanged, 
             tooltip=(
@@ -276,6 +277,7 @@ class Translate(OWTextableBaseWidget):
     
     def outputLanguageChanged(self):
         """ Method for change in Output Language """
+        self.outputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.outputLanguageKey]
         self.sendButton.settingsChanged()
 
 
@@ -317,8 +319,6 @@ class Translate(OWTextableBaseWidget):
         #annotations = list()
         try:
             for segment in self.segmentation:
-                #pour test
-                self.outputLanguage = "fr-FR"
                 #pas pour test
                 segmentation_contents.append(Input(self.translate(segment.get_content())))
                 """annotations.append(
@@ -416,13 +416,13 @@ class Translate(OWTextableBaseWidget):
     def detectInputLanguage(self):
         #detect the language
         text = self.segmentation[0].get_content()
-        self.detectedInputLanguage = detect(text)
-        print("here")
-        print(self.detectedInputLanguage)
-        if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
-            self.infoBox.setText(u'This language is not supported', 'warning')
-            print("test")
-            self.detectedInputLanguage = "en-US"
+        lang_detect_language = detect(text)
+        for language in self.available_languages_dict["MyMemoryTranslator"].values():
+            if lang_detect_language in language:
+                self.detectedInputLanguage = language
+                break
+        self.infoBox.setText(u'This language is not supported', 'warning')
+        return
 
     def translate(self, untranslated_text):
         try:
