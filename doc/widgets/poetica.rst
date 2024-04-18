@@ -47,7 +47,7 @@ Interface
 
 .. _Poetica_fig1:
 
-.. figure:: figures/poetica_maquette.png
+.. figure:: figures/poetica_interface.png
     :align: center
     :scale: 50 %
     :alt: Interface of the Poetica widget
