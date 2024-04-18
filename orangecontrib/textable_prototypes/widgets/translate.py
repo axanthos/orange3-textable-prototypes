@@ -325,7 +325,7 @@ class Translate(OWTextableBaseWidget):
                     self.segmentation[segment].annotations.copy()
                 )"""
                 progressBar.advance()   # 1 tick on the progress bar...
-
+                
         # If an error occurs (e.g. http error, or memory error)...
         except:
 
@@ -339,7 +339,7 @@ class Translate(OWTextableBaseWidget):
             self.send("Translated data", None, self)
             self.controlArea.setDisabled(False)
             return
-
+        self.createdInputs = segmentation_contents
         # Store downloaded XML in input objects...
         """for segmentation_content_idx in range(len(segmentation_contents)):
             newInput = Input(segmentation_contents[segmentation_content_idx])
@@ -347,12 +347,12 @@ class Translate(OWTextableBaseWidget):
 
         # If there's only one play, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
-            self.segmentation = segmentation_contents[0]
+            self.segmentation = self.createdInputs[0]
 
         # Otherwise the widget's output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
-                segmentation_contents,
+                self.createdInputs,
                 #self.captionTitle,
                 import_labels_as=None,
             )
