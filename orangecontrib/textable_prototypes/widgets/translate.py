@@ -199,6 +199,9 @@ class Translate(OWTextableBaseWidget):
                 u"Choose language output."
             ),
         )
+        #initialise first time
+        self.outputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.outputLanguageKey]
+
 
 
         # Translation service
@@ -290,6 +293,8 @@ class Translate(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
+        print(self.outputLanguage)
+        print(self.detectedInputLanguage)
 
         # Check that something has been selected...
         if len(self.segmentation) == 0:
