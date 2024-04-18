@@ -297,13 +297,13 @@ class Translate(OWTextableBaseWidget):
             )
             self.send("Translated data", None, self)
             return
-        if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
+        """if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
             self.infoBox.setText(u'This language is not supported', 'error')
             self.send('Preprocessed data', None, self)
-            return
+            return"""
 
         # Clear created Inputs.
-        self.clearCreatedInputs()
+        self.clearCreatedInputIndices()
 
         # Initialize progress bar.
         self.controlArea.setDisabled(True)
@@ -314,9 +314,12 @@ class Translate(OWTextableBaseWidget):
 
         # Attempt to connect to Theatre-classique and retrieve plays...
         segmentation_contents = list()
-        annotations = list()
+        #annotations = list()
         try:
             for segment in self.segmentation:
+                #pour test
+                self.outputLanguage = "fr-FR"
+                #pas pour test
                 segmentation_contents.append(Input(self.translate(segment.get_content())))
                 """annotations.append(
                     self.segmentation[segment].annotations.copy()
@@ -338,19 +341,19 @@ class Translate(OWTextableBaseWidget):
             return
 
         # Store downloaded XML in input objects...
-        for segmentation_content_idx in range(len(segmentation_contents)):
+        """for segmentation_content_idx in range(len(segmentation_contents)):
             newInput = Input(segmentation_contents[segmentation_content_idx])
-            self.createdInputs.append(newInput)
+            self.createdInputs.append(newInput)"""
 
         # If there's only one play, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
-            self.segmentation = self.createdInputs[0]
+            self.segmentation = segmentation_contents[0]
 
         # Otherwise the widget's output is a concatenation...
         else:
             self.segmentation = Segmenter.concatenate(
-                self.createdInputs,
-                self.captionTitle,
+                segmentation_contents,
+                #self.captionTitle,
                 import_labels_as=None,
             )
 
@@ -419,6 +422,7 @@ class Translate(OWTextableBaseWidget):
         if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
             self.infoBox.setText(u'This language is not supported', 'warning')
             print("test")
+            self.detectedInputLanguage = "en-US"
 
     def translate(self, untranslated_text):
         try:
