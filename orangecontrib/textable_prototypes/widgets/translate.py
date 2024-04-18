@@ -73,6 +73,7 @@ class Translate(OWTextableBaseWidget):
         # Other attributes...
         self.createdInputIndices = list()
         self.segmentation = None
+        self.createdInputs = list()
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -276,44 +277,92 @@ class Translate(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def sendData(self):
-        """Preprocess and send data"""
-        if not self.segmentation:
-            self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Preprocessed data', None, self)
-            return
-        if not self.segmentation.is_non_overlapping():
+        """Compute result of widget processing and send to output"""
+
+        # Check that something has been selected...
+        if len(self.segmentation) == 0:
             self.infoBox.setText(
-                message=u'Please make sure that input segments are not ' +
-                        u'overlapping.',
-                state='error'
+                "Widget needs input.",
+                "warning"
             )
-            self.send('Preprocessed data', None, self)
+            self.send("Translated data", None, self)
             return
 
-        self.clearCreatedInputIndices()
-        previousNumInputs = len(Segmentation.data)
-        self.infoBox.setText(u"Processing, please wait...", "warning")
+        # Clear created Inputs.
+        self.clearCreatedInputs()
+
+        # Initialize progress bar.
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(
             self,
             iterations=len(self.segmentation)
         )
-        preprocessed_data, _ = Segmenter.recode(
-            self.segmentation,
-            case=case,
-            remove_accents=self.removeAccents,
-            label=self.captionTitle,
-            copy_annotations=self.copyAnnotations,
-            progress_callback=progressBar.advance,
-        )
+
+        # Attempt to connect to Theatre-classique and retrieve plays...
+        segmentation_contents = list()
+        annotations = list()
+        try:
+            for segment in self.segmentation:
+                segmentation_contents.append(Input(self.translate(segment.get_content())))
+                """annotations.append(
+                    self.segmentation[segment].annotations.copy()
+                )"""
+                progressBar.advance()   # 1 tick on the progress bar...
+
+        # If an error occurs (e.g. http error, or memory error)...
+        except:
+
+            # Set Info box and widget to "error" state.
+            self.infoBox.setText(
+                "Couldn't translate input.",
+                "error"
+            )
+
+            # Reset output channel.
+            self.send("Translated data", None, self)
+            self.controlArea.setDisabled(False)
+            return
+
+        # Store downloaded XML in input objects...
+        for segmentation_content_idx in range(len(segmentation_contents)):
+            newInput = Input(segmentation_contents[segmentation_content_idx])
+            self.createdInputs.append(newInput)
+
+        # If there's only one play, the widget's output is the created Input.
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget's output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                self.captionTitle,
+                import_labels_as=None,
+            )
+
+        # Annotate segments...
+        """for idx, segment in enumerate(self.segmentation):
+            segment.annotations.update(annotations[idx])
+            self.segmentation[idx] = segment"""        
+
+        # Set status to OK and report data size...
+        message = "%i segment@p sent to output " % len(self.segmentation)
+        message = pluralize(message, len(self.segmentation))
+        numChars = 0
+        for segment in self.segmentation:
+            segmentLength = len(Segmentation.get_data(segment.str_index))
+            numChars += segmentLength
+        message += "(%i character@p)." % numChars
+        message = pluralize(message, numChars)
+        self.infoBox.setText(message)
+        progressBar.finish()
+
+        # Clear progress bar.
         progressBar.finish()
         self.controlArea.setDisabled(False)
-        newNumInputs = len(Segmentation.data)
-        self.createdInputIndices = range(previousNumInputs, newNumInputs)
-        message = u'%i segment@p sent to output.' % len(preprocessed_data)
-        message = pluralize(message, len(preprocessed_data))
-        self.infoBox.setText(message)
-        self.send('Preprocessed data', preprocessed_data, self)
+
+        # Send token...
+        self.send("Translated data", self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
     def clearCreatedInputIndices(self):
