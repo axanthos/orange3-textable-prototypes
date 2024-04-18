@@ -109,6 +109,7 @@ class SuperTextFiles(OWTextableBaseWidget):
 
 
     def __init__(self, *args, **kwargs):
+        """Widget creator."""
         super().__init__(*args, **kwargs)
 
         # Other attributes...
@@ -881,6 +882,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             return -1
 
     def clearCreatedInputs(self):
+        """Clear created inputs"""
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
@@ -1188,6 +1190,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             super().setCaption(title)
 
     def onDeleteWidget(self):
+        """On delete widget"""
         self.clearCreatedInputs()
 
 
