@@ -24,21 +24,18 @@ __version__ = '0.0.1'
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
-
 from Orange.widgets.utils.widgetpreview import WidgetPreview
-
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     InfoBox, SendButton, pluralize
 )
-
 from PyQt5.QtWidgets import QPlainTextEdit
-
 from Orange.widgets import gui, settings
-
 from langdetect import detect
-
 import deep_translator as dt
+import pickle
+import os
+import inspect
 
 class Translate(OWTextableBaseWidget):
     """Orange widget for standard text preprocessing"""
@@ -81,6 +78,19 @@ class Translate(OWTextableBaseWidget):
             callback=self.sendData,
             infoBoxAttribute='infoBox',
         )
+
+        # Path to pkl
+        path = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe()))
+        )
+
+        # Open the pkl and add the content in our database
+        try:
+            with open(os.path.join(path, "translate_data.pkl"), "rb") as file:
+                self.available_languages_dict = pickle.load(file)
+        # Else show error message
+        except IOError:
+            print("Failed to open pkl file.")
 
         # Options box
         """ optionsBox = gui.widgetBox(
@@ -181,7 +191,7 @@ class Translate(OWTextableBaseWidget):
             widget=self.testBox2,
             master=self,
             value='outputLanguage',
-            items=[u'English', u'Portuguese', u'French', u'German', u'Russian'],
+            items=self.available_languages_dict["MyMemoryTranslator"].keys(),
             sendSelectedValue=True,
             callback=self.outputLanguageChanged, 
             tooltip=(
@@ -286,6 +296,10 @@ class Translate(OWTextableBaseWidget):
                 "warning"
             )
             self.send("Translated data", None, self)
+            return
+        if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
+            self.infoBox.setText(u'This language is not supported', 'error')
+            self.send('Preprocessed data', None, self)
             return
 
         # Clear created Inputs.
@@ -400,7 +414,12 @@ class Translate(OWTextableBaseWidget):
         #detect the language
         text = self.segmentation[0].get_content()
         self.detectedInputLanguage = detect(text)
-    
+        print("here")
+        print(self.detectedInputLanguage)
+        if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
+            self.infoBox.setText(u'This language is not supported', 'warning')
+            print("test")
+
     def translate(self, untranslated_text):
         try:
             translated_text = dt.MyMemoryTranslator(self.detectedInputLanguage, self.outputLanguage).translate(untranslated_text)
