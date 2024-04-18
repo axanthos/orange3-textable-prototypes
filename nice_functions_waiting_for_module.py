@@ -2,6 +2,9 @@
 Function to fetch user post
 Can probably be recycled to fetch timelines (local/federated)
 Will be integrated to the main Scraptodon.py module file
+
+Funtion to segment (and later, annotate) posts from dict
+Will also be integrated
 """
 
 from mastodon import Mastodon
