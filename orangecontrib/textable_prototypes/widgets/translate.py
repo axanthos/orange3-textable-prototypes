@@ -85,7 +85,7 @@ class Translate(OWTextableBaseWidget):
 
         # Open the pkl and add the content in our database
         try:
-            with open(os.path.join(path, "translate_data.pkl"), "r") as file:
+            with open(os.path.join(path, "translate_data.pkl"), "rb") as file:
                 self.available_languages_dict = pickle.load(file)
         # Else show error message
         except IOError:
@@ -190,7 +190,7 @@ class Translate(OWTextableBaseWidget):
             widget=self.testBox2,
             master=self,
             value='outputLanguage',
-            items=[u'English', u'Portuguese', u'French', u'German', u'Russian'],
+            items=self.available_languages_dict["MyMemoryTranslator"].keys(),
             sendSelectedValue=True,
             callback=self.outputLanguageChanged, 
             tooltip=(
@@ -365,10 +365,12 @@ class Translate(OWTextableBaseWidget):
         #detect the language
         text = self.segmentation[0].get_content()
         self.detectedInputLanguage = detect(text)
+        print("here")
+        print(self.detectedInputLanguage)
         if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
             self.infoBox.setText(u'This language is not supported', 'warning')
+            print("test")
 
-    
     def translate(self, untranslated_text):
         try:
             translated_text = dt.MyMemoryTranslator(self.detectedInputLanguage, self.outputLanguage).translate(untranslated_text)
