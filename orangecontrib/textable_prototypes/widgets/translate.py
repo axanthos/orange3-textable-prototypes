@@ -423,8 +423,10 @@ class Translate(OWTextableBaseWidget):
         for language in self.available_languages_dict["MyMemoryTranslator"].values():
             if lang_detect_language in language:
                 self.detectedInputLanguage = language
+                print(f"lang_detect: {lang_detect_language}")
+                print(f"langue: {language}")
                 break
-        self.infoBox.setText(u'This language is not supported', 'warning')
+        self.detectedInputLanguage = 'auto'
         return
 
     def translate(self, untranslated_text):
