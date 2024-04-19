@@ -33,7 +33,7 @@ from PyQt5.QtWidgets import QPlainTextEdit
 from Orange.widgets import gui, settings
 from langdetect import detect
 import deep_translator as dt
-import pickle
+import json
 import os
 import inspect
 
@@ -88,8 +88,8 @@ class Translate(OWTextableBaseWidget):
 
         # Open the pkl and add the content in our database
         try:
-            with open(os.path.join(path, "translate_data.pkl"), "rb") as file:
-                self.available_languages_dict = pickle.load(file)
+            with open(os.path.join(path, "translate_data.json"), "r") as file:
+                self.available_languages_dict = json.load(file)
         # Else show error message
         except IOError:
             print("Failed to open pkl file.")
@@ -293,8 +293,6 @@ class Translate(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
-        print(self.outputLanguage)
-        print(self.detectedInputLanguage)
 
         # Check that something has been selected...
         if len(self.segmentation) == 0:
@@ -430,11 +428,13 @@ class Translate(OWTextableBaseWidget):
         return
 
     def translate(self, untranslated_text):
-        try:
-            translated_text = dt.MyMemoryTranslator(self.detectedInputLanguage, self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        except:
-            print("Translation process did not work")
+        print(self.detectedInputLanguage)
+        print(self.outputLanguage)
+        #try:
+        translated_text = dt.MyMemoryTranslator(self.detectedInputLanguage, self.outputLanguage).translate(untranslated_text)
+        return translated_text
+        #except:
+         #   print("Translation process did not work")
     
 
 if __name__ == '__main__':
