@@ -58,6 +58,7 @@ class Translate(OWTextableBaseWidget):
     #enableAPI = settings.Setting(False)
     #inputLanguage = settings.Setting('chosenInputLanguage')
     outputLanguageKey = settings.Setting('french')
+    outputLanguage = settings.Setting('fr-FR')
     
     #translator = settings.Setting('chosenTranslator')
     #labelKey = settings.Setting(u'Entrez votre API key')
@@ -199,8 +200,6 @@ class Translate(OWTextableBaseWidget):
                 u"Choose language output."
             ),
         )
-        #initialise first time
-        self.outputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.outputLanguageKey]
 
 
 
@@ -281,6 +280,7 @@ class Translate(OWTextableBaseWidget):
     def outputLanguageChanged(self):
         """ Method for change in Output Language """
         self.outputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.outputLanguageKey]
+        print(self.outputLanguage)
         self.sendButton.settingsChanged()
 
 
