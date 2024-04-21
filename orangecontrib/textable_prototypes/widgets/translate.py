@@ -419,21 +419,25 @@ class Translate(OWTextableBaseWidget):
     def detectInputLanguage(self):
         #detect the language
         text = self.segmentation[0].get_content()
+        #self.detectedInputLanguage = detect(text)
         lang_detect_language = detect(text)
         for language in self.available_languages_dict["MyMemoryTranslator"].values():
             if lang_detect_language in language:
                 self.detectedInputLanguage = language
                 print(f"lang_detect: {lang_detect_language}")
                 print(f"langue: {language}")
-                break
-        self.detectedInputLanguage = 'auto'
+                return
+        self.infoBox.setText(
+                "Language not recognized",
+                "warning"
+            )
         return
 
     def translate(self, untranslated_text):
         print(self.detectedInputLanguage)
         print(self.outputLanguage)
         #try:
-        translated_text = dt.MyMemoryTranslator(self.detectedInputLanguage, self.outputLanguage).translate(untranslated_text)
+        translated_text = dt.MyMemoryTranslator(source=self.detectedInputLanguage, target=self.outputLanguage).translate(untranslated_text)
         return translated_text
         #except:
          #   print("Translation process did not work")
