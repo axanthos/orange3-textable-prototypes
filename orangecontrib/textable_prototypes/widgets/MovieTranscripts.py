@@ -439,8 +439,12 @@ class MovieTranscripts(OWTextableBaseWidget):
                     # script_links is a variable that may need to be changed if 
                     # another database is used or current database undergoes 
                     # change
-                    script_links = soup.findAll('a', attrs={'class':
-                        re.compile("^script-list-item")})
+
+                    #script_links = soup.findAll('a', attrs={'class':
+                    #    re.compile("^script-list-item")})
+
+                    script_links = soup.find_all('a', class_=re.compile(r"^btn btn-dark btn-sm"))
+                    
                     if not script_links:
                         break
                     links = dict()
