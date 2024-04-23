@@ -61,7 +61,7 @@ class Protoscrat(OWTextableBaseWidget):
             master=self,
             value='UserID',
             orientation='horizontal',
-            label=u'User ID::',
+            label=u'User ID:',
             labelWidth=101,
             callback=self.sendButton.settingsChanged,
             tooltip=(
