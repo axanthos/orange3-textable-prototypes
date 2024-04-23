@@ -13,7 +13,7 @@ class Protoscrat(OWTextableBaseWidget):
 
     name = "Scratodon"
     description = "Button test"
-    icon = "icons/mywidget.svg"
+    icon = "icons/Scratodon_logo_dark.png"
     priority = 1
 
     inputs = []
@@ -25,11 +25,15 @@ class Protoscrat(OWTextableBaseWidget):
 
     autoSend = settings.Setting(True)
     corpus = settings.Setting([])
+    want_main_area = False
+    UserID=""
 
     def __init__(self):
         super().__init__()
 
-        self.infoBox = InfoBox(widget=self.controlArea)
+        
+
+
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
@@ -37,8 +41,44 @@ class Protoscrat(OWTextableBaseWidget):
             infoBoxAttribute="infoBox",
         )
 
+
+        self.infoBox = InfoBox(widget=self.controlArea)
+        gui.separator(self.controlArea, height=3)
+
+        basicURLBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Source',
+            orientation='vertical',
+            addSpace=False,
+        )
+        basicURLBoxLine1 = gui.widgetBox(
+            widget=basicURLBox,
+            box=False,
+            orientation='horizontal',
+        )
+        gui.lineEdit(
+            widget=basicURLBoxLine1,
+            master=self,
+            value='UserID',
+            orientation='horizontal',
+            label=u'User ID::',
+            labelWidth=101,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The URL whose content will be imported."
+            ),
+        )
+        gui.separator(widget=basicURLBox, height=3)
+
+        
+      
+        gui.rubber(self.controlArea)
+
         self.sendButton.draw()
         self.infoBox.draw()
+
+
+
 
     def sendData(self):
         if self.corpus == list():
