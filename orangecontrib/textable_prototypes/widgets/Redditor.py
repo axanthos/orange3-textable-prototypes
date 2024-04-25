@@ -436,6 +436,7 @@ class Redditor(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def mode_changed(self):
+        """Change the search mode"""
         self.sendButton.settingsChanged()
         """Allows to update the interface depeding on query mode"""
         if self.mode == "Subreddit": # 0 = subreddit selected
