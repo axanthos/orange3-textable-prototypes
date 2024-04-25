@@ -11,7 +11,6 @@ Redditor
     :alt: First look at Redditor widget
     :align: center 
     :height: 100px
-    :width: 200 px
     
 
 Authors
