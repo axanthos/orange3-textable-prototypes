@@ -8,6 +8,7 @@ from _textable.widgets.TextableUtils import (
 from mastodon import Mastodon
 from LTTL.Segment import Segment
 from LTTL.Segmentation import Segmentation
+import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
 class Protoscrat(OWTextableBaseWidget):
@@ -109,7 +110,7 @@ class Protoscrat(OWTextableBaseWidget):
         #Send confirmation of how many toots were outputed
         message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
 
-        self.send("Scratted posts", self.segmentation, self)
+        self.send("Scratted posts", self.segmentation)
         self.infoBox.setText(message)
 
     def clearCreatedInputs(self):
@@ -176,47 +177,68 @@ class Protoscrat(OWTextableBaseWidget):
         for post in posts_dict:
 
             #Rentrer le texte dans LTTL
-            input_seg = Input(post.content)
-            #Récupérer le numéro du texte qu'on vient de rentrer
-            str_index = input_seg[0].str_index
+            input_seg = Input(post.content, self.captionTitle)
+            # #Récupérer le numéro du texte qu'on vient de rentrer
+            # str_index = input_seg[0].str_index
 
             #Rajouter chaque segment dans la liste
-            self.createdInputs.append(
-                Segment(
-                    str_index=str_index,
-                    annotations={
-                        "Account" : post.account.username,
-                        "AccountDisplayName" : post.account.display_name,
-                        "Date" : post.created_at, #TODO Format
-                        "URL" : post.url,
-                        "IsReply" : bool(post.in_reply_to_id),
-                        "IsReblog" : bool(post.reblog),
-                        "IsSensitive" : post.sensitive,
-                        "HasMedias" : bool(post.media_attachments), #Rajouter types de médias ?
-                        "HasContentWarning" : bool(post.spoiler_text),
-                        "ReblogId" : post.reblog.id if post.reblog else None,
-                        "PeopleMentionnedId" : post.mentions if post.mentions else None, #TODO get id of accounts (or username ?)
-                        "ReplyToPostId" : post.in_reply_to_id,
-                        "ReplyToAccountId" : post.in_reply_to_account_id,
-                        "SpoilerText" : post.spoiler_text,
-                        "Visibility" : post.visibility,
-                        "Application" : post.application.name if post.application else None,
-                        "Likes" : post.favourites_count,
-                        "Reposts" : post.reblogs_count,
-                        "Language" : post.language,
-                        "Tags" : post.tags if post.tags else None, #TODO tester
-                        "Poll" : post.poll, #TODO Format (ou enlever ?)
-                        "CustomEmojis" : post.emojis if post.emojis else None, #TODO tester
-                        },
-                    )
-                )
-        #Segmenter selon notre liste de segments
-        self.segmentation = Segmentation(self.createdInputs)
+            self.createdInputs.append(input_seg)
+
+
+        # If there's only one post, the widget's output is the created Input...
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget's output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                self.captionTitle,
+                import_labels_as=None,
+            )
+
+            #for idx, post in enumerate(post_dict):
+                #relier les segments déjà fait (segment[idx])
+                #avec les annotations trouvable dans post.id, etc...
+
+
+            # for idx, segment in enumerate(self.segmentation):
+            #         str_index=str_index,
+            #         annotations={
+            #             "Account" : post.account.username,
+            #             "AccountDisplayName" : post.account.display_name,
+            #             "Date" : post.created_at, #TODO Format
+            #             "URL" : post.url,
+            #             "IsReply" : bool(post.in_reply_to_id),
+            #             "IsReblog" : bool(post.reblog),
+            #             "IsSensitive" : post.sensitive,
+            #             "HasMedias" : bool(post.media_attachments), #Rajouter types de médias ?
+            #             "HasContentWarning" : bool(post.spoiler_text),
+            #             "ReblogId" : post.reblog.id if post.reblog else None,
+            #             "PeopleMentionnedId" : post.mentions if post.mentions else None, #TODO get id of accounts (or username ?)
+            #             "ReplyToPostId" : post.in_reply_to_id,
+            #             "ReplyToAccountId" : post.in_reply_to_account_id,
+            #             "SpoilerText" : post.spoiler_text,
+            #             "Visibility" : post.visibility,
+            #             "Application" : post.application.name if post.application else None,
+            #             "Likes" : post.favourites_count,
+            #             "Reposts" : post.reblogs_count,
+            #             "Language" : post.language,
+            #             "Tags" : post.tags if post.tags else None, #TODO tester
+            #             "Poll" : post.poll, #TODO Format (ou enlever ?)
+            #             "CustomEmojis" : post.emojis if post.emojis else None, #TODO tester
+            #             },
+            #         )
+
         #Debug, print chaque segment et son contenu
         for segment in self.segmentation:
             print(segment)
             print(segment.get_content(), "\n")
         print(f"Segmented {len(posts_dict)} posts.")
+
+
+        self.controlArea.setDisabled(False)
+
         return self.segmentation
 
 if __name__ == "__main__":
