@@ -273,6 +273,7 @@ class MovieTranscripts(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def searchFunction(self):
+        """Perform the search"""
         self.controlArea.setDisabled(True)
 
         # Search from the springfieldspringfield.co.uk
@@ -405,6 +406,8 @@ class MovieTranscripts(OWTextableBaseWidget):
 
 	# Get all movie titles from www.springfieldspringfield.co.uk
     def get_all_titles(self):
+        """Get all movie titles from www.springfieldspringfield.co.uk"""
+        
         '''php_query_string and http_query_string are the variable that will need to be changed
         if different database is used or if current database's structure undergoes changes'''
         php_query_string = '/movie_script.php?movie='
@@ -439,18 +442,12 @@ class MovieTranscripts(OWTextableBaseWidget):
                     # script_links is a variable that may need to be changed if 
                     # another database is used or current database undergoes 
                     # change
-
-                    #script_links = soup.findAll('a', attrs={'class':
-                    #    re.compile("^script-list-item")})
-
                     script_links = soup.find_all('a', class_=re.compile(r"^btn btn-dark btn-sm"))
                     
                     if not script_links:
                         break
                     links = dict()
-                    for link in soup.findAll(
-                        'a', attrs={'class': re.compile("^script-list-item")}
-                    ):
+                    for link in soup.find_all('a', class_=re.compile(r"^btn btn-dark btn-sm")):
                         links[link.text] =  \
                             link.get('href')[len(php_query_string):]
                     self.title_to_href.update(links)
