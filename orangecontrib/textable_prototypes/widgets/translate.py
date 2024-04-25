@@ -70,7 +70,6 @@ class Translate(OWTextableBaseWidget):
         super().__init__(*args, **kwargs)
 
         # Other attributes...
-        self.createdInputIndices = list()
         self.inputSegmentation = None
         self.outputSegmentation = None
         self.createdInputs = list()
@@ -228,6 +227,7 @@ class Translate(OWTextableBaseWidget):
 
     def inputData(self, newInput):
         """Process incoming data."""
+        print(f"this is input datat print : {len(newInput)}")
         self.inputSegmentation = newInput
         self.detectInputLanguage()
         self.infoBox.inputChanged()
@@ -240,7 +240,8 @@ class Translate(OWTextableBaseWidget):
         """Compute result of widget processing and send to output"""
 
         # Check that something has been selected...
-        
+        print("this is input segmentation :")
+        print(self.inputSegmentation)
         if not self.inputSegmentation:
             self.infoBox.setText(
                 "Widget needs input.",
@@ -255,7 +256,7 @@ class Translate(OWTextableBaseWidget):
             return"""
 
         # Clear created Inputs.
-        self.clearCreatedInputIndices()
+        self.clearCreatedInputs()
 
         # Initialize progress bar.
         self.controlArea.setDisabled(True)
@@ -264,13 +265,12 @@ class Translate(OWTextableBaseWidget):
             iterations=len(self.inputSegmentation)
         )
 
-        # Attempt to connect to Theatre-classique and retrieve plays...
-        segmentation_contents = list()
+       
         #annotations = list()
         #try:
         for segment in self.inputSegmentation:
             #pas pour test
-            segmentation_contents.append(Input(self.translate(segment.get_content())))
+            self.createdInputs.append(Input(self.translate(segment.get_content()), self.captionTitle))
             """annotations.append(
                 self.inputSegmentation[segment].annotations.copy()
             )"""
@@ -288,13 +288,12 @@ class Translate(OWTextableBaseWidget):
             self.send("Translated data", None, self)
             self.controlArea.setDisabled(False)
             return"""
-        self.createdInputs = segmentation_contents
         # Store downloaded XML in input objects...
         """for segmentation_content_idx in range(len(segmentation_contents)):
             newInput = Input(segmentation_contents[segmentation_content_idx])
             self.createdInputs.append(newInput)"""
 
-        # If there's only one play, the widget's output is the created Input.
+        # If there's only one play, the widget's output is the created Input...
         if len(self.createdInputs) == 1:
             self.outputSegmentation = self.createdInputs[0]
 
@@ -302,7 +301,7 @@ class Translate(OWTextableBaseWidget):
         else:
             self.outputSegmentation = Segmenter.concatenate(
                 self.createdInputs,
-                #self.captionTitle,
+                self.captionTitle,
                 import_labels_as=None,
             )
 
@@ -331,9 +330,14 @@ class Translate(OWTextableBaseWidget):
         self.send("Translated data", self.outputSegmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
-    def clearCreatedInputIndices(self):
-        for i in self.createdInputIndices:
-            Segmentation.set_data(i, None)
+    def clearCreatedInputs(self):
+        """
+        Delete all Input objects that have been created
+        """
+
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
 
     def updateGUI(self):
         """Update GUI state"""
@@ -351,6 +355,10 @@ class Translate(OWTextableBaseWidget):
             self.caseTransformCombo1.setDisabled(True)
 
     def setCaption(self, title):
+        """
+        This method needs to be copied verbatim in every Textable widget that sends a segmentation
+        """
+
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
             super().setCaption(title)
@@ -360,7 +368,7 @@ class Translate(OWTextableBaseWidget):
             super().setCaption(title)
 
     def onDeleteWidget(self):
-        self.clearCreatedInputIndices()
+        self.clearCreatedInputs()
 
     def detectInputLanguage(self):
         #detect the language
