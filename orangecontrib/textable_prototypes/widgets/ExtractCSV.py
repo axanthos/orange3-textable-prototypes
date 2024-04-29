@@ -227,6 +227,7 @@ class ExtractCSV(OWTextableBaseWidget):
     #----------------------------------------------------------------------
 
     def update_gui(self):
+        """Update the GUI"""
         if len(self.selectedHeader)==0:
             self.iscontentHeader.setDisabled(True)
             self.renameHeader.setDisabled(True)
@@ -235,14 +236,17 @@ class ExtractCSV(OWTextableBaseWidget):
             self.renameHeader.setDisabled(False)
 
     def content_changed(self):
+        """Perform if the content has changed"""
         self.content_column = int(self.selectedHeader[0])
         self.treat_input()
         return
 
     def delete_quotes(self):
+        """Delete quotation marks"""
         self.treat_input()
 
     def set_renamebox(self):
+        """Set the rename box"""
         # take selectedHeader
         self.renamedHeader = int(self.selectedHeader[0])
         # appear rename gui
@@ -255,7 +259,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.checkQuotes.setDisabled(True)
 
     def rename(self):
-        # rename
+        """Rename"""
         for key in self.dict_keys:
             # change my header name
             if self.dict_keys.index(key) == self.renamedHeader:
@@ -274,7 +278,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.headerEdit = ""
 
     def cancel(self):
-        # here we get back to normal gui
+        """Go back to normal gui"""
         self.renameBox.setVisible(False)
         self.headerListbox.setDisabled(False)
         self.update_gui()
@@ -282,6 +286,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.headerEdit = ""
 
     def treat_input(self):
+        """Treat the input"""
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
@@ -307,7 +312,8 @@ class ExtractCSV(OWTextableBaseWidget):
             # Input segment attributes...
             inputContent = segment.get_content()
             if not self.deleteQuotes == False :
-                inputContent = inputContent.replace('"',"")
+                inputContent = inputContent.replace('"'," ")
+                inputContent = inputContent.replace("'"," ")
             inputAnnotations = segment.annotations
             inputStrIdx = segment.str_index
             inputStart = segment.start or 0
