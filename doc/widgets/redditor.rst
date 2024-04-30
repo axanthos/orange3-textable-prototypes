@@ -97,7 +97,7 @@ The **Full Text** mode has three filters.
     :scale: 50 %
 
 
-The **URL** mode allows the user to search data by directly using the URL of a post or subreddit.
+The **URL** mode allows the user to search data by directly using the URL of a post.
 
 .. _url_fig4:
 
