@@ -32,7 +32,7 @@ Outputs:
 
   Segmentation with segments for each post and comment in imported corpora
 
-Description 
+Description
 ------------
 
 This widget is designed to scrap one or more different types of content from Reddit, data is retrieved from
