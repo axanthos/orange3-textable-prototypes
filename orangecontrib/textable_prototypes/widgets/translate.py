@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.0.1'
+__version__ = '0.0.5'
 
 
 import LTTL.Segmenter as Segmenter
@@ -56,7 +56,8 @@ class Translate(OWTextableBaseWidget):
 
     # Settings...
     #enableAPI = settings.Setting(False)
-    #inputLanguage = settings.Setting('chosenInputLanguage')
+    inputLanguageKey = settings.Setting('french')
+    inputLanguage = settings.Setting('fr-FR')
     outputLanguageKey = settings.Setting('french')
     outputLanguage = settings.Setting('fr-FR')
     
@@ -97,7 +98,7 @@ class Translate(OWTextableBaseWidget):
         
         # Input language
         
-        """ optionsBox = gui.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Input language',
             orientation='vertical',
@@ -110,14 +111,14 @@ class Translate(OWTextableBaseWidget):
         self.inputLanguage = gui.comboBox(
             widget=self.testBox1,
             master=self,
-            value='inputLanguage',
-            items=[u'Anglais', u'Portuguais', u'Français', u'Allemand', u'Russe'],
+            value='inputLanguageKey',
+            items=list(self.available_languages_dict["MyMemoryTranslator"].keys()),
             sendSelectedValue=True,
-            callback=self.sendButton.settingsChanged,
+            callback=self.inputLanguageChanged,
             tooltip=(
                 u"Choose language input."
             ),
-        ) """
+        )
 
         # Output language
         optionsBox = gui.widgetBox(
@@ -218,6 +219,13 @@ class Translate(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     
+    def inputLanguageChanged(self):
+        """ Method for change in Iutput Language """
+        self.inputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.inputLanguageKey]
+        print(self.inputLanguage)
+        self.sendButton.settingsChanged()
+
+
     def outputLanguageChanged(self):
         """ Method for change in Output Language """
         self.outputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.outputLanguageKey]
