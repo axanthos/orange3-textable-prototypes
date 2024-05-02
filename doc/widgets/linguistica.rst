@@ -50,7 +50,7 @@ Interface
 
 The widget's interface displays a single control (see 
 :ref:`figure 1 <linguistica_fig1>` below): the user can set the minimum
-length allowed for a stem (4 characters is the default value).
+length allowed for a stem (3 characters is the default value).
 
 .. _linguistica_fig1:
 
