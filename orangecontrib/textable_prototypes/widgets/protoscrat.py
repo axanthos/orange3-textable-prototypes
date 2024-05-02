@@ -41,8 +41,15 @@ class Protoscrat(OWTextableBaseWidget):
     )
 
     # Saved settings
+    # General
     autoSend = settings.Setting(False)
-    UserID = settings.Setting("macron@rivals.space")
+    userID = settings.Setting("macron@rivals.space")
+
+    # Filters
+    excludeReblogs = settings.Setting(True)
+    excludeReplies = settings.Setting(True)
+    excludeMedias = settings.Setting(True)
+    onlyMedia = settings.Setting(True)
 
     def __init__(self):
         super().__init__()
@@ -76,7 +83,7 @@ class Protoscrat(OWTextableBaseWidget):
         gui.lineEdit(
             widget=basicURLBoxLine1,
             master=self,
-            value='UserID',
+            value='userID',
             orientation='horizontal',
             label='User ID:',
             labelWidth=101,
@@ -95,8 +102,8 @@ class Protoscrat(OWTextableBaseWidget):
     def sendData(self):
         """Send data when pressing the 'Send Data' button"""
 
-        # Return error if no UserID was given
-        if not self.UserID:
+        # Return error if no userID was given
+        if not self.userID:
             self.infoBox.setText("Please give a User ID.", "warning")
             self.send('Scratted posts', None)
             return
@@ -104,7 +111,7 @@ class Protoscrat(OWTextableBaseWidget):
         #Clear old created Inputs
         self.clearCreatedInputs()
 
-        dictPosts = self.fetchUserPosts(self.UserID)
+        dictPosts = self.fetchUserPosts(self.userID)
         self.segmentation = self.createSegmentation(dictPosts)
 
         #Send confirmation of how many toots were outputed
@@ -157,8 +164,15 @@ class Protoscrat(OWTextableBaseWidget):
         user_id = myMastodon.account_lookup(user).id
         print(f"{username_at_instance}'s id is: {user_id}", "\n")
 
-        #Get all posts (for now just 1 request, 20 or 40 if we add limit=n (strange ??))
-        all_posts = myMastodon.account_statuses(user_id, limit=n)
+        #Get all posts (for now just 1 request)        (limit's max = 40)
+        #excludeReplies seems to miss some of them, but still it's better than nothing
+        #onlyMedia and excludeReblogs seem to work, we should test a bit more
+        all_posts = myMastodon.account_statuses(
+        user_id,
+        exclude_replies=self.excludeReplies,
+        exclude_reblogs=self.excludeReblogs,
+        only_media=self.onlyMedia,
+        limit=n)
 
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
@@ -201,6 +215,12 @@ class Protoscrat(OWTextableBaseWidget):
             #Create a copy of the segment
             segment = self.segmentation[idx]
 
+            #Add place holder text if post has no text (wip)
+            #Should probably do it during segmentation!!
+            if not segment.get_content:
+                #segment.jsplu
+                pass
+
             #Add annotations
             segment.annotations = {
                         "Account" : post.account.username,
@@ -229,7 +249,6 @@ class Protoscrat(OWTextableBaseWidget):
 
             #And replace it's original (we need to do it this way because LTTL)
             self.segmentation[idx] = segment
-            print(segment.annotations)
 
         #Debug, print chaque segment et son contenu
         for segment in self.segmentation:
