@@ -181,14 +181,7 @@ class TheatreClassique(OWTextableBaseWidget):
         )
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
-        gui.separator(widget=titleBox, height=3)
-        gui.button(
-            widget=titleBox,
-            master=self,
-            label="Refresh",
-            callback=self.refreshTitleSeg,
-            tooltip="Connect to Theatre-classique website and refresh list.",
-        )
+
         gui.separator(widget=titleBox, height=3)
 
         gui.separator(widget=self.controlArea, height=3)
@@ -353,13 +346,6 @@ class TheatreClassique(OWTextableBaseWidget):
         # Sort the segmentation alphabetically based on titles (nasty hack!)...
         self.titleSeg.buffer.sort(key=lambda s: s.annotations["title"])
 
-        # Update title and filter value lists (only at init and on manual
-        # refresh, therefore separate from self.updateGUI).
-        self.updateFilterValueList()
-
-    def refreshTitleSeg(self):
-        """Refresh title segmentation from website"""
-        self.titleSeg = self.getTitleListFromTheatreClassique()
         # Update title and filter value lists (only at init and on manual
         # refresh, therefore separate from self.updateGUI).
         self.updateFilterValueList()
