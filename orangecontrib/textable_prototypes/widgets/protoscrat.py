@@ -99,47 +99,16 @@ class Protoscrat(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
 
-    def sendData(self):
-        """Send data when pressing the 'Send Data' button"""
 
-        # Return error if no userID was given
-        if not self.userID:
-            self.infoBox.setText("Please give a User ID.", "warning")
-            self.send('Scratted posts', None)
-            return
-
-        #Clear old created Inputs
-        self.clearCreatedInputs()
-
-        dictPosts = self.fetchUserPosts(self.userID)
-        self.segmentation = self.createSegmentation(dictPosts)
-
-        #Send confirmation of how many toots were outputed
-        message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
-
-        self.send("Scratted posts", self.segmentation)
-        self.infoBox.setText(message)
-
-    def clearCreatedInputs(self):
-        """Delete all Input objects that have been created"""
-
-        for i in self.createdInputs:
-            Segmentation.set_data(i[0].str_index, None)
-        del self.createdInputs[:]
-
-    def setCaption(self, title):
-        """This method needs to be copied verbatim in every Textable widget that sends a segmentation"""
-
-        if 'captionTitle' in dir(self):
-            changed = title != self.captionTitle
-            super().setCaption(title)
-            if changed:
-                self.sendButton.settingsChanged()
-        else:
-            super().setCaption(title)
+    #Our methods
+    def fetchTimelines(self, instance, n=100):
+        """Takes a string like (https://)instance.net and returns a dictionary
+        of the n last posts from Federated or Local timeline"""
+        all_posts = {}
+        return all_posts
 
     def fetchUserPosts(self, username_at_instance, n = 100):
-        """Takes a string like (@)user@instance.net and returns a dictionnary of all posts from user"""
+        """Takes a string like (@)user@instance.net and returns a dictionnary of the n last posts from user"""
 
         #TODO loop to get n posts, instead of just one (?) request
         #TODO fix parsing if string is "https://rival3s.space/@macron"
@@ -189,10 +158,14 @@ class Protoscrat(OWTextableBaseWidget):
         #Pour chaque post (un dictionnaire) dans posts (un dictionnaire de dictionnaires)
         for post in posts_dict:
 
-            #Rentrer le texte dans LTTL
-            input_seg = Input(post.content, self.captionTitle)
-            # #Récupérer le numéro du texte qu'on vient de rentrer
-            # str_index = input_seg[0].str_index
+            #Add placeholder text if post has no text
+            #TODO Maybe we shouldn't do it ? we'll see
+
+            #Rentrer le texte (ou placeholder) dans LTTL
+            if not post.content:
+                input_seg = Input("Placeholder !!!! this post had no text in it...", self.captionTitle)
+            else:
+                input_seg = Input(post.content, self.captionTitle)
 
             #Rajouter chaque segment dans la liste
             self.createdInputs.append(input_seg)
@@ -214,12 +187,6 @@ class Protoscrat(OWTextableBaseWidget):
 
             #Create a copy of the segment
             segment = self.segmentation[idx]
-
-            #Add place holder text if post has no text (wip)
-            #Should probably do it during segmentation!!
-            if not segment.get_content:
-                #segment.jsplu
-                pass
 
             #Add annotations
             segment.annotations = {
@@ -260,6 +227,51 @@ class Protoscrat(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
 
         return self.segmentation
+
+
+
+    #sendData method
+    def sendData(self):
+        """Send data when pressing the 'Send Data' button"""
+
+        # Return error if no userID was given
+        if not self.userID:
+            self.infoBox.setText("Please give a User ID.", "warning")
+            self.send('Scratted posts', None)
+            return
+
+        #Clear old created Inputs
+        self.clearCreatedInputs()
+
+        dictPosts = self.fetchUserPosts(self.userID)
+        self.segmentation = self.createSegmentation(dictPosts)
+
+        #Send confirmation of how many toots were outputed
+        message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
+
+        self.send("Scratted posts", self.segmentation)
+        self.infoBox.setText(message)
+
+
+
+    #Manage inputs, copy/pasted from other modules
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created"""
+
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
+    def setCaption(self, title):
+        """This method needs to be copied verbatim in every Textable widget that sends a segmentation"""
+
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
 if __name__ == "__main__":
     WidgetPreview(Protoscrat).run()
