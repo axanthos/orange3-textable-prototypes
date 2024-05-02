@@ -42,7 +42,7 @@ class Translate(OWTextableBaseWidget):
 
     name = "Translate"
     description = "Text translator"
-    icon = "icons/Translator.png"
+    icon = "icons/Translator.svg"
     priority = 2001
 
     inputs = [('Segmentation', Segmentation, "inputData")]
