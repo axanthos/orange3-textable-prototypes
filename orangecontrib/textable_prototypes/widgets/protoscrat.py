@@ -41,8 +41,8 @@ class Protoscrat(OWTextableBaseWidget):
     )
 
     # Saved settings
-    autoSend = settings.Setting(True)
-    UserID = settings.Setting("")
+    autoSend = settings.Setting(False)
+    UserID = settings.Setting("macron@rivals.space")
 
     def __init__(self):
         super().__init__()
@@ -135,7 +135,7 @@ class Protoscrat(OWTextableBaseWidget):
         """Takes a string like (@)user@instance.net and returns a dictionnary of all posts from user"""
 
         #TODO loop to get n posts, instead of just one (?) request
-        #TODO fix parsing if string is "https://rivals.space/@macron"
+        #TODO fix parsing if string is "https://rival3s.space/@macron"
         #TODO on peut ajouter directement ici les tris MediaOnly/ExcludeRepost/ExcludeReply cf.
         #https://mastodonpy.readthedocs.io/en/stable/_modules/mastodon/accounts.html?highlight=account_statuses
         #(ça sera plus efficace que trier en front)
@@ -167,8 +167,7 @@ class Protoscrat(OWTextableBaseWidget):
         """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
         Concatenate it in a single output"""
 
-        #TODO for later: annotate (like, username, hasPhoto...) each post (easy and useful)
-        #TODO Certains segments sont vides, RT et images sans texte, n'ont rien à afficher en .content
+        #TODO Certains segments sont vides, médias sans texte, n'ont rien à afficher en .content
         #-> Mettre une case dans le GUI pour exclure ou non les textes vides (les posts vides
         #restent utiles pour avoir les annotations, pour les stats..)
         #Q: Mieux vaut annotations vides (None; comme actuellement) ou pas d'annotations ?
@@ -197,38 +196,40 @@ class Protoscrat(OWTextableBaseWidget):
                 import_labels_as=None,
             )
 
-            #for idx, post in enumerate(post_dict):
-                #relier les segments déjà fait (segment[idx])
-                #avec les annotations trouvable dans post.id, etc...
+        for idx, post in enumerate(posts_dict):
 
+            #Create a copy of the segment
+            segment = self.segmentation[idx]
 
-            # for idx, segment in enumerate(self.segmentation):
-            #         str_index=str_index,
-            #         annotations={
-            #             "Account" : post.account.username,
-            #             "AccountDisplayName" : post.account.display_name,
-            #             "Date" : post.created_at, #TODO Format
-            #             "URL" : post.url,
-            #             "IsReply" : bool(post.in_reply_to_id),
-            #             "IsReblog" : bool(post.reblog),
-            #             "IsSensitive" : post.sensitive,
-            #             "HasMedias" : bool(post.media_attachments), #Rajouter types de médias ?
-            #             "HasContentWarning" : bool(post.spoiler_text),
-            #             "ReblogId" : post.reblog.id if post.reblog else None,
-            #             "PeopleMentionnedId" : post.mentions if post.mentions else None, #TODO get id of accounts (or username ?)
-            #             "ReplyToPostId" : post.in_reply_to_id,
-            #             "ReplyToAccountId" : post.in_reply_to_account_id,
-            #             "SpoilerText" : post.spoiler_text,
-            #             "Visibility" : post.visibility,
-            #             "Application" : post.application.name if post.application else None,
-            #             "Likes" : post.favourites_count,
-            #             "Reposts" : post.reblogs_count,
-            #             "Language" : post.language,
-            #             "Tags" : post.tags if post.tags else None, #TODO tester
-            #             "Poll" : post.poll, #TODO Format (ou enlever ?)
-            #             "CustomEmojis" : post.emojis if post.emojis else None, #TODO tester
-            #             },
-            #         )
+            #Add annotations
+            segment.annotations = {
+                        "Account" : post.account.username,
+                        "AccountDisplayName" : post.account.display_name,
+                        "Date" : post.created_at, #TODO Format
+                        "URL" : post.url,
+                        "IsReply" : bool(post.in_reply_to_id),
+                        "IsReblog" : bool(post.reblog),
+                        "IsSensitive" : post.sensitive,
+                        "HasMedias" : bool(post.media_attachments), #Rajouter types de médias ?
+                        "HasContentWarning" : bool(post.spoiler_text),
+                        "ReblogId" : post.reblog.id if post.reblog else None,
+                        "PeopleMentionnedId" : post.mentions if post.mentions else None, #TODO get id of accounts (or username ?)
+                        "ReplyToPostId" : post.in_reply_to_id,
+                        "ReplyToAccountId" : post.in_reply_to_account_id,
+                        "SpoilerText" : post.spoiler_text,
+                        "Visibility" : post.visibility,
+                        "Application" : post.application.name if post.application else None,
+                        "Likes" : post.favourites_count,
+                        "Reposts" : post.reblogs_count,
+                        "Language" : post.language,
+                        "Tags" : post.tags if post.tags else None, #TODO tester
+                        "Poll" : post.poll, #TODO Format (ou enlever ?)
+                        "CustomEmojis" : post.emojis if post.emojis else None, #TODO tester
+            }
+
+            #And replace it's original (we need to do it this way because LTTL)
+            self.segmentation[idx] = segment
+            print(segment.annotations)
 
         #Debug, print chaque segment et son contenu
         for segment in self.segmentation:
