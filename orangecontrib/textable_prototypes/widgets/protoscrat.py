@@ -42,6 +42,17 @@ class Protoscrat(OWTextableBaseWidget):
     # Saved settings
     autoSend = settings.Setting(True)
     UserID = settings.Setting("")
+    URL = settings.Setting("")
+    amount = settings.Setting(100)
+    excludeReposts = settings.Setting(False)
+    API = settings.Setting("")
+    advancedSettings = settings.Setting(False)
+    repostsOnly = settings.Setting(False)
+    minReposts = settings.Setting(10)
+    excludeImages = settings.Setting(False)
+    withImages = settings.Setting(False)
+    minLikes = settings.Setting(10)
+    #mode = settings.ContextSetting(u'No context')
 
     def __init__(self):
         super().__init__()
@@ -49,6 +60,8 @@ class Protoscrat(OWTextableBaseWidget):
         #Attributs initilizations...
         self.segmentation = Input("")
         self.createdInputs = list()
+        self.sources = ["User", "Federated", "Local"]
+        self.selectedSource = "User"
 
         # GUI
         self.sendButton = SendButton(
@@ -56,22 +69,42 @@ class Protoscrat(OWTextableBaseWidget):
             master=self,
             callback=self.sendData,
             infoBoxAttribute="infoBox",
+            sendIfPreCallback=self.updateGUI,
         )
 
-        self.infoBox = InfoBox(widget=self.controlArea)
-        gui.separator(self.controlArea, height=3)
+        queryBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Select A Source",
+            orientation="vertical",
+        )
 
-        basicURLBox = gui.widgetBox(
+        gui.comboBox(
+            widget=queryBox,
+            master=self,
+            value="selectedSource",
+            items=self.sources,
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Source:",
+            emptyString="",
+            labelWidth=120,
+            tooltip=(
+                "Please select the desired source.\n"
+            ),
+            callback=self.sendButton.settingsChanged,
+        )
+
+        self.basicURLBox1 = gui.widgetBox(
             widget=self.controlArea,
             box='Source',
             orientation='vertical',
             addSpace=False,
-        )
+            )
         basicURLBoxLine1 = gui.widgetBox(
-            widget=basicURLBox,
+            widget=self.basicURLBox1,
             box=False,
             orientation='horizontal',
-        )
+            )
         gui.lineEdit(
             widget=basicURLBoxLine1,
             master=self,
@@ -82,23 +115,217 @@ class Protoscrat(OWTextableBaseWidget):
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 "The username '@user@instance.com' whose content will be imported."
-            ),
+                ),
+            )
+        
+        self.basicURLBox2 = gui.widgetBox(
+            widget=self.controlArea,
+            box='Source',
+            orientation='vertical',
+            addSpace=False,
+            )
+        basicURLBoxLine2 = gui.widgetBox(
+            widget=self.basicURLBox2,
+            box=False,
+            orientation='horizontal',
+            )
+        gui.lineEdit(
+            widget=basicURLBoxLine2,
+            master=self,
+            value='URL',
+            orientation='horizontal',
+            label='URL:',
+            labelWidth=101,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "The URL whose content will be imported."
+                ),
+            )
+        
+        if self.selectedSource == "User":
+            self.basicURLBox1.setVisible(True)
+            self.basicURLBox2.setVisible(False)
+        else:
+            self.basicURLBox1.setVisible(False)
+            self.basicURLBox2.setVisible(True)
+        
+        gui.spin(
+            widget=self.controlArea,
+            master=self,
+            value="amount",
+            minv=1,
+            maxv=10000,
+            label="Max amount of posts:",
+            labelWidth=135,
+            orientation="horizontal",
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select the amount of posts that you want",
+            step=10,
         )
 
-        gui.separator(widget=basicURLBox, height=3)
+        self.exclReposts = gui.checkBox(
+            widget=self.controlArea,
+            master=self,
+            value='excludeReposts',
+            label=u'Exclude reposts',
+            callback=self.updateGUI,
+        )
+
+        self.apiKey = gui.lineEdit(
+            widget=self.controlArea,
+            master=self,
+            value='API',
+            orientation='horizontal',
+            label='API key (optional):',
+            labelWidth=101,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "Your API key, optional."
+                ),
+            )
+
+        gui.checkBox(
+            widget=self.controlArea,
+            master=self,
+            value='advancedSettings',
+            label=u'Advanced settings',
+            callback=self.updateGUI,
+        )
+
+        self.advSettings = gui.widgetBox(
+            widget=self.controlArea,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        self.repostsBox = gui.widgetBox(
+            widget=self.advSettings,
+            orientation='vertical',
+            addSpace=False,
+        )
+        
+
+        self.repostsOnlyCheckbox = gui.checkBox(
+            widget=self.repostsBox,
+            master=self,
+            value='repostsOnly',
+            label=u'Reposts only',
+            callback=self.updateGUI,
+        )
+        self.minRepostsBox = gui.spin(
+            widget=self.repostsBox,
+            master=self,
+            value="minReposts",
+            minv=1,
+            maxv=10000,
+            label="Minimum of reposts:",
+            labelWidth=135,
+            orientation="horizontal",
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select the amount of reposts that you want",
+            step=10,
+        )
+
+        self.imagesBox = gui.widgetBox(
+            widget=self.repostsBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        self.excludeImagesCheckbox = gui.checkBox(
+            widget=self.imagesBox,
+            master=self,
+            value='excludeImages',
+            label=u'Exclude images',
+            callback=self.updateGUI,
+        )
+        self.withImagesCheckbox = gui.checkBox(
+            widget=self.imagesBox,
+            master=self,
+            value='withImages',
+            label=u'With images',
+            callback=self.updateGUI,
+        )
+
+        gui.spin(
+            widget=self.repostsBox,
+            master=self,
+            value="minLikes",
+            minv=1,
+            maxv=10000,
+            label="Minimum of likes:",
+            labelWidth=135,
+            orientation="horizontal",
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select the amount of likes that a post should have",
+            step=10,
+        )
+
+        if self.advancedSettings:
+            self.advSettings.setVisible(True)
+        else:
+            self.advSettings.setVisible(False)
+        
+        if self.exclReposts.isChecked():
+            self.repostsOnlyCheckbox.setDisabled(True)
+            self.repostsOnlyCheckbox.setChecked(False)
+            self.minRepostsBox.setDisabled(True)
+        else:
+            self.repostsOnlyCheckbox.setDisabled(False)
+            self.minRepostsBox.setDisabled(False)
+        
+        if self.repostsOnlyCheckbox.isChecked():
+            self.exclReposts.setDisabled(True)
+            self.exclReposts.setChecked(False)
+        else:
+            self.exclReposts.setDisabled(False)
+
+        if self.withImagesCheckbox.isChecked():
+            self.excludeImagesCheckbox.setDisabled(True)
+            self.excludeImagesCheckbox.setChecked(False)
+        else:
+            self.excludeImagesCheckbox.setDisabled(False)
+             
+        if self.excludeImagesCheckbox.isChecked():
+            self.withImagesCheckbox.setDisabled(True)
+            self.withImagesCheckbox.setChecked(False)
+        else:
+            self.withImagesCheckbox.setDisabled(False)
+
+
+        self.infoBox = InfoBox(widget=self.controlArea)
+        gui.separator(self.controlArea, height=3)
+
+        
+
+        gui.separator(widget=self.basicURLBox1, height=3)
+        gui.separator(widget=self.basicURLBox2, height=3)
+        gui.separator(widget=self.apiKey, height=3)
         gui.rubber(self.controlArea)
 
         self.sendButton.draw()
         self.infoBox.draw()
 
+
     def sendData(self):
         """Send data when pressing the 'Send Data' button"""
-
+            
         # Return error if no UserID was given
-        if not self.UserID:
-            self.infoBox.setText("Please give a User ID.", "warning")
-            self.send('Scratted posts', None)
-            return
+        if self.selectedSource=="User":
+            if not self.UserID:
+                self.infoBox.setText("Please give a User ID.", "warning")
+                self.send('Scratted posts', None)
+                return
+        if self.selectedSource=="Federated":
+            if not self.URL:
+                self.infoBox.setText("Please give a URL.", "warning")
+                self.send('Scratted posts', None)
+                return
+        if self.selectedSource=="Local":
+            if not self.URL:
+                self.infoBox.setText("Please give a URL.", "warning")
+                self.send('Scratted posts', None)
+                return
 
         #Clear old created Inputs
         self.clearCreatedInputs()
@@ -111,6 +338,50 @@ class Protoscrat(OWTextableBaseWidget):
 
         self.send("Scratted posts", self.segmentation, self)
         self.infoBox.setText(message)
+        self.updateGUI()
+    
+    def updateGUI(self):
+        """Update GUI state"""
+
+        if self.selectedSource=="User":
+            self.basicURLBox1.setVisible(True)
+            self.basicURLBox2.setVisible(False)
+            self.URL = ""
+        else: 
+            self.basicURLBox1.setVisible(False)
+            self.basicURLBox2.setVisible(True)
+            self.UserID = ""
+        
+        if self.advancedSettings:
+            self.advSettings.setVisible(True)
+        else:
+            self.advSettings.setVisible(False)
+
+        if self.exclReposts.isChecked():
+            self.repostsOnlyCheckbox.setDisabled(True)
+            self.repostsOnlyCheckbox.setChecked(False)
+            self.minRepostsBox.setDisabled(True)
+        else:
+            self.repostsOnlyCheckbox.setDisabled(False)
+            self.minRepostsBox.setDisabled(False)
+        
+        if self.repostsOnlyCheckbox.isChecked():
+            self.exclReposts.setDisabled(True)
+            self.exclReposts.setChecked(False)
+        else:
+            self.exclReposts.setDisabled(False)
+
+        if self.withImagesCheckbox.isChecked():
+            self.excludeImagesCheckbox.setDisabled(True)
+            self.excludeImagesCheckbox.setChecked(False)
+        else:
+            self.excludeImagesCheckbox.setDisabled(False)
+        
+        if self.excludeImagesCheckbox.isChecked():
+            self.withImagesCheckbox.setDisabled(True)
+            self.withImagesCheckbox.setChecked(False)
+        else:
+            self.withImagesCheckbox.setDisabled(False)
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created"""
