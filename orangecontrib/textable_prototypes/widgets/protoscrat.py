@@ -48,7 +48,7 @@ class Protoscrat(OWTextableBaseWidget):
     # Filters
     excludeReblogs = settings.Setting(True)
     excludeReplies = settings.Setting(True)
-    excludeMedias = settings.Setting(True)
+    excludeMedias = settings.Setting(True) #NotImplementedYet
     onlyMedia = settings.Setting(True)
 
     def __init__(self):
@@ -150,7 +150,6 @@ class Protoscrat(OWTextableBaseWidget):
         """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
         Concatenate it in a single output"""
 
-        #TODO Certains segments sont vides, médias sans texte, n'ont rien à afficher en .content
         #-> Mettre une case dans le GUI pour exclure ou non les textes vides (les posts vides
         #restent utiles pour avoir les annotations, pour les stats..)
         #Q: Mieux vaut annotations vides (None; comme actuellement) ou pas d'annotations ?
@@ -191,28 +190,48 @@ class Protoscrat(OWTextableBaseWidget):
             #Add annotations
             segment.annotations = {
                         "Account" : post.account.username,
-                        "AccountDisplayName" : post.account.display_name,
-                        "Date" : post.created_at, #TODO Format
                         "URL" : post.url,
                         "IsReply" : bool(post.in_reply_to_id),
                         "IsReblog" : bool(post.reblog),
                         "IsSensitive" : post.sensitive,
-                        "HasMedias" : bool(post.media_attachments), #Rajouter types de médias ?
-                        "HasContentWarning" : bool(post.spoiler_text),
-                        "ReblogId" : post.reblog.id if post.reblog else None,
-                        "PeopleMentionnedId" : post.mentions if post.mentions else None, #TODO get id of accounts (or username ?)
-                        "ReplyToPostId" : post.in_reply_to_id,
-                        "ReplyToAccountId" : post.in_reply_to_account_id,
-                        "SpoilerText" : post.spoiler_text,
+                        "HasMedias" : bool(post.media_attachments),
                         "Visibility" : post.visibility,
-                        "Application" : post.application.name if post.application else None,
                         "Likes" : post.favourites_count,
                         "Reposts" : post.reblogs_count,
-                        "Language" : post.language,
-                        "Tags" : post.tags if post.tags else None, #TODO tester
-                        "Poll" : post.poll, #TODO Format (ou enlever ?)
-                        "CustomEmojis" : post.emojis if post.emojis else None, #TODO tester
+                        #"AccountDisplayName" : post.account.display_name,
+                        #"ReblogId" : post.reblog.id if post.reblog else None,
+                        #"PeopleMentionnedId" : post.mentions if post.mentions else None,
+                        #"ReplyToPostId" : post.in_reply_to_id,
+                        #"ReplyToAccountId" : post.in_reply_to_account_id,
+                        #"Poll" : post.poll,
+                        #"CustomEmojis" : post.emojis if post.emojis else None,
             }
+
+            #Cut Date at seconds
+            date = post.created_at
+            date = date.replace(microsecond=0, tzinfo=None)
+            segment.annotations["Date"] = date
+
+            #Optionnals annotations (will only be added if it has something to say)
+            if post.tags:
+                tag_list = []
+
+                #List of the name of each tag
+                for tag in post.tags:
+                    tag_list.append(tag.name)
+
+                #Concatenated to a string and added to annotation
+                tag_string = ", ".join(tag_list)
+                segment.annotations["Hashtags"] = tag_string
+
+            if post.spoiler_text:
+                segment.annotations["SpoilerText"] = post.spoiler_text
+            
+            if post.application:
+                segment.annotations["Application"] = post.application.name
+
+            if post.language:
+                segment.annotations["Language"] = post.language
 
             #And replace it's original (we need to do it this way because LTTL)
             self.segmentation[idx] = segment
