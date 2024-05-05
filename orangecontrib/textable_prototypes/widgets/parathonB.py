@@ -604,5 +604,5 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
-    #WidgetPreview(Parathon).run()
+    #WidgetPreview(Parathon).run(inputData=Input("Hello world. How are you doing ?"))
     
