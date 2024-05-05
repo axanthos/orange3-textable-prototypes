@@ -25,6 +25,7 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
+#from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -887,3 +888,4 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
+    #WidgetPreview(LexicalHunter).run(inputData=Input("Hello world. How are you doing ?"))
