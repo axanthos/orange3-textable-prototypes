@@ -606,4 +606,4 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
-    #WidgetPreview(Poetica).run()
+    #WidgetPreview(ECP).run()
