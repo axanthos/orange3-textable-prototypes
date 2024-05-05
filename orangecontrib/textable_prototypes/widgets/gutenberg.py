@@ -30,6 +30,7 @@ from pathlib import Path
 
 # Orange
 from Orange.widgets import widget, gui, settings
+#from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # LTTL
 from LTTL.Segmentation import Segmentation
@@ -692,3 +693,4 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
+    #WidgetPreview(Gutenberg).run()
