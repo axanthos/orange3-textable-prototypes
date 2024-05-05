@@ -30,6 +30,7 @@ import prawcore
 
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
+#from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
@@ -1018,3 +1019,4 @@ if __name__ == "__main__":
     my_widget.raise_()
     my_app.exec_()
     my_widget.saveSettings()
+    #WidgetPreview(Redditor).run()
