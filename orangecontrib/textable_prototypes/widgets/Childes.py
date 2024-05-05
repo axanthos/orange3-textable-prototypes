@@ -40,6 +40,7 @@ from bs4 import BeautifulSoup
 import AnyQt
 
 from Orange.widgets import widget, gui, settings
+#from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
@@ -951,3 +952,4 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
+    #WidgetPreview(Childes).run()
