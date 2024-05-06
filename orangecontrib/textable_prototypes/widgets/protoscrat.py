@@ -8,6 +8,7 @@ from _textable.widgets.TextableUtils import (
 from mastodon import Mastodon
 from LTTL.Segment import Segment
 from LTTL.Segmentation import Segmentation
+import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
 class Protoscrat(OWTextableBaseWidget):
@@ -40,8 +41,16 @@ class Protoscrat(OWTextableBaseWidget):
     )
 
     # Saved settings
-    autoSend = settings.Setting(True)
-    UserID = settings.Setting("")
+    # General
+    autoSend = settings.Setting(False)
+    userID = settings.Setting("macron@rivals.space")
+    
+    # Filters
+    excludeReblogs = settings.Setting(True)
+    excludeReplies = settings.Setting(True)
+    excludeMedias = settings.Setting(True) #NotImplementedYet
+    onlyMedia = settings.Setting(True)
+
     URL = settings.Setting("")
     amount = settings.Setting(100)
     excludeReposts = settings.Setting(False)
@@ -52,7 +61,6 @@ class Protoscrat(OWTextableBaseWidget):
     excludeImages = settings.Setting(False)
     withImages = settings.Setting(False)
     minLikes = settings.Setting(10)
-    #mode = settings.ContextSetting(u'No context')
 
     def __init__(self):
         super().__init__()
@@ -108,7 +116,7 @@ class Protoscrat(OWTextableBaseWidget):
         gui.lineEdit(
             widget=basicURLBoxLine1,
             master=self,
-            value='UserID',
+            value='userID',
             orientation='horizontal',
             label='User ID:',
             labelWidth=101,
@@ -306,40 +314,13 @@ class Protoscrat(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
 
+    #Our methods
+    def fetchTimelines(self, instance, n=100):
+        """Takes a string like (https://)instance.net and returns a dictionary
+        of the n last posts from Federated or Local timeline"""
+        all_posts = {}
+        return all_posts
 
-    def sendData(self):
-        """Send data when pressing the 'Send Data' button"""
-            
-        # Return error if no UserID was given
-        if self.selectedSource=="User":
-            if not self.UserID:
-                self.infoBox.setText("Please give a User ID.", "warning")
-                self.send('Scratted posts', None)
-                return
-        if self.selectedSource=="Federated":
-            if not self.URL:
-                self.infoBox.setText("Please give a URL.", "warning")
-                self.send('Scratted posts', None)
-                return
-        if self.selectedSource=="Local":
-            if not self.URL:
-                self.infoBox.setText("Please give a URL.", "warning")
-                self.send('Scratted posts', None)
-                return
-
-        #Clear old created Inputs
-        self.clearCreatedInputs()
-
-        dictPosts = self.fetchUserPosts(self.UserID)
-        self.segmentation = self.createSegmentation(dictPosts)
-
-        #Send confirmation of how many toots were outputed
-        message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
-
-        self.send("Scratted posts", self.segmentation, self)
-        self.infoBox.setText(message)
-        self.updateGUI()
-    
     def updateGUI(self):
         """Update GUI state"""
 
@@ -402,10 +383,10 @@ class Protoscrat(OWTextableBaseWidget):
             super().setCaption(title)
 
     def fetchUserPosts(self, username_at_instance, n = 100):
-        """Takes a string like (@)user@instance.net and returns a dictionnary of all posts from user"""
+        """Takes a string like (@)user@instance.net and returns a dictionnary of the n last posts from user"""
 
         #TODO loop to get n posts, instead of just one (?) request
-        #TODO fix parsing if string is "https://rivals.space/@macron"
+        #TODO fix parsing if string is "https://rival3s.space/@macron"
         #TODO on peut ajouter directement ici les tris MediaOnly/ExcludeRepost/ExcludeReply cf.
         #https://mastodonpy.readthedocs.io/en/stable/_modules/mastodon/accounts.html?highlight=account_statuses
         #(ça sera plus efficace que trier en front)
@@ -427,8 +408,15 @@ class Protoscrat(OWTextableBaseWidget):
         user_id = myMastodon.account_lookup(user).id
         print(f"{username_at_instance}'s id is: {user_id}", "\n")
 
-        #Get all posts (for now just 1 request, 20 or 40 if we add limit=n (strange ??))
-        all_posts = myMastodon.account_statuses(user_id, limit=n)
+        #Get all posts (for now just 1 request)        (limit's max = 40)
+        #excludeReplies seems to miss some of them, but still it's better than nothing
+        #onlyMedia and excludeReblogs seem to work, we should test a bit more
+        all_posts = myMastodon.account_statuses(
+        user_id,
+        exclude_replies=self.excludeReplies,
+        exclude_reblogs=self.excludeReblogs,
+        only_media=self.onlyMedia,
+        limit=n)
 
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
@@ -437,8 +425,6 @@ class Protoscrat(OWTextableBaseWidget):
         """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
         Concatenate it in a single output"""
 
-        #TODO for later: annotate (like, username, hasPhoto...) each post (easy and useful)
-        #TODO Certains segments sont vides, RT et images sans texte, n'ont rien à afficher en .content
         #-> Mettre une case dans le GUI pour exclure ou non les textes vides (les posts vides
         #restent utiles pour avoir les annotations, pour les stats..)
         #Q: Mieux vaut annotations vides (None; comme actuellement) ou pas d'annotations ?
@@ -446,49 +432,153 @@ class Protoscrat(OWTextableBaseWidget):
         #Pour chaque post (un dictionnaire) dans posts (un dictionnaire de dictionnaires)
         for post in posts_dict:
 
-            #Rentrer le texte dans LTTL
-            input_seg = Input(post.content)
-            #Récupérer le numéro du texte qu'on vient de rentrer
-            str_index = input_seg[0].str_index
+            #Add placeholder text if post has no text
+            #TODO Maybe we shouldn't do it ? we'll see
+
+            #Rentrer le texte (ou placeholder) dans LTTL
+            if not post.content:
+                input_seg = Input("Placeholder !!!! this post had no text in it...", self.captionTitle)
+            else:
+                input_seg = Input(post.content, self.captionTitle)
 
             #Rajouter chaque segment dans la liste
-            self.createdInputs.append(
-                Segment(
-                    str_index=str_index,
-                    annotations={
+            self.createdInputs.append(input_seg)
+
+
+        # If there's only one post, the widget's output is the created Input...
+        if len(self.createdInputs) == 1:
+            self.segmentation = self.createdInputs[0]
+
+        # Otherwise the widget's output is a concatenation...
+        else:
+            self.segmentation = Segmenter.concatenate(
+                self.createdInputs,
+                self.captionTitle,
+                import_labels_as=None,
+            )
+
+        for idx, post in enumerate(posts_dict):
+
+            #Create a copy of the segment
+            segment = self.segmentation[idx]
+
+            #Add annotations
+            segment.annotations = {
                         "Account" : post.account.username,
-                        "AccountDisplayName" : post.account.display_name,
-                        "Date" : post.created_at, #TODO Format
                         "URL" : post.url,
                         "IsReply" : bool(post.in_reply_to_id),
                         "IsReblog" : bool(post.reblog),
                         "IsSensitive" : post.sensitive,
-                        "HasMedias" : bool(post.media_attachments), #Rajouter types de médias ?
-                        "HasContentWarning" : bool(post.spoiler_text),
-                        "ReblogId" : post.reblog.id if post.reblog else None,
-                        "PeopleMentionnedId" : post.mentions if post.mentions else None, #TODO get id of accounts (or username ?)
-                        "ReplyToPostId" : post.in_reply_to_id,
-                        "ReplyToAccountId" : post.in_reply_to_account_id,
-                        "SpoilerText" : post.spoiler_text,
+                        "HasMedias" : bool(post.media_attachments),
                         "Visibility" : post.visibility,
-                        "Application" : post.application.name if post.application else None,
                         "Likes" : post.favourites_count,
                         "Reposts" : post.reblogs_count,
-                        "Language" : post.language,
-                        "Tags" : post.tags if post.tags else None, #TODO tester
-                        "Poll" : post.poll, #TODO Format (ou enlever ?)
-                        "CustomEmojis" : post.emojis if post.emojis else None, #TODO tester
-                        },
-                    )
-                )
-        #Segmenter selon notre liste de segments
-        self.segmentation = Segmentation(self.createdInputs)
+                        #"AccountDisplayName" : post.account.display_name,
+                        #"ReblogId" : post.reblog.id if post.reblog else None,
+                        #"PeopleMentionnedId" : post.mentions if post.mentions else None,
+                        #"ReplyToPostId" : post.in_reply_to_id,
+                        #"ReplyToAccountId" : post.in_reply_to_account_id,
+                        #"Poll" : post.poll,
+                        #"CustomEmojis" : post.emojis if post.emojis else None,
+            }
+
+            #Cut Date at seconds
+            date = post.created_at
+            date = date.replace(microsecond=0, tzinfo=None)
+            segment.annotations["Date"] = date
+
+            #Optionnals annotations (will only be added if it has something to say)
+            if post.tags:
+                tag_list = []
+
+                #List of the name of each tag
+                for tag in post.tags:
+                    tag_list.append(tag.name)
+
+                #Concatenated to a string and added to annotation
+                tag_string = ", ".join(tag_list)
+                segment.annotations["Hashtags"] = tag_string
+
+            if post.spoiler_text:
+                segment.annotations["SpoilerText"] = post.spoiler_text
+            
+            if post.application:
+                segment.annotations["Application"] = post.application.name
+
+            if post.language:
+                segment.annotations["Language"] = post.language
+
+            #And replace it's original (we need to do it this way because LTTL)
+            self.segmentation[idx] = segment
+
         #Debug, print chaque segment et son contenu
         for segment in self.segmentation:
             print(segment)
             print(segment.get_content(), "\n")
         print(f"Segmented {len(posts_dict)} posts.")
+
+
+        self.controlArea.setDisabled(False)
+
         return self.segmentation
+
+
+
+    #sendData method
+    def sendData(self):
+        """Send data when pressing the 'Send Data' button"""
+            
+        # Return error if no UserID was given
+        if self.selectedSource=="User":
+            if not self.UserID:
+                self.infoBox.setText("Please give a User ID.", "warning")
+                self.send('Scratted posts', None)
+                return
+        if self.selectedSource=="Federated":
+            if not self.URL:
+                self.infoBox.setText("Please give a URL.", "warning")
+                self.send('Scratted posts', None)
+                return
+        if self.selectedSource=="Local":
+            if not self.URL:
+                self.infoBox.setText("Please give a URL.", "warning")
+                self.send('Scratted posts', None)
+                return
+
+        #Clear old created Inputs
+        self.clearCreatedInputs()
+
+        dictPosts = self.fetchUserPosts(self.UserID)
+        self.segmentation = self.createSegmentation(dictPosts)
+
+        #Send confirmation of how many toots were outputed
+        message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
+
+        self.send("Scratted posts", self.segmentation, self)
+        self.infoBox.setText(message)
+        self.updateGUI()
+
+
+
+
+    #Manage inputs, copy/pasted from other modules
+    def clearCreatedInputs(self):
+        """Delete all Input objects that have been created"""
+
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
+    def setCaption(self, title):
+        """This method needs to be copied verbatim in every Textable widget that sends a segmentation"""
+
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
 if __name__ == "__main__":
     WidgetPreview(Protoscrat).run()
