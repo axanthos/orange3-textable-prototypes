@@ -331,7 +331,7 @@ class Protoscrat(OWTextableBaseWidget):
         else: 
             self.basicURLBox1.setVisible(False)
             self.basicURLBox2.setVisible(True)
-            self.UserID = ""
+            self.userID = ""
         
         if self.advancedSettings:
             self.advSettings.setVisible(True)
@@ -528,9 +528,9 @@ class Protoscrat(OWTextableBaseWidget):
     def sendData(self):
         """Send data when pressing the 'Send Data' button"""
             
-        # Return error if no UserID was given
+        # Return error if no userID was given
         if self.selectedSource=="User":
-            if not self.UserID:
+            if not self.userID:
                 self.infoBox.setText("Please give a User ID.", "warning")
                 self.send('Scratted posts', None)
                 return
@@ -548,7 +548,7 @@ class Protoscrat(OWTextableBaseWidget):
         #Clear old created Inputs
         self.clearCreatedInputs()
 
-        dictPosts = self.fetchUserPosts(self.UserID)
+        dictPosts = self.fetchUserPosts(self.userID)
         self.segmentation = self.createSegmentation(dictPosts)
 
         #Send confirmation of how many toots were outputed
