@@ -129,7 +129,7 @@ Errors
 ~~~~~~
 
 *Please select input file*
-    The user want to start the process of the transcription without selecting the audio file. 
+    The user wants to start the process of the transcription without selecting the audio file. 
 
 *You seem to have overuseed the built-in API key, refer to the documentation for further informations.*
     The built-in API key is limited to certain amount of requests per day, and as long as Google keeps the service running of course. If you want to avoid this problem, you can setup an account to use the official Google Cloud Speech API following `these instructions <https://github.com/Uberi/speech_recognition/blob/master/reference/library-reference.rst>`_. (Check the recognizer_instance.recognize_google_cloud section)
