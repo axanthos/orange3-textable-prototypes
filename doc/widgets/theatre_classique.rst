@@ -121,3 +121,8 @@ Errors
 *Couldn't download data from theatre-classique website.*
     An error has prevented the widget to download the data from the
     theatre-classique (most likely related to a connection problem).
+
+Note
+----
+
+Note that after performing a refresh of this widget's database, it is necessary to restart Orange to be able to use the widget correctly.
