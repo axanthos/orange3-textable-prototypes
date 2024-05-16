@@ -38,6 +38,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
 
+from PyQt5.QtWidgets import QMessageBox
+
 import urllib
 import re
 import inspect
@@ -189,7 +191,7 @@ class TheatreClassique(OWTextableBaseWidget):
             widget=titleBox,
             master=self,
             label="Refresh",
-            callback=self.refreshTitleSeg,
+            callback=self.alertMessage,
             tooltip="Connect to Theatre-classique website and refresh list.",
         )
         
@@ -212,6 +214,19 @@ class TheatreClassique(OWTextableBaseWidget):
 
         self.setMinimumWidth(350)
         self.adjustSizeWithTimer()
+
+    def alertMessage(self):
+        """
+        Confirmation request message to refresh the database or cancel
+        """
+        result = QMessageBox.information(
+            None,
+            'Theatre Classique',
+            'Are you sure you want to refresh the database ? Once the database is updated, it may be necessary to restart the Orange software to be able to use the widget correctly.',
+            QMessageBox.Ok | QMessageBox.Cancel
+        )
+        if result == QMessageBox.Ok:
+            self.refreshTitleSeg()
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
