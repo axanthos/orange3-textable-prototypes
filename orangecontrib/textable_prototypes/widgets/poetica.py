@@ -191,7 +191,7 @@ class Poetica(OWTextableBaseWidget):
             master=self,
             label="Refresh database",
             callback=self.alertMessage,
-            tooltip="Attention ! Cela peut prendre un peu de temps…",
+            tooltip="Warning ! This may take some time…",
         )
 
         # Basket of found items...
@@ -307,7 +307,7 @@ class Poetica(OWTextableBaseWidget):
         result = QMessageBox.information(
             None,
             'Poetica',
-            'Are you sure you want to refresh the database ? This may take some time.',
+            'Are you sure you want to refresh the database ? This may take some time. Once the database is updated, it may be necessary to restart the Orange software to be able to use the widget correctly.',
             QMessageBox.Ok | QMessageBox.Cancel
         )
         if result == QMessageBox.Ok:
