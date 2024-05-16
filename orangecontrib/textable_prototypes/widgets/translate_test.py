@@ -37,43 +37,42 @@ import json
 import os
 import inspect
 
+
 class Translate(OWTextableBaseWidget):
     """Orange widget for standard text preprocessing"""
 
-    name = "Translate"
-    description = "Text translator"
-    icon = "icons/Translator.svg"
+    name = "Preprocess"
+    description = "Basic text preprocessing"
+    icon = "icons/Preprocess.png"
     priority = 2001
 
-    inputs = [('Segmentation', Segmentation, "inputData")]
-    outputs = [('Translated data', Segmentation)]
-
-    want_main_area = False
+    inputs = [('Segmentation', Segmentation, "inputData",)]
+    outputs = [('Preprocessed data', Segmentation)]
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
 
     # Settings...
-    #enableAPI = settings.Setting(False)
-    #inputLanguage = settings.Setting('chosenInputLanguage')
+    copyAnnotations = settings.Setting(True)
+    applyCaseTransform = settings.Setting(False)
+    caseTransform = settings.Setting('to lower')
+    removeAccents = settings.Setting(False)
     outputLanguageKey = settings.Setting('french')
     outputLanguage = settings.Setting('fr-FR')
-    
-    #translator = settings.Setting('chosenTranslator')
-    #labelKey = settings.Setting(u'Entrez votre API key')
 
     want_main_area = False
 
     def __init__(self, *args, **kwargs):
-        """Initialize a widget"""
+        """Initialize a Preprocess widget"""
         super().__init__(*args, **kwargs)
 
         # Other attributes...
+        self.createdInputs = list()
         self.inputSegmentation = None
         self.outputSegmentation = None
-        self.createdInputs = list()
         self.infoBox = InfoBox(widget=self.controlArea)
+        self.detectedInputLanguage = "en-GB"
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
@@ -81,132 +80,44 @@ class Translate(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
         )
 
-        # Path to pkl
+        # Path to json
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
 
-        # Open the pkl and add the content in our database
+        # Open the jspon and add the content in our database
         try:
             with open(os.path.join(path, "translate_data.json"), "r") as file:
                 self.available_languages_dict = json.load(file)
         # Else show error message
         except IOError:
-            print("Failed to open pkl file.")
+            print("Failed to open json file.")
 
-        
-        # Input language
-        
-        """ optionsBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Input language',
-            orientation='vertical',
-            addSpace=True,
-        )
-        self.testBox1 = gui.widgetBox(
-            widget=optionsBox,
-            orientation='horizontal',
-        )
-        self.inputLanguage = gui.comboBox(
-            widget=self.testBox1,
-            master=self,
-            value='inputLanguage',
-            items=[u'Anglais', u'Portuguais', u'Français', u'Allemand', u'Russe'],
-            sendSelectedValue=True,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Choose language input."
-            ),
-        ) """
+        # GUI...
 
-        # Output language
+        # Options box
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Output language',
             orientation='vertical',
             addSpace=True,
         )
-        self.testBox2 = gui.widgetBox(
+        self.textBox2 = gui.widgetBox(
             widget=optionsBox,
             orientation='horizontal',
         )
         self.outputLanguageBox = gui.comboBox(
-            widget=self.testBox2,
+            widget=self.textBox2,
             master=self,
             value='outputLanguageKey',
-            items=list(self.available_languages_dict["MyMemoryTranslator"].keys()),
             sendSelectedValue=True,
-            callback=self.outputLanguageChanged, 
+            items=list(self.available_languages_dict["MyMemoryTranslator"].keys()),
+            callback=self.outputLanguageChanged,
             tooltip=(
                 u"Choose language output."
             ),
         )
 
-
-
-        # Translation service
-        """ optionsBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Translation service',
-            orientation='vertical',
-            addSpace=True,
-        )
-        self.testBox3 = gui.widgetBox(
-            widget=optionsBox,
-            orientation='horizontal',
-        )
-        self.chooseTranslator = gui.comboBox(
-            widget=self.testBox3,
-            master=self,
-            value='translator',
-            items=[u'Google Traduction', u'DeepL', u'LibrTranslate', u'PONS'],
-            sendSelectedValue=True,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Choose the translation service."
-            ),
-        )
-        self.chooseTranslator.setMinimumWidth(120)
-        self.outputLanguage.setMinimumWidth(120)
-        self.inputLanguage.setMinimumWidth(120)
-        gui.separator(widget=optionsBox, height=3)
-
-        gui.rubber(self.controlArea) """
-
-        # Text Field API key
-        """ optionsBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'',
-            orientation='vertical',
-            addSpace=True,
-        )
-        self.testBox4 = gui.widgetBox(
-            widget=optionsBox,
-            orientation='horizontal',
-        )
-        gui.checkBox(
-            widget=self.testBox4,
-            master=self,
-            value='enableAPI',
-            label=u'API Key :',
-            labelWidth=80,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"API."
-            ),
-        )
-        self.labelKeyLineEdit = gui.lineEdit(
-            widget=self.testBox4,
-            master=self,
-            value='labelKey',
-            orientation='horizontal',
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Spot to put API key if needed"
-            ),
-        ) """
-
-        # Space in between
         gui.rubber(self.controlArea)
 
         # Send button...
@@ -216,47 +127,31 @@ class Translate(OWTextableBaseWidget):
         self.infoBox.draw()
 
         self.sendButton.sendIf()
+        self.adjustSizeWithTimer()
 
-    
     def outputLanguageChanged(self):
         """ Method for change in Output Language """
         self.outputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.outputLanguageKey]
         print(self.outputLanguage)
         self.sendButton.settingsChanged()
 
-
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSegmentation = newInput
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
-        print("input data ok")
-
-        
 
     def sendData(self):
-        """Compute result of widget processing and send to output"""
-
-        # Check that something has been selected...
-        print("this is input segmentation :")
-        print(self.inputSegmentation)
+        """Preprocess and send data"""
         if not self.inputSegmentation:
-            self.infoBox.setText(
-                "Widget needs input.",
-                "warning"
-            )
-            self.send("Translated data", None, self)
-            return        
-
-        """if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
-            self.infoBox.setText(u'This language is not supported', 'error')
+            self.infoBox.setText(u'Widget needs input.', 'warning')
             self.send('Preprocessed data', None, self)
-            return"""
+            return
 
-        # Clear created Inputs.
-        self.clearCreatedInputs()
 
-        # Initialize progress bar.
+        self.clearCreatedInputIndices()
+        previousNumInputs = len(Segmentation.data)
+        self.infoBox.setText(u"Processing, please wait...", "warning")
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(
             self,
@@ -264,32 +159,15 @@ class Translate(OWTextableBaseWidget):
         )
 
         self.detectInputLanguage()
-        #annotations = list()
-        #try:
+
+
         for segment in self.inputSegmentation:
             #pas pour test
             self.createdInputs.append(Input(self.translate(segment.get_content()), self.captionTitle))
             """annotations.append(
                 self.inputSegmentation[segment].annotations.copy()
             )"""
-            progressBar.advance()   # 1 tick on the progress bar...
-                
-        # If an error occurs (e.g. http error, or memory error)...
-            """         except:
-            # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't translate input",
-                "error"
-            ) 
-
-            # Reset output channel.
-            self.send("Translated data", None, self)
-            self.controlArea.setDisabled(False)
-            return"""
-        # Store downloaded XML in input objects...
-        """for segmentation_content_idx in range(len(segmentation_contents)):
-            newInput = Input(segmentation_contents[segmentation_content_idx])
-            self.createdInputs.append(newInput)"""
+            progressBar.advance()   # 1 tick osn the progress bar...
 
         # If there's only one play, the widget's output is the created Input...
         if len(self.createdInputs) == 1:
@@ -303,14 +181,12 @@ class Translate(OWTextableBaseWidget):
                 import_labels_as=None,
             )
 
-        # Annotate segments...
-        """for idx, segment in enumerate(self.outputSegmentation):
-            segment.annotations.update(annotations[idx])
-            self.outputSegmentation[idx] = segment"""        
+        progressBar.finish()
+        self.controlArea.setDisabled(False)
 
-        # Set status to OK and report data size...
-        message = "%i segment@p sent to output " % len(self.outputSegmentation)
+        message = u'%i segment@p sent to output.' % len(self.outputSegmentation)
         message = pluralize(message, len(self.outputSegmentation))
+
         numChars = 0
         for segment in self.outputSegmentation:
             segmentLength = len(Segmentation.get_data(segment.str_index))
@@ -318,45 +194,15 @@ class Translate(OWTextableBaseWidget):
         message += "(%i character@p)." % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
-        progressBar.finish()
-
-        # Clear progress bar.
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
-
-        # Send token...
-        self.send("Translated data", self.outputSegmentation, self)
+        self.send('Preprocessed data', self.outputSegmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
-    def clearCreatedInputs(self):
-        """
-        Delete all Input objects that have been created
-        """
-
+    def clearCreatedInputIndices(self):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
 
-    def updateGUI(self):
-        """Update GUI state"""
-        """ if self.importLabels:
-            self.labelKeyLineEdit.setDisabled(False)
-        else:
-            self.labelKeyLineEdit.setDisabled(True) """
-        """ if self.autoNumber:
-            self.autoNumberKeyLineEdit.setDisabled(False)
-        else:
-            self.autoNumberKeyLineEdit.setDisabled(True) """
-        if self.enableAPI:
-            self.caseTransformCombo1.setDisabled(False)
-        else:
-            self.caseTransformCombo1.setDisabled(True)
-
     def setCaption(self, title):
-        """
-        This method needs to be copied verbatim in every Textable widget that sends a segmentation
-        """
-
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
             super().setCaption(title)
@@ -366,10 +212,11 @@ class Translate(OWTextableBaseWidget):
             super().setCaption(title)
 
     def onDeleteWidget(self):
-        self.clearCreatedInputs()
+        self.clearCreatedInputIndices()
 
     def detectInputLanguage(self):
         #detect the language
+        print(f"HEEEEEERE {self.inputSegmentation[0].get_content()}")
         text = self.inputSegmentation[0].get_content()
         #self.detectedInputLanguage = detect(text)
         lang_detect_language = detect(text)
@@ -393,9 +240,16 @@ class Translate(OWTextableBaseWidget):
         return translated_text
         #except:
          #   print("Translation process did not work")
-    
+
 
 if __name__ == '__main__':
+    """ import sys
+    from PyQt5.QtWidgets import QApplication
+    appl = QApplication(sys.argv)
+    ow = OWTextablePreprocess()
+    ow.show()
+    appl.exec_()
+    ow.saveSettings() """
     from LTTL.Input import Input
     input1 = Input("Mary said hello to John and Mike.")
     input2 = Input("Lucy told Johnny to say hello in return.")
