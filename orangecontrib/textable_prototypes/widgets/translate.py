@@ -108,19 +108,19 @@ class Translate(OWTextableBaseWidget):
             widget=optionsBox,
             orientation='horizontal',
         )
-        available_languages = list()
-        translators = list()
+        self.available_languages = list()
+        self.translators = list()
         for translator in self.available_languages_dict.keys():
-            translators.append(translator)
+            self.translators.append(translator)
             for lang in self.available_languages_dict[translator]["lang"].keys():
-                available_languages.append(lang)
-        available_languages = list(set(available_languages))
-        available_languages.sort()
+                self.available_languages.append(lang)
+        self.available_languages = list(set(self.available_languages))
+        self.available_languages.sort()
         self.inputLanguage = gui.comboBox(
             widget=self.testBox1,
             master=self,
             value='inputLanguageKey',
-            items=available_languages,
+            items=self.available_languages,
             sendSelectedValue=True,
             callback=self.inputLanguageChanged,
             tooltip=(
@@ -143,7 +143,7 @@ class Translate(OWTextableBaseWidget):
             widget=self.testBox2,
             master=self,
             value='outputLanguageKey',
-            items=available_languages,
+            items=self.available_languages,
             sendSelectedValue=True,
             callback=self.outputLanguageChanged, 
             tooltip=(
