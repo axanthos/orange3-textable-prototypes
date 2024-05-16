@@ -503,9 +503,9 @@
         "name": "Qcri Translator",
         "api": true,
         "lang": {
-            "Arabic": "ar",
-            "English": "en",
-            "Spanish": "es"
+            "arabic": "ar",
+            "english": "en",
+            "spanish": "es"
         }
     },
     "Linguee": {

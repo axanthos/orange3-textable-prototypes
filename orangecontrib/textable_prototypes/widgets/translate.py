@@ -93,7 +93,7 @@ class Translate(OWTextableBaseWidget):
                 self.available_languages_dict = json.load(file)
         # Else show error message
         except IOError:
-            print("Failed to open pkl file.")
+            print("Failed to open json file.")
 
         
         # Input language
@@ -146,7 +146,7 @@ class Translate(OWTextableBaseWidget):
 
 
         # Translation service
-        """ optionsBox = gui.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Translation service',
             orientation='vertical',
@@ -172,7 +172,7 @@ class Translate(OWTextableBaseWidget):
         self.inputLanguage.setMinimumWidth(120)
         gui.separator(widget=optionsBox, height=3)
 
-        gui.rubber(self.controlArea) """
+        gui.rubber(self.controlArea) 
 
         # Text Field API key
         """ optionsBox = gui.widgetBox(
