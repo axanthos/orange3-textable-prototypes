@@ -7,7 +7,7 @@ from _textable.widgets.TextableUtils import (
 )
 from mastodon import Mastodon
 from LTTL.Segment import Segment
-from LTTL.Segmentation import Segmenptation
+from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
@@ -46,21 +46,19 @@ class Protoscrat(OWTextableBaseWidget):
     userID = settings.Setting("macron@rivals.space")
     
     # Filters
-    excludeReblogs = settings.Setting(True)
-    excludeReplies = settings.Setting(True)
-    excludeMedias = settings.Setting(True) #NotImplementedYet
-    onlyMedia = settings.Setting(True)
-
     URL = settings.Setting("")
     amount = settings.Setting(100)
+    excludeReplies = settings.Setting(False)
     excludeReposts = settings.Setting(False)
+    onlyMedia = settings.Setting(False)
+
     API = settings.Setting("")
     advancedSettings = settings.Setting(False)
     repostsOnly = settings.Setting(False)
-    minReposts = settings.Setting(10)
+    minReposts = settings.Setting(0)
     excludeImages = settings.Setting(False)
     withImages = settings.Setting(False)
-    minLikes = settings.Setting(10)
+    minLikes = settings.Setting(0)
 
     def __init__(self):
         super().__init__()
@@ -314,6 +312,12 @@ class Protoscrat(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
 
+    #Our methods
+    def fetchTimelines(self, instance, n=100):
+        """Takes a string like (https://)instance.net and returns a dictionary
+        of the n last posts from Federated or Local timeline"""
+        all_posts = {}
+        return all_posts
 
     def updateGUI(self):
         """Update GUI state"""
@@ -376,61 +380,6 @@ class Protoscrat(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
-    def fetchTimelines(self, instance, is_local, n=100):
-        """
-        Récupère les publications des timelines publiques locales ou fédérées d'une instance Mastodon.
-
-        Args:
-        instance (str): URL de l'instance Mastodon, par exemple "https://instance.net" ou "instance.net"
-        is_local (bool): True pour récupérer à partir de la timeline locale, False pour la timeline fédérée
-        n (int): Nombre de publications à récupérer
-
-        Returns:
-        all_post: Une dict contenant les publications de la timeline spécifiée
-
-        # TODO check the timeout logic for queries that are larger than 40
-        """
-
-        # Normalisation de l'URL de l'instance pour garantir l'inclusion de "https://"
-        if not instance.startswith("http://") and not instance.startswith("https://"):
-            instance = f"https://{instance}"
-
-        # Initialisation de la connexion à l'instance
-        myMastodon = Mastodon(api_base_url=instance)
-
-        # Tir de problèmes
-        print(f"Getting {n} posts from the following instance:{instance}. Toot toot !")
-        
-        # Initialisation d'un dict vide pour contenir les objects
-        all_posts = []
-        # L'argument qui limite du nombre de posts !!! Pour l'instant et vu du fait de la limite à 40 l'argument du nombre de post est toujours rabotté à 40 peu importe l'input utilisateur
-        remaining = n
-        # A potentiellement utiliser pour créer un index dans en cas de requètes plus longues qui outrepassent la limite de 40 messages qui timeout.
-        max_id = None
-
-        # Récupération des publications par lots jusqu'à atteindre le nombre désiré `n` ou qu'il n'y ait plus de publications disponibles
-        while remaining > 0:
-            try:
-                timeline = myMastodon.timeline('public', 
-                                            local=is_local, 
-                                            exclude_replies= self.excludeReplise,
-                                            exclude_reblogs= self.excludeReblogs,
-                                            only_media= self.onlyMedia,
-                                            limit=min(remaining, 40), 
-                                            max_id=max_id)
-                if not timeline:
-                    break
-                all_posts.extend(timeline)
-                remaining -= len(timeline)
-                max_id = timeline[-1]['id']
-            except Exception as e:
-                print(f"Une erreur est survenue: {e}")
-                break
-        
-        # Tir de problèmes
-        print(f"This is the output dict: {all_posts}")
-        return all_posts
-
     def fetchUserPosts(self, username_at_instance, n = 100):
         """Takes a string like (@)user@instance.net and returns a dictionnary of the n last posts from user"""
 
@@ -440,9 +389,6 @@ class Protoscrat(OWTextableBaseWidget):
         #https://mastodonpy.readthedocs.io/en/stable/_modules/mastodon/accounts.html?highlight=account_statuses
         #(ça sera plus efficace que trier en front)
         #TODO voir avec max_id min_id since_id et limit pour boucler sur n posts
-        
-        #Dictionary to save all fetched posts
-        all_posts = {}
 
         #Delete the first "@", if given (my parsing is ugly, I (Rose) will do better later)
         if username_at_instance[0] == "@":
@@ -463,39 +409,29 @@ class Protoscrat(OWTextableBaseWidget):
         #Get all posts (for now just 1 request)        (limit's max = 40)
         #excludeReplies seems to miss some of them, but still it's better than nothing
         #onlyMedia and excludeReblogs seem to work, we should test a bit more
-        
-        while True:
-            posts = myMastodon.account_statuses(
-            user_id,
-            exclude_replies=self.excludeReplies,
-            exclude_reblogs=self.excludeReblogs,
-            only_media=self.onlyMedia,
-            limit=n)
-            
-            #check if more posts
-            if not posts:
-                break
-            
-            else:
-                #add posts in dictionnary
-                for post in posts:
-                    all_posts[post.id] = post
-            
-            #update last parameter to start fetching posts starting the last one        
-            last_post_id = posts[-1].id
-            
-            posts = myMastodon.account_statuses(
-                user_id,
-                exclude_replies=self.excludeReplies,
-                exclude_reblogs=self.excludeReblogs,
-                only_media=self.onlyMedia,
-                limit=n,
-                since_id=last_post_id
-            )
+        all_posts = myMastodon.account_statuses(
+        user_id,
+        exclude_replies=self.excludeReplies,
+        exclude_reblogs=self.excludeReposts,
+        only_media=self.onlyMedia,
+        limit=n,
+        )
+
 
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
 
+    def filterPosts(self, all_posts):
+        filtered_posts = []
+        for post in all_posts:
+            if self.withImages:
+                if bool(post.media_attachments):
+                    filtered_posts.append(post)
+            else:
+                filtered_posts.append(post)
+        return filtered_posts
+
+
     def createSegmentation(self, posts_dict):
         """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
         Concatenate it in a single output"""
@@ -597,106 +533,7 @@ class Protoscrat(OWTextableBaseWidget):
 
         return self.segmentation
 
-    def createSegmentation(self, posts_dict):
-        """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
-        Concatenate it in a single output"""
 
-        #-> Mettre une case dans le GUI pour exclure ou non les textes vides (les posts vides
-        #restent utiles pour avoir les annotations, pour les stats..)
-        #Q: Mieux vaut annotations vides (None; comme actuellement) ou pas d'annotations ?
-
-        #Pour chaque post (un dictionnaire) dans posts (un dictionnaire de dictionnaires)
-        for post in posts_dict:
-
-            #Add placeholder text if post has no text
-            #TODO Maybe we shouldn't do it ? we'll see
-
-            #Rentrer le texte (ou placeholder) dans LTTL
-            if not post.content:
-                input_seg = Input("Placeholder !!!! this post had no text in it...", self.captionTitle)
-            else:
-                input_seg = Input(post.content, self.captionTitle)
-
-            #Rajouter chaque segment dans la liste
-            self.createdInputs.append(input_seg)
-
-
-        # If there's only one post, the widget's output is the created Input...
-        if len(self.createdInputs) == 1:
-            self.segmentation = self.createdInputs[0]
-
-        # Otherwise the widget's output is a concatenation...
-        else:
-            self.segmentation = Segmenter.concatenate(
-                self.createdInputs,
-                self.captionTitle,
-                import_labels_as=None,
-            )
-
-        for idx, post in enumerate(posts_dict):
-
-            #Create a copy of the segment
-            segment = self.segmentation[idx]
-
-            #Add annotations
-            segment.annotations = {
-                        "Account" : post.account.username,
-                        "URL" : post.url,
-                        "IsReply" : bool(post.in_reply_to_id),
-                        "IsReblog" : bool(post.reblog),
-                        "IsSensitive" : post.sensitive,
-                        "HasMedias" : bool(post.media_attachments),
-                        "Visibility" : post.visibility,
-                        "Likes" : post.favourites_count,
-                        "Reposts" : post.reblogs_count,
-                        #"AccountDisplayName" : post.account.display_name,
-                        #"ReblogId" : post.reblog.id if post.reblog else None,
-                        #"PeopleMentionnedId" : post.mentions if post.mentions else None,
-                        #"ReplyToPostId" : post.in_reply_to_id,
-                        #"ReplyToAccountId" : post.in_reply_to_account_id,
-                        #"Poll" : post.poll,
-                        #"CustomEmojis" : post.emojis if post.emojis else None,
-            }
-
-            #Cut Date at seconds
-            date = post.created_at
-            date = date.replace(microsecond=0, tzinfo=None)
-            segment.annotations["Date"] = date
-
-            #Optionnals annotations (will only be added if it has something to say)
-            if post.tags:
-                tag_list = []
-
-                #List of the name of each tag
-                for tag in post.tags:
-                    tag_list.append(tag.name)
-
-                #Concatenated to a string and added to annotation
-                tag_string = ", ".join(tag_list)
-                segment.annotations["Hashtags"] = tag_string
-
-            if post.spoiler_text:
-                segment.annotations["SpoilerText"] = post.spoiler_text
-            
-            if post.application:
-                segment.annotations["Application"] = post.application.name
-
-            if post.language:
-                segment.annotations["Language"] = post.language
-
-            #And replace it's original (we need to do it this way because LTTL)
-            self.segmentation[idx] = segment
-
-        #Debug, print chaque segment et son contenu
-        for segment in self.segmentation:
-            print(segment)
-            print(segment.get_content(), "\n")
-        print(f"Segmented {len(posts_dict)} posts.")
-
-
-        self.controlArea.setDisabled(False)
-
-        return self.segmentation
 
     #sendData method
     def sendData(self):
@@ -723,7 +560,10 @@ class Protoscrat(OWTextableBaseWidget):
         self.clearCreatedInputs()
 
         dictPosts = self.fetchUserPosts(self.userID)
-        self.segmentation = self.createSegmentation(dictPosts)
+
+        filteredPosts = self.filterPosts(dictPosts)
+
+        self.segmentation = self.createSegmentation(filteredPosts)
 
         #Send confirmation of how many toots were outputed
         message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
