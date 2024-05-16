@@ -38,6 +38,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
 
+from PyQt5.QtWidgets import QMessageBox
+
 import urllib
 import re
 import inspect
@@ -187,7 +189,7 @@ class ECP(OWTextableBaseWidget):
             widget=titleBox,
             master=self,
             label="Refresh",
-            callback=self.refreshTitleSeg,
+            callback=self.alertMessage,
             tooltip="Connect to ECP website and refresh list.",
         )
         gui.separator(widget=titleBox, height=3)
@@ -209,6 +211,19 @@ class ECP(OWTextableBaseWidget):
 
         self.setMinimumWidth(350)
         self.adjustSizeWithTimer()
+
+    def alertMessage(self):
+        """
+        Confirmation request message to refresh the database or cancel
+        """
+        result = QMessageBox.information(
+            None,
+            '18th Century Poetry',
+            'Are you sure you want to refresh the database ? Once the database is updated, it may be necessary to restart the Orange software to be able to use the widget correctly.',
+            QMessageBox.Ok | QMessageBox.Cancel
+        )
+        if result == QMessageBox.Ok:
+            self.refreshTitleSeg()
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
