@@ -127,6 +127,13 @@ class Translate(OWTextableBaseWidget):
                 u"Choose language input."
             ),
         )
+        gui.button(
+            widget=self.testBox1,
+            master=self,
+            label=u'Auto-detect',
+            callback=self.detectInputLanguage,
+            tooltip=("Auto-detect language"),
+        )
 
         # Output language
         optionsBox = gui.widgetBox(
@@ -149,7 +156,7 @@ class Translate(OWTextableBaseWidget):
             tooltip=(
                 u"Choose language output."
             ),
-        )
+        )f
 
 
 
@@ -279,7 +286,6 @@ class Translate(OWTextableBaseWidget):
             iterations=len(self.inputSegmentation)
         )
 
-        self.detectInputLanguage()
         #annotations = list()
         #try:
         for segment in self.inputSegmentation:
