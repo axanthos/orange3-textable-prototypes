@@ -46,18 +46,17 @@ class Protoscrat(OWTextableBaseWidget):
     userID = settings.Setting("macron@rivals.space")
     
     # Filters
+    excludeReblogs = settings.Setting(True)
+    excludeReplies = settings.Setting(True)
+    excludeMedias = settings.Setting(True)
+    onlyMedia = settings.Setting(True)
+
     URL = settings.Setting("")
     amount = settings.Setting(100)
-    excludeReplies = settings.Setting(False)
-    excludeReposts = settings.Setting(False)
-    onlyMedia = settings.Setting(False)
-
     API = settings.Setting("")
     advancedSettings = settings.Setting(False)
-    repostsOnly = settings.Setting(False)
-    minReposts = settings.Setting(0)
-    excludeImages = settings.Setting(False)
-    withImages = settings.Setting(False)
+    reblogsOnly = settings.Setting(False)
+    minreblogs = settings.Setting(0)
     minLikes = settings.Setting(0)
 
     def __init__(self):
@@ -169,11 +168,25 @@ class Protoscrat(OWTextableBaseWidget):
             step=10,
         )
 
-        self.exclReposts = gui.checkBox(
+        self.excludeRe = gui.widgetBox(
             widget=self.controlArea,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        self.exclreblogs = gui.checkBox(
+            widget=self.excludeRe,
             master=self,
-            value='excludeReposts',
-            label=u'Exclude reposts',
+            value='excludeReblogs',
+            label=u'Exclude reblogs',
+            callback=self.updateGUI,
+        )
+
+        self.excludeRep = gui.checkBox(
+            widget=self.excludeRe,
+            master=self,
+            value='excludeReplies',
+            label=u'Exclude replies',
             callback=self.updateGUI,
         )
 
@@ -204,60 +217,60 @@ class Protoscrat(OWTextableBaseWidget):
             addSpace=False,
         )
 
-        self.repostsBox = gui.widgetBox(
+        self.reblogsBox = gui.widgetBox(
             widget=self.advSettings,
             orientation='vertical',
             addSpace=False,
         )
         
 
-        self.repostsOnlyCheckbox = gui.checkBox(
-            widget=self.repostsBox,
+        self.reblogsOnlyCheckbox = gui.checkBox(
+            widget=self.reblogsBox,
             master=self,
-            value='repostsOnly',
-            label=u'Reposts only',
+            value='reblogsOnly',
+            label='Reblogs only',
             callback=self.updateGUI,
         )
-        self.minRepostsBox = gui.spin(
-            widget=self.repostsBox,
+        self.minreblogsBox = gui.spin(
+            widget=self.reblogsBox,
             master=self,
-            value="minReposts",
-            minv=1,
+            value="minreblogs",
+            minv=0,
             maxv=10000,
-            label="Minimum of reposts:",
+            label="Minimum of reblogs:",
             labelWidth=135,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
-            tooltip="Select the amount of reposts that you want",
+            tooltip="Select the amount of reblogs that you want",
             step=10,
         )
 
         self.imagesBox = gui.widgetBox(
-            widget=self.repostsBox,
+            widget=self.reblogsBox,
             orientation='horizontal',
             addSpace=False,
         )
 
-        self.excludeImagesCheckbox = gui.checkBox(
+        self.excludeMediasCheckbox = gui.checkBox(
             widget=self.imagesBox,
             master=self,
-            value='excludeImages',
+            value='excludeMedias',
             label=u'Exclude images',
             callback=self.updateGUI,
         )
-        self.withImagesCheckbox = gui.checkBox(
+        self.onlyMediaCheckbox = gui.checkBox(
             widget=self.imagesBox,
             master=self,
-            value='withImages',
-            label=u'With images',
+            value='onlyMedia',
+            label=u'Only images',
             callback=self.updateGUI,
         )
 
         gui.spin(
-            widget=self.repostsBox,
+            widget=self.reblogsBox,
             master=self,
             value="minLikes",
-            minv=1,
+            minv=0,
             maxv=10000,
             label="Minimum of likes:",
             labelWidth=135,
@@ -272,31 +285,31 @@ class Protoscrat(OWTextableBaseWidget):
         else:
             self.advSettings.setVisible(False)
         
-        if self.exclReposts.isChecked():
-            self.repostsOnlyCheckbox.setDisabled(True)
-            self.repostsOnlyCheckbox.setChecked(False)
-            self.minRepostsBox.setDisabled(True)
+        if self.exclreblogs.isChecked():
+            self.reblogsOnlyCheckbox.setDisabled(True)
+            self.reblogsOnlyCheckbox.setChecked(False)
+            self.minreblogsBox.setDisabled(True)
         else:
-            self.repostsOnlyCheckbox.setDisabled(False)
-            self.minRepostsBox.setDisabled(False)
+            self.reblogsOnlyCheckbox.setDisabled(False)
+            self.minreblogsBox.setDisabled(False)
         
-        if self.repostsOnlyCheckbox.isChecked():
-            self.exclReposts.setDisabled(True)
-            self.exclReposts.setChecked(False)
+        if self.reblogsOnlyCheckbox.isChecked():
+            self.exclreblogs.setDisabled(True)
+            self.exclreblogs.setChecked(False)
         else:
-            self.exclReposts.setDisabled(False)
+            self.exclreblogs.setDisabled(False)
 
-        if self.withImagesCheckbox.isChecked():
-            self.excludeImagesCheckbox.setDisabled(True)
-            self.excludeImagesCheckbox.setChecked(False)
+        if self.onlyMediaCheckbox.isChecked():
+            self.excludeMediasCheckbox.setDisabled(True)
+            self.excludeMediasCheckbox.setChecked(False)
         else:
-            self.excludeImagesCheckbox.setDisabled(False)
+            self.excludeMediasCheckbox.setDisabled(False)
              
-        if self.excludeImagesCheckbox.isChecked():
-            self.withImagesCheckbox.setDisabled(True)
-            self.withImagesCheckbox.setChecked(False)
+        if self.excludeMediasCheckbox.isChecked():
+            self.onlyMediaCheckbox.setDisabled(True)
+            self.onlyMediaCheckbox.setChecked(False)
         else:
-            self.withImagesCheckbox.setDisabled(False)
+            self.onlyMediaCheckbox.setDisabled(False)
 
 
         self.infoBox = InfoBox(widget=self.controlArea)
@@ -336,31 +349,31 @@ class Protoscrat(OWTextableBaseWidget):
         else:
             self.advSettings.setVisible(False)
 
-        if self.exclReposts.isChecked():
-            self.repostsOnlyCheckbox.setDisabled(True)
-            self.repostsOnlyCheckbox.setChecked(False)
-            self.minRepostsBox.setDisabled(True)
+        if self.exclreblogs.isChecked():
+            self.reblogsOnlyCheckbox.setDisabled(True)
+            self.reblogsOnlyCheckbox.setChecked(False)
+            self.minreblogsBox.setDisabled(True)
         else:
-            self.repostsOnlyCheckbox.setDisabled(False)
-            self.minRepostsBox.setDisabled(False)
+            self.reblogsOnlyCheckbox.setDisabled(False)
+            self.minreblogsBox.setDisabled(False)
         
-        if self.repostsOnlyCheckbox.isChecked():
-            self.exclReposts.setDisabled(True)
-            self.exclReposts.setChecked(False)
+        if self.reblogsOnlyCheckbox.isChecked():
+            self.exclreblogs.setDisabled(True)
+            self.exclreblogs.setChecked(False)
         else:
-            self.exclReposts.setDisabled(False)
+            self.exclreblogs.setDisabled(False)
 
-        if self.withImagesCheckbox.isChecked():
-            self.excludeImagesCheckbox.setDisabled(True)
-            self.excludeImagesCheckbox.setChecked(False)
+        if self.onlyMediaCheckbox.isChecked():
+            self.excludeMediasCheckbox.setDisabled(True)
+            self.excludeMediasCheckbox.setChecked(False)
         else:
-            self.excludeImagesCheckbox.setDisabled(False)
+            self.excludeMediasCheckbox.setDisabled(False)
         
-        if self.excludeImagesCheckbox.isChecked():
-            self.withImagesCheckbox.setDisabled(True)
-            self.withImagesCheckbox.setChecked(False)
+        if self.excludeMediasCheckbox.isChecked():
+            self.onlyMediaCheckbox.setDisabled(True)
+            self.onlyMediaCheckbox.setChecked(False)
         else:
-            self.withImagesCheckbox.setDisabled(False)
+            self.onlyMediaCheckbox.setDisabled(False)
 
     def clearCreatedInputs(self):
         """Delete all Input objects that have been created"""
@@ -483,7 +496,7 @@ class Protoscrat(OWTextableBaseWidget):
                         "HasMedias" : bool(post.media_attachments),
                         "Visibility" : post.visibility,
                         "Likes" : post.favourites_count,
-                        "Reposts" : post.reblogs_count,
+                        "reblogs" : post.reblogs_count,
                         #"AccountDisplayName" : post.account.display_name,
                         #"ReblogId" : post.reblog.id if post.reblog else None,
                         #"PeopleMentionnedId" : post.mentions if post.mentions else None,
