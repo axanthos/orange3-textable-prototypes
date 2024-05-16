@@ -124,3 +124,8 @@ Errors
 *Couldn't download data from 18th Century Poetry website.*
     An error has prevented the widget to download the data from the
     18th Century Poetry (most likely related to a connection problem).
+
+Note
+----
+
+Note that after performing a refresh of this widget's database, it is necessary to restart Orange to be able to use the widget correctly.
