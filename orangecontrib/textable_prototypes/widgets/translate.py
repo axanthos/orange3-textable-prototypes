@@ -108,11 +108,19 @@ class Translate(OWTextableBaseWidget):
             widget=optionsBox,
             orientation='horizontal',
         )
+        available_languages = list()
+        translators = list()
+        for translator in self.available_languages_dict.keys():
+            translators.append(translator)
+            for lang in self.available_languages_dict[translator]["lang"].keys():
+                available_languages.append(lang)
+        available_languages = list(set(available_languages))
+        available_languages.sort()
         self.inputLanguage = gui.comboBox(
             widget=self.testBox1,
             master=self,
             value='inputLanguageKey',
-            items=list(self.available_languages_dict["MyMemoryTranslator"].keys()),
+            items=available_languages,
             sendSelectedValue=True,
             callback=self.inputLanguageChanged,
             tooltip=(
@@ -135,7 +143,7 @@ class Translate(OWTextableBaseWidget):
             widget=self.testBox2,
             master=self,
             value='outputLanguageKey',
-            items=list(self.available_languages_dict["MyMemoryTranslator"].keys()),
+            items=available_languages,
             sendSelectedValue=True,
             callback=self.outputLanguageChanged, 
             tooltip=(
@@ -145,7 +153,7 @@ class Translate(OWTextableBaseWidget):
 
 
 
-        # Translation service
+        """ # Translation service
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Translation service',
@@ -160,7 +168,7 @@ class Translate(OWTextableBaseWidget):
             widget=self.testBox3,
             master=self,
             value='translator',
-            items=[u'Google Traduction', u'DeepL', u'LibrTranslate', u'PONS'],
+            items=translators,
             sendSelectedValue=True,
             callback=self.sendButton.settingsChanged,
             tooltip=(
@@ -172,7 +180,7 @@ class Translate(OWTextableBaseWidget):
         self.inputLanguage.setMinimumWidth(120)
         gui.separator(widget=optionsBox, height=3)
 
-        gui.rubber(self.controlArea) 
+        gui.rubber(self.controlArea)  """
 
         # Text Field API key
         """ optionsBox = gui.widgetBox(
