@@ -60,9 +60,6 @@ multiple files use either control/command-click or shift-click.
 
     Figure 1: **Theatre Classique** widget (basic interface).
 
-The **Options** section allows the user to define the label of the output
-segmentation (**Output segmentation label**).
-
 The **Info** section indicates the number of segments and characters in the
 output segmentation, or the reasons why no segmentation is emitted (no title
 selected, connection issues, etc.).
@@ -88,7 +85,7 @@ given author/genre/title.
 
     Figure 2: **Theatre Classique** widget (advanced interface).
 
-The **Options** and **Info** sections, as well as the **Send** button and
+The **Info** section, as well as the **Send** button and
 **Send automatically**, operate in the same way as in the basic interface.
 
 Messages
