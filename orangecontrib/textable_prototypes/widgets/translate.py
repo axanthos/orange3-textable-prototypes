@@ -227,9 +227,7 @@ class Translate(OWTextableBaseWidget):
 
     def inputData(self, newInput):
         """Process incoming data."""
-        print(f"this is input datat print : {len(newInput)}")
         self.inputSegmentation = newInput
-        self.detectInputLanguage()
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
         print("input data ok")
@@ -265,7 +263,7 @@ class Translate(OWTextableBaseWidget):
             iterations=len(self.inputSegmentation)
         )
 
-       
+        self.detectInputLanguage()
         #annotations = list()
         #try:
         for segment in self.inputSegmentation:

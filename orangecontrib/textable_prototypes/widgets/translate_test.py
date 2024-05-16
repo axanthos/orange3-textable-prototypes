@@ -72,6 +72,7 @@ class Translate(OWTextableBaseWidget):
         self.inputSegmentation = None
         self.outputSegmentation = None
         self.infoBox = InfoBox(widget=self.controlArea)
+        self.detectedInputLanguage = "en-GB"
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
@@ -137,7 +138,6 @@ class Translate(OWTextableBaseWidget):
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSegmentation = newInput
-        self.detectInputLanguage()
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
 
@@ -157,6 +157,9 @@ class Translate(OWTextableBaseWidget):
             self,
             iterations=len(self.inputSegmentation)
         )
+
+        self.detectInputLanguage()
+
 
         for segment in self.inputSegmentation:
             #pas pour test
@@ -213,6 +216,7 @@ class Translate(OWTextableBaseWidget):
 
     def detectInputLanguage(self):
         #detect the language
+        print(f"HEEEEEERE {self.inputSegmentation[0].get_content()}")
         text = self.inputSegmentation[0].get_content()
         #self.detectedInputLanguage = detect(text)
         lang_detect_language = detect(text)
