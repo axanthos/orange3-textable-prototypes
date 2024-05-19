@@ -10,6 +10,8 @@ from LTTL.Segment import Segment
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
+import time
+from urllib.parse import urlparse
 
 class Protoscrat(OWTextableBaseWidget):
     """An Orange widget that uses MastoAPI to pull annotated posts"""
@@ -393,56 +395,51 @@ class Protoscrat(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
-    def fetchUserPosts(self, username_at_instance, n = 100):
-        """Takes a string like (@)user@instance.net and returns a dictionnary of the n last posts from user"""
+    def fetchUserPosts(username_at_instance, n=1000, exclude_replies=True, exclude_reblogs=True, only_media=False):
+        """Takes a string like (@)user@instance.net or a URL and returns a dictionary of the n last posts from user"""
 
-        #TODO loop to get n posts, instead of just one (?) request
-        #TODO fix parsing if string is "https://rival3s.space/@macron"
-        #TODO on peut ajouter directement ici les tris MediaOnly/ExcludeRepost/ExcludeReply cf.
-        #https://mastodonpy.readthedocs.io/en/stable/_modules/mastodon/accounts.html?highlight=account_statuses
-        #(ça sera plus efficace que trier en front)
-        #TODO voir avec max_id min_id since_id et limit pour boucler sur n posts
+        # If url input
+        if isinstance(username_at_instance, str) and username_at_instance.startswith("http"):
+            parsed_url = urlparse(username_at_instance)
+            path_parts = parsed_url.path.split("/")
+            if len(path_parts) > 1 and path_parts[1].startswith("@"):
+                username_at_instance = path_parts[1][1:] + "@" + parsed_url.netloc
 
-        #Delete the first "@", if given (my parsing is ugly, I (Rose) will do better later)
-        if username_at_instance[0] == "@":
+        # Delete the first "@", if given
+        if isinstance(username_at_instance, str) and username_at_instance[0] == "@":
             username_at_instance = username_at_instance[1:]
 
-        #Get user and instance frome input, format it in domain
         user, instance = username_at_instance.split("@")
         domain = f"https://{instance}/"
-
-        #Initialize connexion to instance
         myMastodon = Mastodon(api_base_url=domain)
-        print(f"Trying to get {n} posts from @{user} on {domain}", "\n") #Debug
+        print(f"Trying to get {n} posts from @{user} on {domain}", "\n")
 
-        #Get ID from user
         user_id = myMastodon.account_lookup(user).id
         print(f"{username_at_instance}'s id is: {user_id}", "\n")
 
-        #Get all posts (for now just 1 request)        (limit's max = 40)
-        #excludeReplies seems to miss some of them, but still it's better than nothing
-        #onlyMedia and excludeReblogs seem to work, we should test a bit more
-        all_posts = myMastodon.account_statuses(
-        user_id,
-        exclude_replies=self.excludeReplies,
-        exclude_reblogs=self.excludeReposts,
-        only_media=self.onlyMedia,
-        limit=n,
-        )
+        all_posts = []
+        max_id = None
+        while len(all_posts) < n:
+            posts = myMastodon.account_statuses(
+                user_id,
+                exclude_replies=exclude_replies,
+                exclude_reblogs=exclude_reblogs,
+                only_media=only_media,
+                max_id=max_id,
+                limit=min(40, n - len(all_posts))
+            )
 
+            if not posts:
+                break
+
+            all_posts.extend(posts)
+            max_id = posts[-1].id - 1
+
+            print(f"Fetched {len(all_posts)} posts so far.")
+            time.sleep(1)  # sleep to avoid hitting rate limits
 
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
-
-    def filterPosts(self, all_posts):
-        filtered_posts = []
-        for post in all_posts:
-            if self.withImages:
-                if bool(post.media_attachments):
-                    filtered_posts.append(post)
-            else:
-                filtered_posts.append(post)
-        return filtered_posts
 
 
     def createSegmentation(self, posts_dict):
