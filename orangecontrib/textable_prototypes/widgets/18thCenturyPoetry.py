@@ -421,7 +421,7 @@ class ECP(OWTextableBaseWidget):
         # Extract genre annotation...
         genreSeg = Segmenter.tokenize(
             segmentation=genresListSeg,
-            regexes=[(re.compile(r'<a id[^>]+>(.+?)</a.+?(?=<a id|$)(?s)'), \
+            regexes=[(re.compile(r'(?s)<a id[^>]+>(.+?)</a.+?(?=<a id|$)'), \
             "tokenize", {"genre": "&1"})],
             import_annotations=False,
         )
@@ -429,7 +429,7 @@ class ECP(OWTextableBaseWidget):
         # Extract works...
         titleSeg = Segmenter.tokenize(
             segmentation=genreSeg,
-            regexes=[(re.compile(r'<li class="bibl".+?</span>(?s)'), \
+            regexes=[(re.compile(r'(?s)<li class="bibl".+?</span>'), \
             "tokenize")],
         )
 
@@ -438,17 +438,17 @@ class ECP(OWTextableBaseWidget):
             segmentation=titleSeg,
             regexes=[
                 (
-                    re.compile(r"^.*>\n(.+?)</span>.*$(?s)"),
+                    re.compile(r"(?s)^.*>\n(.+?)</span>.*$"),
                     "tokenize",
                     {"author": "&1"}
                 ),
                 (
-                    re.compile(r'^.*href="(/works/.+?\.shtml)">.*$(?s)'),
+                    re.compile(r'(?s)^.*href="(/works/.+?\.shtml)">.*$'),
                     "tokenize",
                     {"url": "&1"}
                 ),
                 (
-                    re.compile(r'^.*shtml">(.*)</a>.*$(?s)'),
+                    re.compile(r'(?s)^.*shtml">(.*)</a>.*$'),
                     "tokenize",
                     {"title": "&1"}
                 ),
