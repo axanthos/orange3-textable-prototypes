@@ -395,7 +395,7 @@ class Protoscrat(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
-    def fetchUserPosts(username_at_instance, n=1000, exclude_replies=True, exclude_reblogs=True, only_media=False):
+    def fetchUserPosts(self, username_at_instance, n=1000, exclude_replies=True, exclude_reblogs=True, only_media=False):
         """Takes a string like (@)user@instance.net or a URL and returns a dictionary of the n last posts from user"""
 
         # If url input
