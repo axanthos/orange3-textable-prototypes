@@ -528,4 +528,4 @@ class ExtractCSV(OWTextableBaseWidget):
             
 if __name__ == "__main__":
     from LTTL.Input import Input
-    WidgetPreview(ExtractCSV).run(inputData=Input("a simple example"))
+    WidgetPreview(ExtractCSV).run(inputData=Input("1;a \n 2;b \n 3;c"))

@@ -28,6 +28,7 @@ import collections
 import itertools
 
 from Orange.widgets import widget, gui, settings
+#from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from PyQt4.QtGui import QTabWidget, QWidget, QFont, QHBoxLayout
 
@@ -588,4 +589,6 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
-
+    #examples_list=["rosa rosa rosam rosae rosae rosa rosae rosae rosas rosarum rosis rosis"]
+    #segments = LTTL.Segmentation(examples_list)
+    #WidgetPreview(Linguistica).run(inputData=Input(segments))
