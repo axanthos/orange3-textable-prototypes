@@ -57,6 +57,7 @@ from _textable.widgets.TextableUtils import (
 )
 
 from Orange.widgets import widget, gui, settings
+#from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
@@ -1202,3 +1203,4 @@ if __name__ == '__main__':
     ow.show()
     appl.exec_()
     ow.saveSettings()
+    #WidgetPreview(SuperTextFiles).run()
