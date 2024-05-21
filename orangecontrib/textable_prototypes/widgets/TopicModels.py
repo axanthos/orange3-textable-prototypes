@@ -28,6 +28,7 @@ __email__ = "aris.xanthos@unil.ch"
 import Orange.data
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.unsupervised.owcorrespondence import correspondence
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 import LTTL
 from LTTL.Table import Table, PivotCrosstab
@@ -519,5 +520,4 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
-
-
+    #WidgetPreview(TopicModels).run()
