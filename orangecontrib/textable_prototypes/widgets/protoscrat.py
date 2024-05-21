@@ -48,10 +48,10 @@ class Protoscrat(OWTextableBaseWidget):
     userID = settings.Setting("macron@rivals.space")
     
     # Filters
-    excludeReblogs = settings.Setting(True)
-    excludeReplies = settings.Setting(True)
-    excludeMedias = settings.Setting(True)
-    onlyMedia = settings.Setting(True)
+    excludeReblogs = settings.Setting(False)
+    excludeReplies = settings.Setting(False)
+    excludeMedias = settings.Setting(False)
+    onlyMedia = settings.Setting(False)
 
     URL = settings.Setting("")
     amount = settings.Setting(100)
@@ -441,7 +441,28 @@ class Protoscrat(OWTextableBaseWidget):
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
 
+    def filterPosts(self, all_posts):
+        filtered_posts = []
+        for post in all_posts:
+            if self.excludeReblogs and bool(post.reblog):
+                continue
+            if self.reblogsOnly and not bool(post.reblog):
+                continue
+            if self.excludeReplies and bool(post.in_reply_to_id):
+                continue
+            if self.excludeMedias and bool(post.media_attachments):
+                continue
+            if self.onlyMedia and not bool(post.media_attachments):
+                continue
+            if post.reblogs_count < self.minreblogs:
+                continue
+            if post.favourites_count < self.minLikes:
+                continue
 
+            filtered_posts.append(post)
+        return filtered_posts
+
+    
     def createSegmentation(self, posts_dict):
         """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
         Concatenate it in a single output"""
