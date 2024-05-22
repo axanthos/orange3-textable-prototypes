@@ -537,6 +537,7 @@ class Gutenberg(OWTextableBaseWidget):
 
     # Update selections function
     def updateMytitleLabels(self):
+        """Update the selections list"""
         self.mytitleLabels = list()
 
         for titleData in self.myBasket:
