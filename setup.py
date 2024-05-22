@@ -109,7 +109,7 @@ INSTALL_REQUIRES = (
     'filetype',
     'pydub',
     'SpeechRecognition',
-    'imdb',
+    'imdbpy',
 ),
 
 EXTRAS_REQUIRE = {

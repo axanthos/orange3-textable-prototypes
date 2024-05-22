@@ -606,20 +606,24 @@ class MovieReviews(OWTextableBaseWidget):
             return
 
         # Store movie critics strings in input objects...
+        list_range = list()
         for movie in list_review:
             data = movie.get('data', "")
             reviews_data = data.get('reviews')
+            list_range.append(len(reviews_data))
             for review in reviews_data:
                 reviews = review.get('content')
                 newInput = Input(reviews, self.captionTitle)
                 self.createdInputs.append(newInput)
+        num = 0
         for item in list_annotation:
             print(item)
             # Store the annotation as dicts in a separate list
             annotations_dict = {"title": item, "year": item["year"]}
             annot_dict_copy = annotations_dict.copy()
-            for i in range(25):
+            for i in range(list_range[num]):
                 annotations.append(annot_dict_copy)
+            num += 1
         print(annotations)
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
