@@ -1,4 +1,4 @@
-""" 
+"""
 Class MovieReviews
 Copyright 2020-2021 University of Lausanne
 -----------------------------------------------------------------------------
