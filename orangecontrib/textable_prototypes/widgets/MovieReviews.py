@@ -1,4 +1,4 @@
-"""
+""" 
 Class MovieReviews
 Copyright 2020-2021 University of Lausanne
 -----------------------------------------------------------------------------
@@ -611,7 +611,7 @@ class MovieReviews(OWTextableBaseWidget):
             reviews_data = data.get('reviews')
             for review in reviews_data:
                 reviews = review.get('content')
-                newInput = Input(reviews)
+                newInput = Input(reviews, self.captionTitle)
                 self.createdInputs.append(newInput)
         for item in list_annotation:
             print(item)
@@ -629,6 +629,7 @@ class MovieReviews(OWTextableBaseWidget):
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
+                self.captionTitle,
                 import_labels_as=None,
             )
 
@@ -675,6 +676,17 @@ class MovieReviews(OWTextableBaseWidget):
         self.myBasket = list()
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
+
+    # The following method need to be copied (without any change) in
+    # every Textable widget...
+    def setCaption(self, title):
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()
