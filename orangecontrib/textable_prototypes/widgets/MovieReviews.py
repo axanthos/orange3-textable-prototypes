@@ -21,7 +21,7 @@ along with Orange-Textable-Prototypes. If not, see
 
 # TODO Ajouter d'autres annotations
 # TODO Ajouter les options de recherches
-# TODO Les recherches devraient filtrés les films n'ayant pas de critique avant de les afficher dans le corpus 
+# TODO Les recherches devraient filtrer les films n'ayant pas de critique avant de les afficher dans le corpus 
 # TODO Le bouton 'search' devrait être disable quand y'a rien qui est recherché
 
 __version__ = u"0.0.1"
