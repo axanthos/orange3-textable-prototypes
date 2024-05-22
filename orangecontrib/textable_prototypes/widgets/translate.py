@@ -61,7 +61,7 @@ class Translate(OWTextableBaseWidget):
     outputLanguageKey = settings.Setting('french')
     outputLanguage = settings.Setting('fr-FR')
     
-    #translator = settings.Setting('chosenTranslator')
+    translator = settings.Setting('googleTranslator')
     #labelKey = settings.Setting(u'Entrez votre API key')
 
     want_main_area = False
@@ -109,9 +109,9 @@ class Translate(OWTextableBaseWidget):
             orientation='horizontal',
         )
         self.available_languages = list()
-        self.translators = list()
+        self.available_translators = list()
         for translator in self.available_languages_dict.keys():
-            self.translators.append(translator)
+            self.available_translators.append(translator)
             for lang in self.available_languages_dict[translator]["lang"].keys():
                 self.available_languages.append(lang)
         self.available_languages = list(set(self.available_languages))
@@ -156,11 +156,11 @@ class Translate(OWTextableBaseWidget):
             tooltip=(
                 u"Choose language output."
             ),
-        )f
+        )
 
 
 
-        """ # Translation service
+        # Translation service
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Translation service',
@@ -175,19 +175,19 @@ class Translate(OWTextableBaseWidget):
             widget=self.testBox3,
             master=self,
             value='translator',
-            items=translators,
+            items=self.available_translators,
             sendSelectedValue=True,
-            callback=self.sendButton.settingsChanged,
+            callback=self.translatorChanged,
             tooltip=(
                 u"Choose the translation service."
             ),
         )
-        self.chooseTranslator.setMinimumWidth(120)
-        self.outputLanguage.setMinimumWidth(120)
-        self.inputLanguage.setMinimumWidth(120)
+        #self.chooseTranslator.setMinimumWidth(120)
+        #self.outputLanguage.setMinimumWidth(120)
+        #self.inputLanguage.setMinimumWidth(120)
         gui.separator(widget=optionsBox, height=3)
 
-        gui.rubber(self.controlArea)  """
+        gui.rubber(self.controlArea)
 
         # Text Field API key
         """ optionsBox = gui.widgetBox(
@@ -235,18 +235,45 @@ class Translate(OWTextableBaseWidget):
 
     
     def inputLanguageChanged(self):
-        """ Method for change in Iutput Language """
-        self.inputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.inputLanguageKey]
-        print(self.inputLanguage)
+        """ Method for change in Input Language """
+        translators_available_for_lang = []
+        output_available_for_lang = []
+        for translator in self.available_languages_dict.keys():
+            for lang in self.available_languages_dict[translator]["lang"].keys():
+                print(self.inputLanguageKey)
+                print(lang)
+                if self.inputLanguageKey == lang:
+                    translators_available_for_lang.append(translator)
+        for translator in translators_available_for_lang:
+            for lang in self.available_languages_dict[translator]["lang"].keys():
+                output_available_for_lang.append(lang)
+
+        print(translators_available_for_lang)
+        self.chooseTranslator.clear()
+        for lang in translators_available_for_lang:
+            self.chooseTranslator.addItem(lang)
+        self.available_translators = translators_available_for_lang
+        self.available_translators = self.available_translators
+        self.outputLanguageBox.clear()
+        output_available_for_lang = list(set(output_available_for_lang))
+        output_available_for_lang.sort()
+        for lang in output_available_for_lang:
+            self.outputLanguageBox.addItem(lang)
+        print(self.available_translators)
         self.sendButton.settingsChanged()
 
 
     def outputLanguageChanged(self):
         """ Method for change in Output Language """
-        self.outputLanguage = self.available_languages_dict["MyMemoryTranslator"][self.outputLanguageKey]
+        self.outputLanguage = self.available_languages
         print(self.outputLanguage)
         self.sendButton.settingsChanged()
 
+    def translatorChanged(self):
+        """Method for change in translator"""
+        self.translator = self.available_translators
+        print(self.translator)
+        self.sendButton.settingsChanged()
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -254,6 +281,7 @@ class Translate(OWTextableBaseWidget):
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
         print("input data ok")
+
 
         
 
@@ -395,11 +423,13 @@ class Translate(OWTextableBaseWidget):
         text = self.inputSegmentation[0].get_content()
         #self.detectedInputLanguage = detect(text)
         lang_detect_language = detect(text)
-        for language in self.available_languages_dict["MyMemoryTranslator"].values():
-            if lang_detect_language in language:
-                self.detectedInputLanguage = language
+        for key, value in self.available_languages_dict["GoogleTranslator"]["lang"].items():
+            if lang_detect_language == value:
+                self.detectedInputLanguage = key
                 print(f"lang_detect: {lang_detect_language}")
-                print(f"langue: {language}")
+                self.inputLanguageKey = self.detectedInputLanguage
+                self.inputLanguageChanged()
+                self.sendButton.settingsChanged()
                 return
         self.infoBox.setText(
                 "Language not recognized",
@@ -408,11 +438,27 @@ class Translate(OWTextableBaseWidget):
         return
 
     def translate(self, untranslated_text):
-        print(self.detectedInputLanguage)
+        #print(self.detectedInputLanguage)
         print(self.outputLanguage)
         #try:
-        translated_text = dt.MyMemoryTranslator(source=self.detectedInputLanguage, target=self.outputLanguage).translate(untranslated_text)
-        return translated_text
+        if self.translator == "GoogleTranslator":
+            translated_text = dt.GoogleTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
+            return translated_text
+        elif self.translator == "MyMemory":
+            translated_text = dt.MyMemoryTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
+            return translated_text
+        elif self.translator == "DeepL":
+            translated_text = dt.DeeplTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
+            return translated_text
+        elif self.translator == "Qcri":
+            translated_text = dt.QcriTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
+            return translated_text
+        elif self.translator == "Linguee":
+            translated_text = dt.LingueeTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
+            return translated_text
+        elif self.translator == "Pons":
+            translated_text = dt.PonsTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
+            return translated_text
         #except:
          #   print("Translation process did not work")
     

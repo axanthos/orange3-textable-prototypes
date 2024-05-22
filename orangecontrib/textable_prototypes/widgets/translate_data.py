@@ -5,7 +5,7 @@
 from deep_translator import (GoogleTranslator,
                              ChatGptTranslator,
                              MicrosoftTranslator,
-                             PonsTranslator,
+                             PonsTranslator, 
                              LingueeTranslator,
                              MyMemoryTranslator,
                              YandexTranslator,
