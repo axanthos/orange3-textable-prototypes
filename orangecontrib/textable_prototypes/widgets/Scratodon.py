@@ -166,7 +166,7 @@ class Protoscrat(OWTextableBaseWidget):
             labelWidth=135,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
-            tooltip="Select the amount of posts that you want",
+            tooltip="Select the amount of posts that you want, 40/sec",
             step=10,
         )
 
