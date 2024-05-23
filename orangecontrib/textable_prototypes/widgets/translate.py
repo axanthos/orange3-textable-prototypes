@@ -61,7 +61,7 @@ class Translate(OWTextableBaseWidget):
     outputLanguageKey = settings.Setting('french')
     outputLanguage = settings.Setting('fr-FR')
     
-    translator = settings.Setting('googleTranslator')
+    translator = settings.Setting('GoogleTranslator')
     labelKey = settings.Setting('')
 
     want_main_area = False
