@@ -38,9 +38,9 @@ import os
 import inspect
 
 class Translate(OWTextableBaseWidget):
-    """Orange widget for standard text preprocessing"""
+    """Orange widget for standard text translation"""
 
-    name = "Translate"
+    name = "Transletto"
     description = "Text translator"
     icon = "icons/Translator.svg"
     priority = 2001
@@ -174,6 +174,7 @@ class Translate(OWTextableBaseWidget):
                 u"Choose the translation service."
             ),
         )
+<<<<<<< Updated upstream
 
 
         optionsBox = gui.widgetBox(
@@ -197,6 +198,8 @@ class Translate(OWTextableBaseWidget):
         #self.chooseTranslator.setMinimumWidth(120)
         #self.outputLanguage.setMinimumWidth(120)
         #self.inputLanguage.setMinimumWidth(120)
+=======
+>>>>>>> Stashed changes
         gui.separator(widget=optionsBox, height=3)
 
         gui.rubber(self.controlArea)
@@ -297,9 +300,7 @@ class Translate(OWTextableBaseWidget):
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
         print("input data ok")
-
-
-        
+       
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
@@ -340,24 +341,7 @@ class Translate(OWTextableBaseWidget):
             )"""
             progressBar.advance()   # 1 tick on the progress bar...
                 
-        # If an error occurs (e.g. http error, or memory error)...
-            """         except:
-            # Set Info box and widget to "error" state.
-            self.infoBox.setText(
-                "Couldn't translate input",
-                "error"
-            ) 
-
-            # Reset output channel.
-            self.send("Translated data", None, self)
-            self.controlArea.setDisabled(False)
-            return"""
-        # Store downloaded XML in input objects...
-        """for segmentation_content_idx in range(len(segmentation_contents)):
-            newInput = Input(segmentation_contents[segmentation_content_idx])
-            self.createdInputs.append(newInput)"""
-
-        # If there's only one play, the widget's output is the created Input...
+        # If there's only one input, the widget's output is the created Input...
         if len(self.createdInputs) == 1:
             self.outputSegmentation = self.createdInputs[0]
 
@@ -402,21 +386,6 @@ class Translate(OWTextableBaseWidget):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
-
-    def updateGUI(self):
-        """Update GUI state"""
-        """ if self.importLabels:
-            self.labelKeyLineEdit.setDisabled(False)
-        else:
-            self.labelKeyLineEdit.setDisabled(True) """
-        """ if self.autoNumber:
-            self.autoNumberKeyLineEdit.setDisabled(False)
-        else:
-            self.autoNumberKeyLineEdit.setDisabled(True) """
-        if self.enableAPI:
-            self.caseTransformCombo1.setDisabled(False)
-        else:
-            self.caseTransformCombo1.setDisabled(True)
 
     def setCaption(self, title):
         """
@@ -490,21 +459,26 @@ class Translate(OWTextableBaseWidget):
     def translate(self, untranslated_text):
         #print(self.detectedInputLanguage)
         print(self.translator)  
-        #try:
-        dict = self.available_languages_dict[self.translator]["lang"]
-        if self.translator == "GoogleTranslator":
-            translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-        if self.translator == "MyMemory":
-            translated_text = dt.MyMemoryTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-        if self.translator == "DeepL":
-            translated_text = dt.DeeplTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
-        if self.translator == "Qcri":
-            translated_text = dt.QcriTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
-        if self.translator == "Linguee":
-            translated_text = dt.LingueeTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-        if self.translator == "Pons":
-            translated_text = dt.PonsTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-        return translated_text
+        try:
+            dict = self.available_languages_dict[self.translator]["lang"]
+            if self.translator == "GoogleTranslator":
+                translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+            if self.translator == "MyMemory":
+                translated_text = dt.MyMemoryTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+            if self.translator == "DeepL":
+                translated_text = dt.DeeplTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
+            if self.translator == "Qcri":
+                translated_text = dt.QcriTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
+            if self.translator == "Linguee":
+                translated_text = dt.LingueeTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+            if self.translator == "Pons":
+                translated_text = dt.PonsTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+            return translated_text
+        except:
+            self.infoBox.setText(
+                'An error occured',
+                'error'
+            )
     
 
 if __name__ == '__main__':
