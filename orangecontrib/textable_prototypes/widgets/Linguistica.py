@@ -33,6 +33,7 @@ from Orange.widgets import widget, gui, settings
 from PyQt4.QtGui import QTabWidget, QWidget, QFont, QHBoxLayout
 
 from LTTL.Segmentation import Segmentation
+import LTTL.Segmenter as Segmenter
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
@@ -589,6 +590,11 @@ if __name__ == "__main__":
     myWidget.show()
     myApplication.exec_()
     myWidget.saveSettings()
+    #example="rosa<a>rosa<a>rosam<a>rosae<a>rosae<a>rosa<a>rosae<a>rosae<a>rosas<a>rosarum<a>rosis<a>rosis"
+    #segments = Segmenter.import_xml(
+    #                    segmentation=example,
+    #                    element="<a>",
+    #                    )
     #examples_list=["rosa rosa rosam rosae rosae rosa rosae rosae rosas rosarum rosis rosis"]
     #segments = LTTL.Segmentation(examples_list)
     #WidgetPreview(Linguistica).run(inputData=Input(segments))
