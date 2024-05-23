@@ -474,12 +474,9 @@ class Protoscrat(OWTextableBaseWidget):
         #Pour chaque post (un dictionnaire) dans posts (un dictionnaire de dictionnaires)
         for post in posts_dict:
 
-            #Add placeholder text if post has no text
-            #TODO Maybe we shouldn't do it ? we'll see
-
             #Rentrer le texte (ou placeholder) dans LTTL
             if not post.content:
-                input_seg = Input("Placeholder !!!! this post had no text in it...", self.captionTitle)
+                input_seg = Input("OnlyMediaInThisPost", self.captionTitle)
             else:
                 input_seg = Input(post.content, self.captionTitle)
 
