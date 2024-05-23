@@ -444,7 +444,6 @@ class Protoscrat(OWTextableBaseWidget):
 
             print(f"Fetched {len(all_posts)} posts so far.")
             progressBar.advance()
-            time.sleep(1)  # sleep to avoid hitting rate limits
 
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
