@@ -3,7 +3,7 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
-    InfoBox, SendButton,
+    InfoBox, SendButton, ProgressBar,
 )
 from mastodon import Mastodon
 from LTTL.Segment import Segment
@@ -395,7 +395,7 @@ class Protoscrat(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
-    def fetchUserPosts(self, username_at_instance, n=1000, exclude_replies=True, exclude_reblogs=True, only_media=False):
+    def fetchUserPosts(self, username_at_instance, n=100, exclude_replies=True, exclude_reblogs=True, only_media=False):
         """Takes a string like (@)user@instance.net or a URL and returns a dictionary of the n last posts from user"""
 
         # If url input
@@ -409,6 +409,13 @@ class Protoscrat(OWTextableBaseWidget):
         if isinstance(username_at_instance, str) and username_at_instance[0] == "@":
             username_at_instance = username_at_instance[1:]
 
+        # Initialize progress bar...
+        progressBar = ProgressBar(
+            self,
+            iterations=int(self.amount/40)+1
+        )
+
+        n = self.amount
         user, instance = username_at_instance.split("@")
         domain = f"https://{instance}/"
         myMastodon = Mastodon(api_base_url=domain)
@@ -436,6 +443,7 @@ class Protoscrat(OWTextableBaseWidget):
             max_id = posts[-1].id - 1
 
             print(f"Fetched {len(all_posts)} posts so far.")
+            progressBar.advance()
             time.sleep(1)  # sleep to avoid hitting rate limits
 
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
@@ -466,10 +474,6 @@ class Protoscrat(OWTextableBaseWidget):
     def createSegmentation(self, posts_dict):
         """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
         Concatenate it in a single output"""
-
-        #-> Mettre une case dans le GUI pour exclure ou non les textes vides (les posts vides
-        #restent utiles pour avoir les annotations, pour les stats..)
-        #Q: Mieux vaut annotations vides (None; comme actuellement) ou pas d'annotations ?
 
         #Pour chaque post (un dictionnaire) dans posts (un dictionnaire de dictionnaires)
         for post in posts_dict:
@@ -587,11 +591,15 @@ class Protoscrat(OWTextableBaseWidget):
         #Clear old created Inputs
         self.clearCreatedInputs()
 
+        self.controlArea.setDisabled(True)
+
+        #Set Variables
         dictPosts = self.fetchUserPosts(self.userID)
 
         filteredPosts = self.filterPosts(dictPosts)
 
         self.segmentation = self.createSegmentation(filteredPosts)
+
 
         #Send confirmation of how many toots were outputed
         message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
