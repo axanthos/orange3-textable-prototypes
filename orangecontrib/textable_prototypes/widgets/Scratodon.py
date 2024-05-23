@@ -39,13 +39,13 @@ class Protoscrat(OWTextableBaseWidget):
     # Settings...
 
     settingsHandler = VersionedSettingsHandler(
-        version="0.0.1"
+        version="1.0"
     )
 
     # Saved settings
     # General
     autoSend = settings.Setting(False)
-    userID = settings.Setting("macron@rivals.space")
+    userID = settings.Setting("gargron@mastodon.social")
     
     # Filters
     excludeReblogs = settings.Setting(False)
