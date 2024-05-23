@@ -55,14 +55,14 @@ class Translate(OWTextableBaseWidget):
     )
 
     # Settings...
-    #enableAPI = settings.Setting(False)
+    enableAPI = settings.Setting(False)
     inputLanguageKey = settings.Setting('french')
     inputLanguage = settings.Setting('fr-FR')
     outputLanguageKey = settings.Setting('french')
     outputLanguage = settings.Setting('fr-FR')
     
-    translator = settings.Setting('googleTranslator')
-    #labelKey = settings.Setting(u'Entrez votre API key')
+    translator = settings.Setting('GoogleTranslator')
+    labelKey = settings.Setting('')
 
     want_main_area = False
 
@@ -202,29 +202,26 @@ class Translate(OWTextableBaseWidget):
         gui.rubber(self.controlArea)
 
         # Text Field API key
-        """ optionsBox = gui.widgetBox(
+        self.translator_need_API = list()
+        for translator in self.available_languages_dict.keys():
+            if self.available_languages_dict[translator]["api"]:
+                self.translator_need_API.append(translator)
+        print("self.translator_need_api:")
+        print(self.translator_need_API)
+
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
-            box=u'',
+            box=u'API :',
             orientation='vertical',
             addSpace=True,
         )
-        self.testBox4 = gui.widgetBox(
+        self.apiBox = gui.widgetBox(
             widget=optionsBox,
             orientation='horizontal',
         )
-        gui.checkBox(
-            widget=self.testBox4,
-            master=self,
-            value='enableAPI',
-            label=u'API Key :',
-            labelWidth=80,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"API."
-            ),
-        )
-        self.labelKeyLineEdit = gui.lineEdit(
-            widget=self.testBox4,
+
+        self.apiKeyEdit = gui.lineEdit(
+            widget=self.apiBox,
             master=self,
             value='labelKey',
             orientation='horizontal',
@@ -232,7 +229,9 @@ class Translate(OWTextableBaseWidget):
             tooltip=(
                 u"Spot to put API key if needed"
             ),
-        ) """
+        )
+
+        self.apiKeyEdit.setDisabled(True)
 
         # Space in between
         gui.rubber(self.controlArea)
@@ -283,9 +282,14 @@ class Translate(OWTextableBaseWidget):
 
     def translatorChanged(self):
         """Method for change in translator"""
-        self.translator = self.available_translators
+        #self.translator = self.available_translators
         print(self.translator)
         self.sendButton.settingsChanged()
+        if self.translator in self.translator_need_API:
+            self.apiKeyEdit.setDisabled(False)
+        else:
+            self.apiKeyEdit.setDisabled(True)
+            
 
     def inputData(self, newInput):
         """Process incoming data."""
@@ -482,28 +486,22 @@ class Translate(OWTextableBaseWidget):
 
     def translate(self, untranslated_text):
         #print(self.detectedInputLanguage)
-        print(self.outputLanguage)
+        print(self.translator)  
         #try:
+        dict = self.available_languages_dict[self.translator]["lang"]
         if self.translator == "GoogleTranslator":
-            translated_text = dt.GoogleTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "MyMemory":
-            translated_text = dt.MyMemoryTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "DeepL":
-            translated_text = dt.DeeplTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "Qcri":
-            translated_text = dt.QcriTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "Linguee":
-            translated_text = dt.LingueeTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "Pons":
-            translated_text = dt.PonsTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        #except:
-         #   print("Translation process did not work")
+            translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "MyMemory":
+            translated_text = dt.MyMemoryTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "DeepL":
+            translated_text = dt.DeeplTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
+        if self.translator == "Qcri":
+            translated_text = dt.QcriTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
+        if self.translator == "Linguee":
+            translated_text = dt.LingueeTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "Pons":
+            translated_text = dt.PonsTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        return translated_text
     
 
 if __name__ == '__main__':
