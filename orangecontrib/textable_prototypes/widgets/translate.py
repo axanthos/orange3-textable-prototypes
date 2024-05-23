@@ -108,14 +108,8 @@ class Translate(OWTextableBaseWidget):
             widget=optionsBox,
             orientation='horizontal',
         )
-        self.available_languages = list()
-        self.available_translators = list()
-        for translator in self.available_languages_dict.keys():
-            self.available_translators.append(translator)
-            for lang in self.available_languages_dict[translator]["lang"].keys():
-                self.available_languages.append(lang)
-        self.available_languages = list(set(self.available_languages))
-        self.available_languages.sort()
+       
+        self.vacheALait()
         self.inputLanguage = gui.comboBox(
             widget=self.testBox1,
             master=self,
@@ -158,8 +152,6 @@ class Translate(OWTextableBaseWidget):
             ),
         )
 
-
-
         # Translation service
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
@@ -182,6 +174,26 @@ class Translate(OWTextableBaseWidget):
                 u"Choose the translation service."
             ),
         )
+
+
+        optionsBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'',
+            orientation='vertical',
+            addSpace=True,
+        )
+        self.testBox5 = gui.widgetBox(
+            widget=optionsBox,
+            orientation='horizontal',
+        )
+        gui.button(
+            widget=self.testBox5,
+            master=self,
+            label=u'Reset',
+            callback=self.resetAll,
+            tooltip=("Reset all"),
+        )
+
         #self.chooseTranslator.setMinimumWidth(120)
         #self.outputLanguage.setMinimumWidth(120)
         #self.inputLanguage.setMinimumWidth(120)
@@ -417,6 +429,37 @@ class Translate(OWTextableBaseWidget):
 
     def onDeleteWidget(self):
         self.clearCreatedInputs()
+
+    def vacheALait(self):
+        self.available_languages = list()
+        self.available_translators = list()
+        for translator in self.available_languages_dict.keys():
+            self.available_translators.append(translator)
+            for lang in self.available_languages_dict[translator]["lang"].keys():
+                self.available_languages.append(lang)
+        self.available_languages = list(set(self.available_languages))
+        self.available_languages.sort()
+
+
+    def resetAll(self):
+        self.inputLanguage.clear()
+        self.chooseTranslator.clear()
+        self.outputLanguageBox.clear()
+        self.vacheALait()
+        translators_available_for_lang = []
+        output_available_for_lang = []
+        for translator in self.available_languages_dict.keys():
+            for lang in self.available_languages_dict[translator]["lang"].keys():
+                print(self.inputLanguageKey)
+                print(lang)
+                self.inputLanguage.addItem(lang)
+        for translator in translators_available_for_lang:
+            for lang in self.available_languages_dict[translator]["lang"].keys():
+                print(self.inputLanguageKey)
+                print(lang)
+                self.outputLanguageBox.addItem(lang)
+        
+
 
     def detectInputLanguage(self):
         #detect the language
