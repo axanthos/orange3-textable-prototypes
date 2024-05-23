@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(774.0, 443.0)" />
+		<node id="1" name="Scratodon" qualified_name="orangecontrib.textable_prototypes.widgets.Scratodon.Protoscrat" project_name="Orange3-Textable-Prototypes" version="" title="Scratodon Again" position="(160.0, 838.0)" />
+		<node id="2" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display Again" position="(786.0, 836.0)" />
+		<node id="3" name="Extract XML" qualified_name="_textable.widgets.OWTextableExtractXML.OWTextableExtractXML" project_name="Orange3-Textable" version="" title="Extract XML" position="(460.0, 838.0)" />
+		<node id="4" name="Scratodon" qualified_name="orangecontrib.textable_prototypes.widgets.Scratodon.Protoscrat" project_name="Orange3-Textable-Prototypes" version="" title="Scratodon" position="(177.0, 440.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="1" sink_node_id="3" source_channel="Scratted posts" sink_channel="Segmentation" enabled="true" />
+		<link id="1" source_node_id="4" sink_node_id="0" source_channel="Scratted posts" sink_channel="Segmentation" enabled="true" />
+		<link id="2" source_node_id="3" sink_node_id="2" source_channel="Extracted data" sink_channel="Segmentation" enabled="true" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(102.0, -23.0, 336.0, 312.0)" font-family="MS Shell Dlg 2" font-size="16">Fetch posts of Mastodon here. 
+
+1. Select the source you want to fetch the posts from (user/local/federated)
+
+2. Enter the username (ex: @user@instance.fr) if you chose user or the instance URL (ex: instance.fr) if you chose local/federated 
+
+3. Enter the max amount of posts you want
+
+4. Select more filters if you want
+
+5. Click on "Send" </text>
+		<arrow id="1" start="(184.0, 300.0)" end="(184.0, 393.0)" fill="#C1272D" />
+		<text id="2" type="text/plain" rect="(693.0, 252.0, 192.0, 52.0)" font-family="MS Shell Dlg 2" font-size="16">Display the fetched posts</text>
+		<arrow id="3" start="(767.0, 292.0)" end="(769.0, 388.0)" fill="#C1272D" />
+		<text id="4" type="text/plain" rect="(358.0, 497.0, 260.0, 232.0)" font-family="MS Shell Dlg 2" font-size="16">If you want to remove the xml markup, here are the steps to follow : 
+
+1. Type "p" in the segmentation field
+
+2. Click on "Send"</text>
+		<arrow id="5" start="(460.0, 684.0)" end="(460.0, 783.0)" fill="#C1272D" />
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\xff\xff\xff\xc7\x00\x00\x00L\x00\x00\x03\x83\x00\x00\x02d\xff\xff\xff\xce\x00\x00\x00j\x00\x00\x03|\x00\x00\x02]\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\xff\xff\xff\xce\x00\x00\x00j\x00\x00\x03|\x00\x00\x02]', 'segmentDelimiter': '\\n', 'uuid': '06319f89-4c6d-40fa-b9d5-416d6046505d', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties node_id="1" format="literal">{'API': '', 'URL': '', 'advancedSettings': True, 'amount': 100, 'autoSend': False, 'controlAreaVisible': True, 'excludeMedias': False, 'excludeReblogs': False, 'excludeReplies': False, 'minLikes': 0, 'minreblogs': 0, 'onlyMedia': False, 'reblogsOnly': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x03U\x00\x00\x00\x96\x00\x00\x04J\x00\x00\x02\xa8\x00\x00\x03V\x00\x00\x00\xb4\x00\x00\x04I\x00\x00\x02\xa7\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x03V\x00\x00\x00\xb4\x00\x00\x04I\x00\x00\x02\xa7', 'userID': '@gargron@mastodon.social', 'uuid': '4c383770-a340-494b-8870-775bb6e64490', '__version__': 1, '_TextableUtils_settings_version__': (0, 0, 1)}</properties>
+		<properties node_id="2" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': True, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x01\x99\x00\x00\x01*\x00\x00\x05I\x00\x00\x03&lt;\x00\x00\x01\x9a\x00\x00\x01H\x00\x00\x05H\x00\x00\x03;\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x01\x9a\x00\x00\x01H\x00\x00\x05H\x00\x00\x03;', 'segmentDelimiter': '\\n', 'uuid': 'a92da394-3c28-4c81-8dbc-29b81a54081e', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties node_id="3" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'conditions': [], 'controlAreaVisible': True, 'deleteMarkup': False, 'displayAdvancedSettings': False, 'element': 'p', 'importAnnotations': True, 'importElementAs': '', 'mergeDuplicates': False, 'preserveLeaves': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02^\x00\x00\x00\xb0\x00\x00\x03\xa2\x00\x00\x02\xc2\x00\x00\x02_\x00\x00\x00\xce\x00\x00\x03\xa1\x00\x00\x02\xc1\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x02_\x00\x00\x00\xce\x00\x00\x03\xa1\x00\x00\x02\xc1', 'uuid': '4de796f5-756a-4c8c-8dc7-f2c3f4f83e89', '__version__': 1, '_TextableUtils_settings_version__': (0, 15)}</properties>
+		<properties node_id="4" format="literal">{'API': '', 'URL': '', 'advancedSettings': True, 'amount': 100, 'autoSend': False, 'controlAreaVisible': True, 'excludeMedias': False, 'excludeReblogs': False, 'excludeReplies': False, 'minLikes': 0, 'minreblogs': 0, 'onlyMedia': False, 'reblogsOnly': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x03U\x00\x00\x00\x96\x00\x00\x04J\x00\x00\x02\xa8\x00\x00\x03V\x00\x00\x00\xb4\x00\x00\x04I\x00\x00\x02\xa7\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x03V\x00\x00\x00\xb4\x00\x00\x04I\x00\x00\x02\xa7', 'userID': '@gargron@mastodon.social', 'uuid': 'd3d91b72-5430-4a10-9d15-7bbf760a0106', '__version__': 1, '_TextableUtils_settings_version__': (0, 0, 1)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
