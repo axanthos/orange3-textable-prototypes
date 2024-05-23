@@ -455,10 +455,6 @@ class Translate(OWTextableBaseWidget):
         if self.translator == "Pons":
             translated_text = dt.PonsTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
         return translated_text
-        
-        #except:
-        Pons
-         #   print("Translation process did not work")
     
 
 if __name__ == '__main__':
