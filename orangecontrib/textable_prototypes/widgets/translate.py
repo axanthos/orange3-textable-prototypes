@@ -509,9 +509,11 @@ class Translate(OWTextableBaseWidget):
 
     def translate(self, untranslated_text):
         #print(self.detectedInputLanguage)
-        print(self.translator)  
+        print(self.translator) 
+
+        dict = self.available_languages_dict[self.translator]["lang"]
+        print(dict[self.inputLanguageKey])
         try:
-            dict = self.available_languages_dict[self.translator]["lang"]
             if self.translator == "GoogleTranslator":
                 translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
             if self.translator == "MyMemory":
