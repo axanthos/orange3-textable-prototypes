@@ -449,20 +449,23 @@ class Translate(OWTextableBaseWidget):
         self.inputLanguage.clear()
         self.chooseTranslator.clear()
         self.outputLanguageBox.clear()
-        self.vacheALait()
-        translators_available_for_lang = []
-        output_available_for_lang = []
+
+        #Get all translators and available languages:
+        self.available_languages = list()
+        self.available_translators = list()
         for translator in self.available_languages_dict.keys():
+            self.available_translators.append(translator)
             for lang in self.available_languages_dict[translator]["lang"].keys():
-                print(self.inputLanguageKey)
-                print(lang)
-                self.inputLanguage.addItem(lang)
-        for translator in translators_available_for_lang:
-            for lang in self.available_languages_dict[translator]["lang"].keys():
-                print(self.inputLanguageKey)
-                print(lang)
-                self.outputLanguageBox.addItem(lang)
+                self.available_languages.append(lang)
+        self.available_languages = list(set(self.available_languages))
+        self.available_languages.sort()
+
+        for translator in self.available_translators:
+            self.chooseTranslator.addItem(translator)
         
+        for lang in self.available_languages:
+            self.inputLanguage.addItem(lang)
+            self.outputLanguageBox.addItem(lang)        
 
 
     def detectInputLanguage(self):
