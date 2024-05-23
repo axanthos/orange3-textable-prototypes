@@ -479,7 +479,7 @@ class Protoscrat(OWTextableBaseWidget):
 
             #Rentrer le texte (ou placeholder) dans LTTL
             if not post.content:
-                input_seg = Input("Placeholder !!!! this post had no text in it...", self.captionTitle)
+                input_seg = Input("OnlyMediaInThisPost", self.captionTitle)
             else:
                 input_seg = Input(post.content, self.captionTitle)
 
