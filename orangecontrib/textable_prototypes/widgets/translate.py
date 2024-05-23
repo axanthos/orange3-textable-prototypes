@@ -61,7 +61,7 @@ class Translate(OWTextableBaseWidget):
     outputLanguageKey = settings.Setting('french')
     outputLanguage = settings.Setting('fr-FR')
     
-    translator = settings.Setting('googleTranslator')
+    translator = settings.Setting('GoogleTranslator')
     #labelKey = settings.Setting(u'Entrez votre API key')
 
     want_main_area = False
@@ -271,7 +271,7 @@ class Translate(OWTextableBaseWidget):
 
     def translatorChanged(self):
         """Method for change in translator"""
-        self.translator = self.available_translators
+        #self.translator = self.available_translators
         print(self.translator)
         self.sendButton.settingsChanged()
 
@@ -439,27 +439,25 @@ class Translate(OWTextableBaseWidget):
 
     def translate(self, untranslated_text):
         #print(self.detectedInputLanguage)
-        print(self.outputLanguage)
+        print(self.translator)  
         #try:
+        dict = self.available_languages_dict[self.translator]["lang"]
         if self.translator == "GoogleTranslator":
-            translated_text = dt.GoogleTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "MyMemory":
-            translated_text = dt.MyMemoryTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "DeepL":
-            translated_text = dt.DeeplTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "Qcri":
-            translated_text = dt.QcriTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "Linguee":
-            translated_text = dt.LingueeTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
-        elif self.translator == "Pons":
-            translated_text = dt.PonsTranslator(source=self.inputLanguageKey, target=self.outputLanguage).translate(untranslated_text)
-            return translated_text
+            translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "MyMemory":
+            translated_text = dt.MyMemoryTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "DeepL":
+            translated_text = dt.DeeplTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.api).translate(untranslated_text)
+        if self.translator == "Qcri":
+            translated_text = dt.QcriTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.api).translate(untranslated_text)
+        if self.translator == "Linguee":
+            translated_text = dt.LingueeTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "Pons":
+            translated_text = dt.PonsTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        return translated_text
+        
         #except:
+        Pons
          #   print("Translation process did not work")
     
 
