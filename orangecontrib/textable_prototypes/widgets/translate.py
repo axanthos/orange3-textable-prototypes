@@ -193,10 +193,6 @@ class Translate(OWTextableBaseWidget):
             callback=self.resetAll,
             tooltip=("Reset all"),
         )
-
-        #self.chooseTranslator.setMinimumWidth(120)
-        #self.outputLanguage.setMinimumWidth(120)
-        #self.inputLanguage.setMinimumWidth(120)
         gui.separator(widget=optionsBox, height=3)
 
         gui.rubber(self.controlArea)
@@ -247,7 +243,7 @@ class Translate(OWTextableBaseWidget):
     
     def inputLanguageChanged(self):
         """ Method for change in Input Language """
-        translators_available_for_lang = []
+        """ translators_available_for_lang = []
         output_available_for_lang = []
         for translator in self.available_languages_dict.keys():
             for lang in self.available_languages_dict[translator]["lang"].keys():
@@ -270,20 +266,22 @@ class Translate(OWTextableBaseWidget):
         output_available_for_lang.sort()
         for lang in output_available_for_lang:
             self.outputLanguageBox.addItem(lang)
-        print(self.available_translators)
+        print(self.available_translators) """
+        self.update(boxUpdated="input")
         self.sendButton.settingsChanged()
 
 
     def outputLanguageChanged(self):
         """ Method for change in Output Language """
-        self.outputLanguage = self.available_languages
-        print(self.outputLanguage)
+        
+        self.update(boxUpdated="output")
         self.sendButton.settingsChanged()
 
     def translatorChanged(self):
         """Method for change in translator"""
         #self.translator = self.available_translators
         print(self.translator)
+        self.update(boxUpdated="translator")
         self.sendButton.settingsChanged()
         if self.translator in self.translator_need_API:
             self.apiKeyEdit.setDisabled(False)
@@ -465,7 +463,62 @@ class Translate(OWTextableBaseWidget):
         
         for lang in self.available_languages:
             self.inputLanguage.addItem(lang)
-            self.outputLanguageBox.addItem(lang)        
+            self.outputLanguageBox.addItem(lang)     
+
+    def update(self, boxUpdated):
+        if boxUpdated != "input":
+            previousInput = self.inputLanguageKey
+            self.inputLanguage.clear()
+        if boxUpdated != "translator":
+            previousTranslator = self.translator
+            self.chooseTranslator.clear()
+        if boxUpdated != "output":
+            previousOutput = self.outputLanguageKey
+            self.outputLanguageBox.clear()
+
+
+        #Get all translators:
+        if boxUpdated != "translator":
+            self.available_translators = list()
+            for translator in self.available_languages_dict.keys():
+                for lang in self.available_languages_dict[translator]["lang"].keys():
+                    if boxUpdated == "input":
+                        if self.inputLanguageKey == lang:
+                            self.available_translators.append(translator)
+                    elif boxUpdated == "output":
+                        if self.outputLanguageKey == lang:
+                            self.available_translators.append(translator)
+            self.available_translators = list(set(self.available_translators))
+
+        #Get all input languages
+        #if boxUpdated != "input":
+        self.available_languages = list()
+        for translator in self.available_languages_dict.keys():
+            if translator == self.translator:
+                for lang in self.available_languages_dict[translator]["lang"].keys():
+                    self.available_languages.append(lang)
+        self.available_languages = list(set(self.available_languages))
+        self.available_languages.sort()
+        
+        
+        if boxUpdated != "input":
+            for lang in self.available_languages:
+                self.inputLanguage.addItem(lang)
+            if previousInput in self.available_languages:
+                self.inputLanguageKey = previousInput
+        if boxUpdated != "translator":
+            for translator in self.available_translators:
+                self.chooseTranslator.addItem(translator)
+            if previousTranslator in self.available_translators:
+                self.translator = previousTranslator
+        if boxUpdated != "output":
+            for lang in self.available_languages:
+                self.outputLanguageBox.addItem(lang)
+            if previousOutput in self.available_languages:
+                self.outputLanguageKey = previousOutput
+        
+        
+        self.sendButton.settingsChanged()
 
 
     def detectInputLanguage(self):
