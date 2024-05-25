@@ -53,7 +53,7 @@ class Protoscrat(OWTextableBaseWidget):
     excludeMedias = settings.Setting(False)
     onlyMedia = settings.Setting(False)
 
-    URL = settings.Setting("")
+    URL = settings.Setting("mastodon.social")
     amount = settings.Setting(100)
     API = settings.Setting("")
     advancedSettings = settings.Setting(False)
@@ -328,12 +328,6 @@ class Protoscrat(OWTextableBaseWidget):
         self.infoBox.draw()
 
     #Our methods
-    def fetchTimelines(self, instance, n=100):
-        """Takes a string like (https://)instance.net and returns a dictionary
-        of the n last posts from Federated or Local timeline"""
-        all_posts = {}
-        return all_posts
-
     def updateGUI(self):
         """Update GUI state"""
 
@@ -448,6 +442,59 @@ class Protoscrat(OWTextableBaseWidget):
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
 
+    def fetchTimelines(self, instance, amount=100 ,exclude_replies=True, exclude_reblogs=True, only_media=False):
+        """
+        Récupère les publications des timelines publiques locales ou fédérées d'une instance Mastodon.
+
+        Args:
+        instance (str): URL de l'instance Mastodon, par exemple "https://instance.net" ou "instance.net"
+        is_local (bool): True pour récupérer à partir de la timeline locale, False pour la timeline fédérée
+        n (int): Nombre de publications à récupérer
+
+        Returns:
+        all_post: Une dict contenant les publications de la timeline spécifiée
+        """
+
+        # Transformer la logique de sélection Local/Fédéré d'une string (GUI) en Bool (Utilisé par le script)
+
+        if self.selectedSource == "Local":
+            is_local = True
+        else:
+            is_local = False
+
+        # Normalisation de l'URL de l'instance pour garantir l'inclusion de "https://"
+        if not self.URL.startswith("http://") and not self.URL.startswith("https://"):
+            instance = f"https://{self.URL}"
+
+        # Initialisation de la connexion à l'instance
+        myMastodon = Mastodon(api_base_url=instance)
+        
+        # Initialisation d'un dict vide pour contenir les objects
+        all_posts = []
+        # L'argument qui limite du nombre de posts !!! Pour l'instant et vu du fait de la limite à 40 l'argument du nombre de post est toujours rabotté à 40 peu importe l'input utilisateur
+        remaining = self.amount
+        # A potentiellement utiliser pour créer un index dans en cas de requètes plus longues qui outrepassent la limite de 40 messages qui timeout.
+        max_id = None
+
+        # Récupération des publications par lots jusqu'à atteindre le nombre désiré `n` ou qu'il n'y ait plus de publications disponibles
+        while remaining > 0:
+            try:
+                timeline = myMastodon.timeline('public', 
+                                            local=is_local,
+                                            max_id=max_id)
+                if not timeline:
+                    break
+                all_posts.extend(timeline)
+                remaining -= self.amount
+                max_id = timeline[-1]['id']
+                time.sleep(1)
+                limit=min(remaining, self.amount)
+            except Exception as e:
+                print(f"Une erreur est survenue: {e}")
+                break
+
+        return all_posts
+
     def filterPosts(self, all_posts):
         filtered_posts = []
         for post in all_posts:
@@ -468,7 +515,6 @@ class Protoscrat(OWTextableBaseWidget):
 
             filtered_posts.append(post)
         return filtered_posts
-
     
     def createSegmentation(self, posts_dict):
         """Takes a dictionary of posts, and create an input (in HTML) of each of their content.
@@ -544,7 +590,7 @@ class Protoscrat(OWTextableBaseWidget):
             if post.spoiler_text:
                 segment.annotations["SpoilerText"] = post.spoiler_text
             
-            if post.application:
+            if getattr(post, 'application', None):
                 segment.annotations["Application"] = post.application.name
 
             if post.language:
@@ -564,24 +610,25 @@ class Protoscrat(OWTextableBaseWidget):
 
         return self.segmentation
 
-
-
     #sendData method
     def sendData(self):
         """Send data when pressing the 'Send Data' button"""
             
         # Return error if no userID was given
         if self.selectedSource=="User":
+            dictPosts = self.fetchUserPosts(self.userID)
             if not self.userID:
                 self.infoBox.setText("Please give a User ID.", "warning")
                 self.send('Scratted posts', None)
                 return
         if self.selectedSource=="Federated":
+            dictPosts = self.fetchTimelines(self.URL)
             if not self.URL:
                 self.infoBox.setText("Please give a URL.", "warning")
                 self.send('Scratted posts', None)
                 return
         if self.selectedSource=="Local":
+            dictPosts = self.fetchTimelines(self.URL)
             if not self.URL:
                 self.infoBox.setText("Please give a URL.", "warning")
                 self.send('Scratted posts', None)
@@ -592,8 +639,6 @@ class Protoscrat(OWTextableBaseWidget):
 
         self.controlArea.setDisabled(True)
 
-        #Set Variables
-        dictPosts = self.fetchUserPosts(self.userID)
 
         filteredPosts = self.filterPosts(dictPosts)
 
@@ -606,9 +651,6 @@ class Protoscrat(OWTextableBaseWidget):
         self.send("Scratted posts", self.segmentation, self)
         self.infoBox.setText(message)
         self.updateGUI()
-
-
-
 
     #Manage inputs, copy/pasted from other modules
     def clearCreatedInputs(self):
