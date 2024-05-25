@@ -442,7 +442,7 @@ class Protoscrat(OWTextableBaseWidget):
         print(f"Got {len(all_posts)} posts from {username_at_instance}", "\n")
         return all_posts
 
-    def fetchTimelines(self, instance, amount=100 ,exclude_replies=True, exclude_reblogs=True, only_media=False):
+    def fetchTimelines(self, instance, n=100, only_media=False):
         """
         Récupère les publications des timelines publiques locales ou fédérées d'une instance Mastodon.
 
@@ -454,6 +454,8 @@ class Protoscrat(OWTextableBaseWidget):
         Returns:
         all_post: Une dict contenant les publications de la timeline spécifiée
         """
+
+        n = self.amount
 
         # Transformer la logique de sélection Local/Fédéré d'une string (GUI) en Bool (Utilisé par le script)
 
@@ -468,11 +470,17 @@ class Protoscrat(OWTextableBaseWidget):
 
         # Initialisation de la connexion à l'instance
         myMastodon = Mastodon(api_base_url=instance)
+
+        # Initialize progress bar...
+        progressBar = ProgressBar(
+            self,
+            iterations=int(self.amount/40)+1
+        )
         
         # Initialisation d'un dict vide pour contenir les objects
         all_posts = []
         # L'argument qui limite du nombre de posts !!! Pour l'instant et vu du fait de la limite à 40 l'argument du nombre de post est toujours rabotté à 40 peu importe l'input utilisateur
-        remaining = self.amount
+        remaining = n
         # A potentiellement utiliser pour créer un index dans en cas de requètes plus longues qui outrepassent la limite de 40 messages qui timeout.
         max_id = None
 
@@ -481,18 +489,23 @@ class Protoscrat(OWTextableBaseWidget):
             try:
                 timeline = myMastodon.timeline('public', 
                                             local=is_local,
-                                            max_id=max_id)
+                                            max_id=max_id,
+                                            only_media=False,
+                                            limit=min(remaining, n))
                 if not timeline:
                     break
+                print(f"Fetched {len(all_posts)} posts so far.")
                 all_posts.extend(timeline)
-                remaining -= self.amount
+                progressBar.advance()
+                remaining -= 40
                 max_id = timeline[-1]['id']
                 time.sleep(1)
-                limit=min(remaining, self.amount)
+                limit=min(remaining, n)
             except Exception as e:
                 print(f"Une erreur est survenue: {e}")
                 break
 
+        print(f"This is the output dict: {all_posts}")
         return all_posts
 
     def filterPosts(self, all_posts):
