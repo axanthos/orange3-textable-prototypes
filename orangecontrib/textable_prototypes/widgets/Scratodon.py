@@ -628,39 +628,35 @@ class Protoscrat(OWTextableBaseWidget):
         """Send data when pressing the 'Send Data' button"""
             
         # Return error if no userID was given
-        if self.selectedSource=="User":
-            dictPosts = self.fetchUserPosts(self.userID)
-            if not self.userID:
+        def validate_inputs():
+            if self.selectedSource == "User" and not self.userID:
                 self.infoBox.setText("Please give a User ID.", "warning")
-                self.send('Scratted posts', None)
-                return
-        if self.selectedSource=="Federated":
-            dictPosts = self.fetchTimelines(self.URL)
-            if not self.URL:
+                return False
+            if self.selectedSource in ["Federated", "Local"] and not self.URL:
                 self.infoBox.setText("Please give a URL.", "warning")
-                self.send('Scratted posts', None)
-                return
-        if self.selectedSource=="Local":
-            dictPosts = self.fetchTimelines(self.URL)
-            if not self.URL:
-                self.infoBox.setText("Please give a URL.", "warning")
-                self.send('Scratted posts', None)
-                return
+                return False
+            return True
+    
+        def fetch_posts():
+            if self.selectedSource == "User":
+                return self.fetchUserPosts(self.userID)
+            return self.fetchTimelines(self.URL)
+    
+        if not validate_inputs():
+            self.send('Scratted posts', None)
+            return
 
-        #Clear old created Inputs
+        dictPosts = fetch_posts()
+
+        # Clear old created Inputs
         self.clearCreatedInputs()
-
         self.controlArea.setDisabled(True)
 
-
         filteredPosts = self.filterPosts(dictPosts)
-
         self.segmentation = self.createSegmentation(filteredPosts)
 
-
-        #Send confirmation of how many toots were outputed
-        message = f" Succesfully scrapped ! {len(self.segmentation)} segments sent to output"
-
+        # Send confirmation of how many toots were outputted
+        message = f"Successfully scrapped! {len(self.segmentation)} segments sent to output"
         self.send("Scratted posts", self.segmentation, self)
         self.infoBox.setText(message)
         self.updateGUI()
