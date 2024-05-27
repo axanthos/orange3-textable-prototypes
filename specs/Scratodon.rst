@@ -104,7 +104,7 @@ Fonctionnalités optionnelles
 - Condition d'ajout des messages au corpus en fonctions de conditions arbitraires (Présence de médias/Interactivité)
 - Filtres : nombre d'interactions, likes et images
 
-TODO
+TODO (completed)
 ----
 
 Etapes
@@ -113,15 +113,15 @@ Etapes
 Version alpha
 ~~~~~~~~~~~~~
 
-- L'interface graphique est complètement construite. IN PROGRESS
-- La sélection de document au corpus était ajoutée. IN PROGRESS
-- Le téléchargement des messages mastodons en fonction d'un flux de source séléctionné au préalable dans l'interface utilisateur au format XML était fonctionnel. IN PROGRESS
+- L'interface graphique est complètement construite.
+- La sélection de document au corpus était ajoutée.
+- Le téléchargement des messages mastodons en fonction d'un flux de source séléctionné au préalable dans l'interface utilisateur au format XML était fonctionnel.
 
 Remise et présentation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-- Les fonctionnalités principales sont complètement prises en charge par le logiciel. TBD
-- La documentation du logiciel est complète. TBD
+- Les fonctionnalités principales sont complètement prises en charge par le logiciel.
+- La documentation du logiciel est complète.
 
 Infrastructure
 ---------------
