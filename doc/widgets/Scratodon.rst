@@ -25,15 +25,17 @@ Input: None
 
 Outputs:
 
-* ``Segmentation``
+``Segmentation``
 
-    Annoted segments for each scraped posts from an instance of Mastodon
+   Annoted segments for each scraped posts from an instance of Mastodon
 
 Description
 -----------
 
 This widget is for the purpose of scrapping posts from instances of the social media *Mastodon*
 (for example: https://rivals.space/explore).
+The name comes from the combination of scraping and mastodon, but adapted to the fictional character
+of *Scrat* from *Ice Age* (Wedge & Saldanha, 2002).
 Each post will be send as a segment, including annotations for specific informations.
 It can be information about: *account*, *URL*, *reply*, *reblog* (known also as *repost*)
 and the amount of them, *case sensitive*, *media*, *visibility* and *like*.
@@ -45,7 +47,6 @@ Interface
     :align: center
     :scale: 50 %
     :alt: Interface of the Scratodon widget
-
     Figure 1: **Scratodon** widget interface.
 
 The **Scratodon** widget lets the user the possibility to scrap data from
