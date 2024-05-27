@@ -121,7 +121,7 @@ class Protoscrat(OWTextableBaseWidget):
             labelWidth=101,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                "The username '@user@instance.com' whose content will be imported."
+                "The username '(@)user@instance' whose content will be imported."
                 ),
             )
         
@@ -509,6 +509,7 @@ class Protoscrat(OWTextableBaseWidget):
         return all_posts
 
     def filterPosts(self, all_posts):
+        """Set an empty dictionary, where the segmentation will be filtered"""
         filtered_posts = []
         for post in all_posts:
             if self.excludeReblogs and bool(post.reblog):
