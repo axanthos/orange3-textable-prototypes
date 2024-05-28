@@ -328,51 +328,57 @@ class Translate(OWTextableBaseWidget):
         )
 
         #annotations = list()
-        #try:
-        for segment in self.inputSegmentation:
-            #pas pour test
-            self.createdInputs.append(Input(self.translate(segment.get_content()), self.captionTitle))
-            """annotations.append(
-                self.inputSegmentation[segment].annotations.copy()
-            )"""
-            progressBar.advance()   # 1 tick on the progress bar...
+        try:
+            for segment in self.inputSegmentation:
+                #pas pour test
+                self.createdInputs.append(Input(self.translate(segment.get_content()), self.captionTitle))
+                """annotations.append(
+                    self.inputSegmentation[segment].annotations.copy()
+                )"""
+                progressBar.advance()   # 1 tick on the progress bar...
+       
                 
-        # If there's only one input, the widget's output is the created Input...
-        if len(self.createdInputs) == 1:
-            self.outputSegmentation = self.createdInputs[0]
+            # If there's only one input, the widget's output is the created Input...
+            if len(self.createdInputs) == 1:
+                self.outputSegmentation = self.createdInputs[0]
 
-        # Otherwise the widget's output is a concatenation...
-        else:
-            self.outputSegmentation = Segmenter.concatenate(
-                self.createdInputs,
-                self.captionTitle,
-                import_labels_as=None,
+            # Otherwise the widget's output is a concatenation...
+            else:
+                self.outputSegmentation = Segmenter.concatenate(
+                    self.createdInputs,
+                    self.captionTitle,
+                    import_labels_as=None,
+                )
+
+            # Annotate segments...
+            """for idx, segment in enumerate(self.outputSegmentation):
+                segment.annotations.update(annotations[idx])
+                self.outputSegmentation[idx] = segment"""        
+
+            # Set status to OK and report data size...
+            message = "%i segment@p sent to output " % len(self.outputSegmentation)
+            message = pluralize(message, len(self.outputSegmentation))
+            numChars = 0
+            for segment in self.outputSegmentation:
+                segmentLength = len(Segmentation.get_data(segment.str_index))
+                numChars += segmentLength
+            message += "(%i character@p)." % numChars
+            message = pluralize(message, numChars)
+            self.infoBox.setText(message)
+            progressBar.finish()
+
+            self.controlArea.setDisabled(False)
+
+            # Send token...
+            self.send("Translated data", self.outputSegmentation, self)
+            self.sendButton.resetSettingsChangedFlag()
+
+        except:
+            self.infoBox.setText(
+                'An error occured',
+                'error'
             )
-
-        # Annotate segments...
-        """for idx, segment in enumerate(self.outputSegmentation):
-            segment.annotations.update(annotations[idx])
-            self.outputSegmentation[idx] = segment"""        
-
-        # Set status to OK and report data size...
-        message = "%i segment@p sent to output " % len(self.outputSegmentation)
-        message = pluralize(message, len(self.outputSegmentation))
-        numChars = 0
-        for segment in self.outputSegmentation:
-            segmentLength = len(Segmentation.get_data(segment.str_index))
-            numChars += segmentLength
-        message += "(%i character@p)." % numChars
-        message = pluralize(message, numChars)
-        self.infoBox.setText(message)
-        progressBar.finish()
-
-        # Clear progress bar.
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
-
-        # Send token...
-        self.send("Translated data", self.outputSegmentation, self)
-        self.sendButton.resetSettingsChangedFlag()
+            self.controlArea.setDisabled(False)
 
     def clearCreatedInputs(self):
         """
@@ -513,25 +519,23 @@ class Translate(OWTextableBaseWidget):
 
         dict = self.available_languages_dict[self.translator]["lang"]
         print(dict[self.inputLanguageKey])
-        try:
-            if self.translator == "GoogleTranslator":
-                translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-            if self.translator == "MyMemory":
-                translated_text = dt.MyMemoryTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-            if self.translator == "DeepL":
-                translated_text = dt.DeeplTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
-            if self.translator == "Qcri":
-                translated_text = dt.QcriTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
-            if self.translator == "Linguee":
-                translated_text = dt.LingueeTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-            if self.translator == "Pons":
-                translated_text = dt.PonsTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
-            return translated_text
-        except:
-            self.infoBox.setText(
-                'An error occured',
-                'error'
-            )
+        #print(dict[self.outputLanguageKey])
+
+        if self.translator == "GoogleTranslator":
+            translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "MyMemory":
+            translated_text = dt.MyMemoryTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "DeepL":
+            translated_text = dt.DeeplTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
+        if self.translator == "Qcri":
+            translated_text = dt.QcriTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey], api_key=self.labelKey).translate(untranslated_text)
+        if self.translator == "Linguee":
+            translated_text = dt.LingueeTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        if self.translator == "Pons":
+            translated_text = dt.PonsTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
+        return translated_text
+
+
     
 
 if __name__ == '__main__':
