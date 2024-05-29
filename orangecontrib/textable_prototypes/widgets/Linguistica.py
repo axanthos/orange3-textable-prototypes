@@ -582,16 +582,16 @@ class Linguistica(OWTextableBaseWidget):
 
             
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = Linguistica()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = Linguistica()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
     from LTTL.Input import Input
     import LTTL.Segmenter as Segmenter
     import re
-    example="rosa rosa rosam rosae rosae rosa rosae rosae rosas rosarum rosis rosis"
-    segments = Segmenter.tokenize(example, , (r"\w+", tokenize))
+    example=Input("rosa rosa rosam rosae rosae rosa rosae rosae rosas rosarum rosis rosis")
+    segments = Segmenter.tokenize(example, [(re.compile(r"\w+"), "tokenize")])
     WidgetPreview(Linguistica).run(inputData=Input(segments))
