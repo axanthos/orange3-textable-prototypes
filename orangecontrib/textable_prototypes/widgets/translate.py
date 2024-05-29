@@ -40,27 +40,30 @@ import inspect
 class Translate(OWTextableBaseWidget):
     """Orange widget for standard text translation"""
 
+    # Widget metadata
     name = "Transletto"
     description = "Text translator"
     icon = "icons/Translator.svg"
     priority = 2001
 
+    # Input and output signals
     inputs = [('Segmentation', Segmentation, "inputData")]
     outputs = [('Translated data', Segmentation)]
 
     want_main_area = False
 
+    # Settings handler
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
 
     # Settings...
     enableAPI = settings.Setting(False)
-    inputLanguageKey = settings.Setting('french')
-    inputLanguage = settings.Setting('fr-FR')
+    inputLanguageKey = settings.Setting('english')
+    inputLanguage = settings.Setting('en')
     outputLanguageKey = settings.Setting('french')
-    outputLanguage = settings.Setting('fr-FR')
-    
+    outputLanguage = settings.Setting('fr')
+    autoSend = settings.Setting(True)
     translator = settings.Setting('GoogleTranslator')
     labelKey = settings.Setting('')
 
@@ -68,9 +71,10 @@ class Translate(OWTextableBaseWidget):
 
     def __init__(self, *args, **kwargs):
         """Initialize a widget"""
+        
         super().__init__(*args, **kwargs)
 
-        # Other attributes...
+        # Initialize attributes...
         self.inputSegmentation = None
         self.outputSegmentation = None
         self.createdInputs = list()
@@ -82,12 +86,12 @@ class Translate(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
         )
 
-        # Path to pkl
+        # Path to the JSON file containing available languages and translators
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
 
-        # Open the pkl and add the content in our database
+        # Load the available languages and translators from the JSON file
         try:
             with open(os.path.join(path, "translate_data.json"), "r") as file:
                 self.available_languages_dict = json.load(file)
@@ -96,8 +100,7 @@ class Translate(OWTextableBaseWidget):
             print("Failed to open json file.")
 
         
-        # Input language
-        
+        # GUI elements for input language selection        
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Input language',
@@ -108,8 +111,10 @@ class Translate(OWTextableBaseWidget):
             widget=optionsBox,
             orientation='horizontal',
         )
-       
-        self.vacheALait()
+
+        #Générer les listes des Traducteurs et Languages à être affichés au départ
+        self.GenerateTranslatorLanguageList()
+        
         self.inputLanguage = gui.comboBox(
             widget=self.testBox1,
             master=self,
@@ -129,7 +134,7 @@ class Translate(OWTextableBaseWidget):
             tooltip=("Auto-detect language"),
         )
 
-        # Output language
+        # GUI elements for output language selection
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Output language',
@@ -152,15 +157,15 @@ class Translate(OWTextableBaseWidget):
             ),
         )
 
-        # Translation service
-        optionsBox = gui.widgetBox(
+        # GUI elements for translation service selection
+        optionsBoxTranslator = gui.widgetBox(
             widget=self.controlArea,
             box=u'Translation service',
             orientation='vertical',
             addSpace=True,
         )
         self.testBox3 = gui.widgetBox(
-            widget=optionsBox,
+            widget=optionsBoxTranslator,
             orientation='horizontal',
         )
         self.chooseTranslator = gui.comboBox(
@@ -175,15 +180,15 @@ class Translate(OWTextableBaseWidget):
             ),
         )
 
-
-        optionsBox = gui.widgetBox(
+        # Reset button
+        optionsBoxReset = gui.widgetBox(
             widget=self.controlArea,
             box=u'',
             orientation='vertical',
             addSpace=True,
         )
         self.testBox5 = gui.widgetBox(
-            widget=optionsBox,
+            widget=optionsBoxReset,
             orientation='horizontal',
         )
         gui.button(
@@ -195,10 +200,9 @@ class Translate(OWTextableBaseWidget):
         )
 
         gui.separator(widget=optionsBox, height=3)
-
         gui.rubber(self.controlArea)
 
-        # Text Field API key
+        # API key input field
         self.translator_need_API = list()
         for translator in self.available_languages_dict.keys():
             if self.available_languages_dict[translator]["api"]:
@@ -206,17 +210,16 @@ class Translate(OWTextableBaseWidget):
         print("self.translator_need_api:")
         print(self.translator_need_API)
 
-        optionsBox = gui.widgetBox(
+        optionsBoxAPI = gui.widgetBox(
             widget=self.controlArea,
             box=u'API :',
             orientation='vertical',
             addSpace=True,
         )
         self.apiBox = gui.widgetBox(
-            widget=optionsBox,
+            widget=optionsBoxAPI,
             orientation='horizontal',
         )
-
         self.apiKeyEdit = gui.lineEdit(
             widget=self.apiBox,
             master=self,
@@ -227,60 +230,32 @@ class Translate(OWTextableBaseWidget):
                 u"Spot to put API key if needed"
             ),
         )
-
         self.apiKeyEdit.setDisabled(True)
 
-        # Space in between
+        # Space and send button
         gui.rubber(self.controlArea)
-
-        # Send button...
         self.sendButton.draw()
 
         # Info box...
         self.infoBox.draw()
 
+        #Send automatically
         self.sendButton.sendIf()
 
     
     def inputLanguageChanged(self):
         """ Method for change in Input Language """
-        """ translators_available_for_lang = []
-        output_available_for_lang = []
-        for translator in self.available_languages_dict.keys():
-            for lang in self.available_languages_dict[translator]["lang"].keys():
-                print(self.inputLanguageKey)
-                print(lang)
-                if self.inputLanguageKey == lang:
-                    translators_available_for_lang.append(translator)
-        for translator in translators_available_for_lang:
-            for lang in self.available_languages_dict[translator]["lang"].keys():
-                output_available_for_lang.append(lang)
-
-        print(translators_available_for_lang)
-        self.chooseTranslator.clear()
-        for lang in translators_available_for_lang:
-            self.chooseTranslator.addItem(lang)
-        self.available_translators = translators_available_for_lang
-        self.available_translators = self.available_translators
-        self.outputLanguageBox.clear()
-        output_available_for_lang = list(set(output_available_for_lang))
-        output_available_for_lang.sort()
-        for lang in output_available_for_lang:
-            self.outputLanguageBox.addItem(lang)
-        print(self.available_translators) """
         self.update(boxUpdated="input")
         self.sendButton.settingsChanged()
 
 
     def outputLanguageChanged(self):
         """ Method for change in Output Language """
-        
         self.update(boxUpdated="output")
         self.sendButton.settingsChanged()
 
     def translatorChanged(self):
         """Method for change in translator"""
-        #self.translator = self.available_translators
         print(self.translator)
         self.update(boxUpdated="translator")
         self.sendButton.settingsChanged()
@@ -300,8 +275,6 @@ class Translate(OWTextableBaseWidget):
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
-
-        # Check that something has been selected...
         print("this is input segmentation :")
         print(self.inputSegmentation)
         if not self.inputSegmentation:
@@ -311,11 +284,6 @@ class Translate(OWTextableBaseWidget):
             )
             self.send("Translated data", None, self)
             return        
-
-        """if self.detectedInputLanguage not in self.available_languages_dict["MyMemoryTranslator"].items():
-            self.infoBox.setText(u'This language is not supported', 'error')
-            self.send('Preprocessed data', None, self)
-            return"""
 
         # Clear created Inputs.
         self.clearCreatedInputs()
@@ -327,10 +295,9 @@ class Translate(OWTextableBaseWidget):
             iterations=len(self.inputSegmentation)
         )
 
-        #annotations = list()
+        # Make translation, print error if translation not available
         try:
             for segment in self.inputSegmentation:
-                #pas pour test
                 self.createdInputs.append(Input(self.translate(segment.get_content()), self.captionTitle))
                 """annotations.append(
                     self.inputSegmentation[segment].annotations.copy()
@@ -374,6 +341,7 @@ class Translate(OWTextableBaseWidget):
             self.sendButton.resetSettingsChangedFlag()
 
         except:
+            #Print error if widget fails to translate
             self.infoBox.setText(
                 'An error occured',
                 'error'
@@ -381,19 +349,13 @@ class Translate(OWTextableBaseWidget):
             self.controlArea.setDisabled(False)
 
     def clearCreatedInputs(self):
-        """
-        Delete all Input objects that have been created
-        """
-
+        """Delete all Input objects that have been created"""
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
 
     def setCaption(self, title):
-        """
-        This method needs to be copied verbatim in every Textable widget that sends a segmentation
-        """
-
+        """This method needs to be copied verbatim in every Textable widget that sends a segmentation"""
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
             super().setCaption(title)
@@ -405,7 +367,8 @@ class Translate(OWTextableBaseWidget):
     def onDeleteWidget(self):
         self.clearCreatedInputs()
 
-    def vacheALait(self):
+    def GenerateTranslatorLanguageList(self):
+        """Generate lists of available translators and languages"""
         self.available_languages = list()
         self.available_translators = list()
         for translator in self.available_languages_dict.keys():
@@ -417,6 +380,7 @@ class Translate(OWTextableBaseWidget):
 
 
     def resetAll(self):
+        """Reset widget settings"""
         self.inputLanguage.clear()
         self.chooseTranslator.clear()
         self.outputLanguageBox.clear()
@@ -439,6 +403,7 @@ class Translate(OWTextableBaseWidget):
             self.outputLanguageBox.addItem(lang)     
 
     def update(self, boxUpdated):
+        """Update values when a box is changed"""
         if boxUpdated != "input":
             previousInput = self.inputLanguageKey
             self.inputLanguage.clear()
@@ -495,9 +460,9 @@ class Translate(OWTextableBaseWidget):
 
 
     def detectInputLanguage(self):
+        """Auto-detect input language"""
         #detect the language
         text = self.inputSegmentation[0].get_content()
-        #self.detectedInputLanguage = detect(text)
         lang_detect_language = detect(text)
         for key, value in self.available_languages_dict["GoogleTranslator"]["lang"].items():
             if lang_detect_language == value:
@@ -513,13 +478,11 @@ class Translate(OWTextableBaseWidget):
             )
         return
 
-    def translate(self, untranslated_text):
-        #print(self.detectedInputLanguage)
-        print(self.translator) 
+    def translate(self, untranslated_text):        
+        """Translate a text from one language to another"""
 
         dict = self.available_languages_dict[self.translator]["lang"]
         print(dict[self.inputLanguageKey])
-        #print(dict[self.outputLanguageKey])
 
         if self.translator == "GoogleTranslator":
             translated_text = dt.GoogleTranslator(source=dict[self.inputLanguageKey], target=dict[self.outputLanguageKey]).translate(untranslated_text)
@@ -537,7 +500,7 @@ class Translate(OWTextableBaseWidget):
 
 
     
-
+# Widget Preview for testing
 if __name__ == '__main__':
     from LTTL.Input import Input
     input1 = Input("Mary said hello to John and Mike.")
