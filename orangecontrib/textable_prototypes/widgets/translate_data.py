@@ -5,7 +5,7 @@
 from deep_translator import (GoogleTranslator,
                              ChatGptTranslator,
                              MicrosoftTranslator,
-                             PonsTranslator,
+                             PonsTranslator, 
                              LingueeTranslator,
                              MyMemoryTranslator,
                              YandexTranslator,
@@ -44,14 +44,30 @@ langs_dict["DeepL"] = deepl_dict
 #Qcri Translator
 qcri_dict = {
     "name": "Qcri Translator",
-    
+    "api": True,
+    "lang": QcriTranslator(api_key="29007d2cbaa9a744cfbf42611b27a75c").get_supported_languages(as_dict=True)
 }
+langs_dict["Qcri"] = qcri_dict
+
+#Linguee Translator
+linguee_dict = {
+    "name": "Linguee Translator",
+    "api": False,
+    "lang": LingueeTranslator(source="english", target="german").get_supported_languages(as_dict=True)
+}
+langs_dict["Linguee"] = linguee_dict
+
+#Pons Translator
+pons_dict = {
+    "name": "Pons Translator",
+    "api": False,
+    "lang": PonsTranslator(source='english', target='french').get_supported_languages(as_dict=True)
+}
+langs_dict["Pons"] = pons_dict
+print(pons_dict)
 
 
-""" langs_dict = dt.MyMemoryTranslator(source="ace-ID",target="hr-HR").get_supported_languages(as_dict=True)
-bigger_dict = dict()
-bigger_dict["MyMemoryTranslator"] = langs_dict
-print(bigger_dict)
+
 with open('orangecontrib\\textable_prototypes\widgets\\translate_data.json', 'w') as f:
-    json.dump(bigger_dict, f) """
+    json.dump(langs_dict, f)
 
