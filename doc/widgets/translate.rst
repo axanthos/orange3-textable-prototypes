@@ -87,7 +87,6 @@ Warnings
 *Widget needs input*
     A text segmentation should be input into the widget for translation.
 
-*Error*
-    An Error accurred
-
+*An error occured*
+    An error occurs when the translator cannot complete the translation. 
 
