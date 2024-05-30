@@ -37,7 +37,7 @@ import json
 import os
 import inspect
 
-class Translate(OWTextableBaseWidget):
+class Transletto(OWTextableBaseWidget):
     """Orange widget for standard text translation"""
 
     # Widget metadata
@@ -59,11 +59,11 @@ class Translate(OWTextableBaseWidget):
 
     # Settings...
     enableAPI = settings.Setting(False)
-    inputLanguageKey = settings.Setting('english')
+    inputLanguageKey = settings.Setting('English')
     inputLanguage = settings.Setting('en')
-    outputLanguageKey = settings.Setting('french')
+    outputLanguageKey = settings.Setting('French')
     outputLanguage = settings.Setting('fr')
-    autoSend = settings.Setting(True)
+    autoSend = settings.Setting(False)
     translator = settings.Setting('GoogleTranslator')
     labelKey = settings.Setting('')
 
@@ -77,6 +77,7 @@ class Translate(OWTextableBaseWidget):
         # Initialize attributes...
         self.inputSegmentation = None
         self.outputSegmentation = None
+        self.defaultLanguage = "English"
         self.createdInputs = list()
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
@@ -93,7 +94,7 @@ class Translate(OWTextableBaseWidget):
 
         # Load the available languages and translators from the JSON file
         try:
-            with open(os.path.join(path, "translate_data.json"), "r") as file:
+            with open(os.path.join(path, "translate_data_test.json"), "r") as file:
                 self.available_languages_dict = json.load(file)
         # Else show error message
         except IOError:
@@ -210,20 +211,21 @@ class Translate(OWTextableBaseWidget):
         print("self.translator_need_api:")
         print(self.translator_need_API)
 
-        optionsBoxAPI = gui.widgetBox(
+        """ optionsBoxAPI = gui.widgetBox(
             widget=self.controlArea,
-            box=u'API :',
+            box=u'API key :',
             orientation='vertical',
             addSpace=True,
-        )
+        ) """
         self.apiBox = gui.widgetBox(
-            widget=optionsBoxAPI,
+            widget=optionsBoxTranslator,
             orientation='horizontal',
         )
         self.apiKeyEdit = gui.lineEdit(
             widget=self.apiBox,
             master=self,
             value='labelKey',
+            label='API Key: ',
             orientation='horizontal',
             callback=self.sendButton.settingsChanged,
             tooltip=(
@@ -299,9 +301,6 @@ class Translate(OWTextableBaseWidget):
         try:
             for segment in self.inputSegmentation:
                 self.createdInputs.append(Input(self.translate(segment.get_content()), self.captionTitle))
-                """annotations.append(
-                    self.inputSegmentation[segment].annotations.copy()
-                )"""
                 progressBar.advance()   # 1 tick on the progress bar...
        
                 
@@ -316,11 +315,7 @@ class Translate(OWTextableBaseWidget):
                     self.captionTitle,
                     import_labels_as=None,
                 )
-
-            # Annotate segments...
-            """for idx, segment in enumerate(self.outputSegmentation):
-                segment.annotations.update(annotations[idx])
-                self.outputSegmentation[idx] = segment"""        
+     
 
             # Set status to OK and report data size...
             message = "%i segment@p sent to output " % len(self.outputSegmentation)
@@ -343,7 +338,7 @@ class Translate(OWTextableBaseWidget):
         except:
             #Print error if widget fails to translate
             self.infoBox.setText(
-                'An error occured',
+                'Translation failed. Please try changing the translation service or languages.',
                 'error'
             )
             self.controlArea.setDisabled(False)
@@ -400,7 +395,10 @@ class Translate(OWTextableBaseWidget):
         
         for lang in self.available_languages:
             self.inputLanguage.addItem(lang)
-            self.outputLanguageBox.addItem(lang)     
+            self.outputLanguageBox.addItem(lang)  
+
+        self.inputLanguageKey = self.defaultLanguage
+        self.outputLanguageKey = self.defaultLanguage   
 
     def update(self, boxUpdated):
         """Update values when a box is changed"""
@@ -506,4 +504,4 @@ if __name__ == '__main__':
     input1 = Input("Mary said hello to John and Mike.")
     input2 = Input("Lucy told Johnny to say hello in return.")
     input = Segmenter.concatenate([input1, input2])
-    WidgetPreview(Translate).run(inputData=input)
+    WidgetPreview(Transletto).run(inputData=input)
