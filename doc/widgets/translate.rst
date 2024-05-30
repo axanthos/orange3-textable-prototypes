@@ -17,7 +17,7 @@ Translate a text using various translation APIs
 Author
 ------
 
-André, Sébastien Franzone, Marie Fasel, Klisman Kodra
+André da Glória Santiago, Sébastien Franzone, Marie Fasel, Klisman Kodra
 
 Signals
 -------
