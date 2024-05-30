@@ -94,7 +94,7 @@ class Transletto(OWTextableBaseWidget):
 
         # Load the available languages and translators from the JSON file
         try:
-            with open(os.path.join(path, "translate_data_test.json"), "r") as file:
+            with open(os.path.join(path, "translate_data.json"), "r") as file:
                 self.available_languages_dict = json.load(file)
         # Else show error message
         except IOError:
