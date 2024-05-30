@@ -50,9 +50,8 @@ The widget's interface requires the following user inputs (see :ref:`figure 1 <t
 1. **Input language**: The language of the input text. This can be set manually or automatically detected.
 2. **Output language**: The language into which the text will be translated.
 3. **Translation service**: The service to be used for translation (e.g., GoogleTranslator, DeepL).
-4. **Reset** button triggers the reset of the interface. 
+4. **Reset** button triggers the reset of the interface and puts the GoogleTranslator as a default translation service, and english as a default input and output language. 
 5. **API**:In some instances, there is a need of an API key such as Deepl and QCRI.
-6. **API**:In some instances, there is a need of an API key such as Deepl and QCRI.
 
 
 .. _translate_fig1:
