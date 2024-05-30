@@ -12,7 +12,7 @@
 
 1. Select the source you want to fetch the posts from (user/local/federated)
 
-2. Enter the username (ex: @user@instance.fr) if you chose user or the instance URL (ex: instance.fr) if you chose local/federated 
+2. Enter the username (ex: (@)user@instance) if you chose user or the instance URL (ex: instance.fr) if you chose local/federated 
 
 3. Enter the max amount of posts you want
 
@@ -25,8 +25,8 @@
 	</annotations>
 	<thumbnail />
 	<node_properties>
-		<properties node_id="0" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\xff\xff\xff\xc7\x00\x00\x00L\x00\x00\x03\x83\x00\x00\x02d\xff\xff\xff\xce\x00\x00\x00j\x00\x00\x03|\x00\x00\x02]\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\xff\xff\xff\xce\x00\x00\x00j\x00\x00\x03|\x00\x00\x02]', 'segmentDelimiter': '\\n', 'uuid': '06319f89-4c6d-40fa-b9d5-416d6046505d', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
-		<properties node_id="1" format="literal">{'API': '', 'URL': '', 'advancedSettings': False, 'amount': 100, 'autoSend': False, 'controlAreaVisible': True, 'excludeMedias': False, 'excludeReblogs': False, 'excludeReplies': False, 'minLikes': 0, 'minreblogs': 0, 'onlyMedia': False, 'reblogsOnly': False, 'savedWidgetGeometry': None, 'userID': 'gargron@mastodon.social', 'uuid': '7c249acc-b890-4641-bbce-f096e4171d99', '__version__': 1, '_TextableUtils_settings_version__': (1, 0)}</properties>
+		<properties node_id="0" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\xa9\x00\x00\x00Z\x00\x00\x04Y\x00\x00\x02l\x00\x00\x00\xaa\x00\x00\x00x\x00\x00\x04X\x00\x00\x02k\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\xaa\x00\x00\x00x\x00\x00\x04X\x00\x00\x02k', 'segmentDelimiter': '\\n', 'uuid': '06319f89-4c6d-40fa-b9d5-416d6046505d', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties node_id="1" format="literal">{'API': '', 'URL': '', 'advancedSettings': False, 'amount': 100, 'autoSend': False, 'controlAreaVisible': True, 'excludeMedias': False, 'excludeReblogs': False, 'excludeReplies': False, 'minLikes': 0, 'minreblogs': 0, 'onlyMedia': False, 'reblogsOnly': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\x0c\x00\x00\x00F\x00\x00\x02\xf3\x00\x00\x02D\x00\x00\x02\r\x00\x00\x00d\x00\x00\x02\xf2\x00\x00\x02C\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x02\r\x00\x00\x00d\x00\x00\x02\xf2\x00\x00\x02C', 'userID': 'gargron@mastodon.social', 'uuid': '7c249acc-b890-4641-bbce-f096e4171d99', '__version__': 1, '_TextableUtils_settings_version__': (1, 0)}</properties>
 	</node_properties>
 	<session_state>
 		<window_groups />
