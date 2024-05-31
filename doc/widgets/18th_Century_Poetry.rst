@@ -125,6 +125,7 @@ Errors
     An error has prevented the widget to download the data from the
     18th Century Poetry (most likely related to a connection problem).
 
+
 Note
 ----
 

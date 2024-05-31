@@ -94,3 +94,7 @@ Warnings
     emission to proceed.
     
 
+Note
+----
+
+Note that the widget still has a problem when multiple segments are given to it as input.
