@@ -13,7 +13,7 @@ from LTTL.Input import Input
 import time
 from urllib.parse import urlparse
 
-class Protoscrat(OWTextableBaseWidget):
+class Scratodon(OWTextableBaseWidget):
     """An Orange widget that uses MastoAPI to pull annotated posts"""
 
     #----------------------------------------------------------------------
@@ -682,4 +682,4 @@ class Protoscrat(OWTextableBaseWidget):
             super().setCaption(title)
 
 if __name__ == "__main__":
-    WidgetPreview(Protoscrat).run()
+    WidgetPreview(Scratodon).run()
