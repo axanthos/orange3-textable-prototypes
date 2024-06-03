@@ -25,7 +25,7 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
-#from Orange.widgets.utils.widgetpreview import WidgetPreview
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -881,11 +881,11 @@ class WidgetEditList(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = LexicalHunter()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
-    #WidgetPreview(LexicalHunter).run(inputData=Input("Hello world. How are you doing ?"))
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = LexicalHunter()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(LexicalHunter).run(inputData=Input("Hello world. How are you doing ?"))
