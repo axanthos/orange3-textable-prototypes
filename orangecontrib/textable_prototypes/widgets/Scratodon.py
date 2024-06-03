@@ -421,7 +421,13 @@ class Scratodon(OWTextableBaseWidget):
                     limit=min(40, n - len(all_posts)))
 
             all_posts.extend(posts)
-            max_id = posts[-1].id - 1
+            
+            try:
+                max_id = posts[-1].id - 1
+            #If fetching all the account isn't enough, tell the user
+            except:
+                print(f"Got ALL posts from this user, only {len(all_posts)}")
+                return all_posts
 
             print(f"Fetched {len(all_posts)} posts so far.")
             progressBar.advance()
@@ -479,12 +485,14 @@ class Scratodon(OWTextableBaseWidget):
                                             limit=min(remaining, n))
                 if not timeline:
                     break
-                print(f"Fetched {len(all_posts)} posts so far.")
+
                 all_posts.extend(timeline)
-                progressBar.advance()
                 remaining -= 40
                 max_id = timeline[-1]['id']
                 limit=min(remaining, n)
+
+                print(f"Fetched {len(all_posts)} posts so far.")
+                progressBar.advance()
 
             except Exception as e:
                 print(f"Une erreur est survenue: {e}")
@@ -541,7 +549,10 @@ class Scratodon(OWTextableBaseWidget):
 
             #Rentrer le texte (ou placeholder) dans LTTL
             if not post.content:
-                input_seg = Input("OnlyMediaInThisPost", self.captionTitle)
+                if post.reblog:
+                    input_seg = Input("CantFetchTextFromReblogs", self.captionTitle)
+                else:
+                    input_seg = Input("OnlyMediaInThisPost", self.captionTitle)
             else:
                 input_seg = Input(post.content, self.captionTitle)
 
