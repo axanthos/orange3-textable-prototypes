@@ -45,19 +45,26 @@ class Scratodon(OWTextableBaseWidget):
     # Saved settings
     # General
     autoSend = settings.Setting(False)
-    userID = settings.Setting("gargron@mastodon.social")
-    
-    # Filters
-    excludeReblogs = settings.Setting(False)
-    excludeReplies = settings.Setting(False)
-    excludeMedias = settings.Setting(False)
-    onlyReblogs = settings.Setting(False)
-    onlyReplies = settings.Setting(False)
-    onlyMedia = settings.Setting(False)
 
+    selectedSource = settings.Setting("User")
+    userID = settings.Setting("gargron@mastodon.social")
     URL = settings.Setting("mastodon.social")
     amount = settings.Setting(100)
-    advancedSettings = settings.Setting(False)
+    
+    #advancedSettings = settings.Setting(False)
+
+    # Filters
+    filterReblogs = settings.Setting("Keep")
+    filterReplies = settings.Setting("Keep")
+    filterMedias = settings.Setting("Keep")
+
+    # excludeReblogs = settings.Setting(False)
+    # excludeReplies = settings.Setting(False)
+    # excludeMedias = settings.Setting(False)
+    # onlyReblogs = settings.Setting(False)
+    # onlyReplies = settings.Setting(False)
+    # onlyMedia = settings.Setting(False)
+
     minReblogs = settings.Setting(0)
     minLikes = settings.Setting(0)
 
@@ -67,8 +74,8 @@ class Scratodon(OWTextableBaseWidget):
         #Attributs initilizations...
         self.segmentation = Input("")
         self.createdInputs = list()
-        self.sources = ["User", "Federated", "Local"]
-        self.selectedSource = "User"
+        #self.sources = ["User", "Federated", "Local"]
+        #self.selectedSource = "User"
 
         # GUI
         self.sendButton = SendButton(
@@ -81,7 +88,7 @@ class Scratodon(OWTextableBaseWidget):
 
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Select source",
+            box="Source",
             orientation="vertical",
         )
 
@@ -89,11 +96,10 @@ class Scratodon(OWTextableBaseWidget):
             widget=queryBox,
             master=self,
             value="selectedSource",
-            items=self.sources,
+            items=["User", "Federated", "Local"],
             sendSelectedValue=True,
             orientation="horizontal",
-            label="Source:",
-            emptyString="",
+            label="Source Type:",
             labelWidth=100,
             tooltip=(
                 "User's posts or one of the timelines."
@@ -101,19 +107,18 @@ class Scratodon(OWTextableBaseWidget):
             callback=self.sendButton.settingsChanged,
         )
 
-        self.basicURLBox1 = gui.widgetBox(
-            widget=self.controlArea,
-            box='Source',
+        self.UserIDBox = gui.widgetBox(
+            widget=queryBox,
             orientation='vertical',
             addSpace=False,
             )
-        basicURLBoxLine1 = gui.widgetBox(
-            widget=self.basicURLBox1,
+        Spacer1 = gui.widgetBox(
+            widget=self.UserIDBox,
             box=False,
             orientation='horizontal',
             )
         gui.lineEdit(
-            widget=basicURLBoxLine1,
+            widget=self.UserIDBox,
             master=self,
             value='userID',
             orientation='horizontal',
@@ -125,19 +130,18 @@ class Scratodon(OWTextableBaseWidget):
                 ),
             )
         
-        self.basicURLBox2 = gui.widgetBox(
-            widget=self.controlArea,
-            box='Source',
+        self.URLBox = gui.widgetBox(
+            widget=queryBox,
             orientation='vertical',
             addSpace=False,
             )
-        basicURLBoxLine2 = gui.widgetBox(
-            widget=self.basicURLBox2,
+        Spacer2 = gui.widgetBox(
+            widget=self.URLBox,
             box=False,
             orientation='horizontal',
             )
         gui.lineEdit(
-            widget=basicURLBoxLine2,
+            widget=self.URLBox,
             master=self,
             value='URL',
             orientation='horizontal',
@@ -149,15 +153,8 @@ class Scratodon(OWTextableBaseWidget):
                 ),
             )
         
-        if self.selectedSource == "User":
-            self.basicURLBox1.setVisible(True)
-            self.basicURLBox2.setVisible(False)
-        else:
-            self.basicURLBox1.setVisible(False)
-            self.basicURLBox2.setVisible(True)
-        
         gui.spin(
-            widget=self.controlArea,
+            widget=queryBox,
             master=self,
             value="amount",
             minv=1,
@@ -166,62 +163,75 @@ class Scratodon(OWTextableBaseWidget):
             labelWidth=150,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
-            tooltip="Amount of posts that will get fetched. \n(~5 minutes of wait every 12k posts)",
+            tooltip="Amount of posts that will get fetched. \n!! Actual amount of posts may be lower, because of the filters.\n(~5 minutes of wait every 12k posts)",
             step=10,
         )
 
-        self.excludeRe = gui.widgetBox(
+        filtersBox = gui.widgetBox(
             widget=self.controlArea,
-            orientation='horizontal',
-            addSpace=False,
+            box="Filters",
+            orientation="vertical",
         )
 
-        self.exclreblogs = gui.checkBox(
-            widget=self.excludeRe,
+        typesBox = gui.widgetBox(
+            widget=filtersBox,
+            box="Type of posts",
+            orientation="vertical",
+        )
+
+        gui.comboBox(
+            widget=typesBox,
             master=self,
-            value='excludeReblogs',
-            label='Exclude reblogs',
-            callback=self.updateGUI,
+            value="filterReblogs",
+            items=["Remove", "Keep", "Keep Only"],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Reblogs:",
+            labelWidth=125,
+            tooltip=(
+                "What to do with posts that are reblogs (They won't have any text anyway)."
+            ),
+            callback=self.sendButton.settingsChanged,
         )
 
-        self.excludeRep = gui.checkBox(
-            widget=self.excludeRe,
+        gui.comboBox(
+            widget=typesBox,
             master=self,
-            value='excludeReplies',
-            label='Exclude replies',
-            callback=self.updateGUI,
+            value="filterReplies",
+            items=["Remove", "Keep", "Keep Only"],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="Replies:",
+            labelWidth=125,
+            tooltip=(
+                "What to do with posts that are replies."
+            ),
+            callback=self.sendButton.settingsChanged,
         )
 
-        gui.checkBox(
-            widget=self.controlArea,
+        gui.comboBox(
+            widget=typesBox,
             master=self,
-            value='advancedSettings',
-            label='Advanced settings',
-            callback=self.updateGUI,
+            value="filterMedias",
+            items=["Remove", "Keep", "Keep Only"],
+            sendSelectedValue=True,
+            orientation="horizontal",
+            label="With medias:",
+            labelWidth=125,
+            tooltip=(
+                "What to do with posts that have medias."
+            ),
+            callback=self.sendButton.settingsChanged,
         )
 
-        self.advSettings = gui.widgetBox(
-            widget=self.controlArea,
-            orientation='horizontal',
-            addSpace=False,
+        interactionsBox = gui.widgetBox(
+            widget=filtersBox,
+            box="Interactions",
+            orientation="vertical",
         )
 
-        self.reblogsBox = gui.widgetBox(
-            widget=self.advSettings,
-            orientation='vertical',
-            addSpace=False,
-        )
-        
-
-        self.onlyReblogsCheckbox = gui.checkBox(
-            widget=self.reblogsBox,
-            master=self,
-            value='onlyReblogs',
-            label='Only reblogs',
-            callback=self.updateGUI,
-        )
-        self.minReblogsBox = gui.spin(
-            widget=self.reblogsBox,
+        gui.spin(
+            widget=interactionsBox,
             master=self,
             value="minReblogs",
             minv=0,
@@ -230,33 +240,12 @@ class Scratodon(OWTextableBaseWidget):
             labelWidth=150,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
-            tooltip="Amount of reblogs that you want",
-            step=10,
-        )
-
-        self.imagesBox = gui.widgetBox(
-            widget=self.reblogsBox,
-            orientation='horizontal',
-            addSpace=False,
-        )
-
-        self.excludeMediasCheckbox = gui.checkBox(
-            widget=self.imagesBox,
-            master=self,
-            value='excludeMedias',
-            label='Exclude images',
-            callback=self.updateGUI,
-        )
-        self.onlyMediaCheckbox = gui.checkBox(
-            widget=self.imagesBox,
-            master=self,
-            value='onlyMedia',
-            label='Only images',
-            callback=self.updateGUI,
+            tooltip="Amount of reblogs that a post should have",
+            step=5,
         )
 
         gui.spin(
-            widget=self.reblogsBox,
+            widget=interactionsBox,
             master=self,
             value="minLikes",
             minv=0,
@@ -266,92 +255,29 @@ class Scratodon(OWTextableBaseWidget):
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
             tooltip="Amount of likes that a post should have",
-            step=10,
+            step=5,
         )
 
-        if self.advancedSettings:
-            self.advSettings.setVisible(True)
-        else:
-            self.advSettings.setVisible(False)
-        
-        if self.exclreblogs.isChecked():
-            self.onlyReblogsCheckbox.setDisabled(True)
-            self.onlyReblogsCheckbox.setChecked(False)
-            self.minReblogsBox.setDisabled(True)
-        else:
-            self.onlyReblogsCheckbox.setDisabled(False)
-            self.minReblogsBox.setDisabled(False)
-        
-        if self.onlyReblogsCheckbox.isChecked():
-            self.exclreblogs.setDisabled(True)
-            self.exclreblogs.setChecked(False)
-        else:
-            self.exclreblogs.setDisabled(False)
-
-        if self.onlyMediaCheckbox.isChecked():
-            self.excludeMediasCheckbox.setDisabled(True)
-            self.excludeMediasCheckbox.setChecked(False)
-        else:
-            self.excludeMediasCheckbox.setDisabled(False)
-             
-        if self.excludeMediasCheckbox.isChecked():
-            self.onlyMediaCheckbox.setDisabled(True)
-            self.onlyMediaCheckbox.setChecked(False)
-        else:
-            self.onlyMediaCheckbox.setDisabled(False)
-
-
         self.infoBox = InfoBox(widget=self.controlArea)
-        gui.separator(self.controlArea, height=3)
+        #gui.separator(self.controlArea, height=3)
 
-
-
-        gui.separator(widget=self.basicURLBox1, height=3)
-        gui.separator(widget=self.basicURLBox2, height=3)
-        gui.rubber(self.controlArea)
+        #gui.rubber(filtersBox)
 
         self.sendButton.draw()
         self.infoBox.draw()
+        self.updateGUI()
 
     #Our methods
     def updateGUI(self):
         """Update GUI state"""
 
         if self.selectedSource=="User":
-            self.basicURLBox1.setVisible(True)
-            self.basicURLBox2.setVisible(False)
+            self.UserIDBox.setVisible(True)
+            self.URLBox.setVisible(False)
         else: 
-            self.basicURLBox1.setVisible(False)
-            self.basicURLBox2.setVisible(True)
-        
-        if self.advancedSettings:
-            self.advSettings.setVisible(True)
-        else:
-            self.advSettings.setVisible(False)
+            self.UserIDBox.setVisible(False)
+            self.URLBox.setVisible(True)
 
-        if self.exclreblogs.isChecked():
-            self.onlyReblogsCheckbox.setDisabled(True)
-            self.onlyReblogsCheckbox.setChecked(False)
-        else:
-            self.onlyReblogsCheckbox.setDisabled(False)
-        
-        if self.onlyReblogsCheckbox.isChecked():
-            self.exclreblogs.setDisabled(True)
-            self.exclreblogs.setChecked(False)
-        else:
-            self.exclreblogs.setDisabled(False)
-
-        if self.onlyMediaCheckbox.isChecked():
-            self.excludeMediasCheckbox.setDisabled(True)
-            self.excludeMediasCheckbox.setChecked(False)
-        else:
-            self.excludeMediasCheckbox.setDisabled(False)
-        
-        if self.excludeMediasCheckbox.isChecked():
-            self.onlyMediaCheckbox.setDisabled(True)
-            self.onlyMediaCheckbox.setChecked(False)
-        else:
-            self.onlyMediaCheckbox.setDisabled(False)
 
     def fetchUserPosts(self, username_at_instance, n=100, exclude_replies=False, exclude_reblogs=False, only_media=False):
         """Takes a string like (@)user@instance.net or a URL and returns a dictionary of the n last posts from user"""
@@ -504,24 +430,24 @@ class Scratodon(OWTextableBaseWidget):
                 self.controlArea.setDisabled(False)
                 return
 
-        print(f"This is the output dict: {all_posts}")
+        print(f"Got {len(all_posts)} posts from timeline of {instance}", "\n")
         return all_posts
 
     def filterPosts(self, all_posts):
         """Set an empty dictionary, where the segmentation will be filtered"""
         filtered_posts = []
         for post in all_posts:
-            if self.excludeReblogs and bool(post.reblog):
+            if self.filterReblogs=="Remove" and bool(post.reblog):
                 continue
-            if self.onlyReblogs and not bool(post.reblog):
+            if self.filterReblogs=="Keep Only" and not bool(post.reblog):
                 continue
-            if self.excludeReplies and bool(post.in_reply_to_id):
+            if self.filterReplies=="Remove" and bool(post.in_reply_to_id):
                 continue
-            if self.onlyReplies and not bool(post.in_reply_to_id):
+            if self.filterReplies=="Keep Only" and not bool(post.in_reply_to_id):
                 continue
-            if self.excludeMedias and bool(post.media_attachments):
+            if self.filterMedias=="Remove" and bool(post.media_attachments):
                 continue
-            if self.onlyMedia and not bool(post.media_attachments):
+            if self.filterMedias=="Keep Only" and not bool(post.media_attachments):
                 continue
             if post.reblogs_count < self.minReblogs:
                 continue
@@ -655,10 +581,23 @@ class Scratodon(OWTextableBaseWidget):
         self.clearCreatedInputs()
         self.controlArea.setDisabled(True)
 
+        #Initialiser filtres
+        excludeReblogs = False
+        excludeReplies = False
+        onlyMedia = False
+
+        #Transform filters to bool
+        if self.filterReblogs=="Remove":
+            excludeReblogs = True
+        if self.filterReplies=="Remove":
+            excludeReplies = True
+        if self.filterMedias=="Keep Only":
+            onlyMedia = True
+
         if self.selectedSource == "User":
-            dictPosts = self.fetchUserPosts(self.userID, self.amount, self.excludeReplies, self.excludeReblogs, self.onlyMedia)
+            dictPosts = self.fetchUserPosts(self.userID, self.amount, excludeReplies, excludeReblogs, onlyMedia)
         else:
-            dictPosts = self.fetchTimelines(self.URL, self.amount, self.onlyMedia)
+            dictPosts = self.fetchTimelines(self.URL, self.amount, onlyMedia)
 
         filteredPosts = self.filterPosts(dictPosts)
         self.segmentation = self.createSegmentation(filteredPosts)
