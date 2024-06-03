@@ -26,7 +26,7 @@ __email__ = "aris.xanthos@unil.ch"
 
 
 from Orange.widgets import widget, gui, settings
-#from Orange.widgets.utils.widgetpreview import WidgetPreview
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -614,11 +614,11 @@ class ECP(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = ECP()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
-    #WidgetPreview(ECP).run()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = ECP()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(ECP).run()
