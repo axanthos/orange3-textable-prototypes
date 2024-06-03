@@ -57,7 +57,7 @@ from _textable.widgets.TextableUtils import (
 )
 
 from Orange.widgets import widget, gui, settings
-#from Orange.widgets.utils.widgetpreview import WidgetPreview
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
@@ -1196,11 +1196,11 @@ class SuperTextFiles(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = SuperTextFiles()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
-    #WidgetPreview(SuperTextFiles).run()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #appl = QApplication(sys.argv)
+    #ow = SuperTextFiles()
+    #ow.show()
+    #appl.exec_()
+    #ow.saveSettings()
+    WidgetPreview(SuperTextFiles).run()
