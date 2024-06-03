@@ -411,4 +411,4 @@ if __name__ == '__main__':
     # myWidget = AudioFile()
     # myWidget.show()
     # myApplication.exec_()
-    # myWidget.saveSettings()
+    myWidget.saveSettings()

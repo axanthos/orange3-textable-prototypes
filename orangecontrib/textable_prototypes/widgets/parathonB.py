@@ -638,5 +638,5 @@ if __name__ == "__main__":
     #myWidget.inputData(Input('a simple example :) ;)'))
     #myWidget.show()
     #myApplication.exec_()
-    #myWidget.saveSettings()
+    myWidget.saveSettings()
     WidgetPreview(Parathon).run(inputData=Input("Hello world !!! How are you doinggg ?"))
