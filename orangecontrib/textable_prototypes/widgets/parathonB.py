@@ -484,9 +484,6 @@ class Parathon(OWTextableBaseWidget):
                                                selectedDictsLabels, f2fList,
                                                cmcList, progressBar.advance)
 
-        # Remplacer cette ligne de code par celle qui transforme parathonResult en segmentation (?) pour être envoyé comme output
-        #bypassed_data = bypass(self.inputsegmentation, label=self.captionTitle)
-
         self.segmentation = parathonResult
         progressBar.finish()        
         
