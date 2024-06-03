@@ -50,20 +50,11 @@ class Scratodon(OWTextableBaseWidget):
     userID = settings.Setting("gargron@mastodon.social")
     URL = settings.Setting("mastodon.social")
     amount = settings.Setting(100)
-    
-    #advancedSettings = settings.Setting(False)
 
     # Filters
     filterReblogs = settings.Setting("Keep")
     filterReplies = settings.Setting("Keep")
     filterMedias = settings.Setting("Keep")
-
-    # excludeReblogs = settings.Setting(False)
-    # excludeReplies = settings.Setting(False)
-    # excludeMedias = settings.Setting(False)
-    # onlyReblogs = settings.Setting(False)
-    # onlyReplies = settings.Setting(False)
-    # onlyMedia = settings.Setting(False)
 
     minReblogs = settings.Setting(0)
     minLikes = settings.Setting(0)
@@ -74,8 +65,6 @@ class Scratodon(OWTextableBaseWidget):
         #Attributs initilizations...
         self.segmentation = Input("")
         self.createdInputs = list()
-        #self.sources = ["User", "Federated", "Local"]
-        #self.selectedSource = "User"
 
         # GUI
         self.sendButton = SendButton(
@@ -86,12 +75,15 @@ class Scratodon(OWTextableBaseWidget):
             sendIfPreCallback=self.updateGUI,
         )
 
+
+        #Boite des sources
         queryBox = gui.widgetBox(
             widget=self.controlArea,
             box="Source",
             orientation="vertical",
         )
 
+        #Combo Box du choix de source
         gui.comboBox(
             widget=queryBox,
             master=self,
@@ -107,16 +99,21 @@ class Scratodon(OWTextableBaseWidget):
             callback=self.sendButton.settingsChanged,
         )
 
+        # Sous-Boite pour contenir le user ID
         self.UserIDBox = gui.widgetBox(
             widget=queryBox,
             orientation='vertical',
             addSpace=False,
             )
+        
+        #Ecarter un peu plus la sous-boite de l'élément précédent
         Spacer1 = gui.widgetBox(
             widget=self.UserIDBox,
             box=False,
             orientation='horizontal',
             )
+
+        #Champ pour donner le user ID
         gui.lineEdit(
             widget=self.UserIDBox,
             master=self,
@@ -130,16 +127,21 @@ class Scratodon(OWTextableBaseWidget):
                 ),
             )
         
+        #Sous-boite pour l'URL, analogue à celle du user ID
         self.URLBox = gui.widgetBox(
             widget=queryBox,
             orientation='vertical',
             addSpace=False,
             )
+        
+        #Ecarter
         Spacer2 = gui.widgetBox(
             widget=self.URLBox,
             box=False,
             orientation='horizontal',
             )
+
+        #Champ pour rentrer l'URL
         gui.lineEdit(
             widget=self.URLBox,
             master=self,
@@ -153,6 +155,7 @@ class Scratodon(OWTextableBaseWidget):
                 ),
             )
         
+        #Champ pour le nombre de posts
         gui.spin(
             widget=queryBox,
             master=self,
@@ -167,18 +170,21 @@ class Scratodon(OWTextableBaseWidget):
             step=10,
         )
 
+        #Boite des filtres
         filtersBox = gui.widgetBox(
             widget=self.controlArea,
             box="Filters",
             orientation="vertical",
         )
 
+        #Qui contient la sous-boite des types
         typesBox = gui.widgetBox(
             widget=filtersBox,
             box="Type of posts",
             orientation="vertical",
         )
 
+        #Les 3 comboBox pour filter
         gui.comboBox(
             widget=typesBox,
             master=self,
@@ -224,12 +230,14 @@ class Scratodon(OWTextableBaseWidget):
             callback=self.sendButton.settingsChanged,
         )
 
+        #La sous-boite des interactions
         interactionsBox = gui.widgetBox(
             widget=filtersBox,
             box="Interactions",
             orientation="vertical",
         )
 
+        #Nombre minimum de reblogs
         gui.spin(
             widget=interactionsBox,
             master=self,
@@ -244,6 +252,7 @@ class Scratodon(OWTextableBaseWidget):
             step=5,
         )
 
+        #Nombre minimum de likes
         gui.spin(
             widget=interactionsBox,
             master=self,
@@ -259,9 +268,6 @@ class Scratodon(OWTextableBaseWidget):
         )
 
         self.infoBox = InfoBox(widget=self.controlArea)
-        #gui.separator(self.controlArea, height=3)
-
-        #gui.rubber(filtersBox)
 
         self.sendButton.draw()
         self.infoBox.draw()
