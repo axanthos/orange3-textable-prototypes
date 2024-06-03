@@ -51,14 +51,14 @@ class Scratodon(OWTextableBaseWidget):
     excludeReblogs = settings.Setting(False)
     excludeReplies = settings.Setting(False)
     excludeMedias = settings.Setting(False)
+    onlyReblogs = settings.Setting(False)
+    onlyReplies = settings.Setting(False)
     onlyMedia = settings.Setting(False)
 
     URL = settings.Setting("mastodon.social")
     amount = settings.Setting(100)
-    API = settings.Setting("")
     advancedSettings = settings.Setting(False)
-    reblogsOnly = settings.Setting(False)
-    minreblogs = settings.Setting(0)
+    minReblogs = settings.Setting(0)
     minLikes = settings.Setting(0)
 
     def __init__(self):
@@ -81,7 +81,7 @@ class Scratodon(OWTextableBaseWidget):
 
         queryBox = gui.widgetBox(
             widget=self.controlArea,
-            box="Select A Source",
+            box="Select source",
             orientation="vertical",
         )
 
@@ -94,9 +94,9 @@ class Scratodon(OWTextableBaseWidget):
             orientation="horizontal",
             label="Source:",
             emptyString="",
-            labelWidth=120,
+            labelWidth=100,
             tooltip=(
-                "Please select the desired source.\n"
+                "User's posts or one of the timelines."
             ),
             callback=self.sendButton.settingsChanged,
         )
@@ -118,10 +118,10 @@ class Scratodon(OWTextableBaseWidget):
             value='userID',
             orientation='horizontal',
             label='User ID:',
-            labelWidth=101,
+            labelWidth=50,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                "The username '(@)user@instance' whose content will be imported."
+                "The full username (ex: gargron@mastodon.social) of the wanted user."
                 ),
             )
         
@@ -142,10 +142,10 @@ class Scratodon(OWTextableBaseWidget):
             value='URL',
             orientation='horizontal',
             label='URL:',
-            labelWidth=101,
+            labelWidth=50,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                "The URL whose content will be imported."
+                "The domain (ex: mastodon.social) of the wanted instance."
                 ),
             )
         
@@ -161,12 +161,12 @@ class Scratodon(OWTextableBaseWidget):
             master=self,
             value="amount",
             minv=1,
-            maxv=10000,
+            maxv=1000000,
             label="Max amount of posts:",
-            labelWidth=135,
+            labelWidth=150,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
-            tooltip="Select the amount of posts that you want, 40/sec",
+            tooltip="Amount of posts that will get fetched. \n(~5 minutes of wait every 12k posts)",
             step=10,
         )
 
@@ -180,7 +180,7 @@ class Scratodon(OWTextableBaseWidget):
             widget=self.excludeRe,
             master=self,
             value='excludeReblogs',
-            label=u'Exclude reblogs',
+            label='Exclude reblogs',
             callback=self.updateGUI,
         )
 
@@ -188,28 +188,15 @@ class Scratodon(OWTextableBaseWidget):
             widget=self.excludeRe,
             master=self,
             value='excludeReplies',
-            label=u'Exclude replies',
+            label='Exclude replies',
             callback=self.updateGUI,
         )
-
-        self.apiKey = gui.lineEdit(
-            widget=self.controlArea,
-            master=self,
-            value='API',
-            orientation='horizontal',
-            label='API key (optional):',
-            labelWidth=101,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                "Your API key, optional."
-                ),
-            )
 
         gui.checkBox(
             widget=self.controlArea,
             master=self,
             value='advancedSettings',
-            label=u'Advanced settings',
+            label='Advanced settings',
             callback=self.updateGUI,
         )
 
@@ -226,24 +213,24 @@ class Scratodon(OWTextableBaseWidget):
         )
         
 
-        self.reblogsOnlyCheckbox = gui.checkBox(
+        self.onlyReblogsCheckbox = gui.checkBox(
             widget=self.reblogsBox,
             master=self,
-            value='reblogsOnly',
-            label='Reblogs only',
+            value='onlyReblogs',
+            label='Only reblogs',
             callback=self.updateGUI,
         )
-        self.minreblogsBox = gui.spin(
+        self.minReblogsBox = gui.spin(
             widget=self.reblogsBox,
             master=self,
-            value="minreblogs",
+            value="minReblogs",
             minv=0,
-            maxv=10000,
+            maxv=1000000,
             label="Minimum of reblogs:",
-            labelWidth=135,
+            labelWidth=150,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
-            tooltip="Select the amount of reblogs that you want",
+            tooltip="Amount of reblogs that you want",
             step=10,
         )
 
@@ -257,14 +244,14 @@ class Scratodon(OWTextableBaseWidget):
             widget=self.imagesBox,
             master=self,
             value='excludeMedias',
-            label=u'Exclude images',
+            label='Exclude images',
             callback=self.updateGUI,
         )
         self.onlyMediaCheckbox = gui.checkBox(
             widget=self.imagesBox,
             master=self,
             value='onlyMedia',
-            label=u'Only images',
+            label='Only images',
             callback=self.updateGUI,
         )
 
@@ -273,12 +260,12 @@ class Scratodon(OWTextableBaseWidget):
             master=self,
             value="minLikes",
             minv=0,
-            maxv=10000,
+            maxv=1000000,
             label="Minimum of likes:",
-            labelWidth=135,
+            labelWidth=150,
             orientation="horizontal",
             callback=self.sendButton.settingsChanged,
-            tooltip="Select the amount of likes that a post should have",
+            tooltip="Amount of likes that a post should have",
             step=10,
         )
 
@@ -288,14 +275,14 @@ class Scratodon(OWTextableBaseWidget):
             self.advSettings.setVisible(False)
         
         if self.exclreblogs.isChecked():
-            self.reblogsOnlyCheckbox.setDisabled(True)
-            self.reblogsOnlyCheckbox.setChecked(False)
-            self.minreblogsBox.setDisabled(True)
+            self.onlyReblogsCheckbox.setDisabled(True)
+            self.onlyReblogsCheckbox.setChecked(False)
+            self.minReblogsBox.setDisabled(True)
         else:
-            self.reblogsOnlyCheckbox.setDisabled(False)
-            self.minreblogsBox.setDisabled(False)
+            self.onlyReblogsCheckbox.setDisabled(False)
+            self.minReblogsBox.setDisabled(False)
         
-        if self.reblogsOnlyCheckbox.isChecked():
+        if self.onlyReblogsCheckbox.isChecked():
             self.exclreblogs.setDisabled(True)
             self.exclreblogs.setChecked(False)
         else:
@@ -317,11 +304,10 @@ class Scratodon(OWTextableBaseWidget):
         self.infoBox = InfoBox(widget=self.controlArea)
         gui.separator(self.controlArea, height=3)
 
-        
+
 
         gui.separator(widget=self.basicURLBox1, height=3)
         gui.separator(widget=self.basicURLBox2, height=3)
-        gui.separator(widget=self.apiKey, height=3)
         gui.rubber(self.controlArea)
 
         self.sendButton.draw()
@@ -334,11 +320,9 @@ class Scratodon(OWTextableBaseWidget):
         if self.selectedSource=="User":
             self.basicURLBox1.setVisible(True)
             self.basicURLBox2.setVisible(False)
-            self.URL = ""
         else: 
             self.basicURLBox1.setVisible(False)
             self.basicURLBox2.setVisible(True)
-            self.userID = ""
         
         if self.advancedSettings:
             self.advSettings.setVisible(True)
@@ -346,14 +330,12 @@ class Scratodon(OWTextableBaseWidget):
             self.advSettings.setVisible(False)
 
         if self.exclreblogs.isChecked():
-            self.reblogsOnlyCheckbox.setDisabled(True)
-            self.reblogsOnlyCheckbox.setChecked(False)
-            self.minreblogsBox.setDisabled(True)
+            self.onlyReblogsCheckbox.setDisabled(True)
+            self.onlyReblogsCheckbox.setChecked(False)
         else:
-            self.reblogsOnlyCheckbox.setDisabled(False)
-            self.minreblogsBox.setDisabled(False)
+            self.onlyReblogsCheckbox.setDisabled(False)
         
-        if self.reblogsOnlyCheckbox.isChecked():
+        if self.onlyReblogsCheckbox.isChecked():
             self.exclreblogs.setDisabled(True)
             self.exclreblogs.setChecked(False)
         else:
@@ -371,25 +353,7 @@ class Scratodon(OWTextableBaseWidget):
         else:
             self.onlyMediaCheckbox.setDisabled(False)
 
-    def clearCreatedInputs(self):
-        """Delete all Input objects that have been created"""
-
-        for i in self.createdInputs:
-            Segmentation.set_data(i[0].str_index, None)
-        del self.createdInputs[:]
-
-    def setCaption(self, title):
-        """This method needs to be copied verbatim in every Textable widget that sends a segmentation"""
-
-        if 'captionTitle' in dir(self):
-            changed = title != self.captionTitle
-            super().setCaption(title)
-            if changed:
-                self.sendButton.settingsChanged()
-        else:
-            super().setCaption(title)
-
-    def fetchUserPosts(self, username_at_instance, n=100, exclude_replies=True, exclude_reblogs=True, only_media=False):
+    def fetchUserPosts(self, username_at_instance, n=100, exclude_replies=False, exclude_reblogs=False, only_media=False):
         """Takes a string like (@)user@instance.net or a URL and returns a dictionary of the n last posts from user"""
 
         # If url input
@@ -406,32 +370,55 @@ class Scratodon(OWTextableBaseWidget):
         # Initialize progress bar...
         progressBar = ProgressBar(
             self,
-            iterations=int(self.amount/40)+1
+            iterations=int(n/40)+1
         )
+        
+        try:
+            user, instance = username_at_instance.split("@")
+        except Exception as e:
+                print(f"Une erreur est survenue: {e}")
+                #Return an error
+                self.infoBox.setText("Can't find any '@', please check your User ID", "warning")
+                self.send('Scratted posts', None)
 
-        n = self.amount
-        user, instance = username_at_instance.split("@")
+                #And free the user
+                self.controlArea.setDisabled(False)
+                return
+
         domain = f"https://{instance}/"
+        
         myMastodon = Mastodon(api_base_url=domain)
+
         print(f"Trying to get {n} posts from @{user} on {domain}", "\n")
 
-        user_id = myMastodon.account_lookup(user).id
+        try:
+            user_id = myMastodon.account_lookup(user).id
+        except Exception as e:
+            #Return an error
+            self.infoBox.setText("Can't find this account, please check your User ID", "warning")
+            self.send('Scratted posts', None)
+
+            #And free the user
+            self.controlArea.setDisabled(False)
+            return            
+
         print(f"{username_at_instance}'s id is: {user_id}", "\n")
 
+        # Initialisation d'un dict vide pour contenir les objects
         all_posts = []
+        # Créer un index pour requetes de plus de 40 posts
         max_id = None
+
+        # Récupération des publications par lots jusqu'à atteindre le
+        # nombre désiré `n` ou qu'il n'y ait plus de publications disponibles
         while len(all_posts) < n:
             posts = myMastodon.account_statuses(
-                user_id,
-                exclude_replies=exclude_replies,
-                exclude_reblogs=exclude_reblogs,
-                only_media=only_media,
-                max_id=max_id,
-                limit=min(40, n - len(all_posts))
-            )
-
-            if not posts:
-                break
+                    user_id,
+                    exclude_replies=exclude_replies,
+                    exclude_reblogs=exclude_reblogs,
+                    only_media=only_media,
+                    max_id=max_id,
+                    limit=min(40, n - len(all_posts)))
 
             all_posts.extend(posts)
             max_id = posts[-1].id - 1
@@ -455,8 +442,6 @@ class Scratodon(OWTextableBaseWidget):
         all_post: Une dict contenant les publications de la timeline spécifiée
         """
 
-        n = self.amount
-
         # Transformer la logique de sélection Local/Fédéré d'une string (GUI) en Bool (Utilisé par le script)
 
         if self.selectedSource == "Local":
@@ -468,20 +453,20 @@ class Scratodon(OWTextableBaseWidget):
         if not self.URL.startswith("http://") and not self.URL.startswith("https://"):
             instance = f"https://{self.URL}"
 
-        # Initialisation de la connexion à l'instance
-        myMastodon = Mastodon(api_base_url=instance)
-
         # Initialize progress bar...
         progressBar = ProgressBar(
             self,
-            iterations=int(self.amount/40)+1
+            iterations=int(n/40)+1
         )
+
+        # Initialisation de la connexion à l'instance
+        myMastodon = Mastodon(api_base_url=instance)
         
         # Initialisation d'un dict vide pour contenir les objects
         all_posts = []
-        # L'argument qui limite du nombre de posts !!! Pour l'instant et vu du fait de la limite à 40 l'argument du nombre de post est toujours rabotté à 40 peu importe l'input utilisateur
+        # Argument qui limite le nombre de posts
         remaining = n
-        # A potentiellement utiliser pour créer un index dans en cas de requètes plus longues qui outrepassent la limite de 40 messages qui timeout.
+        # Créer un index pour requetes de plus de 40 posts
         max_id = None
 
         # Récupération des publications par lots jusqu'à atteindre le nombre désiré `n` ou qu'il n'y ait plus de publications disponibles
@@ -490,7 +475,7 @@ class Scratodon(OWTextableBaseWidget):
                 timeline = myMastodon.timeline('public', 
                                             local=is_local,
                                             max_id=max_id,
-                                            only_media=False,
+                                            only_media=only_media,
                                             limit=min(remaining, n))
                 if not timeline:
                     break
@@ -499,11 +484,17 @@ class Scratodon(OWTextableBaseWidget):
                 progressBar.advance()
                 remaining -= 40
                 max_id = timeline[-1]['id']
-                time.sleep(1)
                 limit=min(remaining, n)
+
             except Exception as e:
                 print(f"Une erreur est survenue: {e}")
-                break
+                #Return an error
+                self.infoBox.setText("Can't find this instance, please check your URL", "warning")
+                self.send('Scratted posts', None)
+
+                #And free the user
+                self.controlArea.setDisabled(False)
+                return
 
         print(f"This is the output dict: {all_posts}")
         return all_posts
@@ -514,20 +505,31 @@ class Scratodon(OWTextableBaseWidget):
         for post in all_posts:
             if self.excludeReblogs and bool(post.reblog):
                 continue
-            if self.reblogsOnly and not bool(post.reblog):
+            if self.onlyReblogs and not bool(post.reblog):
                 continue
             if self.excludeReplies and bool(post.in_reply_to_id):
+                continue
+            if self.onlyReplies and not bool(post.in_reply_to_id):
                 continue
             if self.excludeMedias and bool(post.media_attachments):
                 continue
             if self.onlyMedia and not bool(post.media_attachments):
                 continue
-            if post.reblogs_count < self.minreblogs:
+            if post.reblogs_count < self.minReblogs:
                 continue
             if post.favourites_count < self.minLikes:
                 continue
 
             filtered_posts.append(post)
+
+        if not filtered_posts:
+            #Return an error
+            self.infoBox.setText("Filters too strong, no posts were kept", "warning")
+            self.send('Scratted posts', None)
+
+            #And free the user
+            self.controlArea.setDisabled(False)
+            return
         return filtered_posts
     
     def createSegmentation(self, posts_dict):
@@ -619,7 +621,6 @@ class Scratodon(OWTextableBaseWidget):
             print(segment.get_content(), "\n")
         print(f"Segmented {len(posts_dict)} posts.")
 
-
         self.controlArea.setDisabled(False)
 
         return self.segmentation
@@ -629,29 +630,24 @@ class Scratodon(OWTextableBaseWidget):
         """Send data when pressing the 'Send Data' button"""
             
         # Return error if no userID was given
-        def validate_inputs():
-            if self.selectedSource == "User" and not self.userID:
-                self.infoBox.setText("Please give a User ID.", "warning")
-                return False
-            if self.selectedSource in ["Federated", "Local"] and not self.URL:
-                self.infoBox.setText("Please give a URL.", "warning")
-                return False
-            return True
-    
-        def fetch_posts():
-            if self.selectedSource == "User":
-                return self.fetchUserPosts(self.userID)
-            return self.fetchTimelines(self.URL)
-    
-        if not validate_inputs():
+        if self.selectedSource == "User" and not self.userID:
+            self.infoBox.setText("Please give a User ID.", "warning")
             self.send('Scratted posts', None)
             return
 
-        dictPosts = fetch_posts()
+        if self.selectedSource in ["Federated", "Local"] and not self.URL:
+            self.infoBox.setText("Please give a URL.", "warning")
+            self.send('Scratted posts', None)
+            return
 
         # Clear old created Inputs
         self.clearCreatedInputs()
         self.controlArea.setDisabled(True)
+
+        if self.selectedSource == "User":
+            dictPosts = self.fetchUserPosts(self.userID, self.amount, self.excludeReplies, self.excludeReblogs, self.onlyMedia)
+        else:
+            dictPosts = self.fetchTimelines(self.URL, self.amount, self.onlyMedia)
 
         filteredPosts = self.filterPosts(dictPosts)
         self.segmentation = self.createSegmentation(filteredPosts)
