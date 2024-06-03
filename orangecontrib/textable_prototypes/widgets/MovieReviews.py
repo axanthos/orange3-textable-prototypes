@@ -30,8 +30,8 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
-
 from Orange.widgets.utils.widgetpreview import WidgetPreview
+
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
