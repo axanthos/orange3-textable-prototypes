@@ -1018,5 +1018,5 @@ if __name__ == "__main__":
     #my_widget.show()
     #my_widget.raise_()
     #my_app.exec_()
-    my_widget.saveSettings()
+    #my_widget.saveSettings()
     WidgetPreview(Redditor).run()

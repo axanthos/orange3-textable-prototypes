@@ -1202,5 +1202,5 @@ if __name__ == '__main__':
     #ow = SuperTextFiles()
     #ow.show()
     #appl.exec_()
-    ow.saveSettings()
+    #ow.saveSettings()
     WidgetPreview(SuperTextFiles).run()

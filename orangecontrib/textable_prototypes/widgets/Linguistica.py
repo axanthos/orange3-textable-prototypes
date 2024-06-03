@@ -588,7 +588,7 @@ if __name__ == "__main__":
     #myWidget = Linguistica()
     #myWidget.show()
     #myApplication.exec_()
-    myWidget.saveSettings()
+    #myWidget.saveSettings()
     from LTTL.Input import Input
     import LTTL.Segmenter as Segmenter
     import re

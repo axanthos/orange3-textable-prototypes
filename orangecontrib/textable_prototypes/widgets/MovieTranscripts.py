@@ -639,5 +639,5 @@ if __name__ == "__main__":
     #myWidget = MovieTranscripts()
     #myWidget.show()
     #myApplication.exec_()
-    myWidget.saveSettings()
+    #myWidget.saveSettings()
     WidgetPreview(MovieTranscripts).run()

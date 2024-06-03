@@ -887,5 +887,5 @@ if __name__ == "__main__":
     #myWidget = LexicalHunter()
     #myWidget.show()
     #myApplication.exec_()
-    myWidget.saveSettings()
+    #myWidget.saveSettings()
     WidgetPreview(LexicalHunter).run(inputData=Input("Hello world. How are you doing ?"))

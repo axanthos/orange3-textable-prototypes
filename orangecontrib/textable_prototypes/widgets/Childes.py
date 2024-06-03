@@ -951,5 +951,5 @@ if __name__ == "__main__":
     #myWidget = Childes()
     #myWidget.show()
     #myApplication.exec_()
-    myWidget.saveSettings()
+    #myWidget.saveSettings()
     WidgetPreview(Childes).run()
