@@ -38,7 +38,7 @@ from bs4 import BeautifulSoup
 from urllib import request, parse
 from LTTL.Segmentation import Segmentation
 from Orange.widgets import Orange, widget, gui, settings
-#from Orange.widgets.utils.widgetpreview import WidgetPreview
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 from fuzzywuzzy import fuzz, process
 from _textable.widgets.TextableUtils import ProgressBar
 from _textable.widgets.TextableUtils import (
@@ -633,11 +633,11 @@ class MovieTranscripts(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = MovieTranscripts()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
-    #WidgetPreview(MovieTranscripts).run()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = MovieTranscripts()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(MovieTranscripts).run()
