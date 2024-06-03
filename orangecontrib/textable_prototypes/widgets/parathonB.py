@@ -629,15 +629,14 @@ class Parathon(OWTextableBaseWidget):
 
         
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
     from LTTL.Input import Input
-    
-    myApplication = QApplication(sys.argv)
-    myWidget = Parathon()
+    #myApplication = QApplication(sys.argv)
+    #myWidget = Parathon()
     #myWidget.inputData(Input('03/02/2021, 19:30 - sorcha: *LMAO'))
-    myWidget.inputData(Input('a simple example :) ;)'))
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
-    #WidgetPreview(Parathon).run(inputData=Input("Hello world !!! How are you doinggg ?"))
+    #myWidget.inputData(Input('a simple example :) ;)'))
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(Parathon).run(inputData=Input("Hello world !!! How are you doinggg ?"))
