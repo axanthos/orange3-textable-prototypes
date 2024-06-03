@@ -32,9 +32,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import (
-    QTabWidget, QWidget, QHBoxLayout, QMessageBox, QIntValidator
-)
+import AnyQt.QtGui
+#from AnyQt.QtGui import (
+    #QTabWidget, QWidget, QHBoxLayout, QMessageBox, QIntValidator
+#)
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
