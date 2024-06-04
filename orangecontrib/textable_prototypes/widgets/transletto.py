@@ -60,9 +60,7 @@ class Transletto(OWTextableBaseWidget):
     # Settings...
     enableAPI = settings.Setting(False)
     inputLanguageKey = settings.Setting('English')
-    inputLanguage = settings.Setting('en')
     outputLanguageKey = settings.Setting('French')
-    outputLanguage = settings.Setting('fr')
     autoSend = settings.Setting(False)
     translator = settings.Setting('GoogleTranslator')
     labelKey = settings.Setting('')
@@ -102,14 +100,14 @@ class Transletto(OWTextableBaseWidget):
 
         
         # GUI elements for input language selection        
-        optionsBox = gui.widgetBox(
+        optionsBoxInput = gui.widgetBox(
             widget=self.controlArea,
             box=u'Input language',
             orientation='vertical',
             addSpace=True,
         )
         self.testBox1 = gui.widgetBox(
-            widget=optionsBox,
+            widget=optionsBoxInput,
             orientation='horizontal',
         )
 
@@ -136,14 +134,14 @@ class Transletto(OWTextableBaseWidget):
         )
 
         # GUI elements for output language selection
-        optionsBox = gui.widgetBox(
+        optionsBoxOutput = gui.widgetBox(
             widget=self.controlArea,
             box=u'Output language',
             orientation='vertical',
             addSpace=True,
         )
         self.testBox2 = gui.widgetBox(
-            widget=optionsBox,
+            widget=optionsBoxOutput,
             orientation='horizontal',
         )
         self.outputLanguageBox = gui.comboBox(
@@ -200,7 +198,7 @@ class Transletto(OWTextableBaseWidget):
             tooltip=("Reset all"),
         )
 
-        gui.separator(widget=optionsBox, height=3)
+        gui.separator(widget=optionsBoxReset, height=3)
         gui.rubber(self.controlArea)
 
         # API key input field
