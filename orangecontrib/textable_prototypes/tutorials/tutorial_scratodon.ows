@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(774.0, 443.0)" />
+		<node id="1" name="Scratodon" qualified_name="orangecontrib.textable_prototypes.widgets.Scratodon.Protoscrat" project_name="Orange3-Textable-Prototypes" version="" title="Scratodon" position="(177.0, 440.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="1" sink_node_id="0" source_channel="Scratted posts" sink_channel="Segmentation" enabled="true" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(102.0, -23.0, 336.0, 312.0)" font-family="MS Shell Dlg 2" font-size="16">Fetch posts of Mastodon here. 
+
+1. Select the source you want to fetch the posts from (user/local/federated)
+
+2. Enter the username (ex: (@)user@instance) if you chose user or the instance URL (ex: instance.fr) if you chose local/federated 
+
+3. Enter the max amount of posts you want
+
+4. Select more filters if you want
+
+5. Click on "Send" </text>
+		<arrow id="1" start="(184.0, 300.0)" end="(184.0, 393.0)" fill="#C1272D" />
+		<text id="2" type="text/plain" rect="(693.0, 252.0, 192.0, 52.0)" font-family="MS Shell Dlg 2" font-size="16">Display the fetched posts</text>
+		<arrow id="3" start="(767.0, 292.0)" end="(769.0, 388.0)" fill="#C1272D" />
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\xa9\x00\x00\x00Z\x00\x00\x04Y\x00\x00\x02l\x00\x00\x00\xaa\x00\x00\x00x\x00\x00\x04X\x00\x00\x02k\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\xaa\x00\x00\x00x\x00\x00\x04X\x00\x00\x02k', 'segmentDelimiter': '\\n', 'uuid': '06319f89-4c6d-40fa-b9d5-416d6046505d', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+		<properties node_id="1" format="literal">{'API': '', 'URL': '', 'advancedSettings': False, 'amount': 100, 'autoSend': False, 'controlAreaVisible': True, 'excludeMedias': False, 'excludeReblogs': False, 'excludeReplies': False, 'minLikes': 0, 'minreblogs': 0, 'onlyMedia': False, 'reblogsOnly': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\x0c\x00\x00\x00F\x00\x00\x02\xf3\x00\x00\x02D\x00\x00\x02\r\x00\x00\x00d\x00\x00\x02\xf2\x00\x00\x02C\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x02\r\x00\x00\x00d\x00\x00\x02\xf2\x00\x00\x02C', 'userID': 'gargron@mastodon.social', 'uuid': '7c249acc-b890-4641-bbce-f096e4171d99', '__version__': 1, '_TextableUtils_settings_version__': (1, 0)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

@@ -109,6 +109,7 @@ INSTALL_REQUIRES = (
     'filetype',
     'pydub',
     'SpeechRecognition',
+    'Mastodon.py',
 ),
 
 EXTRAS_REQUIRE = {
