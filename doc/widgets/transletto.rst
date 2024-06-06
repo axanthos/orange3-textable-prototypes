@@ -10,7 +10,7 @@
 Translate
 =========
 
-.. image:: figures/Translate.svg
+.. image:: figures/Transletto.svg
 
 Translate a text using various translation APIs
 
@@ -38,34 +38,36 @@ Outputs:
 Description
 -----------
 
-This widget takes a text segmentation as input and translates it into a specified target language using one of the available translation services. The translation services currently supported include GoogleTranslator, DeepL, and others as listed in the widget interface.
+This widget takes a text segmentation as input and translates it into a specified target language using one of the available translation services. The translation services currently supported include GoogleTranslator, DeepL, QCRI, MyMemory, Linguee, and Pons.
 
 The widget's interface allows users to select the input language manually or enable automatic language detection. Users can also select the desired output language and choose the translation service to be used.
 
 Interface
 ~~~~~~~~~
 
-The widget's interface requires the following user inputs (see :ref:`figure 1 <translate_fig1>` below):
+The widget's interface requires the following user inputs (see :ref:`figure 1 <transletto_fig1>` below):
 
 1. **Input language**: The language of the input text. This can be set manually or automatically detected.
 2. **Output language**: The language into which the text will be translated.
-3. **Translation service**: The service to be used for translation (e.g., GoogleTranslator, DeepL).
-4. **Reset** button triggers the reset of the interface and puts the GoogleTranslator as a default translation service, and english as a default input and output language. 
-5. **API**:In some instances, there is a need of an API key such as Deepl and QCRI.
+3. **Translation service**: The service to be used for translation (e.g., GoogleTranslator, DeepL, QCRI, MyMemory, Linguee, Pons).
+4. **API Key**: In some instances, such as with DeepL and QCRI, an API key is required. Ensure you have the necessary API keys and enter them in the appropriate field.
+5. **Reset button**: This button resets the interface to its default settings (GoogleTranslator as the translation service, and English as the default input and output language).
 
+.. _transletto_fig1:
 
-.. _translate_fig1:
-
-.. figure:: figures/translate_interface.png
+.. figure:: figures/transletto_interface.png
     :align: center
     :alt: Interface of the Translate widget
 
-    Figure 1: **Translate** widget interface.
+    Figure 1: **Transletto** widget interface.
 
 The **Info** section indicates that the input has been correctly processed or the reason why no output is emitted (e.g., no input, unsupported language).
 
 The **Send** button triggers the translation and sends the translated text to the output connection. When the **Send automatically** checkbox is selected, the widget will attempt to automatically emit results whenever its interface is modified.
 
+Errors
+~~~~~~
+If the translation fails, an error will be raised. Please check the provided input and ensure the selected translation service and languages are correct.
 
 Messages
 --------
@@ -76,7 +78,6 @@ Information
 *Segments sent to output.*
     This confirms that the widget has operated properly and the translation is complete.
 
-
 Warnings
 ~~~~~~~~
 
@@ -86,6 +87,6 @@ Warnings
 *Widget needs input*
     A text segmentation should be input into the widget for translation.
 
-*An error occured*
-    An error occurs when the translator cannot complete the translation. 
+*Translation failed*
+    An error occurs when the translator cannot complete the translation. Please try changing the translation service or languages.
 
