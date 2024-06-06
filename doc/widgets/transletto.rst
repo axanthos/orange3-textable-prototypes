@@ -10,7 +10,10 @@
 Translate
 =========
 
-.. image:: figures/Transletto.png
+.. figure:: figures/Transletto.png
+    :align: center
+    :scale: 50%
+    :alt: Transletto Icon
 
 Translate a text using various translation APIs
 
@@ -57,6 +60,7 @@ The widget's interface requires the following user inputs (see :ref:`figure 1 <t
 
 .. figure:: figures/transletto_interface.png
     :align: center
+    :scale: 50%
     :alt: Interface of the Translate widget
 
     Figure 1: **Transletto** widget interface.
@@ -83,10 +87,8 @@ Warnings
 *Widget needs input*
     A text segmentation should be input into the widget for translation.
 
-*Translation failed*
-    An error occurs when the translator cannot complete the translation. Please try changing the translation service or languages.
-
 Errors
 ~~~~~~
-*An error occured 
-    If the translation fails, an error will be raised. Please check the provided input and ensure the selected translation service and languages are correct.
+*Translation failed*
+    An error occurs when the translator cannot complete the translation. Please try changing the translation service or languages.
+    
