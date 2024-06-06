@@ -65,7 +65,7 @@ The widget's interface requires the following user inputs (see :ref:`figure 1 <t
     :hight: 337px
     :alt: Interface of the Translate widget
 
-    Figure 1: **Transletto** widget interface.
+Figure 1: **Transletto** widget interface.
 
 The **Info** section indicates that the input has been correctly processed or the reason why no output is emitted (e.g., no input, unsupported language).
 
