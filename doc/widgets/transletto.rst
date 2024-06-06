@@ -1,4 +1,3 @@
-
 .. meta::
    :description: Orange3 Textable Prototypes documentation, Translate
                  widget
@@ -12,8 +11,8 @@ Translate
 
 .. figure:: figures/Transletto.png
     :align: center
-    :width: 200px
-    :hight: 200px
+    :width: 100px
+    :height: 100px
     :alt: Transletto Icon
 
 Translate a text using various translation APIs
@@ -21,7 +20,7 @@ Translate a text using various translation APIs
 Author
 ------
 
-André da Glória Santiago, Sébastien Franzone, Marie Fasel, Klisman Kodra
+André da Glória Santiago, Sébastien Franzone, Marie Fasel, (Klisman Kodra)
 
 Signals
 -------
@@ -51,7 +50,7 @@ Interface
 
 The widget's interface requires the following user inputs (see :ref:`figure 1 <transletto_fig1>` below):
 
-1. **Input language**: The language of the input text. This can be set manually or automatically detected.
+1. **Input language**: The language of the input text. This can be set manually or automatically detected using the "Auto-detect" button
 2. **Output language**: The language into which the text will be translated.
 3. **Translation service**: The service to be used for translation (e.g., GoogleTranslator, DeepL, QCRI, MyMemory, Linguee, Pons).
 4. **API Key**: In some instances, such as with DeepL and QCRI, an API key is required. Ensure you have the necessary API keys and enter them in the appropriate field.
@@ -62,12 +61,12 @@ The widget's interface requires the following user inputs (see :ref:`figure 1 <t
 .. figure:: figures/transletto_interface.png
     :align: center
     :width: 235px
-    :hight: 337px
+    :height: 337px
     :alt: Interface of the Translate widget
+    
+    Figure 1: **Transletto** widget interface.
 
-Figure 1: **Transletto** widget interface.
-
-The **Info** section indicates that the input has been correctly processed or the reason why no output is emitted (e.g., no input, unsupported language).
+The **Info** section indicates that the input has been correctly processed or the reason why no output is emitted (e.g., no input, error in the translation process).
 
 The **Send** button triggers the translation and sends the translated text to the output connection. When the **Send automatically** checkbox is selected, the widget will attempt to automatically emit results whenever its interface is modified.
 
