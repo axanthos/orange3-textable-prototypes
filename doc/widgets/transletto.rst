@@ -10,7 +10,7 @@
 Translate
 =========
 
-.. image:: figures/Transletto.svg
+.. image:: figures/Transletto.png
 
 Translate a text using various translation APIs
 
@@ -51,7 +51,7 @@ The widget's interface requires the following user inputs (see :ref:`figure 1 <t
 2. **Output language**: The language into which the text will be translated.
 3. **Translation service**: The service to be used for translation (e.g., GoogleTranslator, DeepL, QCRI, MyMemory, Linguee, Pons).
 4. **API Key**: In some instances, such as with DeepL and QCRI, an API key is required. Ensure you have the necessary API keys and enter them in the appropriate field.
-5. **Reset button**: This button resets the interface to its default settings (GoogleTranslator as the translation service, and English as the default input and output language).
+5. **Reset button**: This button resets the interface to its default settings (GoogleTranslator as the translation service, and English as the default input and French as the output language).
 
 .. _transletto_fig1:
 
@@ -64,10 +64,6 @@ The widget's interface requires the following user inputs (see :ref:`figure 1 <t
 The **Info** section indicates that the input has been correctly processed or the reason why no output is emitted (e.g., no input, unsupported language).
 
 The **Send** button triggers the translation and sends the translated text to the output connection. When the **Send automatically** checkbox is selected, the widget will attempt to automatically emit results whenever its interface is modified.
-
-Errors
-~~~~~~
-If the translation fails, an error will be raised. Please check the provided input and ensure the selected translation service and languages are correct.
 
 Messages
 --------
@@ -90,3 +86,7 @@ Warnings
 *Translation failed*
     An error occurs when the translator cannot complete the translation. Please try changing the translation service or languages.
 
+Errors
+~~~~~~
+*An error occured 
+    If the translation fails, an error will be raised. Please check the provided input and ensure the selected translation service and languages are correct.
