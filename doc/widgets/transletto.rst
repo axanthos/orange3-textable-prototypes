@@ -12,7 +12,8 @@ Translate
 
 .. figure:: figures/Transletto.png
     :align: center
-    :scale: 50%
+    :width: 200px
+    :hight: 200px
     :alt: Transletto Icon
 
 Translate a text using various translation APIs
@@ -60,7 +61,8 @@ The widget's interface requires the following user inputs (see :ref:`figure 1 <t
 
 .. figure:: figures/transletto_interface.png
     :align: center
-    :scale: 50%
+    :width: 235px
+    :hight: 337px
     :alt: Interface of the Translate widget
 
     Figure 1: **Transletto** widget interface.
@@ -91,4 +93,3 @@ Errors
 ~~~~~~
 *Translation failed*
     An error occurs when the translator cannot complete the translation. Please try changing the translation service or languages.
-    
