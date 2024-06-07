@@ -109,6 +109,8 @@ INSTALL_REQUIRES = (
     'filetype',
     'pydub',
     'SpeechRecognition',
+    'langdetect',
+    'deep_translator'
     'Mastodon.py',
 ),
 
