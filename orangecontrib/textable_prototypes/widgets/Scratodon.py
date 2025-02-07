@@ -22,7 +22,7 @@ class Scratodon(OWTextableBaseWidget):
     name = "Scratodon"
     description = "MastoAPI calls"
     icon = "icons/Scratodon_logo_dark.png"
-    priority = 1
+    priority = 19
 
     #----------------------------------------------------------------------
     # Channel definitions...

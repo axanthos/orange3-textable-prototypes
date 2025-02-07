@@ -1,6 +1,6 @@
 """
-Class Childes
-Copyright 2019 University of Lausanne
+Class Movie Transcripts
+Copyright 2019-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __author__ = "David Fluhmann, Leonardo Cavaliere, Kirill Melnikov"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -58,7 +58,7 @@ class MovieTranscripts(OWTextableBaseWidget):
     name = "Movie Transcripts"
     description = "Import movie transcripts from www.springfieldspringfield.co.uk"
     icon = "icons/Movie_Transcripts.png"
-    priority = 11
+    priority = 14
 
     #----------------------------------------------------------------------
     # Channel definitions...

@@ -32,19 +32,25 @@ Widgets
     :maxdepth: 1
 
     Super Text Files <widgets/SuperTextFiles>
+    Audio File <widgets/audioFile>
+    Theatre Classique <widgets/theatre_classique>
     Lyrics Genius <widgets/lyrics_genius>
     Movie Transcripts <widgets/movie_transcripts>
     Movie Reviews <widgets/MovieReviews>
-    Gutenberg <widgets/gutenberg>
-    Theatre Classique <widgets/theatre_classique>
-    18th Century Poetry <widgets/18th_century_poetry>
-    Extract CSV <widgets/extractCSV>
+    18th Century Poetry <widgets/18th_Century_Poetry>
+    Poetica <widgets/poetica>
     Redditor <widgets/redditor>
+    Scratodon <widgets/Scratodon>
+    Swiss Law <widgets/Swiss_Law>
+    Gutenberg <widgets/gutenberg>
     CHILDES <widgets/CHILDES>
     Linguistica <widgets/linguistica>
     spaCy <widgets/spaCy>
+    Topic Models <widgets/topic_models>
+    Parathon <widgets/parathon>
     Text Summarizer <widgets/text_summarizer>
     Lexical Hunter <widgets/lexical_hunter>
-    Topic Models <widgets/topic_models>
+    Extract CSV <widgets/extractCSV>
+    Transletto <widgets/transletto>
 
 

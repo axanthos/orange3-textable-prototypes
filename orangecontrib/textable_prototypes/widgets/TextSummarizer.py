@@ -1,6 +1,6 @@
 """
 Class Text Summarizer
-Copyright 2021 University of Lausanne
+Copyright 2021-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 Orange3-Textable-Prototypes is free software: you can redistribute it 
@@ -16,7 +16,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Melinda Femminis, Catherine Pedroni, Jason Ola"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -79,7 +79,7 @@ class TextSummarizer(OWTextableBaseWidget):
     name = "TL;DR"
     description = "Summarize texts with spaCy models"
     icon = "icons/TL_DR_icon.svg"
-    priority = 21 
+    priority = 34 
 
     #----------------------------------------------------------------------
     # Channel definitions...

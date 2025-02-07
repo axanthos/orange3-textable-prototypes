@@ -1,6 +1,6 @@
 """
 Class Redditor
-Copyright 2019 University of Lausanne
+Copyright 2019-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Nahuel Degonda, Olivia Edelman, Loris Rimaz"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -55,7 +55,7 @@ class Redditor(OWTextableBaseWidget):
     name = "Redditor"
     description = "Scrap on Reddit"
     icon = "icons/Reddit-alien.png"
-    priority = 14
+    priority = 18
 
     #----------------------------------------------------------------------
     # Channel definitions...

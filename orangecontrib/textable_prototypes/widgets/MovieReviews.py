@@ -1,6 +1,6 @@
 """
 Class MovieReviews
-Copyright 2020-2021 University of Lausanne
+Copyright 2020-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -24,7 +24,7 @@ along with Orange-Textable-Prototypes. If not, see
 # TODO Les recherches devraient filtrer les films n'ayant pas de critique avant de les afficher dans le corpus 
 # TODO Le bouton 'search' devrait être disable quand y'a rien qui est recherché
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Caroline Rohrbach, Maryam Zoee, Victor Vermot"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"

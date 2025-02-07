@@ -1,6 +1,6 @@
 """
 Class SuperTextFiles
-Copyright 2020 University of Lausanne
+Copyright 2020-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package and based on the
 file OWTextableTextFiles of the Orange3-Textable package.
@@ -20,8 +20,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-# OWTextableTextFiles version = '0.17.10'
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Loïc Aubrays, Fàbio Torres Cabral"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -74,7 +73,7 @@ class SuperTextFiles(OWTextableBaseWidget):
     name = "Super Text Files"
     description = "Import data from raw text and PDF files"
     icon = "icons/SuperTextFiles.svg"
-    priority = 1 # TODO
+    priority = 10
 
     #----------------------------------------------------------------------
     # Channel definitions....
@@ -286,7 +285,7 @@ class SuperTextFiles(OWTextableBaseWidget):
         self.exportButton = gui.button(
             widget=fileBoxCol2,
             master=self,
-            label=u'Export List',
+            label=u'Export JSON',
             callback=self.exportList,
             tooltip=(
                 u"Open a dialog for selecting a file where the file\n"
@@ -296,7 +295,7 @@ class SuperTextFiles(OWTextableBaseWidget):
         self.importButton = gui.button(
             widget=fileBoxCol2,
             master=self,
-            label=u'Import List',
+            label=u'Import JSON',
             callback=self.importList,
             tooltip=(
                 u"Open a dialog for selecting a file list to\n"
@@ -780,7 +779,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             encoding = detector.result['encoding']
         fh = open(
             filePath,
-            mode='rU',
+            mode='r',
             encoding=encoding,
         )
         try:

@@ -1,6 +1,6 @@
 """
 Class LexicalHunter
-Copyright 2018-2019 University of Lausanne
+Copyright 2018-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -67,7 +67,7 @@ class LexicalHunter(OWTextableBaseWidget):
     name = "Lexical Hunter"
     description = "Identify words contained in lists (lexical fields)"
     icon = "icons/lexical_hunter.svg"
-    priority = 22
+    priority = 35
 
     #----------------------------------------------------------------------
     # Channel definitions...

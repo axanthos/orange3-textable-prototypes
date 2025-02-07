@@ -47,6 +47,7 @@ Interface
     :align: center
     :scale: 50 %
     :alt: Interface of the Scratodon widget
+    
     Figure 1: **Scratodon** widget interface.
 
 The **Scratodon** widget lets the user the possibility to scrap data from

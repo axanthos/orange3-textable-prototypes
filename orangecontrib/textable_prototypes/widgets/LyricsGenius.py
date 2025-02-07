@@ -1,6 +1,6 @@
 """
 Class LyricsGenius
-Copyright 2018-2019 University of Lausanne
+Copyright 2018-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Cyrille Gay Crosier, Rafael Bruni Baschino, Basile Maillard"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -58,7 +58,7 @@ class LyricsGenius(OWTextableBaseWidget):
     name = "Lyrics Genius"
     description = "Lyrics importation"
     icon = "icons/LyricsGenius.svg"
-    priority = 10
+    priority = 13
 
     #----------------------------------------------------------------------
     # Channel definitions...

@@ -117,7 +117,7 @@ class SpaCy(OWTextableBaseWidget):
     name = "spaCy"
     description = "Natural language processing using spaCy"
     icon = "icons/spacy.svg"
-    priority = 21   # TODO
+    priority = 31   
 
     #----------------------------------------------------------------------
     # Channel definitions...

@@ -90,11 +90,11 @@ Installation
 Install ffmpeg
 ~~~~~~~~~~~~~~
 
-Mac OS: `Install ffmpeg <https://superuser.com/questions/624561/install-ffmpeg-on-os-x>`_ (we recommend using homebrew)
+Mac OS: `Install ffmpeg MacOS <https://superuser.com/questions/624561/install-ffmpeg-on-os-x>`_ (we recommend using homebrew)
 
 Windows : `Install ffmpeg Windows <https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/>`_
 
-Linux/Ubuntu : `Install ffmpeg <https://www.tecmint.com/install-ffmpeg-in-linux/>`_
+Linux/Ubuntu : `Install ffmpeg Linux/Ubuntu <https://www.tecmint.com/install-ffmpeg-in-linux/>`_
 
 
 Messages

@@ -1,6 +1,6 @@
 """
 Class Gutenberg
-Copyright 2018-2021 University of Lausanne
+Copyright 2021-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.0"
+__version__ = u"0.0.1"
 __author__ = "Florian Rieder, Paul Zignani"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -61,7 +61,7 @@ class Gutenberg(OWTextableBaseWidget):
     name = "Gutenberg"
     description = "Gutenberg caching and importation"
     icon = "icons/gutenberg.png"
-    priority = 10
+    priority = 21
 
     #----------------------------------------------------------------------
     # Channel definitions...

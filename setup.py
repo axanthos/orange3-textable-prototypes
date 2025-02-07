@@ -112,8 +112,8 @@ INSTALL_REQUIRES = (
     'SpeechRecognition',
     'imdbpy',
     'langdetect',
-    'deep_translator'
-    'Mastodon',
+    'deep_translator',
+    'Mastodon.py',
 ),
 
 EXTRAS_REQUIRE = {

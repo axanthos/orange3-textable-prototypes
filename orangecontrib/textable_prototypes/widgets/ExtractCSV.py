@@ -1,6 +1,6 @@
 """
 Class ExtractCSV
-Copyright 2020 University of Lausanne
+Copyright 2020-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -20,8 +20,8 @@ along with Orange-Textable-Prototypes. If not, see
 
 """
 
-__version__ = u"0.0.2"
-__author__ = "Noémie Carette", "Saara Jones", "Sorcha Walsh"
+__version__ = u"0.0.3"
+__author__ = "Noé Carette", "Saara Jones", "Sorcha Walsh"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
@@ -53,7 +53,7 @@ class ExtractCSV(OWTextableBaseWidget):
     name = "Extract CSV"
     description = "Extract tabulated data as a Textable Segmentation"
     icon = "icons/extractcsv.png"
-    priority = 21   # TODO
+    priority = 36   # TODO
 
     #----------------------------------------------------------------------
     # Channel definitions...

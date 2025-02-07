@@ -1,6 +1,6 @@
 """
 Class Swiss Law
-Copyright 2018-2019 University of Lausanne
+Copyright 2018-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Elijah Green, Thomas Rywalski, Samantha Allendes Bravo, Antoine Vigand"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -54,7 +54,7 @@ class SwissLaw(OWTextableBaseWidget):
     name = "Swiss Law"
     description = "Swiss Law Documents importation"
     icon = "icons/SwissLaw.png"
-    priority = 10
+    priority = 20
 
     # ----------------------------------------------------------------------
     # Channel definitions...

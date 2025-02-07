@@ -1,6 +1,6 @@
 """
 Class Poetica
-Copyright 2023 University of Lausanne
+Copyright 2023-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Sinem Kilic, Laure Margot, Leonie Nussbaum, Olivia Verbrugge"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -57,7 +57,7 @@ class Poetica(OWTextableBaseWidget):
     name = "Poetica"
     description = "Poems importation from poetica.fr"
     icon = "icons/poetica.png"
-    priority = 10
+    priority = 17
 
     #----------------------------------------------------------------------
     # Channel definitions...
