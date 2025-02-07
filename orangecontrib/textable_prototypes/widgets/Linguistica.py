@@ -435,7 +435,7 @@ class Linguistica(OWTextableBaseWidget):
         # Check that there's an input...
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input", "warning")
-            self.send("Morphologically analyzed data", None, self)
+            self.send("Morphologically analyzed data", None)
             self.updateGUI()
             return
 
@@ -469,7 +469,7 @@ class Linguistica(OWTextableBaseWidget):
             self.morphology["suffixes"] = suffixes
         except ValueError as e:
             self.infoBox.setText(e.__str__(), "warning")
-            self.send("Morphologically analyzed data", None, self)
+            self.send("Morphologically analyzed data", None)
             self.controlArea.setDisabled(False)
             progressBar.finish()   # Clear progress bar.
             self.morphology = dict()

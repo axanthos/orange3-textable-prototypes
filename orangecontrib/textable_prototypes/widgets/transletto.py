@@ -282,7 +282,7 @@ class Transletto(OWTextableBaseWidget):
                 "Widget needs input.",
                 "warning"
             )
-            self.send("Translated data", None, self)
+            self.send("Translated data", None)
             return        
 
         # Clear created Inputs.
@@ -330,7 +330,7 @@ class Transletto(OWTextableBaseWidget):
             self.controlArea.setDisabled(False)
 
             # Send token...
-            self.send("Translated data", self.outputSegmentation, self)
+            self.send("Translated data", self.outputSegmentation)
             self.sendButton.resetSettingsChangedFlag()
 
         except:

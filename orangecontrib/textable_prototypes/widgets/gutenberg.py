@@ -663,7 +663,7 @@ class Gutenberg(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Gutenberg importation", self.segmentation, self)
+        self.send("Gutenberg importation", self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
 

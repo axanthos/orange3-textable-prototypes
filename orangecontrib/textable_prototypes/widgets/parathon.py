@@ -389,7 +389,7 @@ class Parathon(OWTextableBaseWidget):
         # Preprocess and send data
         if not self.inputsegmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Segmented data', None, self)
+            self.send('Segmented data', None)
             return
         # if advancedSettings: # renommer selon le code
             # return
@@ -397,7 +397,7 @@ class Parathon(OWTextableBaseWidget):
         if not self.selectedDictionaries:
             self.infoBox.setText(u'Please select at least 1 dictionary', 
                                  'warning')
-            self.send('Segmented data', None, self)
+            self.send('Segmented data', None)
             return
 
 
@@ -425,8 +425,8 @@ class Parathon(OWTextableBaseWidget):
         message = pluralize(message, len(self.segmentation))
         self.infoBox.setText(message)
         # Send token...
-        self.send('Segmented data', self.segmentation, self)
-        #self.send('Segmented data', parathonResult, self)
+        self.send('Segmented data', self.segmentation)
+        #self.send('Segmented data', parathonResult)
         
         self.sendButton.resetSettingsChangedFlag()
         

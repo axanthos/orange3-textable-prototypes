@@ -341,8 +341,8 @@ class Childes(OWTextableBaseWidget):
                 "Please add a corpus to the selection.",
                 "warning"
             )
-            self.send("Files", None, self)
-            self.send("Utterances", None, self)
+            self.send("Files", None)
+            self.send("Utterances", None)
             return
        
         # Clear created Inputs and initialize progress bar...
@@ -406,8 +406,8 @@ class Childes(OWTextableBaseWidget):
                     )
 
                     # Reset output channel.
-                    self.send("Files", None, self)
-                    self.send("Utterances", None, self)
+                    self.send("Files", None)
+                    self.send("Utterances", None)
                     progressBar.finish()
                     self.controlArea.setDisabled(False)
                     return
@@ -515,7 +515,7 @@ class Childes(OWTextableBaseWidget):
 
         message = "%i file@p" % len(self.fileSegmentation)
         message = pluralize(message, len(self.fileSegmentation))
-        self.send("Files", self.fileSegmentation, self)
+        self.send("Files", self.fileSegmentation)
         
         # Build utterance segmentation if needed...
         if self.outputUtterances:
@@ -538,9 +538,9 @@ class Childes(OWTextableBaseWidget):
             message += " and " if not self.outputWords else ", "
             message += "%i utterance@p" % len(self.utteranceSegmentation)
             message = pluralize(message, len(self.utteranceSegmentation))
-            self.send("Utterances", self.utteranceSegmentation, self)
+            self.send("Utterances", self.utteranceSegmentation)
         else:
-            self.send("Utterances", None, self)
+            self.send("Utterances", None)
 
         # Build word segmentation if needed...
         if self.outputWords:
@@ -602,9 +602,9 @@ class Childes(OWTextableBaseWidget):
             
             message += " and %i word@p" % len(self.wordSegmentation)
             message = pluralize(message, len(self.wordSegmentation))
-            self.send("Words", self.wordSegmentation, self)
+            self.send("Words", self.wordSegmentation)
         else:
-            self.send("Words", None, self)
+            self.send("Words", None)
 
         # Set status to OK and report data size...
         message += " sent to output."
@@ -793,8 +793,8 @@ class Childes(OWTextableBaseWidget):
                 "Error while attempting to scrape the CHILDES website.", 
                 "error",
             )
-            self.send("Files", None, self)
-            self.send("Utterances", None, self)
+            self.send("Files", None)
+            self.send("Utterances", None)
         
         # Remove saved files if required...
         try:

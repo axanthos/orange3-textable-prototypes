@@ -579,7 +579,7 @@ class SpaCy(OWTextableBaseWidget):
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
             for channel in [c.name for c in self.outputs]:
-                self.send(channel, None, self)
+                self.send(channel, None)
             return
 
         # Check max length and adjust if needed...
@@ -592,7 +592,7 @@ class SpaCy(OWTextableBaseWidget):
                     "warning",
                 )
                 for channel in [c.name for c in self.outputs]:
-                    self.send(channel, None, self)
+                    self.send(channel, None)
                 return
         else:
             if inputLength > self.nlp.max_length:
@@ -651,25 +651,25 @@ class SpaCy(OWTextableBaseWidget):
 
         # Build segmentations and send them to output...                   
         tokenSeg = Segmentation(tokenSegments, self.captionTitle + "_tokens")
-        self.send("Tokenized text", tokenSeg, self)
+        self.send("Tokenized text", tokenSeg)
         if self.segmentChunks:
             chunkSeg = Segmentation(
                 chunkSegments, 
                 self.captionTitle + "_chunks",
             )
-            self.send("Noun chunks", chunkSeg, self)
+            self.send("Noun chunks", chunkSeg)
         if self.segmentEntities:
             entitySeg = Segmentation(
                 entitySegments, 
                 self.captionTitle + "_entities",
             )
-            self.send("Named entities", entitySeg, self)
+            self.send("Named entities", entitySeg)
         if self.segmentSentences:
             sentenceSeg = Segmentation(
                 sentenceSegments, 
                 self.captionTitle + "_sentences",
             )
-            self.send("Sentences", sentenceSeg, self)
+            self.send("Sentences", sentenceSeg)
 
         # Set status to OK and report data size...
         message = "%i token@p" % len(tokenSeg)

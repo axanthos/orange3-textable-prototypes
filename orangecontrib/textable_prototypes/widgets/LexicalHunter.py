@@ -251,7 +251,7 @@ class LexicalHunter(OWTextableBaseWidget):
                 "A segmentation input is needed.",
                 "warning"
             )
-            self.send("Segmentation with annotations", None, self)
+            self.send("Segmentation with annotations", None)
             return
 
         # Skip if no list is selected
@@ -260,7 +260,7 @@ class LexicalHunter(OWTextableBaseWidget):
                 "You need to define at least one lexical list.",
                 "error"
             )
-            self.send("Segmentation with annotations", None, self)
+            self.send("Segmentation with annotations", None)
             return
 
         # A list must have been selected
@@ -269,7 +269,7 @@ class LexicalHunter(OWTextableBaseWidget):
                 "Please select one or more lexical lists.",
                 "warning"
             )
-            self.send("Segmentation with annotations", None, self)
+            self.send("Segmentation with annotations", None)
             return
 
         # A annotation key must have been defined
@@ -279,7 +279,7 @@ class LexicalHunter(OWTextableBaseWidget):
                 "An annotation key is needed.",
                 "warning"
             )
-            self.send("Segmentation with annotations", None, self)
+            self.send("Segmentation with annotations", None)
             return
         """
 
@@ -290,7 +290,7 @@ class LexicalHunter(OWTextableBaseWidget):
         message = pluralize(message, len(self.outputSeg))
 
         # Segmentation go to outputs...
-        self.send("Segmentation with annotations", self.outputSeg, self)
+        self.send("Segmentation with annotations", self.outputSeg)
         self.infoBox.setText(message)
 
         self.sendButton.resetSettingsChangedFlag()

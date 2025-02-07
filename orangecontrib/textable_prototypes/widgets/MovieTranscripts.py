@@ -517,7 +517,7 @@ class MovieTranscripts(OWTextableBaseWidget):
                 "warning"
             )
             self.segmentation = None
-            self.send("Movie transcripts", self.segmentation, self)
+            self.send("Movie transcripts", self.segmentation)
             return
 
         # Clear created Inputs.
@@ -609,7 +609,7 @@ class MovieTranscripts(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Movie transcripts", self.segmentation, self)
+        self.send("Movie transcripts", self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
 

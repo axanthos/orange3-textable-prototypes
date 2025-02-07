@@ -518,7 +518,7 @@ class LyricsGenius(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Lyrics importation", self.segmentation, self)
+        self.send("Lyrics importation", self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
 

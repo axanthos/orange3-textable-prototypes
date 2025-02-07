@@ -238,7 +238,7 @@ class ECP(OWTextableBaseWidget):
                 "Please select one or more titles.",
                 "warning"
             )
-            self.send("XML-TEI data", None, self)
+            self.send("XML-TEI data", None)
             return
 
         # Clear created Inputs.
@@ -278,7 +278,7 @@ class ECP(OWTextableBaseWidget):
                 "error"
             )
             # Reset output channel.
-            self.send("XML-TEI data", None, self)
+            self.send("XML-TEI data", None)
             self.controlArea.setDisabled(False)
             return
 
@@ -325,7 +325,7 @@ class ECP(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
 
         # Send token...
-        self.send("XML-TEI data", self.segmentation, self)
+        self.send("XML-TEI data", self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
     def getTitleSeg(self):
@@ -401,7 +401,7 @@ class ECP(OWTextableBaseWidget):
             self.titleLabels = list()
 
             # Reset output channel.
-            self.send("XML-TEI data", None, self)
+            self.send("XML-TEI data", None)
             return None
 
         # Otherwise store HTML content in LTTL Input object.

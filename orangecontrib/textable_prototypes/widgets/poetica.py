@@ -758,7 +758,7 @@ class Poetica(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send("Poems importation", self.segmentation, self)
+        self.send("Poems importation", self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
 

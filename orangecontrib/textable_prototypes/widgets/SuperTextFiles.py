@@ -562,7 +562,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                         u"JSON message.",
                         'error'
                     )
-                    self.send('Text data', None, self)
+                    self.send('Text data', None)
                     return
                 temp_files.append((
                     path,
@@ -580,7 +580,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 u"Please make sure that incoming message is valid JSON.",
                 'error'
             )
-            self.send('Text data', None, self)
+            self.send('Text data', None)
             return
 
     def sendData(self):
@@ -592,7 +592,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             not (self.file or self.displayAdvancedSettings)
         ):
             self.infoBox.setText(u'Please select input file.', 'warning')
-            self.send('Text data', None, self)
+            self.send('Text data', None)
             return
 
         # Check that autoNumberKey is not empty (if necessary)...
@@ -604,7 +604,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Text data', None, self)
+                self.send('Text data', None)
                 return
         else:
             autoNumberKey = None
@@ -677,7 +677,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 if fileContent == -1:
                     message = u"Couldn't open file."
                     self.infoBox.setText(message, 'error')
-                    self.send('Text data', None, self)
+                    self.send('Text data', None)
                     self.controlArea.setDisabled(False)
                     return
 
@@ -694,7 +694,7 @@ class SuperTextFiles(OWTextableBaseWidget):
                 else:
                     message = u"Couldn't open file."
                 self.infoBox.setText(message, 'error')
-                self.send('Text data', None, self)
+                self.send('Text data', None)
                 self.controlArea.setDisabled(False)
                 return
 
@@ -763,7 +763,7 @@ class SuperTextFiles(OWTextableBaseWidget):
         progressBar.finish()
         self.controlArea.setDisabled(False)
 
-        self.send('Text data', self.segmentation, self)
+        self.send('Text data', self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
     def extract_raw_text(self, filePath, encoding):
@@ -805,7 +805,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             else:
                 message = u"Please select another encoding."
             self.infoBox.setText(message, 'error')
-            self.send('Text data', None, self)
+            self.send('Text data', None)
             self.controlArea.setDisabled(False)
             return
         finally:

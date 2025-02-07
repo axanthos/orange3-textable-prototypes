@@ -466,7 +466,7 @@ class ExtractCSV(OWTextableBaseWidget):
             self.infoBox.setText("Widget needs input", "warning")
             del self.headerList[:]
             self.headerList = self.headerList
-            self.send("CSV Segmentation", None, self)
+            self.send("CSV Segmentation", None)
             return
 
         # Initialize progress bar.
@@ -509,7 +509,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
         
         # Send data to output...
-        self.send("CSV Segmentation", outputSeg, self)
+        self.send("CSV Segmentation", outputSeg)
         
         self.sendButton.resetSettingsChangedFlag()             
 

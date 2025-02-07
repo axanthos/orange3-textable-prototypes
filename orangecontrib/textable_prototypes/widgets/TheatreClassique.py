@@ -241,7 +241,7 @@ class TheatreClassique(OWTextableBaseWidget):
                 "Please select one or more titles.",
                 "warning"
             )
-            self.send("XML-TEI data", None, self)
+            self.send("XML-TEI data", None)
             return
 
         # Clear created Inputs.
@@ -279,7 +279,7 @@ class TheatreClassique(OWTextableBaseWidget):
             )
 
             # Reset output channel.
-            self.send("XML-TEI data", None, self)
+            self.send("XML-TEI data", None)
             self.controlArea.setDisabled(False)
             return
 
@@ -327,7 +327,7 @@ class TheatreClassique(OWTextableBaseWidget):
         self.controlArea.setDisabled(False)
 
         # Send token...
-        self.send("XML-TEI data", self.segmentation, self)
+        self.send("XML-TEI data", self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
     def getTitleSeg(self):
@@ -410,7 +410,7 @@ class TheatreClassique(OWTextableBaseWidget):
             self.titleLabels = list()
 
             # Reset output channel.
-            self.send("XML-TEI data", None, self)
+            self.send("XML-TEI data", None)
             return None
 
         # Otherwise store HTML content in LTTL Input object.

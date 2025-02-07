@@ -303,7 +303,7 @@ class AudioFile(OWTextableBaseWidget):
             
         if not self.file:
             self.infoBox.setText(u"Please select input file.", "warning")
-            self.send('Text data', None, self)
+            self.send('Text data', None)
             return 
 
         # Clear created Inputs.
@@ -314,7 +314,7 @@ class AudioFile(OWTextableBaseWidget):
             transcription = self.get_large_audio_transcription(self.file, language=self.language, set_silence_len=self.selected_dur, set_silence_threshold=self.selected_vol)
         except speech_recognition.UnknownValueError as err:
             self.infoBox.setText(u"You seem to have overuseed the built-in API key, refer to the documentation for further informations.", "warning")
-            self.send('Text data', None, self)
+            self.send('Text data', None)
             return
         print(transcription)
 
@@ -343,7 +343,7 @@ class AudioFile(OWTextableBaseWidget):
         message = " Succesfully transcripted ! % i segment@p sent to output" % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
         # Send token...
-        self.send("Text data", self.segmentation, self)
+        self.send("Text data", self.segmentation)
         self.infoBox.setText(message)
         self.sendButton.resetSettingsChangedFlag()
 

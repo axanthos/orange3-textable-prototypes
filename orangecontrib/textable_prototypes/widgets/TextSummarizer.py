@@ -257,8 +257,8 @@ class TextSummarizer(OWTextableBaseWidget):
         self.inputSeg = segmentation
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
-            self.send('Summary', None, self)
-            self.send('HTML_Summary', None, self)
+            self.send('Summary', None)
+            self.send('HTML_Summary', None)
             return
         # Load default language model
         self.cv = self.loadModelEN()
@@ -369,8 +369,8 @@ class TextSummarizer(OWTextableBaseWidget):
         # Check that there's an input
         if self.inputSeg is None:
             self.infoBox.setText("Widget needs input.", "warning")
-            self.send('Summary', None, self)
-            self.send('HTML_Summary', None, self)
+            self.send('Summary', None)
+            self.send('HTML_Summary', None)
             return
 
         # Initialize progress bar.
@@ -418,8 +418,8 @@ class TextSummarizer(OWTextableBaseWidget):
         self.html_outputSeg = Segmentation(html_segments, self.captionTitle)
 
         # Send segmentation to output channels
-        self.send("Summary", self.outputSeg, self)
-        self.send('HTML_Summary', self.html_outputSeg, self)
+        self.send("Summary", self.outputSeg)
+        self.send('HTML_Summary', self.html_outputSeg)
 
         # Set message to sent
         message = "%i segment@p sent to output " % len(self.outputSeg)

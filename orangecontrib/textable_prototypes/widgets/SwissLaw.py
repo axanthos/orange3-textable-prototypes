@@ -465,7 +465,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.infoBox.setText(message)
 
         # Final send
-        self.send("Law Documents importation", self.segmentation, self)
+        self.send("Law Documents importation", self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
     def clearCreatedInputs(self):

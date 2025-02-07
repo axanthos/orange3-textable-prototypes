@@ -658,7 +658,7 @@ class MovieReviews(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
 
-        self.send('Segmentation', self.segmentation, self)
+        self.send('Segmentation', self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
     def clearResults(self):

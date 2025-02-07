@@ -411,7 +411,7 @@ class Charnetto(OWTextableBaseWidget):
     def sendNoneToOutputs(self):
         """Send None token to all output channels."""
         for channel in [c.name for c in self.outputs]:
-            self.send(channel, None, self)
+            self.send(channel, None)
         return
 
     def sendData(self):
@@ -482,7 +482,7 @@ class Charnetto(OWTextableBaseWidget):
         # Send output...
         outputSegmentation = Segmentation(charSegments, 
                                            label=self.captionTitle)
-        self.send("Character segmentation", outputSegmentation, self)
+        self.send("Character segmentation", outputSegmentation)
         print(outputSegmentation.to_string())
 
         # Set status to OK and report data size...

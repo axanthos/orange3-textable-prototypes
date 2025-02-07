@@ -610,7 +610,7 @@ class Scratodon(OWTextableBaseWidget):
 
         # Send confirmation of how many toots were outputted
         message = f"Successfully scrapped! {len(self.segmentation)} segments sent to output"
-        self.send("Scratted posts", self.segmentation, self)
+        self.send("Scratted posts", self.segmentation)
         self.infoBox.setText(message)
         self.updateGUI()
 
