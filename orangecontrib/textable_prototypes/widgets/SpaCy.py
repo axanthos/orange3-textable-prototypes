@@ -1,6 +1,6 @@
 """
 Class SpaCy
-Copyright 2022 University of Lausanne
+Copyright 2022-2025 University of Lausanne
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable-Prototypes package.
 
@@ -19,16 +19,19 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.9"
+__version__ = u"0.1.0"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
-import importlib.util
+import importlib
 import sys
 import os
+import json
 import subprocess
 import platform
+
+from urllib.request import urlopen
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -46,6 +49,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, ProgressBar
 )
 
+from iso639 import Lang
+
 import spacy
 
 # Global variables...
@@ -57,92 +62,51 @@ RELEVANT_KEYS = [
    'like_url', 'lower_', 'norm_', 'pos_', 'sentiment', 'shape_', 
    'tag_', 'whitespace_',
 ]
-AVAILABLE_MODELS = {
-    "Catalan news (small)": "cat_core_news_sm",
-    "Catalan news (medium)": "cat_core_news_md",
-    "Catalan news (large)": "cat_core_news_lg",
-    "Catalan news (transformer)": "cat_core_news_trf",
-    "Chinese web (small)": "zh_core_web_sm",
-    "Chinese web (medium)": "zh_core_web_md",
-    "Chinese web (large)": "zh_core_web_lg",
-    "Chinese web (transformer)": "zh_core_web_trf",
-    "Danish news (small)": "da_core_news_sm",
-    "Danish news (medium)": "da_core_news_md",
-    "Danish news (large)": "da_core_news_lg",
-    "Danish news (transformer)": "da_core_news_trf",
-    "Dutch news (small)": "nl_core_news_sm",
-    "Dutch news (medium)": "nl_core_news_md",
-    "Dutch news (large)": "nl_core_news_lg",
-    "English web (small)": "en_core_web_sm",
-    "English web (medium)": "en_core_web_md",
-    "English web (large)": "en_core_web_lg",
-    "English web (transformer)": "en_core_web_trf",
-    "Finnish news (small)": "fi_core_news_sm",
-    "Finnish news (medium)": "fi_core_news_md",
-    "Finnish news (large)": "fi_core_news_lg",
-    "French news (small)": "fr_core_news_sm",
-    "French news (medium)": "fr_core_news_md",
-    "French news (large)": "fr_core_news_lg",
-    "French news (transformer)": "fr_dep_news_trf",
-    "German news (small)": "de_core_news_sm",
-    "German news (medium)": "de_core_news_md",
-    "German news (large)": "de_core_news_lg",
-    "German news (transformer)": "de_dep_news_trf",
-    "Greek news (small)": "el_core_news_sm",
-    "Greek news (medium)": "el_core_news_md",
-    "Greek news (large)": "el_core_news_lg",
-    "Italian news (small)": "it_core_news_sm",
-    "Italian news (medium)": "it_core_news_md",
-    "Italian news (large)": "it_core_news_lg",
-    "Japanese news (small)": "ja_core_news_sm",
-    "Japanese news (medium)": "ja_core_news_md",
-    "Japanese news (large)": "ja_core_news_lg",
-    "Japanese news (transformer)": "ja_core_news_trf",
-    "Korean news (small)": "ko_core_news_sm",
-    "Korean news (medium)": "ko_core_news_md",
-    "Korean news (large)": "ko_core_news_lg",
-    "Lithuanian news (small)": "lt_core_news_sm",
-    "Lithuanian news (medium)": "lt_core_news_md",
-    "Lithuanian news (large)": "lt_core_news_lg",
-    "Macedonian news (small)": "mk_core_news_sm",
-    "Macedonian news (medium)": "mk_core_news_md",
-    "Macedonian news (large)": "mk_core_news_lg",
-    "Multi-language Wikipedia (small)": "xx_ent_wiki_sm",
-    "Multi-language Universal Dependencies (small)": "xx_ent_ud_sm",
-    "Norwegian Bokmal news (small)": "nb_core_news_sm",
-    "Norwegian Bokmal news (medium)": "nb_core_news_md",
-    "Norwegian Bokmal news (large)": "nb_core_news_lg",
-    "Polish news (small)": "pl_core_news_sm",
-    "Polish news (medium)": "pl_core_news_md",
-    "Polish news (large)": "pl_core_news_lg",
-    "Portuguese news (small)": "pt_core_news_sm",
-    "Portuguese news (medium)": "pt_core_news_md",
-    "Portuguese news (large)": "pt_core_news_lg",
-    "Romanian news (small)": "ro_core_news_sm",
-    "Romanian news (medium)": "ro_core_news_md",
-    "Romanian news (large)": "ro_core_news_lg",
-    "Russian news (small)": "ru_core_news_sm",
-    "Russian news (medium)": "ru_core_news_md",
-    "Russian news (large)": "ru_core_news_lg",
-    "Spanish news (small)": "es_core_news_sm",
-    "Spanish news (medium)": "es_core_news_md",
-    "Spanish news (large)": "es_core_news_lg",
-    "Spanish news (transformer)": "es_core_news_trf",
-    "Swedish news (small)": "sv_core_news_sm",
-    "Swedish news (medium)": "sv_core_news_md",
-    "Swedish news (large)": "sv_core_news_lg",
+
+DOWNLOAD_URL = spacy.about.__download_url__
+COMPATIBILITY_URL = spacy.about.__compatibility__
+COMPATIBILITY = json.loads(urlopen(COMPATIBILITY_URL).read().decode("utf-8"))
+SPACY_VERSION = spacy.__version__
+while True:
+    try:
+        MODELS = COMPATIBILITY["spacy"][SPACY_VERSION]
+        break
+    except KeyError:
+        SPACY_VERSION = ".".join(SPACY_VERSION.split(".")[:-1])
+
+MODEL_SIZE_MAPPING = {
+    "sm": "small",
+    "md": "medium",
+    "lg": "large",
+    "trf": "transformer",
 }
-MODEL_VERSION_NUM = "3.5.0"
-DOWNLOAD_URL = "https://github.com/explosion/spacy-models/releases/download/"
+AVAILABLE_MODELS = dict()
+UNKNOWN_LANGUAGE_COUNTER = 0
+for model in MODELS:
+    lang_code, _, model_type, model_size = model.split("_")
+    if lang_code == "xx":
+        lang_name = "multilingual"
+    else:
+        try:
+            lang_name = Lang(lang_code).name
+        except:
+            UNKNOWN_LANGUAGE_COUNTER += 1
+            lang_name = f"Unknown language ({UNKNOWN_LANGUAGE_COUNTER})"
+    model_name = f"{lang_name} {model_type} ({MODEL_SIZE_MAPPING[model_size]})"
+    AVAILABLE_MODELS[model_name] = model        
 
 # Determine which language models are installed...
 INSTALLED_MODELS = list()
 DOWNLOADABLE_MODELS = list()
 for model, package in AVAILABLE_MODELS.items():
-    if importlib.util.find_spec(package.replace("-", "_")):
-        INSTALLED_MODELS.append(model)
+    norm_package = package.replace("-", "_")
+    if importlib.util.find_spec(norm_package):
+        if importlib.metadata.version(norm_package)  \
+            in COMPATIBILITY["spacy"][SPACY_VERSION][package]:
+            INSTALLED_MODELS.append(model)
     else:
         DOWNLOADABLE_MODELS.append(model)
+
 
 class SpaCy(OWTextableBaseWidget):
     """Textable widget for NLP using spaCy."""
@@ -440,7 +404,7 @@ class SpaCy(OWTextableBaseWidget):
             tooltip="Select language models then click Download.",
         )
         self.downloadableModelsListbox.setSelectionMode(3)
-        self.downloadableModelLabels = DOWNLOADABLE_MODELS[:]
+        self.downloadableModelLabels = sorted(DOWNLOADABLE_MODELS[:])
         self.downloadableModelLabels = self.downloadableModelLabels
         
         self.downloadButton = gui.button(
@@ -781,9 +745,9 @@ def spacyItemsToSegments(items, parentSegment):
 def download_spacy_model(model):
     """Reimplemented and adapted from spacy.cli.download."""
     global DOWNLOAD_URL
-    global MODEL_VERSION_NUM
-    dl_tpl = "{m}-{v}/{m}-{v}.tar.gz#egg={m}=={v}"
-    download_url = DOWNLOAD_URL + dl_tpl.format(m=model, v=MODEL_VERSION_NUM)
+    model_version_num = COMPATIBILITY["spacy"][SPACY_VERSION][model][0]
+    dl_tpl = "/{m}-{v}/{m}-{v}.tar.gz#egg={m}=={v}"
+    download_url = DOWNLOAD_URL + dl_tpl.format(m=model, v=model_version_num)
     pip_args = ["--no-cache-dir"]
     if platform.system() == "Windows":
         executable = sys.executable.replace("pythonw", "python")
