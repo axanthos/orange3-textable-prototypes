@@ -25,6 +25,7 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -686,6 +687,7 @@ class WidgetEditList(OWTextableBaseWidget):
         self.updateGUI()
     
     def cancelListChanges(self):
+        """Cancel the list changes"""
         # Reset textfields values
         self.titleEdit.setText("")
         self.editor.setPlainText("")
@@ -714,39 +716,41 @@ class WidgetEditList(OWTextableBaseWidget):
         )
         if not filePath:
             return
-        self.file = os.path.normpath(filePath)
-        self.baseLocation = os.path.dirname(filePath)
-        # Gets txt file name and substracts .txt extension
-        fileName = os.path.join(self.baseLocation, self.file);
+        for f in filePath:
+            if f:
+                self.file = os.path.normpath(f)
+                self.baseLocation = os.path.dirname(f)
+                # Gets txt file name and substracts .txt extension
+                fileName = os.path.join(self.baseLocation, self.file);
 
-        # Cutting the path to get the name
-        if platform.system() == "Windows":
-            listLexicName = fileName.split('\\')
+                # Cutting the path to get the name
+                if platform.system() == "Windows":
+                    listLexicName = fileName.split('\\')
 
-        else:
-            listLexicName = fileName.split('/')
+                else:
+                    listLexicName = fileName.split('/')
 
-        # Getting file name
-        lexicName = listLexicName[-1]
-        lexicName = re.sub('\.txt$', '', lexicName)
+                # Getting file name
+                lexicName = listLexicName[-1]
+                lexicName = re.sub('\.txt$', '', lexicName)
 
 
-        # Trying to open the files and store their content in a dictionnary
-        # then store all of theses in a list
-        try:
-            fileHandle = open(fileName, encoding='utf-8')
-            content = fileHandle.readlines()
-            # Deleting spaces
-            self.tempDict[lexicName] = [re.sub(r'\s', "", i) for i in content]
-            fileHandle.close()
-            self.setTitleList()
-        except IOError:
-            QMessageBox.warning(
-                None,
-                'Textable',
-                "Couldn't open file.",
-                QMessageBox.Ok
-            )
+                # Trying to open the files and store their content in a dictionnary
+                # then store all of theses in a list
+                try:
+                    fileHandle = open(fileName, encoding='utf-8')
+                    content = fileHandle.readlines()
+                    # Deleting spaces
+                    self.tempDict[lexicName] = [re.sub(r'\s', "", i) for i in content]
+                    fileHandle.close()
+                    self.setTitleList()
+                except IOError:
+                    QMessageBox.warning(
+                        None,
+                        'Textable',
+                        "Couldn't open file.",
+                        QMessageBox.Ok
+                    )
             return
 
     def exportOneLexic(self):
@@ -763,22 +767,26 @@ class WidgetEditList(OWTextableBaseWidget):
         exportContent = self.tempDict[exportTitle]
 
         # Saving lexic content
-        if filePath:
-            outputFile = open(
-                filePath,
-                encoding='utf8',
-                mode='w+',
-                errors='xmlcharrefreplace',
-            )
+        for file in filePath:
+            if file:
+                try:
+                    outputFile = open(
+                        file,
+                        encoding='utf8',
+                        mode='w+',
+                        errors='xmlcharrefreplace',
+                    )
 
-            outputFile.write('\n'.join(exportContent))
-            outputFile.close()
-            QMessageBox.information(
-                None,
-                'Textable',
-                'Lexical file correctly exported',
-                QMessageBox.Ok
-            )
+                    outputFile.write('\n'.join(exportContent))
+                    outputFile.close()
+                    QMessageBox.information(
+                        None,
+                        'Textable',
+                        'Lexical file correctly exported',
+                        QMessageBox.Ok
+                    )
+                except OSError:
+                    pass
 
     def exportAllLexics(self):
         """Lets the user export all the lexics"""
@@ -873,10 +881,11 @@ class WidgetEditList(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = LexicalHunter()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = LexicalHunter()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(LexicalHunter).run(inputData=Input("Hello world. How are you doing ?"))

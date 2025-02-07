@@ -57,7 +57,7 @@ select multiple files use either control/command-click or shift-click.
 
 .. figure:: figures/18thCenturyPoetry_Basic.png
     :align: center
-    :alt: Basic interface of the 18th Century Poetryy widget
+    :alt: Basic interface of the 18th Century Poetry widget
 
     Figure 1: **18th Century Poetry** widget (basic interface).
 
@@ -124,3 +124,9 @@ Errors
 *Couldn't download data from 18th Century Poetry website.*
     An error has prevented the widget to download the data from the
     18th Century Poetry (most likely related to a connection problem).
+
+
+Note
+----
+
+Note that after performing a refresh of this widget's database, it is necessary to restart Orange to be able to use the widget correctly.

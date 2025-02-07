@@ -84,14 +84,14 @@ Follow the instructions below to install the widget:
 =============
 
 2.3.1 Information
-~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 *<n> segments sent to output (<m> characters).*
     This confirms that the widget has operated properly.
 
 
 2.3.2 Warnings
-~~~~~~~~
+~~~~~~~~~~~~~~
 
 *Settings were changed, please click 'Send' when ready.*
     Settings have changed but the **Send automatically** checkbox
@@ -100,4 +100,4 @@ Follow the instructions below to install the widget:
     emission to proceed.
 
 *Your corpus is empty, please add some law texts first.*
-    The corpus is empty, so the user have to add some law documents before sending.
+    The corpus is empty, so the user has to add some law documents before sending.

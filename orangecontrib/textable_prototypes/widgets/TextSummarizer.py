@@ -32,9 +32,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import (
-    QTabWidget, QWidget, QHBoxLayout, QMessageBox, QIntValidator
-)
+import AnyQt.QtGui
+#from AnyQt.QtGui import (
+    #QTabWidget, QWidget, QHBoxLayout, QMessageBox, QIntValidator
+#)
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
@@ -154,7 +155,7 @@ class TextSummarizer(OWTextableBaseWidget):
             orientation="horizontal",
             label="Input's language:",
             labelWidth=135,
-            # Appeler autre méthode
+            # Call other method
             callback=self.languageChanged,
             tooltip=(
                 "Please select the text's language.\n"
@@ -271,7 +272,7 @@ class TextSummarizer(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def noLanguageModelWarning(self):
-        """"Warn user that a spaCy model must be installed and disable GUI."""
+        """Warn user that a spaCy model must be installed and disable GUI."""
         self.infoBox.setText(
             "Please use the spaCy widget to download a language "
             "model first.",
@@ -436,7 +437,7 @@ class TextSummarizer(OWTextableBaseWidget):
     ################################################################
 
     def summarize(self, cv, content):
-        "Main function that summarize the text"
+        """Main function that summarize the text"""
 
         progressBar = ProgressBar(self, iterations=3)
 

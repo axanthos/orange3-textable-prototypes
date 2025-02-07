@@ -11,7 +11,6 @@ Redditor
     :alt: First look at Redditor widget
     :align: center 
     :height: 100px
-    :width: 200 px
     
 
 Authors
@@ -38,7 +37,7 @@ Description
 
 This widget is designed to scrap one or more different types of content from Reddit, data is retrieved from
 `<https://www.reddit.com/>`. 
-The widget outputs at least one segmentation with the the title and content of a post or subreddit, with the possibility to include or exclude comments and images.
+The widget outputs at least one segmentation with the title and content of a post or subreddit, with the possibility to include or exclude comments and images.
 Segments in this segmentation have a number of annotations :
 
 
@@ -78,6 +77,7 @@ Users can also choose the amount of posts they want to upload to the widget.
 
 .. figure:: figures/subreddit_fig2.png
     :align: center
+    :width: 650px
     :scale: 50 %
     
     
@@ -93,19 +93,17 @@ The **Full Text** mode has three filters.
 
 .. figure:: figures/fullText_fig3.png
     :align: center
-    :height: 100px
-    :width: 200 px
+    :width: 650px
     :scale: 50 %
 
 
-The **URL** mode allows the user to search data by directly using the URL of a post or subreddit.
+The **URL** mode allows the user to search data by directly using the URL of a post.
 
 .. _url_fig4:
 
 .. figure:: figures/url_fig4.png
     :align: center
-    :height: 100px
-    :width: 200 px
+    :width: 650px
     :scale: 50 %
 
 The widget also has options available for all three modes.
@@ -118,8 +116,7 @@ The **Include Comments** option allows the user to choose wether or not he wants
 
 .. figure:: figures/include_fig5.png
     :align: center
-    :height: 100px
-    :width: 200 px
+    :width: 650px
     :scale: 50 %
 
 The **Add Request** button allows users to add multiple posts and/or subreddits to the basket in the **Selection** box. To select multiple files use the **Selection** box to add them to the basket.
@@ -149,10 +146,10 @@ Warnings
     emission to proceed.
 
 *The post found only contains images. Try to include images or comments.*
-   The widget instance is unable to emit image to output because the user hasn’t checked the box for images
+   The widget instance is unable to emit image to output because the user hasn't checked the box for images
 
 *Please fill in the input box.*
-   The widget instance is unable to emit data to output because the user hasn’t filled in the input box.
+   The widget instance is unable to emit data to output because the user hasn't filled in the input box.
 
 
 Errors

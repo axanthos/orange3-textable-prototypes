@@ -28,6 +28,7 @@ __email__ = "aris.xanthos@unil.ch"
 import Orange.data
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.unsupervised.owcorrespondence import correspondence
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 import LTTL
 from LTTL.Table import Table, PivotCrosstab
@@ -512,12 +513,11 @@ def pivot_crosstab_to_gensim(table, callback=None):
 
     
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = TopicModels()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
-
-
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = TopicModels()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(TopicModels).run()

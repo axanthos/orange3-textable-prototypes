@@ -27,7 +27,7 @@ Description
 -----------
 
 This widget is designed for searching any movie by its title or actors and the output is 25 reviews of the film. 
-The widget will use the imdbpy library to import the movies’ data.
+The widget will use the imdbpy library to import the movies' data.
 
 
 Interface
@@ -44,7 +44,7 @@ The **Movie Reviews** widget lets the user make a search on the IMDB library.
 
 The **Search** button searches the database for entries matching user's input.
 
-The **Corpus** section is a container where the user's movie selections are stored. The user can add or remove the movies to and from their corpus or clear the corpus entirely.
+The **Corpus** section is a container where the user's movie selections are stored. The users can add or remove the movies to and from their corpus or clear the corpus entirely.
 
 The **Send** button triggers the emission of a segmentation to the output connection(s). When selected, the Send automatically checkbox disables the button and the widget attempts to automatically emit a segmentation at every modification of its interface.
 

@@ -25,6 +25,7 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
@@ -43,6 +44,8 @@ from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, ProgressBar,
 )
+
+import re
 
 class LyricsGenius(OWTextableBaseWidget):
     """Textable widget for importing JSON data from the website Genius
@@ -95,6 +98,7 @@ class LyricsGenius(OWTextableBaseWidget):
         self.documentLabels = list()
         self.selectedTitles = list()
         # selections box attributs
+        self.titleLabels = list()
         self.myTitles = list()
         self.mytitleLabels = list()
         # stock all the inputs (songs) in a list
@@ -365,10 +369,14 @@ class LyricsGenius(OWTextableBaseWidget):
         page = requests.get(page_url)
         html = BeautifulSoup(page.text, "html.parser")
         [h.extract() for h in html('script')]
-        lyrics = html.find("div", class_="lyrics").get_text()
-        lyrics.replace('\\n', '\n')
+        lyrics = ""
+        for element in html.find_all("div", class_=re.compile(r"^Lyrics__Container")):
+            lyrics_part = element.get_text()
+            lyrics = lyrics + lyrics_part
+        lyrics = re.sub(r"(?<=\S)(\[|\(|[A-Z])", r" \1", lyrics)
         # return a string
         return lyrics
+        
 
 
     # Function clearing the results list
@@ -393,6 +401,7 @@ class LyricsGenius(OWTextableBaseWidget):
 
     # Update selections function
     def updateMytitleLabels(self):
+        """Update the selctions"""
         self.mytitleLabels = list()
         for songData in self.myBasket:
             result_string = songData["title"] + " - " + songData["artist"]

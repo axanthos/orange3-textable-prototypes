@@ -276,8 +276,8 @@ class SwissLaw(OWTextableBaseWidget):
 
         self.updateSegLevelsComboBox()
 
-    # Update the remove button if a law text is selected in the corpus
     def updateRemoveButton(self):
+        """Update the remove button if a law text is selected in the corpus"""
         self.removeButton.setDisabled(self.corpusSelectedItems == list())
 
     # Function clearing the results list
@@ -288,8 +288,8 @@ class SwissLaw(OWTextableBaseWidget):
         self.clearButton.setDisabled(True)
         self.addButton.setDisabled(self.corpusLabels == list())
 
-    # Function updating available segmentation
     def updateSegLevelsComboBox(self):
+        """Update available segmentation"""
         self.segLevelComboBox.clear()
         self.segLevels = list()
         self.segLevels.append("No Segmentation")
@@ -322,8 +322,8 @@ class SwissLaw(OWTextableBaseWidget):
         self.updateSegLevelsComboBox()
         self.selectedLanguage = "FR"
 
-    # Update selections function
     def updateMyDocumentLabels(self):
+        """Update selections"""
         self.corpusLabels = list()
         for item in self.myBasket:
             result_string = item[0] + " - " + item[1] + " - " + item[2]
@@ -363,8 +363,8 @@ class SwissLaw(OWTextableBaseWidget):
         self.updateSegLevelsComboBox()
         self.selectedLanguage = "FR"
 
-    # Function that download xml law text based on the url
     def get_xml_contents(self, urls) -> str:
+        """Download xml law text based on the url"""
         response = requests.get(urls)
         xml_content = response.content.decode('utf-8')
         return xml_content
@@ -469,6 +469,7 @@ class SwissLaw(OWTextableBaseWidget):
         self.sendButton.resetSettingsChangedFlag()
 
     def clearCreatedInputs(self):
+        """Clear created inputs"""
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]

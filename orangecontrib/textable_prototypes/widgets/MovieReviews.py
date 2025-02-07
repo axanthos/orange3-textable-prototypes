@@ -21,7 +21,7 @@ along with Orange-Textable-Prototypes. If not, see
 
 # TODO Ajouter d'autres annotations
 # TODO Ajouter les options de recherches
-# TODO Les recherches devraient filtrés les films n'ayant pas de critique avant de les afficher dans le corpus 
+# TODO Les recherches devraient filtrer les films n'ayant pas de critique avant de les afficher dans le corpus 
 # TODO Le bouton 'search' devrait être disable quand y'a rien qui est recherché
 
 __version__ = u"0.0.1"
@@ -30,8 +30,8 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 from Orange.widgets import widget, gui, settings
-
 from Orange.widgets.utils.widgetpreview import WidgetPreview
+
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
@@ -78,6 +78,7 @@ class MovieReviews(OWTextableBaseWidget):
     want_main_area = False
 
     def __init__(self):
+        """Widget creator."""
         super().__init__()
 
         # Search filters attributs
@@ -375,6 +376,7 @@ class MovieReviews(OWTextableBaseWidget):
 
 
     def mode_changed(self):
+        """Define the possible actions according to the type of search"""
         self.sendButton.settingsChanged()
         if self.type_results == "Title": # 0 = subreddit selected
             # Hide Genre box
@@ -604,20 +606,24 @@ class MovieReviews(OWTextableBaseWidget):
             return
 
         # Store movie critics strings in input objects...
+        list_range = list()
         for movie in list_review:
             data = movie.get('data', "")
             reviews_data = data.get('reviews')
+            list_range.append(len(reviews_data))
             for review in reviews_data:
                 reviews = review.get('content')
-                newInput = Input(reviews)
+                newInput = Input(reviews, self.captionTitle)
                 self.createdInputs.append(newInput)
+        num = 0
         for item in list_annotation:
             print(item)
             # Store the annotation as dicts in a separate list
             annotations_dict = {"title": item, "year": item["year"]}
             annot_dict_copy = annotations_dict.copy()
-            for i in range(25):
+            for i in range(list_range[num]):
                 annotations.append(annot_dict_copy)
+            num += 1
         print(annotations)
         # If there's only one item, the widget's output is the created Input.
         if len(self.createdInputs) == 1:
@@ -627,6 +633,7 @@ class MovieReviews(OWTextableBaseWidget):
         else:
             self.segmentation = Segmenter.concatenate(
                 self.createdInputs,
+                self.captionTitle,
                 import_labels_as=None,
             )
 
@@ -673,6 +680,17 @@ class MovieReviews(OWTextableBaseWidget):
         self.myBasket = list()
         self.sendButton.settingsChanged()
         self.clearmyBasket.setDisabled(True)
+
+    # The following method need to be copied (without any change) in
+    # every Textable widget...
+    def setCaption(self, title):
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
+            super().setCaption(title)
+            if changed:
+                self.sendButton.settingsChanged()
+        else:
+            super().setCaption(title)
 
 if __name__ == "__main__":
     WidgetPreview(MovieReviews).run()

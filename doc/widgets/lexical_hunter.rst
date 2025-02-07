@@ -39,7 +39,7 @@ This widget is a lexical fields identifier.
 It creates annotation based on one or multiple lexical fields. 
 There are some basic lexical fields, but the user can modify or remove them. 
 The user can also create and/or import custom lexical fields. 
-t is possible to export these lexical fields as well.
+It is possible to export these lexical fields as well.
 The interface of Lexical Hunter is available in two versions, a basic one that lets the user select some 
 lexical fields to annotate the segmented data and an advanced one that lets the user manage these lexical lists.
 Do not put any special characters in your lists, unless you know what you are doing, otherwise the widget will 
@@ -76,8 +76,7 @@ segmentation at every modification of its interface.
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of **Lexical Hunter**  (see :ref:`figure 2 
-<lexicalhunter_fig2>` below) lets the user edit, delete, add, import 
+The advanced version of **Lexical Hunter**  (see :ref:`figure 2 <lexicalhunter_fig2>` below) lets the user edit, delete, add, import 
 or export lists.
 
 .. _lexicalhunter_fig2:

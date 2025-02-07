@@ -26,6 +26,7 @@ __email__ = "aris.xanthos@unil.ch"
 
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -36,6 +37,8 @@ from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
+
+from PyQt5.QtWidgets import QMessageBox
 
 import urllib
 import re
@@ -186,7 +189,7 @@ class ECP(OWTextableBaseWidget):
             widget=titleBox,
             master=self,
             label="Refresh",
-            callback=self.refreshTitleSeg,
+            callback=self.alertMessage,
             tooltip="Connect to ECP website and refresh list.",
         )
         gui.separator(widget=titleBox, height=3)
@@ -208,6 +211,19 @@ class ECP(OWTextableBaseWidget):
 
         self.setMinimumWidth(350)
         self.adjustSizeWithTimer()
+
+    def alertMessage(self):
+        """
+        Confirmation request message to refresh the database or cancel
+        """
+        result = QMessageBox.information(
+            None,
+            '18th Century Poetry',
+            'Are you sure you want to refresh the database ? Once the database is updated, it may be necessary to restart the Orange software to be able to use the widget correctly.',
+            QMessageBox.Ok | QMessageBox.Cancel
+        )
+        if result == QMessageBox.Ok:
+            self.refreshTitleSeg()
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
@@ -315,7 +331,7 @@ class ECP(OWTextableBaseWidget):
     def getTitleSeg(self):
         """Get title segmentation, either saved locally or online"""
 
-        # Try to open saved file in this module"s directory...
+        # Try to open saved file in this module's directory...
         path = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe()))
         )
@@ -405,7 +421,7 @@ class ECP(OWTextableBaseWidget):
         # Extract genre annotation...
         genreSeg = Segmenter.tokenize(
             segmentation=genresListSeg,
-            regexes=[(re.compile(r'<a id[^>]+>(.+?)</a.+?(?=<a id|$)(?s)'), \
+            regexes=[(re.compile(r'(?s)<a id[^>]+>(.+?)</a.+?(?=<a id|$)'), \
             "tokenize", {"genre": "&1"})],
             import_annotations=False,
         )
@@ -413,7 +429,7 @@ class ECP(OWTextableBaseWidget):
         # Extract works...
         titleSeg = Segmenter.tokenize(
             segmentation=genreSeg,
-            regexes=[(re.compile(r'<li class="bibl".+?</span>(?s)'), \
+            regexes=[(re.compile(r'(?s)<li class="bibl".+?</span>'), \
             "tokenize")],
         )
 
@@ -422,17 +438,17 @@ class ECP(OWTextableBaseWidget):
             segmentation=titleSeg,
             regexes=[
                 (
-                    re.compile(r"^.*>\n(.+?)</span>.*$(?s)"),
+                    re.compile(r"(?s)^.*>\n(.+?)</span>.*$"),
                     "tokenize",
                     {"author": "&1"}
                 ),
                 (
-                    re.compile(r'^.*href="(/works/.+?\.shtml)">.*$(?s)'),
+                    re.compile(r'(?s)^.*href="(/works/.+?\.shtml)">.*$'),
                     "tokenize",
                     {"url": "&1"}
                 ),
                 (
-                    re.compile(r'^.*shtml">(.*)</a>.*$(?s)'),
+                    re.compile(r'(?s)^.*shtml">(.*)</a>.*$'),
                     "tokenize",
                     {"title": "&1"}
                 ),
@@ -598,10 +614,11 @@ class ECP(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = ECP()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = ECP()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(ECP).run()

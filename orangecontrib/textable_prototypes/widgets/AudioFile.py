@@ -1,6 +1,29 @@
 """
-AUDIOFILE
+Class TheatreClassique
+Copyright 2022 University of Lausanne
+-----------------------------------------------------------------------------
+This file is part of the Orange3-Textable-Prototypes package.
+
+Orange3-Textable-Prototypes is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Orange3-Textable-Prototypes is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Orange-Textable-Prototypes. If not, see
+<http://www.gnu.org/licenses/>.
 """
+
+__version__ = u"0.1.6"
+__author__ = " Gavin Vinasi, Johan Cuda, Rebecca Kneubuehler"
+__maintainer__ = "Aris Xanthos"
+__email__ = "aris.xanthos@unil.ch"
+
 import os 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.settings import Setting
@@ -64,6 +87,7 @@ class AudioFile(OWTextableBaseWidget):
     }
   
     def __init__(self):
+        """Widget creator."""
         super().__init__()
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
@@ -275,6 +299,7 @@ class AudioFile(OWTextableBaseWidget):
             return whole_text
 
     def sendData(self):
+        """Send data"""
             
         if not self.file:
             self.infoBox.setText(u"Please select input file.", "warning")
@@ -332,6 +357,7 @@ class AudioFile(OWTextableBaseWidget):
             super().setCaption(title)
 
     def browse(self):
+        """Browse"""
         audioPath, _ = QFileDialog.getOpenFileName(
             self,
             u"open Text File",
@@ -345,6 +371,7 @@ class AudioFile(OWTextableBaseWidget):
         self.sendButton.settingsChanged()
 
     def showAdvancedSettings(self):
+        """Make advanced settings visible"""
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
@@ -384,4 +411,4 @@ if __name__ == '__main__':
     # myWidget = AudioFile()
     # myWidget.show()
     # myApplication.exec_()
-    # myWidget.saveSettings()
+    #myWidget.saveSettings()

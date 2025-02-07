@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="Poetica" qualified_name="orangecontrib.textable_prototypes.widgets.poetica.Poetica" project_name="Orange3-Textable-Prototypes" version="" title="Poetica" position="(120.0, 179.0)" />
+		<node id="1" name="Display" qualified_name="_textable.widgets.OWTextableDisplay.OWTextableDisplay" project_name="Orange3-Textable" version="" title="Display" position="(291.0, 179.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Poems importation" sink_channel="Segmentation" enabled="true" />
+	</links>
+	<annotations>
+		<arrow id="0" start="(88.5, 313.5)" end="(114.5, 236.5)" fill="#C1272D" />
+		<arrow id="1" start="(378.0, 277.5)" end="(323.0, 226.0)" fill="#C1272D" />
+		<text id="2" type="text/plain" rect="(-14.0, 315.0, 226.0, 472.0)" font-family="MS Shell Dlg 2" font-size="16">Build a corpus of poems.
+
+1) Select an author and/or a topic and click on "Search"
+
+2) Select one ore more poems from those proposed and add them by clicking on "Add to corpus"
+
+3) Send your corpus by clicking on "Send"</text>
+		<text id="3" type="text/plain" rect="(387.5, 257.5, 180.0, 200.0)" font-family="MS Shell Dlg 2" font-size="16">You can see the output result here</text>
+	</annotations>
+<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoSend': False, 'controlAreaVisible': True, 'corpus': ['https://www.poetica.fr/poeme-4037/guillaume-apollinaire-le-hibou/', 'https://www.poetica.fr/poeme-7961/paul-eluard-sur-la-maison-du-rire/'], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\xff\xff\xff\xff\xff\xff\xff\xfa\x00\x00\x03\xc0\x00\x00\x01\xfe\x00\x00\x00\x00\x00\x00\x00\x14\x00\x00\x03\xbf\x00\x00\x02e\x00\x00\x00\x00\x02\x00\x00\x00\x03\xc0\x00\x00\x00\x00\x00\x00\x00\x11\x00\x00\x03\xbf\x00\x00\x01\xfd', 'uuid': 'dc4e4d30-24bf-4b8f-9135-5afbf0af8ade', '__version__': 1, '_TextableUtils_settings_version__': (0, 0)}</properties>
+		<properties node_id="1" format="literal">{'autoSend': True, 'basicFormatHTML': True, 'controlAreaVisible': True, 'customFormat': '%(__content__)s', 'customFormatting': False, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'footer': '', 'header': '', 'lastLocation': '.', 'limitNumberOfSegments': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00\xac\x00\x00\x00A\x00\x00\x03\x1d\x00\x00\x01\xd6\x00\x00\x00\xb1\x00\x00\x00W\x00\x00\x03\x18\x00\x00\x01\xd1\x00\x00\x00\x00\x00\x00\x00\x00\x03\xc0', 'segmentDelimiter': '\\n', 'uuid': 'df7c430e-b948-483c-b6f2-9ba6b131cd00', '__version__': 1, '_TextableUtils_settings_version__': (0, 16)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

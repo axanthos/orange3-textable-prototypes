@@ -33,7 +33,7 @@ Description
 -----------
 
 The widget is designed to import one or more texts from `<http://www.gutenberg.org/>`__ in Orange Canvas.
-The output is a segmentation containing a segment for each imported text, annoted by title author and language.
+The output is a segmentation containing a segment for each imported text, annotated by title, author and language.
 
 Interface
 ~~~~~~~~~

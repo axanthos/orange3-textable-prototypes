@@ -30,6 +30,7 @@ import prawcore
 
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
@@ -436,6 +437,7 @@ class Redditor(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def mode_changed(self):
+        """Change the search mode"""
         self.sendButton.settingsChanged()
         """Allows to update the interface depeding on query mode"""
         if self.mode == "Subreddit": # 0 = subreddit selected
@@ -1009,11 +1011,12 @@ class Redditor(OWTextableBaseWidget):
 # The following code lets you execute the code (to view the
 # resulting interface)...
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
-    import sys
-    my_app = QApplication(list(sys.argv))
-    my_widget = Redditor()
-    my_widget.show()
-    my_widget.raise_()
-    my_app.exec_()
-    my_widget.saveSettings()
+    #from PyQt5.QtWidgets import QApplication
+    #import sys
+    #my_app = QApplication(list(sys.argv))
+    #my_widget = Redditor()
+    #my_widget.show()
+    #my_widget.raise_()
+    #my_app.exec_()
+    #my_widget.saveSettings()
+    WidgetPreview(Redditor).run()

@@ -30,6 +30,7 @@ from pathlib import Path
 
 # Orange
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # LTTL
 from LTTL.Segmentation import Segmentation
@@ -536,6 +537,7 @@ class Gutenberg(OWTextableBaseWidget):
 
     # Update selections function
     def updateMytitleLabels(self):
+        """Update the selections list"""
         self.mytitleLabels = list()
 
         for titleData in self.myBasket:
@@ -685,10 +687,11 @@ class Gutenberg(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = Gutenberg()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = Gutenberg()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(Gutenberg).run()

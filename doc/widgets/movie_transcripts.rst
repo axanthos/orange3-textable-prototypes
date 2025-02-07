@@ -81,5 +81,5 @@ Errors
 
 *Couldn't save database on disk*
     An error has prevented the widget from saving the downloaded database on
-    the tser's hard drive.
+    the user's hard drive.
 

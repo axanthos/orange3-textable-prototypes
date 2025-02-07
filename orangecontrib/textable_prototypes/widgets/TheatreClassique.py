@@ -26,6 +26,7 @@ __email__ = "aris.xanthos@unil.ch"
 
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -36,6 +37,8 @@ from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
+
+from PyQt5.QtWidgets import QMessageBox
 
 import urllib
 import re
@@ -181,14 +184,17 @@ class TheatreClassique(OWTextableBaseWidget):
         )
         self.titleListbox.setMinimumHeight(150)
         self.titleListbox.setSelectionMode(3)
+
         gui.separator(widget=titleBox, height=3)
+
         gui.button(
             widget=titleBox,
             master=self,
             label="Refresh",
-            callback=self.refreshTitleSeg,
+            callback=self.alertMessage,
             tooltip="Connect to Theatre-classique website and refresh list.",
         )
+        
         gui.separator(widget=titleBox, height=3)
 
         gui.separator(widget=self.controlArea, height=3)
@@ -208,6 +214,19 @@ class TheatreClassique(OWTextableBaseWidget):
 
         self.setMinimumWidth(350)
         self.adjustSizeWithTimer()
+
+    def alertMessage(self):
+        """
+        Confirmation request message to refresh the database or cancel
+        """
+        result = QMessageBox.information(
+            None,
+            'Theatre Classique',
+            'Are you sure you want to refresh the database ? Once the database is updated, it may be necessary to restart the Orange software to be able to use the widget correctly.',
+            QMessageBox.Ok | QMessageBox.Cancel
+        )
+        if result == QMessageBox.Ok:
+            self.refreshTitleSeg()
 
     def sendData(self):
         """Compute result of widget processing and send to output"""
@@ -571,10 +590,11 @@ class TheatreClassique(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    myApplication = QApplication(sys.argv)
-    myWidget = TheatreClassique()
-    myWidget.show()
-    myApplication.exec_()
-    myWidget.saveSettings()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #myApplication = QApplication(sys.argv)
+    #myWidget = TheatreClassique()
+    #myWidget.show()
+    #myApplication.exec_()
+    #myWidget.saveSettings()
+    WidgetPreview(TheatreClassique).run()

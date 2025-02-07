@@ -57,6 +57,7 @@ from _textable.widgets.TextableUtils import (
 )
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
@@ -109,6 +110,7 @@ class SuperTextFiles(OWTextableBaseWidget):
 
 
     def __init__(self, *args, **kwargs):
+        """Widget creator."""
         super().__init__(*args, **kwargs)
 
         # Other attributes...
@@ -881,6 +883,7 @@ class SuperTextFiles(OWTextableBaseWidget):
             return -1
 
     def clearCreatedInputs(self):
+        """Clear created inputs"""
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
@@ -1188,14 +1191,16 @@ class SuperTextFiles(OWTextableBaseWidget):
             super().setCaption(title)
 
     def onDeleteWidget(self):
+        """On delete widget"""
         self.clearCreatedInputs()
 
 
 if __name__ == '__main__':
-    import sys
-    from PyQt5.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = SuperTextFiles()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    #import sys
+    #from PyQt5.QtWidgets import QApplication
+    #appl = QApplication(sys.argv)
+    #ow = SuperTextFiles()
+    #ow.show()
+    #appl.exec_()
+    #ow.saveSettings()
+    WidgetPreview(SuperTextFiles).run()
