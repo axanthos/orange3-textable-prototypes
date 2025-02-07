@@ -99,6 +99,7 @@ INSTALL_REQUIRES = (
     'requests',
     'praw',
     'spacy >= 3.0',
+    'iso639',
     'filetype',
     'pdfplumber',
     'fitz',
@@ -109,6 +110,7 @@ INSTALL_REQUIRES = (
     'filetype',
     'pydub',
     'SpeechRecognition',
+    'imdbpy',
     'langdetect',
     'deep_translator'
     'Mastodon',
