@@ -48,7 +48,6 @@ Widgets
     spaCy <widgets/spaCy>
     Topic Models <widgets/topic_models>
     Parathon <widgets/parathon>
-    Text Summarizer <widgets/text_summarizer>
     Lexical Hunter <widgets/lexical_hunter>
     Extract CSV <widgets/extractCSV>
     Transletto <widgets/transletto>

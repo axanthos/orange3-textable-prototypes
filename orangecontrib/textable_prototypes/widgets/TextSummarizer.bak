@@ -167,8 +167,9 @@ class TextSummarizer(OWTextableBaseWidget):
             box, "More languages are available. \nTo access them, please use the spaCy widget to \ndownload the model first."
         )
 
-        self.lenghtMethodCombo = gui.comboBox(
-            widget= self.controlArea,
+        lengthBox = gui.widgetBox(self.controlArea, orientation="horizontal")
+        self.lengthMethodCombo = gui.comboBox(
+            widget=lengthBox,
             master=self,
             value="method",
             items=[
@@ -187,12 +188,10 @@ class TextSummarizer(OWTextableBaseWidget):
         )
 
         self.numSentsSpin = gui.spin(
-            widget= self.controlArea,
+            widget=lengthBox,
             master=self,
             value='numSents',
-            label='Number of sentences : ',
             callback=self.sendButton.sendIf(),
-            labelWidth=180,
             tooltip=(
                 'Select the number of sentences wanted for the summary.'
             ),
@@ -203,16 +202,14 @@ class TextSummarizer(OWTextableBaseWidget):
         )
 
         self.percentageSpin = gui.spin(
-            widget= self.controlArea,
+            widget=lengthBox,
             master=self,
             value='percentage',
-            label='Length in %:',
-            labelWidth=180,
             callback=self.sendButton.sendIf(),
             tooltip=(
                 'Select the length of the summary in percentage of the input text.'
             ),
-            maxv= 99,
+            maxv=99,
             minv=1,
             step=1,
         )
@@ -326,17 +323,8 @@ class TextSummarizer(OWTextableBaseWidget):
 
     def summaryGui(self):
         """Disable percentageSpin or numSentsSpin"""
-        if self.method == "Number of sentences":
-            self.percentageSpin.setVisible(False)
-            self.percentageSpin.label.setVisible(False)
-            self.numSentsSpin.setVisible(True)
-            self.numSentsSpin.label.setVisible(True)
-        elif self.method == "Percentage of input's length":
-            self.percentageSpin.setVisible(True)
-            self.percentageSpin.label.setVisible(True)
-            self.numSentsSpin.setVisible(False)
-            self.numSentsSpin.label.setVisible(False)
-        
+        self.percentageSpin.setVisible(self.method != "Number of sentences")
+        self.numSentsSpin.setVisible(self.method == "Number of sentences")     
         self.sendButton.settingsChanged()
 
     def segmentBoxState(self):
@@ -490,7 +478,7 @@ class TextSummarizer(OWTextableBaseWidget):
         # Depending on the choosen method: sentences or %
         if self.method == "Number of sentences":
             top_sent=top_sentences[:self.numSents]
-        elif self.method == "Percentage of text lenght":
+        elif self.method == "Percentage of text length":
             percentSent = int(round(self.percentage * len(sentence_rank) / 100))
             top_sent=top_sentences[:percentSent]
 
