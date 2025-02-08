@@ -149,7 +149,6 @@ class SuperTextFiles(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
-            addSpace=False,
         )
         basicFileBoxLine1 = gui.widgetBox(
             widget=basicFileBox,
@@ -208,13 +207,11 @@ class SuperTextFiles(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Sources',
             orientation='vertical',
-            addSpace=False,
         )
         fileBoxLine1 = gui.widgetBox(
             widget=fileBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         self.fileListbox = gui.listBox(
             widget=fileBoxLine1,
@@ -465,7 +462,6 @@ class SuperTextFiles(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
         )
         optionsBoxLine1 = gui.widgetBox(
             widget=optionsBox,
