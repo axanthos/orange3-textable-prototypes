@@ -102,7 +102,7 @@ INSTALL_REQUIRES = (
     'iso639',
     'filetype',
     'pdfplumber',
-    'fitz',
+    'pymupdf',
     'pytesseract',
     'pillow',
     'scikit-learn',
