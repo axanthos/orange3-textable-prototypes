@@ -37,7 +37,7 @@ from LTTL.Input import Input
 from bs4 import BeautifulSoup
 from urllib import request, parse
 from LTTL.Segmentation import Segmentation
-from Orange.widgets import Orange, widget, gui, settings
+from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from fuzzywuzzy import fuzz, process
 from _textable.widgets.TextableUtils import ProgressBar
