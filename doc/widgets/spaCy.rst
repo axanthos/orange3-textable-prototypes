@@ -164,7 +164,8 @@ named entity recognizer, or have a large amount of RAM available.
 Model manager tab
 *****************
 
-The **spaCy** is initially installed with a single language model for English. The **Model manager** tab (see :ref:`figure 2 <spacy_fig2>` below) enables the
+The **spaCy** widget is initially installed without language models. 
+The **Model manager** tab (see :ref:`figure 2 <spacy_fig2>` below) enables the
 user to download and install additional language models for English or for 
 other languages (cf. `<https://spacy.io/usage/models#languages>`_ for available
 language models)
@@ -181,8 +182,7 @@ Simply select one ore more models to download and install, then click
 **Download** and confirm your choices with **OK**. After the models have been 
 downloaded and installed, you will be prompted to quit and restart Orange
 Canvas for changes to take effect. Please note that some models may be quite 
-large and take a substantial amount of time to download (in particular the 
-*en_core_web_lg* English model, which weighs 798 Mb).
+large and take a substantial amount of time to download.
 
 Messages
 --------

@@ -721,7 +721,7 @@ def spacyItemsToSegments(items, parentSegment):
                 k: getattr(item, k) for k in RELEVANT_KEYS
                 if hasattr(item, k)
                 and getattr(item, k) is not None 
-                and getattr(item, k) is not ""
+                and getattr(item, k) != ""
                 
             }
         )

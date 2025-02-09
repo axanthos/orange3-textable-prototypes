@@ -32,12 +32,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "0.28"   # file version
+__version__ = "0.29"   # file version
 
 NAME = 'Orange3-Textable-Prototypes'
 DOCUMENTATION_NAME = 'Textable Prototypes'
 
-VERSION = '0.28'  # package version
+VERSION = '0.29'  # package version
 
 DESCRIPTION = 'Additional widgets for the Textable add-on to Orange 3.'
 LONG_DESCRIPTION = open(
@@ -99,7 +99,7 @@ INSTALL_REQUIRES = (
     'requests',
     'praw',
     'spacy >= 3.0',
-    'iso639',
+    'iso639-lang',
     'filetype',
     'pdfplumber',
     'pymupdf',
