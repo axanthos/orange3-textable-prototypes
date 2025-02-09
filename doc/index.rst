@@ -1,6 +1,6 @@
 .. meta::
    :description: Orange3 Textable Prototypes documentation homepage
-   :keywords: Orange3, Textable, Prototypes, documentation
+   :keywords: Orange3, Textable, Prototypes, documentation, homepage
 
 .. only:: html
 
