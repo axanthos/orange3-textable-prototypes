@@ -76,6 +76,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 ===============================
 
 * Fonctionnalités minimales
+* Choisir le nombre de commentaires en output
 
 
 .. image:: images/youget.jpeg
