@@ -75,8 +75,8 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 2.3 Fonctionnalités principales
 ===============================
 
-* Fonctionnalités minimales
-* Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité)
+* Fonctionnalités minimales. 
+* Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité).
 
 
 .. image:: images/youget.jpeg
@@ -84,12 +84,12 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 2.4 Fonctionnalités optionnelles
 ================================
 
-* À définir
+* Avoir en output les commentaires triés par likes ou par leur date.
 
 2.5 Tests
 =========
 
-* Vérifier que les commentaires soient exportés
+* Vérifier que les commentaires soient exportés.
 
 3. Etapes
 *********
@@ -102,7 +102,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 3.2 Remise et présentation
 ==========================
 * La documentation du logiciel est complète.
-* Les fonctionnalités principales sont complétement prises en charge par le logiciel
+* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 
 
 4. Infrastructure
