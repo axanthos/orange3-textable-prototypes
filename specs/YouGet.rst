@@ -24,24 +24,32 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 .. _virgile.albasini@unil.ch: mailto:virgile.albasini@unil.ch
 
     - code
+	- design
+	- specification
 
 * Sophie Ward (`sophie.ward@unil.ch`_):
 
 .. _sophie.ward@unil.ch: mailto:sophie.ward@unil.ch
 
-    - code
+	- code
+	- design
+	- specification
 
 * Lorelei Chevroulet(`lorelei.chevroulet@unil.ch`_):
 
 .. _lorelei.chevroulet@unil.ch: mailto:lorelei.chevroulet@unil.ch
 
     - code
+	- design
+	- specification
 	
 * Vincent (`vincent@unil.ch`_):
 
 .. _@unil.ch: mailto:@unil.ch
 
     - code
+	- design
+	- specification
 
 2. Technique
 ************
@@ -62,7 +70,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 
 * Output : les commentaires sous forme de tableau
 
-.. image:: images/lexical_hunter_basic.png
+.. image:: images/youget.jpeg
 
 2.3 Fonctionnalités principales
 ===============================
@@ -70,7 +78,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 * Fonctionnalités minimales
 
 
-.. image:: images/lexical_hunter_advanced.png
+.. image:: images/youget.jpeg
 
 2.4 Fonctionnalités optionnelles
 ================================
