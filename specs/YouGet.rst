@@ -57,9 +57,9 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 2.1 Dépendances
 ===============
 
-* Orange 3.7 ou supérieur
+* Orange 3.38.1 ou supérieur
 
-* Orange Textable 3.0b0 ou supérieur
+* Orange Textable 3.2.2 ou supérieur
 
 2.2 Fonctionnalités minimales
 =============================
@@ -68,7 +68,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 
 * Entrer une url pour télécharger les commentaires
 
-* Output : les commentaires sous forme de tableau
+* Output : les commentaires sous forme de segmentation
 
 .. image:: images/youget.jpeg
 
