@@ -104,4 +104,4 @@ TODO
 4. Infrastructure
 =================
 Le projet est disponible sur GitHub à l'adresse `https://github.com/sarahperettipoix/orange3-textable-prototypes'
-<https://github.com/sarahperettipoix/orange3-textable-prototypes>`_
+<https://github.com/sarahperettipoix/orange3-textable-prototypes>_
