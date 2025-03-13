@@ -7,7 +7,7 @@ Specification widget SCI-HUbator
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable (v3.1.0) permettant l'importation et l'extraction de corpus tirés de `Sci-HUB <https://www.sci-hub.se/>`_
+Créer un widget pour Orange Textable (v3.1.2) permettant l'importation et l'extraction de corpus tirés de `Sci-HUB <https://www.sci-hub.se/>`_
 
 1.2 Aperçu des étapes
 =====================
@@ -51,8 +51,9 @@ Créer un widget pour Orange Textable (v3.1.0) permettant l'importation et l'ext
 
 2.1 Dépendances
 ===============
-* Orange 3.18
-* Orange Textable 3.1.0
+* Orange 3.38
+* Orange Textable 3.1.2
+* sci-hub.py
 
 
 2.2 Fonctionnalités minimales
@@ -61,8 +62,7 @@ Créer un widget pour Orange Textable (v3.1.0) permettant l'importation et l'ext
 .. image:: images/scihubator_minimal.png
 
 * permettre l'importation de pdf tirés de SCI-HUB à l'aide d'un DOI et l'extraction du corpus textuel.
-* créer et émettre une segmentation avec un segment (=Input) pour chaque partie du corpus importé (résumé/abstract, bibliographie...).
-* traitement correct des références
+* créer et émettre une segmentation avec un segment (=Input) comprenant l'entièreté du texte du PDF.
 
 2.3 Fonctionnalités principales
 ===============================
@@ -80,6 +80,7 @@ Créer un widget pour Orange Textable (v3.1.0) permettant l'importation et l'ext
 * créer et émettre une segmentation par thème.
 * créer et émettre un résumé/abstract.
 * créer et émettre un tableau de cross-reference.
+* importer un JSON contenant des nombreux liens
 
 2.5 Tests
 =========
@@ -102,5 +103,5 @@ TODO
 
 4. Infrastructure
 =================
-Le projet est disponible sur GitHub à l'adresse `https://github.com/Olipper/orange3-textable-prototypes-'
-<https://github.com/Olipper/orange3-textable-prototypes->`_
+Le projet est disponible sur GitHub à l'adresse `https://github.com/sarahperettipoix/orange3-textable-prototypes'
+<https://github.com/sarahperettipoix/orange3-textable-prototypes>`_
