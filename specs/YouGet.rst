@@ -7,7 +7,7 @@ Specification widget YouGet
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable permettant de télécherager les commentaires d'un url youtube.
+Créer un widget pour Orange Textable permettant de télécherager les commentaires d'un url YouTube.
 
 1.2 Aperçu des étapes
 =====================
@@ -95,7 +95,8 @@ Vérifier que les commentaires soient exportés
 
 3.1 Version alpha
 =================
-* 
+* L'interface graphique est complétement construite.
+* Le téléchargement des commentaires des vidéos YouTube sont fonctionnels.
 
 3.2 Remise et présentation
 ==========================
