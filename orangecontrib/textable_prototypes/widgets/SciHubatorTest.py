@@ -18,6 +18,55 @@ __version__ = "0.01"
 class SciHubator(widget.OWWidget):
     """An Orange widget that lets the user select an integer value"""
 
+    #Version minimale
+    """
+    basicURLBox = gui.widgetBox(
+        widget=self.controlArea,
+        box=u'Source',
+        orientation='vertical',
+        addSpace=False,
+    )
+    basicURLBoxLine1 = gui.widgetBox(
+        widget=basicURLBox,
+        box=False,
+        orientation='horizontal',
+    )
+    gui.lineEdit(
+        widget=basicURLBoxLine1,
+        master=self,
+        value='URL',
+        orientation='horizontal',
+        label=u'DOI/URL:',
+        labelWidth=101,
+        callback=self.sendButton.settingsChanged,
+        tooltip=(
+            u"The URL whose content will be imported."
+        ),
+    )
+
+    self.exportButton = gui.button(
+        widget=URLBoxCol2,
+        master=self,
+        label=u'Export List',
+        callback=self.exportList,
+        tooltip=(
+            u"Open a dialog for selecting a file where the URL\n"
+            u"list can be exported in JSON format."
+        ),
+    )
+    self.importButton = gui.button(
+        widget=URLBoxCol2,
+        master=self,
+        label=u'Import List',
+        callback=self.importList,
+        tooltip=(
+            u"Open a dialog for selecting an URL list to\n"
+            u"import (in JSON format). URLs from this list will\n"
+            u"be added to those already imported."
+        ),
+    )
+    """
+
     # ----------------------------------------------------------------------
     # Widget's metadata...
 
@@ -49,7 +98,6 @@ class SciHubator(widget.OWWidget):
     importURLs = Setting(True)
     importURLsKey = Setting(u'url')
     lastLocation = Setting('.')
-    displayAdvancedSettings = Setting(False)
     URL = Setting(u'')
     selected_int = Setting(50)
 
@@ -67,13 +115,6 @@ class SciHubator(widget.OWWidget):
         self.newAnnotationKey = u''
         self.newAnnotationValue = u''
 
-        self.advancedSettings = AdvancedSettings(
-            widget=self.controlArea,
-            master=self,
-            callback=self.int_changed,
-        )
-        self.advancedSettings.draw()
-
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -84,94 +125,6 @@ class SciHubator(widget.OWWidget):
         )
         # ----------------------------------------------------------------------
         # User interface...
-
-        basicURLBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Source',
-            orientation='vertical',
-            addSpace=False,
-        )
-        basicURLBoxLine1 = gui.widgetBox(
-            widget=basicURLBox,
-            box=False,
-            orientation='horizontal',
-        )
-        gui.lineEdit(
-            widget=basicURLBoxLine1,
-            master=self,
-            value='URL',
-            orientation='horizontal',
-            label=u'DOI/URL:',
-            labelWidth=101,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"The URL whose content will be imported."
-            ),
-        )
-        gui.separator(widget=basicURLBox, height=3)
-        optionsBox = gui.widgetBox(
-            widget=self.controlArea,
-            box=u'Options',
-            orientation='vertical',
-            addSpace=False,
-        )
-        gui.checkBox(
-            widget=optionsBox,
-            master=self,
-            value='importAll',
-            label=u'All',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import URLs as annotations."
-            ),
-        )
-        iBox = gui.indentedBox(
-            widget=optionsBox,
-        )
-        gui.separator(widget=optionsBox, height=3)
-        gui.checkBox(
-            widget=iBox,
-            master=self,
-            value='importAbstract',
-            label=u'Abstract',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import URLs as annotations."
-            ),
-        )
-        gui.separator(widget=optionsBox, height=3)
-        gui.checkBox(
-            widget=iBox,
-            master=self,
-            value='importText',
-            label=u'Top Level',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import URLs as annotations."
-            ),
-        )
-        gui.separator(widget=optionsBox, height=3)
-        gui.checkBox(
-            widget=iBox,
-            master=self,
-            value='importBibliography',
-            label=u'Bibliography',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import URLs as annotations."
-            ),
-        )
-        self.sendButton.draw()
-        self.infoBox.draw()
-        self.sendButton.sendIf()
-
-
-        self.advancedSettings.basicWidgets.append(basicURLBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         # ADVANCED GUI...
 
@@ -207,24 +160,6 @@ class SciHubator(widget.OWWidget):
             widget=URLBoxLine1,
             orientation='vertical',
         )
-        self.moveUpButton = gui.button(
-            widget=URLBoxCol2,
-            master=self,
-            label=u'Move Up',
-            callback=self.moveUp,
-            tooltip=(
-                u"Move the selected URL upward in the list."
-            ),
-        )
-        self.moveDownButton = gui.button(
-            widget=URLBoxCol2,
-            master=self,
-            label=u'Move Down',
-            callback=self.moveDown,
-            tooltip=(
-                u"Move the selected URL downward in the list."
-            ),
-        )
         self.removeButton = gui.button(
             widget=URLBoxCol2,
             master=self,
@@ -241,27 +176,6 @@ class SciHubator(widget.OWWidget):
             callback=self.clearAll,
             tooltip=(
                 u"Remove all URLs from the list."
-            ),
-        )
-        self.exportButton = gui.button(
-            widget=URLBoxCol2,
-            master=self,
-            label=u'Export List',
-            callback=self.exportList,
-            tooltip=(
-                u"Open a dialog for selecting a file where the URL\n"
-                u"list can be exported in JSON format."
-            ),
-        )
-        self.importButton = gui.button(
-            widget=URLBoxCol2,
-            master=self,
-            label=u'Import List',
-            callback=self.importList,
-            tooltip=(
-                u"Open a dialog for selecting an URL list to\n"
-                u"import (in JSON format). URLs from this list will\n"
-                u"be added to those already imported."
             ),
         )
         URLBoxLine2 = gui.widgetBox(
@@ -309,12 +223,9 @@ class SciHubator(widget.OWWidget):
                 u"Import URLs as annotations."
             ),
         )
-        adviBox = gui.indentedBox(
-            widget=advOptionsBox,
-        )
         gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
-            widget=adviBox,
+            widget=advOptionsBox,
             master=self,
             value='importAbstract',
             label=u'Abstract',
@@ -326,10 +237,10 @@ class SciHubator(widget.OWWidget):
         )
         gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
-            widget=adviBox,
+            widget=advOptionsBox,
             master=self,
             value='importText',
-            label=u'Top Level ...',
+            label=u'Top Level Sections',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
@@ -338,7 +249,7 @@ class SciHubator(widget.OWWidget):
         )
         gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
-            widget=adviBox,
+            widget=advOptionsBox,
             master=self,
             value='importBibliography',
             label=u'Bibliography',
@@ -359,8 +270,9 @@ class SciHubator(widget.OWWidget):
                 u"text field to the list."
             ),
         )
-        self.advancedSettings.advancedWidgets.append(URLBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
+        self.sendButton.draw()
+        self.infoBox.draw()
+        self.sendButton.sendIf()
 
     def int_changed(self):
         """Send the entered number on "Number" output"""
