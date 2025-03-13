@@ -7,7 +7,7 @@ Specification widget YouGet
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable permettant de télécherager les commentaires d'un url YouTube.
+Créer un widget pour Orange Textable permettant de télécharger les commentaires d'une URL YouTube.
 
 1.2 Aperçu des étapes
 =====================
@@ -23,33 +23,33 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 
 .. _virgile.albasini@unil.ch: mailto:virgile.albasini@unil.ch
 
-    	- code
-	- design
-	- specification
+    	- Code
+	- Design
+	- Specification
 
 * Sophie Ward (`sophie.ward@unil.ch`_):
 
 .. _sophie.ward@unil.ch: mailto:sophie.ward@unil.ch
 
-	- code
-	- design
-	- specification
+	- Code
+	- Design
+	- Specification
 
 * Lorelei Chevroulet(`lorelei.chevroulet@unil.ch`_):
 
 .. _lorelei.chevroulet@unil.ch: mailto:lorelei.chevroulet@unil.ch
 
-   	- code
-	- design
-	- specification
+   	- Code
+	- Design
+	- Specification
 	
 * Vincent (`vincent@unil.ch`_):
 
 .. _@unil.ch: mailto:@unil.ch
 
-    	- code
-	- design
-	- specification
+    	- Code
+	- Design
+	- Specification
 
 2. Technique
 ************
@@ -66,7 +66,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 
 * Input : pas d'input
 
-* Entrer une url pour télécharger les commentaires
+* Entrer une URL pour télécharger les commentaires
 
 * Output : les commentaires sous forme de segmentation
 
@@ -76,7 +76,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 ===============================
 
 * Fonctionnalités minimales
-* Choisir le nombre de commentaires en output
+* Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité)
 
 
 .. image:: images/youget.jpeg
@@ -84,12 +84,12 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 2.4 Fonctionnalités optionnelles
 ================================
 
-* Peut choisir le nombre de commentaires en output
+* À définir
 
 2.5 Tests
 =========
 
-Vérifier que les commentaires soient exportés
+* Vérifier que les commentaires soient exportés
 
 3. Etapes
 *********
