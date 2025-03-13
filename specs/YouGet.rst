@@ -101,7 +101,7 @@ Vérifier que les commentaires soient exportés
 3.2 Remise et présentation
 ==========================
 * La documentation du logiciel est complète.
-* Le logiciel est fonctionnel
+* Les fonctionnalités principales sont complétement prises en charge par le logiciel
 
 
 4. Infrastructure
