@@ -70,7 +70,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 
 * Output : les commentaires sous forme de segmentation
 
-.. image:: images/youget.jpeg
+.. image:: images/youget_minimal.png
 
 2.3 Fonctionnalités principales
 ===============================
@@ -79,7 +79,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 * Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité).
 
 
-.. image:: images/youget.jpeg
+.. image:: images/youget_principal.png
 
 2.4 Fonctionnalités optionnelles
 ================================
