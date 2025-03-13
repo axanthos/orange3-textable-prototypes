@@ -23,7 +23,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 
 .. _virgile.albasini@unil.ch: mailto:virgile.albasini@unil.ch
 
-    - code
+    	- code
 	- design
 	- specification
 
@@ -39,7 +39,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 
 .. _lorelei.chevroulet@unil.ch: mailto:lorelei.chevroulet@unil.ch
 
-    - code
+   	- code
 	- design
 	- specification
 	
@@ -47,7 +47,7 @@ Créer un widget pour Orange Textable permettant de télécherager les commentai
 
 .. _@unil.ch: mailto:@unil.ch
 
-    - code
+    	- code
 	- design
 	- specification
 
