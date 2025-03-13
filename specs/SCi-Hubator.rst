@@ -46,6 +46,14 @@ Créer un widget pour Orange Textable (v3.1.2) permettant l'importation et l'ext
     - Code
     - Débuggage
 
+* Chétioui Orsowen (`orsowen.chetioui@unil.ch`_):
+
+.. _orsowen.chetioui@unil.ch: mailto:orsowen.chetioui@unil.ch
+
+    - Spécification
+    - Code
+    - Débuggage
+
 2. Technique
 ************
 
