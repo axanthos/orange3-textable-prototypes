@@ -108,4 +108,4 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 4. Infrastructure
 =================
 Le projet est disponible sur GitHub à l'adresse `https://github.com/axanthos/TextablePrototypes.git
-<https://github.com/axanthos/TextablePrototypes.git>`_
+<https://github.com/axanthos/orange3-textable-prototypes>`_
