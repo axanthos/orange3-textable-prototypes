@@ -45,7 +45,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 	
 * Vincent (`vincent.joris@unil.ch`_):
 
-.. _@unil.ch: mailto:@unil.ch
+.. _vincent.joris@unil.ch: mailto:vincent.joris@unil.ch
 
     	- Code
 	- Design
