@@ -146,7 +146,7 @@ class SciHubator(widget.OWWidget):
             widget=iBox,
             master=self,
             value='importText',
-            label=u'Text',
+            label=u'Top Level',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
@@ -329,7 +329,7 @@ class SciHubator(widget.OWWidget):
             widget=adviBox,
             master=self,
             value='importText',
-            label=u'Text',
+            label=u'Top Level ...',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
