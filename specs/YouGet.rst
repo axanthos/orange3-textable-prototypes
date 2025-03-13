@@ -72,7 +72,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 
 * Entrer une URL pour télécharger les commentaires
 
-* Output : les commentaires sous forme de segmentation
+* Output : les commentaires sous forme de segmentation (sous forme .JSON)
 
 .. image:: images/youget_minimal.png
 
