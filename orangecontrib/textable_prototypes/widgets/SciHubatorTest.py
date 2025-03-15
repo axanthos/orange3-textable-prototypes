@@ -36,7 +36,7 @@ class SciHubator(widget.OWWidget):
         master=self,
         value='URL',
         orientation='horizontal',
-        label=u'DOI/URL:',
+        label=u'DOI:',
         labelWidth=101,
         callback=self.sendButton.settingsChanged,
         tooltip=(
@@ -195,7 +195,7 @@ class SciHubator(widget.OWWidget):
             master=self,
             value='newURL',
             orientation='horizontal',
-            label=u'URL(s):',
+            label=u'DOI(s):',
             labelWidth=101,
             callback=self.updateGUI,
             tooltip=(
