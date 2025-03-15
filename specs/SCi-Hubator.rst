@@ -24,7 +24,7 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 .. _colin.luginbuhl@unil.ch: mailto:colin.luginbuhl@unil.ch
 
     - Specification
-    - extraction des données
+    - Extraction des données
     - Code
     - Documentation
 
@@ -50,7 +50,7 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 
 .. _orsowen.chetioui@unil.ch: mailto:orsowen.chetioui@unil.ch
 
-    - Spécification
+    - Documentation
     - Code
     - Débuggage
 
@@ -61,7 +61,8 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 ===============
 * Orange 3.38.1
 * Orange Textable 3.2.2
-* sci-hub.py
+* scihub.py
+* PyMuPDF 1.25.4 (déjà présent pour SuperTextFiles)
 
 
 2.2 Fonctionnalités minimales
