@@ -63,18 +63,18 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 2.1 Dépendances
 ===============
 
-* Orange 3.38.1 ou supérieur
+* Orange 3.38.1 ou supérieur.
 
-* Orange Textable 3.2.2 ou supérieur
+* Orange Textable 3.2.2 ou supérieur.
 
 2.2 Fonctionnalités minimales
 =============================
 
-* Input : pas d'input
+* Input : pas d'input.
 
-* Entrer une URL d'une vidéo YouTube pour télécharger les commentaires
+* Entrer une URL d'une vidéo YouTube pour télécharger les commentaires.
 
-* Output : les commentaires sont sous forme de segmentation (sous forme .JSON)
+* Output : les commentaires sont sous forme de segmentation (sous forme .JSON).
 
 .. image:: images/youget_minimal.png
 
@@ -82,7 +82,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 ===============================
 
 * Fonctionnalités minimales
-* Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité)
+* Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité).
 
 
 .. image:: images/youget_principal.png
@@ -90,25 +90,25 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 2.4 Fonctionnalités optionnelles
 ================================
 
-* Avoir en output les commentaires triés par likes ou par leur date
+* Avoir en output les commentaires triés par likes ou par leur date.
 
 2.5 Tests
 =========
 
-* Vérifier que les commentaires soient exportés
+* Vérifier que les commentaires soient exportés.
 
 3. Etapes
 *********
 
 3.1 Version alpha
 =================
-* L'interface graphique est complétement construite
-* Le téléchargement des commentaires des vidéos YouTube sont fonctionnels
+* L'interface graphique est complétement construite.
+* Le téléchargement des commentaires des vidéos YouTube sont fonctionnels.
 
 3.2 Remise et présentation
 ==========================
-* La documentation du logiciel est complète
-* Les fonctionnalités principales sont complétement prises en charge par le logiciel
+* La documentation du logiciel est complète.
+* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
 
 
 4. Infrastructure
