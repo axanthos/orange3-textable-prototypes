@@ -24,7 +24,8 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 * Virgile Albasini (`virgile.albasini@unil.ch`_):
 
 .. _virgile.albasini@unil.ch: mailto:virgile.albasini@unil.ch
-    	- Code
+    	
+	- Code
 	- Spécification
 	- Documentation
 	- Maquettes
