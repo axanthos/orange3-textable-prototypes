@@ -91,6 +91,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 ================================
 
 * Avoir en output les commentaires triés par likes ou par leur date.
+* Pouvoir importer une liste d'url
 
 2.5 Tests
 =========
