@@ -18,41 +18,51 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 
 1.3 Équipe et responsabilitées
 ==============================
+* Mainteneur :
+    - Aris Xanthos (aris.xanthos@unil.ch)
 
 * Virgile Albasini (`virgile.albasini@unil.ch`_):
 
 .. _virgile.albasini@unil.ch: mailto:virgile.albasini@unil.ch
 
+<<<<<<< Updated upstream
     	- Code
+=======
+	- Spécification
+    - Code
+>>>>>>> Stashed changes
 	- Documentation
 	- Maquettes
-	- Spécification
 
 * Sophie Ward (`sophie.ward@unil.ch`_):
 
 .. _sophie.ward@unil.ch: mailto:sophie.ward@unil.ch
-
+	
+	- Spécification
 	- Code
 	- Documentation
 	- GitHub
-	- Spécification
 
 * Lorelei Chevroulet(`lorelei.chevroulet@unil.ch`_):
 
 .. _lorelei.chevroulet@unil.ch: mailto:lorelei.chevroulet@unil.ch
 
+	- Spécification
    	- Code
 	- Maquettes
-	- Spécification
 	- Vérification orthographique
 	
 * Vincent Joris (`vincent.joris@unil.ch`_):
 
 .. _vincent.joris@unil.ch: mailto:vincent.joris@unil.ch
 
+<<<<<<< Updated upstream
     	- Code
-	- Interface
+=======
 	- Spécification
+    - Code
+>>>>>>> Stashed changes
+	- Interface
 	- Tests
 
 2. Technique
