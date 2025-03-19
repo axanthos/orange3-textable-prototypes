@@ -91,7 +91,7 @@ INSTALL_REQUIRES = (
     'setuptools',
     'future',
     'LTTL >= 2.1.0',
-    'Orange3-Textable >= 3.2.1',
+    'Orange3-Textable >= 3.2.3',
     'gensim',
     'lxa5crab',
     'bs4',
