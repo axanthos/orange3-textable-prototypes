@@ -1,5 +1,5 @@
 ﻿#################################
-Specification widget YouGet
+Spécification widget YouGet
 #################################
 
 1 Introduction
@@ -7,53 +7,53 @@ Specification widget YouGet
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable permettant de télécharger les commentaires d'une URL YouTube.
+Créer un widget pour Orange Textable permettant de télécharger les commentaires d'une vidéo à partir d'une URL YouTube.
 
 1.2 Aperçu des étapes
 =====================
-* Premiere version de la specification: 13.03.2025
-* Remise de la specification: 20.03.2025
+* Première version de la spécification: 13.03.2025
+* Remise de la spécification: 20.03.2025
 * Version alpha du projet: 17.04.2025
-* Remise et presentation du projet:  22.05.2025
+* Remise et présentation du projet:  22.05.2025
 
-1.3 Equipe et responsabilitées
+1.3 Équipe et responsabilitées
 ==============================
 
 * Virgile Albasini (`virgile.albasini@unil.ch`_):
 
 .. _virgile.albasini@unil.ch: mailto:virgile.albasini@unil.ch
 
-    	- Code
-	- Design
-	- GitHub
-	- Specification
+    - Code
+	- Documentation
+	- Maquettes
+	- Spécification
 
 * Sophie Ward (`sophie.ward@unil.ch`_):
 
 .. _sophie.ward@unil.ch: mailto:sophie.ward@unil.ch
 
 	- Code
-	- Design
+	- Documentation
 	- GitHub
-	- Specification
+	- Spécification
 
 * Lorelei Chevroulet(`lorelei.chevroulet@unil.ch`_):
 
 .. _lorelei.chevroulet@unil.ch: mailto:lorelei.chevroulet@unil.ch
 
    	- Code
-	- Design
-	- GitHub
-	- Specification
+	- Maquettes
+	- Spécification
+	- Vérification orthographique
 	
 * Vincent Joris (`vincent.joris@unil.ch`_):
 
 .. _vincent.joris@unil.ch: mailto:vincent.joris@unil.ch
 
-    	- Code
-	- Design
-	- GitHub
-	- Specification
+    - Code
+	- Interface
+	- Spécification
+	- Tests
 
 2. Technique
 ************
@@ -70,17 +70,17 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 
 * Input : pas d'input
 
-* Entrer une URL pour télécharger les commentaires
+* Entrer une URL d'une vidéo YouTube pour télécharger les commentaires
 
-* Output : les commentaires sous forme de segmentation (sous forme .JSON)
+* Output : les commentaires sont sous forme de segmentation (sous forme .JSON)
 
 .. image:: images/youget_minimal.png
 
 2.3 Fonctionnalités principales
 ===============================
 
-* Fonctionnalités minimales. 
-* Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité).
+* Fonctionnalités minimales
+* Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité)
 
 
 .. image:: images/youget_principal.png
@@ -88,25 +88,25 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 2.4 Fonctionnalités optionnelles
 ================================
 
-* Avoir en output les commentaires triés par likes ou par leur date.
+* Avoir en output les commentaires triés par likes ou par leur date
 
 2.5 Tests
 =========
 
-* Vérifier que les commentaires soient exportés.
+* Vérifier que les commentaires soient exportés
 
 3. Etapes
 *********
 
 3.1 Version alpha
 =================
-* L'interface graphique est complétement construite.
-* Le téléchargement des commentaires des vidéos YouTube sont fonctionnels.
+* L'interface graphique est complétement construite
+* Le téléchargement des commentaires des vidéos YouTube sont fonctionnels
 
 3.2 Remise et présentation
 ==========================
-* La documentation du logiciel est complète.
-* Les fonctionnalités principales sont complétement prises en charge par le logiciel.
+* La documentation du logiciel est complète
+* Les fonctionnalités principales sont complétement prises en charge par le logiciel
 
 
 4. Infrastructure
