@@ -73,6 +73,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 * Input : pas d'input.
 
 * Entrer une URL d'une vidéo YouTube pour télécharger les commentaires.
+* Pouvoir importer une liste d'url
 
 * Output : les commentaires sont sous forme de segmentation.
 
@@ -91,7 +92,6 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 ================================
 
 * Avoir en output les commentaires triés par likes ou par leur date.
-* Pouvoir importer une liste d'url
 
 2.5 Tests
 =========
