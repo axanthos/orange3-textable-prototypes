@@ -74,7 +74,7 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 
 * Entrer une URL d'une vidéo YouTube pour télécharger les commentaires.
 
-* Output : les commentaires sont sous forme de segmentation (sous forme .JSON).
+* Output : les commentaires sont sous forme de segmentation.
 
 .. image:: images/youget_minimal.png
 
