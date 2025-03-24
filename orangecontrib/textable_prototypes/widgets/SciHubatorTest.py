@@ -198,6 +198,7 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"Remove the selected URL from the list."
             ),
+            disabled = True,
         )
         self.clearAllButton = gui.button(
             widget=URLBoxCol2,
@@ -207,6 +208,7 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"Remove all DOIs from the list."
             ),
+            disabled = True,
         )
         URLBoxLine2 = gui.widgetBox(
             widget=URLBox,
@@ -299,6 +301,7 @@ class SciHubator(OWTextableBaseWidget):
                 u"Add the URL currently displayed in the 'URL'\n"
                 u"text field to the list."
             ),
+            disabled = True,
         )
         gui.rubber(self.controlArea)
         self.sendButton.draw()
@@ -469,6 +472,9 @@ class SciHubator(OWTextableBaseWidget):
         del self.DOIs[:]
         del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
+        # Ne devrait pas être nécessaire non ?
+        # Rajoutée anyway
+        self.updateGUI()
 
     def remove(self):
         """Remove URL from DOIs attr"""
@@ -477,6 +483,9 @@ class SciHubator(OWTextableBaseWidget):
             self.DOIs.pop(index)
             del self.selectedURLLabel[:]
             self.sendButton.settingsChanged()
+            # Ne devrait pas être nécessaire non ?
+            # Rajoutée anyway
+            self.updateGUI()
 
     def add(self):
         """Add DOIs to DOIs attr"""
@@ -486,6 +495,9 @@ class SciHubator(OWTextableBaseWidget):
             print(DOI)
             self.DOIs.append(DOI)
         self.sendButton.settingsChanged()
+        # Ne devrait pas être nécessaire non ?
+        # Rajoutée anyway
+        self.updateGUI()
     
     def updateGUI(self):
         """Update GUI state"""
@@ -496,11 +508,12 @@ class SciHubator(OWTextableBaseWidget):
         del self.URLLabel[:]
         if self.DOIs:
             DOIs = [f for f in self.DOIs]
+            self.URLLabel = DOIs
             # maxURLLen = max([len(n) for n in DOIs])
-            for DOI in DOIs:    #range(len(self.DOIs)):
+            # for DOI in DOIs:    #range(len(self.DOIs)):
                 # format = u'%-' + str(maxURLLen + 2) + u's'
                 #format % DOIs[index]
-                self.URLLabel.append(DOI)
+                # self.URLLabel.append(DOI)
         self.URLLabel = self.URLLabel
         # if cachedLabel is not None:
         #     self.sendButton.sendIfPreCallback = None
@@ -697,3 +710,5 @@ if __name__ == '__main__':
     #         self.clearAllButton.setDisabled(True)
     #         self.exportButton.setDisabled(True)
 
+# def checkIfDOI(string):
+#     regex = re.compile(r'\d{2}\.\d{4}.+')
