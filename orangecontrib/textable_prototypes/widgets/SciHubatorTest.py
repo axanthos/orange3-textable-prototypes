@@ -528,56 +528,6 @@ class SciHubator(OWTextableBaseWidget):
         # else:
         #     self.importDOIsKeyLineEdit.setDisabled(True)
         self.updateURLBoxButtons()
-    #     if self.displayAdvancedSettings:
-    #         if self.selectedURLLabel:
-    #             cachedLabel = self.selectedURLLabel[0]
-    #         else:
-    #             cachedLabel = None
-    #         del self.URLLabel[:]
-    #         if self.DOIs:
-    #             DOIs = [f[0] for f in self.DOIs]
-    #             encodings = [f[1] for f in self.DOIs]
-    #             annotations = ['{%s: %s}' % (f[2], f[3]) for f in self.DOIs]
-    #             maxURLLen = max([len(n) for n in DOIs])
-    #             maxAnnoLen = max([len(a) for a in annotations])
-    #             for index in range(len(self.DOIs)):
-    #                 format = u'%-' + str(maxURLLen + 2) + u's'
-    #                 URLLabel = format % DOIs[index]
-    #                 if maxAnnoLen > 4:
-    #                     if len(annotations[index]) > 4:
-    #                         format = u'%-' + str(maxAnnoLen + 2) + u's'
-    #                         URLLabel += format % annotations[index]
-    #                     else:
-    #                         URLLabel += u' ' * (maxAnnoLen + 2)
-    #                 URLLabel += encodings[index]
-    #                 self.URLLabel.append(URLLabel)
-    #         self.URLLabel = self.URLLabel
-    #         if cachedLabel is not None:
-    #             self.sendButton.sendIfPreCallback = None
-    #             self.selectedURLLabel = [cachedLabel]
-    #             self.sendButton.sendIfPreCallback = self.updateGUI
-    #         if self.newURL:
-    #             if (
-    #                 (self.newAnnotationKey and self.newAnnotationValue) or
-    #                 (not self.newAnnotationKey and not self.newAnnotationValue)
-    #             ):
-    #                 self.addButton.setDisabled(False)
-    #             else:
-    #                 self.addButton.setDisabled(True)
-    #         else:
-    #             self.addButton.setDisabled(True)
-    #         if self.autoNumber:
-    #             self.autoNumberKeyLineEdit.setDisabled(False)
-    #         else:
-    #             self.autoNumberKeyLineEdit.setDisabled(True)
-    #         if self.importDOIs:
-    #             self.importDOIsKeyLineEdit.setDisabled(False)
-    #         else:
-    #             self.importDOIsKeyLineEdit.setDisabled(True)
-    #         self.updateURLBoxButtons()
-    #         self.advancedSettings.setVisible(True)
-    #     else:
-    #         self.advancedSettings.setVisible(False)
 
     def updateURLBoxButtons(self):
         """Update state of File box buttons"""
