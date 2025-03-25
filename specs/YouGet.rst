@@ -1,5 +1,5 @@
 ﻿#################################
-Specification widget YouGet
+Spécification widget YouGet
 #################################
 
 1 Introduction
@@ -7,49 +7,55 @@ Specification widget YouGet
 
 1.1 But du projet
 =================
-Créer un widget pour Orange Textable permettant de télécharger les commentaires d'une URL YouTube.
+Créer un widget pour Orange Textable permettant de télécharger les commentaires d'une vidéo à partir d'une URL YouTube.
 
 1.2 Aperçu des étapes
 =====================
-* Premiere version de la specification: 13.03.2025
-* Remise de la specification: 20.03.2025
+* Première version de la spécification: 13.03.2025
+* Remise de la spécification: 20.03.2025
 * Version alpha du projet: 17.04.2025
-* Remise et presentation du projet:  22.05.2025
+* Remise et présentation du projet:  22.05.2025
 
-1.3 Equipe et responsabilitées
+1.3 Équipe et responsabilitées
 ==============================
+* Mainteneur :
+    - Aris Xanthos (aris.xanthos@unil.ch)
 
 * Virgile Albasini (`virgile.albasini@unil.ch`_):
 
 .. _virgile.albasini@unil.ch: mailto:virgile.albasini@unil.ch
-
-    	- Code
-	- Design
-	- Specification
+    	
+	- Spécification
+	- Code
+	- Documentation
+	- Maquettes
 
 * Sophie Ward (`sophie.ward@unil.ch`_):
 
 .. _sophie.ward@unil.ch: mailto:sophie.ward@unil.ch
-
+	
+	- Spécification
 	- Code
-	- Design
-	- Specification
+	- Documentation
+	- GitHub
 
 * Lorelei Chevroulet(`lorelei.chevroulet@unil.ch`_):
 
 .. _lorelei.chevroulet@unil.ch: mailto:lorelei.chevroulet@unil.ch
 
+	- Spécification
    	- Code
-	- Design
-	- Specification
+	- Maquettes
+	- Vérification orthographique
 	
-* Vincent (`vincent.joris@unil.ch`_):
+* Vincent Joris (`vincent.joris@unil.ch`_):
 
 .. _vincent.joris@unil.ch: mailto:vincent.joris@unil.ch
 
-    	- Code
-	- Design
-	- Specification
+	- Spécification
+	- Code
+	- Interface
+	- Tests
 
 2. Technique
 ************
@@ -57,25 +63,26 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 2.1 Dépendances
 ===============
 
-* Orange 3.38.1 ou supérieur
+* Orange 3.38.1 ou supérieur.
 
-* Orange Textable 3.2.2 ou supérieur
+* Orange Textable 3.2.2 ou supérieur.
 
 2.2 Fonctionnalités minimales
 =============================
 
-* Input : pas d'input
+* Input : pas d'input.
 
-* Entrer une URL pour télécharger les commentaires
+* Entrer une URL d'une vidéo YouTube pour télécharger les commentaires.
+* Pouvoir importer une liste d'url
 
-* Output : les commentaires sous forme de segmentation
+* Output : les commentaires sont sous forme de segmentation.
 
 .. image:: images/youget_minimal.png
 
 2.3 Fonctionnalités principales
 ===============================
 
-* Fonctionnalités minimales. 
+* Fonctionnalités minimales
 * Choisir le nombre de commentaires en output (minimum 1 commentaire, puis 100, puis 1000, ou un nombre de commentaires illimité).
 
 
@@ -108,4 +115,4 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 4. Infrastructure
 =================
 Le projet est disponible sur GitHub à l'adresse `https://github.com/axanthos/TextablePrototypes.git
-<https://github.com/axanthos/TextablePrototypes.git>`_
+<https://github.com/axanthos/orange3-textable-prototypes>`_
