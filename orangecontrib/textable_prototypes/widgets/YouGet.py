@@ -43,6 +43,7 @@ import LTTL.SegmenterThread as Segmenter
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
+from youtube_comment_downloader import *
 
 class DemoTextableWidget(OWTextableBaseWidget):
     """Demo Orange3-Textable widget"""
@@ -335,6 +336,36 @@ class DemoTextableWidget(OWTextableBaseWidget):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
 
+class Fetch:
+    # Get comments once per URL -> caching
 
+    url: str
+    comments: list
+
+    @classmethod
+    def from_url(cls, url='', limit=0, order='desc') -> list:
+        # TODO: add sorting function
+        if url != cls.url:
+            cls.comments = cls.scrape(url)
+            cls.url = url
+        return cls.comments if limit == 0 else cls.comments[0:limit]
+        #if limit == 0:
+        #    return cls.comments
+        #else:
+        #    return cls.comments[0:limit]
+
+    @staticmethod
+    def scrape(url='https://www.youtube.com/watch?v=ScMzIvxBSi4') -> list:
+        print(url)
+        # that's where we go fetch the comments!
+        downloader = YoutubeCommentDownloader()
+        comments = downloader.get_comments_from_url(url)
+        return [x for x in comments]
+
+
+Fetch.url = ''
+test = Fetch.from_url('https://www.youtube.com/watch?v=ScMzIvxBSi4', limit=5)
+print(test)
+print(len(test))
 if __name__ == '__main__':
         WidgetPreview(DemoTextableWidget).run()
