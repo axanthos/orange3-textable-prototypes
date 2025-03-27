@@ -10,7 +10,7 @@ YouGet
 
 .. image:: figures/spacy.png
 
-Import YouTube video comments (`<https://www.youtube.cpm>`_).
+Import YouTube video comments (`<https://www.youtube.com>`_).
 
 Author
 ------
@@ -30,39 +30,22 @@ Outputs:
 
 * The comments from a YouTube video in the form of a segmentation
 
+Optional 
+
+* Have the comments in output ordered by likes or by their date
+
 
 Description
 -----------
 
 This widget provides a graphical interface which permits the user to put in an URL and
-download the comments from the YouTube video in the form of a segmentation.
+download the comments from YouTube videos (`<https://www.youtube.com>`_) in the form of a segmentation.
+The output is a segmentation containing the comments of the YouTube video. 
 
-* choose an URL
-* choose the number of comments you would like to download
-* see the comments in the form of a segmentation
+* Choose an URL
+* Choose the number of comments you would like to download
+* See the comments in the form of a segmentation
 
-This widget provides a graphical interface to a number of functionalities of 
-the spaCy (`<https://spacy.io/>`_) natural language processing Python library:
-
-* tokenization
-* part-of-speech tagging
-* lemmatization
-* named entity recognition
-* noun chunk segmentation
-* sentence segmentation
-
-The user is referred to the extensive documentation of spaCy for detailed
-explanations of what these various levels of linguistic analysis encompass and
-how they are technically obtained. Note that spaCy is able to process text in a
-range of languages (cf. `<https://spacy.io/usage/models#languages>`_), provided
-that the corresponding language "models" have been downloaded by the user, a 
-task that this widget can do for you.
-
-The widget outputs at least one segmentation containing a segment for each 
-token in the input data. Segments in this segmentation have a variable number 
-of annotations (depending on user-defined parameters and what is available for
-the language in question). For example, here is what spaCy's *en_core_web_sm*
-model returns for token *library* in the sentence *This library rocks.* (see spaCy's `documentation <https://spacy.io/api/token#attributes>`_ for details):
 
 ================    =============
 key                 example value 
