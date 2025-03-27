@@ -1,9 +1,9 @@
 
 .. meta::
-   :description: Orange3 Textable Prototypes documentation, spaCy widget
-   :keywords: Orange3, Textable, Prototypes, documentation, spaCy, widget
+   :description: Orange3 Textable Prototypes documentation, YouGet widget
+   :keywords: Orange3, Textable, Prototypes, documentation, YouGet, widget
 
-.. _spaCy:
+.. _YouGet:
 
 YouGet
 =======
@@ -15,7 +15,7 @@ Natural language processing using the spaCy (`<https://spacy.io/>`_) library.
 Author
 ------
 
-Aris Xanthos
+Virgile Albasini, Sophie Ward, Lorelei Chevroulet, et Vincent Joris
 
 Signals
 -------
