@@ -107,7 +107,6 @@ class SciHubator(OWTextableBaseWidget):
     # ----------------------------------------------------------------------
     # Channel definitions (NB: no input in this case)...
 
-    inputs = []
     outputs = [('Text data', Segmentation)]
 
     # ----------------------------------------------------------------------
@@ -366,6 +365,8 @@ class SciHubator(OWTextableBaseWidget):
             # Within this method, this is done using the following
             # instruction.
             self.signal_prog.emit(1, False)
+
+            DOIs.append(self.DOIContent)
             
             # Indicate the total number of iterations that the
             # progress bar will go through (e.g. number of input

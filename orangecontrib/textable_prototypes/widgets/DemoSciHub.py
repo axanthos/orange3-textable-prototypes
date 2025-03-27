@@ -85,7 +85,6 @@ class DemoTextableWidget(OWTextableBaseWidget):
         )
 
         # GUI...
-
         # Top-level GUI boxes are created using method
         # create_widgetbox(), so that they are automatically
         # enabled/disabled when processes are running.
@@ -93,7 +92,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
             box=u'Options',
             orientation='vertical',
             addSpace=False,
-            )
+        )
 
         # GUI elements can be assigned to variables or even
         # attributes (e.g. self.DOIContentLineEdit) if
@@ -122,19 +121,6 @@ class DemoTextableWidget(OWTextableBaseWidget):
             ),
         )
 
-"""        gui.comboBox(
-            widget=optionsBox,
-            master=self,
-            value="numberOfSegments",
-            items=["1", "10", "100", "1000", "10000"],
-            sendSelectedValue=True,
-            orientation='horizontal',
-            label="Number of segments:",
-            labelWidth=130,
-            callback=self.sendButton.settingsChanged,
-            tooltip="Number of segments to create.",
-        )"""
-
         # Stretchable vertical spacing between "options"
         # and Send button etc.
         gui.rubber(self.controlArea)
@@ -145,20 +131,6 @@ class DemoTextableWidget(OWTextableBaseWidget):
         
         # Send data if needed. 
         self.sendButton.settingsChanged()
-
-   """ def inputData(self, segmentation):
-        Handle segmentation on input connection
-        
-        # If the input is None and it is needed for the widget
-        # to operate, send None to output(s) then return.
-        # Here, the widget can still operate without input.
-        if segmentation is None:
-            self.inputSegmentationLength = 0
-        else:
-            self.inputSegmentationLength = len(segmentation)
-
-        # Display the standard message for "input changed".
-        self.infoBox.inputChanged()"""
 
     def sendData(self):
         """Perform every required check and operation 
@@ -337,4 +309,4 @@ class DemoTextableWidget(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-        WidgetPreview(DemoTextableWidget).run()
+        WidgetPreview(DemoSciHub).run()
