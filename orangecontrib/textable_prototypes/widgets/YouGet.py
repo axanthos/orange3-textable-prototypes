@@ -342,28 +342,30 @@ class Fetch:
     url: str
     comments: list
 
-    @staticmethod
-    def get_comments(url):
-        if url != Fetch.url:
-            Fetch.comments = Fetch.fetch_comments()
-            Fetch.url = url
-        return Fetch.comments
-
-
     @classmethod
-    def fetch_comments(cls):
-        # that's where we go fetch the comments!
-        # cls.comments = <function goes here>
-        downloader = YoutubeCommentDownloader()
-        comments = downloader.get_comments_from_url('https://www.youtube.com/watch?v=ScMzIvxBSi4',
-                                                    sort_by=SORT_BY_POPULAR)
-        # for comment in islice(comments, 10):
-        #    print(comment)
+    def from_url(cls, url='', limit=0, order='desc') -> list:
+        # TODO: add sorting function
+        if url != cls.url:
+            cls.comments = cls.scrape(url)
+            cls.url = url
+        return cls.comments if limit == 0 else cls.comments[0:limit]
+        #if limit == 0:
+        #    return cls.comments
+        #else:
+        #    return cls.comments[0:limit]
 
+    @staticmethod
+    def scrape(url='https://www.youtube.com/watch?v=ScMzIvxBSi4') -> list:
+        print(url)
+        # that's where we go fetch the comments!
+        downloader = YoutubeCommentDownloader()
+        comments = downloader.get_comments_from_url(url)
         return [x for x in comments]
 
-#Fetch.url = ''
-#test = Fetch.get_comments('https://www.youtube.com/watch?v=ScMzIvxBSi4')
-#print(test)
+
+Fetch.url = ''
+test = Fetch.from_url('https://www.youtube.com/watch?v=ScMzIvxBSi4', limit=5)
+print(test)
+print(len(test))
 if __name__ == '__main__':
         WidgetPreview(DemoTextableWidget).run()
