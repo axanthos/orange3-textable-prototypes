@@ -10,7 +10,7 @@ YouGet
 
 .. image:: figures/spacy.png
 
-Natural language processing using the spaCy (`<https://spacy.io/>`_) library.
+Import YouTube video comments (`<https://www.youtube.cpm>`_).
 
 Author
 ------
@@ -20,33 +20,26 @@ Virgile Albasini, Sophie Ward, Lorelei Chevroulet, et Vincent Joris
 Signals
 -------
 
-Inputs: ``Text data``
+Inputs: 
 
-  Textable segmentation
-
+* Enter a YouTube video's URL to download comments
+* Import a URL list
+* Choose the amount of comments you would like to download (minimum 1 comment, then 100, then 1000, or no limit)
 
 Outputs:
 
-* ``Tokenized text`` (default)
-
-  Segmentation with a segment for each `token <https://spacy.io/usage/spacy-101#annotations-token>`_ in the input data
-
-* ``Named entities`` (optional)
-
-  Segmentation with a segment for each `named entity <https://spacy.io/usage/linguistic-features#named-entities>`_ in the input 
-  data
-
-* ``Noun chunks`` (optional)
-
-  Segmentation with a segment for each `noun chunk <https://spacy.io/usage/linguistic-features#noun-chunks>`_ in the input data
-
-* ``Sentences`` (optional)
-
-  Segmentation with a segment for each `sentence <https://spacy.io/usage/linguistic-features#sbd>`_ in the input data
+* The comments from a YouTube video in the form of a segmentation
 
 
 Description
 -----------
+
+This widget provides a graphical interface which permits the user to put in an URL and
+download the comments from the YouTube video in the form of a segmentation.
+
+* choose an URL
+* choose the number of comments you would like to download
+* see the comments in the form of a segmentation
 
 This widget provides a graphical interface to a number of functionalities of 
 the spaCy (`<https://spacy.io/>`_) natural language processing Python library:
