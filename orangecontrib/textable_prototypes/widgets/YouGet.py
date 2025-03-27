@@ -49,7 +49,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
 
     name = "You Get"
     description = "Widget that downloads comments from a youtube URL"
-    icon = "icons/someIcon.svg"
+    icon = "icons/YouGet.svg"
     priority = 99
 
     # Input and output channels (remove if not needed)...
