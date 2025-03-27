@@ -28,7 +28,7 @@ __email__ = "aris.xanthos@unil.ch"
 # Standard imports...
 import re
 import http
-# from scihub import SciHub
+from scihub import SciHub
 import pdfplumber
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
