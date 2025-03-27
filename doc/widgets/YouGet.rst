@@ -5,7 +5,7 @@
 
 .. _spaCy:
 
-spaCy
+YouGet
 =======
 
 .. image:: figures/spacy.png
