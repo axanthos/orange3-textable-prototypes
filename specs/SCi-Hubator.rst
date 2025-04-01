@@ -61,7 +61,7 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 ===============
 * Orange 3.38.1
 * Orange Textable 3.2.2
-* `scihub.py <https://github.com/zaytoun/scihub.py>`_
+* `scidownl <https://pypi.org/project/scidownl/>`_
 * PyMuPDF 1.25.4 (déjà présent pour SuperTextFiles)
 
 
