@@ -62,7 +62,7 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 * Orange 3.38.1
 * Orange Textable 3.2.2
 * `scidownl <https://pypi.org/project/scidownl/>`_ 1.0.2
-* * `pdfplumber 0.11.6 <https://github.com/jsvine/pdfplumber>`_ (déjà présent pour SuperTextFiles)
+* `pdfplumber <https://github.com/jsvine/pdfplumber>`_ 0.11.6 (déjà présent pour SuperTextFiles)
 
 
 2.2 Fonctionnalités minimales
