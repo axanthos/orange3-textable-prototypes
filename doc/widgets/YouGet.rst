@@ -38,58 +38,19 @@ Optional
 Description
 -----------
 
-This widget provides a graphical interface which permits the user to put in an URL and
-download the comments from YouTube videos (`<https://www.youtube.com>`_) in the form of a segmentation.
-The output is a segmentation containing the comments of the YouTube video. 
+This widget provides a graphical interface which permits the user to enter an YouTube video's URL and
+download its comments (`<https://www.youtube.com>`_).
+The output is a segmentation containing the comments of the chosen YouTube video. 
 
 * Choose an URL
 * Choose the number of comments you would like to download
 * See the comments in the form of a segmentation
 
+**YouGet**'s interface is available in two versions, depending on whether or not the Advanced Settings is
+selected.
 
-================    =============
-key                 example value 
-================    =============
-*dep_*              *nsubj*
-*ent_iob_*          *O*
-*head*              *rocks*
-*is_alpha*          *True*
-*is_bracket*        *False*
-*is_digit*          *False*
-*is_left_punct*     *False*
-*is_lower*          *True*
-*is_oov*            *True*
-*is_punct*          *False*
-*is_quote*          *False*
-*is_right_punct*    *False*
-*is_space*          *False*
-*is_stop*           *False*
-*is_title*          *False*
-*is_upper*          *False*
-*lang_*             *en*
-*lemma_*            *library*
-*like_email*        *False*
-*like_num*          *False*
-*like_url*          *False*
-*lower_*            *library*
-*norm_*             *library*
-*pos_*              *NOUN*
-*sentiment*         *0.0*
-*shape_*            *xxxx*
-*tag_*              *NN*
-*whitespace_*       *" "*
-================    =============
-
-Optionally, the widget's output may also include up to three more 
-segmentations, into `named entities 
-<https://spacy.io/usage/linguistic-features#named-entities>`_, noun chunks 
-<https://spacy.io/usage/linguistic-features#noun-chunks>`_, and `sentences 
-<https://spacy.io/usage/linguistic-features#sbd>`_. These elements have the 
-annotations *lemma_*, *lower_* and *sentiment*, as well as *label* (for all but
-sentences).
-
-Interface
-~~~~~~~~~
+Basic Interface
+~~~~~~~~~~~~~~~
 
 User controls are divided into two tabs: (see :ref:`figure 1 
 <spacy_fig1>` below): **Options** and **Model manager**.
