@@ -52,22 +52,32 @@ selected.
 Basic Interface
 ~~~~~~~~~~~~~~~
 
-User controls are divided into two tabs: (see :ref:`figure 1 
-<spacy_fig1>` below): **Options** and **Model manager**.
+User controls are divided into two sections: **Sources** and **Options**.
 
-.. _spacy_fig1:
+.. _YouGet_principal:
 
-.. figure:: figures/spacy_interface_options.png
+.. figure:: figures/YouGet_principal.png
     :align: center
-    :alt: Interface of the spaCy widget, Options tab
+    :alt: Interface of the YouGet widget
 
-    Figure 1: **spaCy** widget interface, **Options** tab.
+    Figure 1: **YouGet** widget interface.
 
-Options tab
-***********
+Sources
+*******
 
-The **Options** tab contains all controls related to the way spaCy processes
-the input data. 
+The **Sources** section contains all the controls related to the way YouGet
+processes the input data. 
+
+The user adds their YouTube video's URL of choice in the **URL** empty section and press
+on the **add** button. The user can add one or more URLs to their list which will then appear
+in the empty section above. If they wish to remove an URL, they can press on the **Remove** 
+button. If they wish to not only remove, but all of their URLs, they can press on the 
+**Clear All** button.
+
+Options
+*******
+
+The **Options** section contains the controls to choose how many comments is desired in output.
 
 The **Model** dropdown menu lets the user specify the language
 model to be used, among those that have been installed on their computer (see
