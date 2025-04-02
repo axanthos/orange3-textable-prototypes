@@ -8,7 +8,7 @@
 YouGet
 =======
 
-.. image:: figures/spacy.png
+.. image:: figures/YouGet.svg
 
 Import YouTube video comments (`<https://www.youtube.com>`_).
 
