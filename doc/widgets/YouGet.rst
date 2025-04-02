@@ -68,10 +68,10 @@ Sources
 The **Sources** section contains all the controls related to the way YouGet
 processes the input data. 
 
-The user adds their YouTube video's URL of choice in the **URL** empty section and press
-on the **add** button. The user can add one or more URLs to their list which will then appear
+The user adds the YouTube video's URL of their choice in the **URL**'s section and presses
+on the **add** button to add their URL to the list. The user can add one or more URLs to their list which will then appear
 in the empty section above. If they wish to remove an URL, they can press on the **Remove** 
-button. If they wish to not only remove, but all of their URLs, they can press on the 
+button. If they wish to not only remove one, but all of their URLs, they can press on the 
 **Clear All** button.
 
 Options
@@ -79,57 +79,12 @@ Options
 
 The **Options** section contains the controls to choose how many comments is desired in output.
 
-The **Model** dropdown menu lets the user specify the language
-model to be used, among those that have been installed on their computer (see
-below for how to download and install models using the **Model manager** tab). 
+The user can choose the **number of comments** they would like have in output. They can choose between 
+having 1 comment (minimum requirement), 100, 100, or an illimited amount of comments in output.
 
-Regardless of any configuration choices, a given language model will at least
-output a tokenized version of the input data, with a subset of the annotations 
-indicated above. By ticking boxes in the **Additional token annotations** 
-section, the user can opt to add information concerning **part-of-speech 
-tags**, **syntactic dependencies**, and **named entities**. Note that ticking
-these boxes may require to reload the language model (which can take some time, 
-depending on model size), and will increase the duration of processing (in proportion of the amount of input data).
+Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
+of a segmentation.
 
-When boxes in the **Additional segmentations** are ticked, the widget will 
-send up to three additional segmentations on separate output channels (which
-can be accessed by double-clicking the connexions between the **spaCy** widget 
-and the next widget in the line and redrawing the connexions as desired in the
-**Edit Links** dialog). The segments of these segmentations correspond to 
-**named entities**, **noun chunks**, and **sentences** respectively. The same 
-remarks as for additional annotations apply: ticking these boxes may require to reload the language mode and will increase the duration of processing.
-
-The last item in the **Options** section controls the **maximum number of input
-characters** allowed by the widget. As indicated in spaCy's documentation, the
-spaCy parser and NER models require roughly 1GB of temporary memory per 100'000
-characters in the input; this means long texts may cause memory allocation
-errors. It is probably safe to increase the default limit of 1 million 
-characters if you're not using the syntactic parser (required for syntactic 
-dependency annotation as well as noun chunk and sentence segmentation) or 
-named entity recognizer, or have a large amount of RAM available.
-
-Model manager tab
-*****************
-
-The **spaCy** widget is initially installed without language models. 
-The **Model manager** tab (see :ref:`figure 2 <spacy_fig2>` below) enables the
-user to download and install additional language models for English or for 
-other languages (cf. `<https://spacy.io/usage/models#languages>`_ for available
-language models)
-
-.. _spacy_fig2:
-
-.. figure:: figures/spacy_interface_model_manager.png
-    :align: center
-    :alt: Interface of the spaCy widget, Model manager tab
-
-    Figure 2: **spaCy** widget interface, **Model Manager** tab.
-
-Simply select one ore more models to download and install, then click
-**Download** and confirm your choices with **OK**. After the models have been 
-downloaded and installed, you will be prompted to quit and restart Orange
-Canvas for changes to take effect. Please note that some models may be quite 
-large and take a substantial amount of time to download.
 
 Messages
 --------
