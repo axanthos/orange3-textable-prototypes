@@ -31,6 +31,7 @@ from scidownl import scihub_download
 import tempfile
 import pdfplumber
 import os
+import requests
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
@@ -206,17 +207,22 @@ class DemoSciHUB(OWTextableBaseWidget):
         max_itr = len(DOIList)+1
         cur_itr = 1
 
+        # Permet de tester la connexion à Sci-Hub
+        if not test_scihub_accessible():
+            self.sendNoneToOutputs()
+            self.infoBox.setText("SciHub inaccessible - vérifiez votre connexion", 'error')
+            return
         # Actual processing...
 
         # For each progress bar iteration...
+        tempdir = tempfile.TemporaryDirectory()
         for DOI in DOIList:
 
             # Update progress bar manually...
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
-            cur_itr += 1
+            #cur_itr += 1
 
             # code ajouté ici
-            tempdir = tempfile.TemporaryDirectory()
             paper = DOI
             paper_type = "doi"
             out = f"{tempdir.name}/{DOIList.index(DOI)}"
@@ -228,15 +234,21 @@ class DemoSciHUB(OWTextableBaseWidget):
                 self.infoBox.setText(ex, 'error')
             DOIText = ""
             if os.path.exists(f"{out}.pdf"):
-                print("plouf")
-                with pdfplumber.open(f"{out}.pdf") as pdf:
-                    for page in pdf.pages:
-                        DOIText += page.extract_text()
-                        print(self.DOIContent)
+                try:
+                    with pdfplumber.open(f"{out}.pdf") as pdf:
+                        for page in pdf.pages:
+                            self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                            cur_itr += (1/len(pdf.pages))
+                            DOIText += page.extract_text()
+                except Exception as e:
+                    self.sendNoneToOutputs()
+                    self.infoBox.setText(f"Erreur lors de la lecture du PDF: {str(e)}", 'error')
+                    return
             else:
                 print("Bonjour")
                 self.sendNoneToOutputs()
-                self.infoBox.setText("Vérifiez la connextion", 'error')
+                self.infoBox.setText("Le téléchargement a échoué - vérifiez le DOI ou réessayez plus tard.", 'error')
+                return
             ########
 
             # Create an LTTL.Input...           
@@ -247,6 +259,7 @@ class DemoSciHUB(OWTextableBaseWidget):
                 label = self.captionTitle
             else:
                 label = None # will be set later.
+            print(DOIText)
             myInput = Input(DOIText, label)
 
             # Extract the first (and single) segment in the 
@@ -267,8 +280,8 @@ class DemoSciHUB(OWTextableBaseWidget):
             time.sleep(0.00001) # Needed somehow!
             if self.cancel_operation:
                 self.signal_prog.emit(100, False)
-                return            
-
+                return
+        tempdir.cleanup()
         # Update infobox and reset progress bar...
         self.signal_text.emit("Step 2/2: Post-processing...", 
                               "warning")
@@ -336,6 +349,13 @@ class DemoSciHUB(OWTextableBaseWidget):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
 
+
+def test_scihub_accessible():
+    try:
+        response = requests.get("https://sci-hub.se", timeout=10)
+        return response.status_code == 200
+    except:
+        return False
 
 if __name__ == '__main__':
         WidgetPreview(DemoSciHub).run()
