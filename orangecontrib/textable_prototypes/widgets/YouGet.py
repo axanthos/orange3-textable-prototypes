@@ -36,12 +36,14 @@ from _textable.widgets.TextableUtils import (
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 
+
 # Using the threaded version of LTTL.Segmenter to create
 # a "responsive" widget.
 import LTTL.SegmenterThread as Segmenter
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
+
 
 
 class DemoTextableWidget(OWTextableBaseWidget):
