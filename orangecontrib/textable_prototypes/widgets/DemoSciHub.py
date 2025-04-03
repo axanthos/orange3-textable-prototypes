@@ -49,7 +49,7 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 from LTTL.Input import Input
 
 
-class DemoTextableWidget(OWTextableBaseWidget):
+class DemoSciHUB(OWTextableBaseWidget):
     """Demo Orange3-Textable widget"""
 
     name = "Demo Scihub"
@@ -75,7 +75,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+        self.inputSegmentationLength = 0
         # The following attribute is required by every widget
         # that imports new strings into Textable.
         self.createdInputs = list()
