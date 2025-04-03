@@ -171,7 +171,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
         before calling the method that does the actual 
         processing.
         """
-
+        #TODO changer segmentContent en url, toutes les occurences, variable de classe etc
         if self.segmentContent == "":
             # Use mode "warning" when user needs to do some
             # action or provide some information; use mode "error"
@@ -229,11 +229,13 @@ class DemoTextableWidget(OWTextableBaseWidget):
         # progress bar will go through (e.g. number of input
         # segments, number of selected files, etc.), then
         # set current iteration to 1.
+        #TODO mettre 1 url maxitr = longueur url
         max_itr = int(self.numberOfSegments)
         cur_itr = 1
 
         # Actual processing...
         
+        # TODO for url in urls
         # For each progress bar iteration...
         for _ in range(int(self.numberOfSegments)):
 
@@ -242,6 +244,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
             cur_itr += 1
             
             # Create an LTTL.Input...           
+            #TODO len(urls)
             if int(self.numberOfSegments) == 1:
                 # self.captionTitle is the name of the widget,
                 # which will become the label of the output
@@ -249,6 +252,11 @@ class DemoTextableWidget(OWTextableBaseWidget):
                 label = self.captionTitle
             else:
                 label = None # will be set later.
+
+            #TODO self.segmentContent devient la chaine de charactère qui contient les commentaires
+            #TODO faire 1 seul segment
+            #TODO boucler dans les comms et faire une chaine list comprehension \n.join([lm.text for lm in commnet_list])
+
             myInput = Input(self.segmentContent, label)
 
             # Extract the first (and single) segment in the 
