@@ -155,7 +155,7 @@ class DemoSciHUB(OWTextableBaseWidget):
                                  "warning")
             # Make sure to send None and return if the widget 
             # cannot operate properly at this point.
-            self.send("New DOI", None)
+            self.send("New segmentation", None)
             return
 
         # If the widget creates new LTTL.Input objects (i.e.
@@ -196,14 +196,14 @@ class DemoSciHUB(OWTextableBaseWidget):
         # instruction.
         self.signal_prog.emit(1, False)
 
-        DOIList = []
-        DOIList.append(self.DOIContent)
+        DOIList = self.DOIContent.split(",")
+        #DOIList.append(self.DOIContent)
         
         # Indicate the total number of iterations that the
         # progress bar will go through (e.g. number of input
         # segments, number of selected files, etc.), then
         # set current iteration to 1.
-        max_itr = len(DOIList)
+        max_itr = len(DOIList)+1
         cur_itr = 1
 
         # Actual processing...
@@ -220,11 +220,23 @@ class DemoSciHUB(OWTextableBaseWidget):
             paper = DOI
             paper_type = "doi"
             out = f"{tempdir.name}/{DOIList.index(DOI)}"
-            scihub_download(paper, paper_type=paper_type, out=out)
+            try:
+                scihub_download(paper, paper_type=paper_type, out=out)
+            except Exception as ex:
+                print(ex)
+                self.sendNoneToOutputs()
+                self.infoBox.setText(ex, 'error')
+            DOIText = ""
             if os.path.exists(f"{out}.pdf"):
+                print("plouf")
                 with pdfplumber.open(f"{out}.pdf") as pdf:
-                    first_page = pdf.pages[0]
-                    print(first_page.extract_text())
+                    for page in pdf.pages:
+                        DOIText += page.extract_text()
+                        print(self.DOIContent)
+            else:
+                print("Bonjour")
+                self.sendNoneToOutputs()
+                self.infoBox.setText("Vérifiez la connextion", 'error')
             ########
 
             # Create an LTTL.Input...           
@@ -235,7 +247,7 @@ class DemoSciHUB(OWTextableBaseWidget):
                 label = self.captionTitle
             else:
                 label = None # will be set later.
-            myInput = Input(self.DOIContent, label)
+            myInput = Input(DOIText, label)
 
             # Extract the first (and single) segment in the 
             # newly created LTTL.Input and annotate it with 
