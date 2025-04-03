@@ -27,6 +27,10 @@ __email__ = "aris.xanthos@unil.ch"
 
 from functools import partial
 import time
+from scidownl import scihub_download
+import tempfile
+import pdfplumber
+import os
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
@@ -42,6 +46,7 @@ import LTTL.SegmenterThread as Segmenter
 
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
+from LTTL.Input import Input
 
 
 class DemoTextableWidget(OWTextableBaseWidget):
@@ -209,7 +214,19 @@ class DemoTextableWidget(OWTextableBaseWidget):
             # Update progress bar manually...
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
             cur_itr += 1
-            
+
+            # code ajouté ici
+            tempdir = tempfile.TemporaryDirectory()
+            paper = DOI
+            paper_type = "doi"
+            out = f"{tempdir.name}/{DOIList.index(DOI)}"
+            scihub_download(paper, paper_type=paper_type, out=out)
+            if os.path.exists(f"{out}.pdf"):
+                with pdfplumber.open(f"{out}.pdf") as pdf:
+                    first_page = pdf.pages[0]
+                    print(first_page.extract_text())
+            ########
+
             # Create an LTTL.Input...           
             if len(DOIList) == 1:
                 # self.captionTitle is the name of the widget,
