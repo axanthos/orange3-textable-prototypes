@@ -66,8 +66,12 @@ class DemoTextableWidget(OWTextableBaseWidget):
     )
 
     # Settings...
-    segmentContent = settings.Setting("Url")
+    segmentUrl = settings.Setting("Url")
+
     #numberOfSegments = settings.Setting("10")
+
+    #pour l'instant c'est 1
+    numberOfSegments = 1
 
     want_main_area = False
 
@@ -108,7 +112,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
         gui.lineEdit(
             widget=optionsBox,
             master=self,
-            value="segmentContent",
+            value="segmentUrl",
             orientation="horizontal",
             label="Url :",
             labelWidth=130,
@@ -171,8 +175,8 @@ class DemoTextableWidget(OWTextableBaseWidget):
         before calling the method that does the actual 
         processing.
         """
-        #TODO changer segmentContent en url, toutes les occurences, variable de classe etc
-        if self.segmentContent == "":
+        #TODO changer le nom de variable segmentContent en url, toutes les occurences, variable de classe etc
+        if self.segmentUrl == "":
             # Use mode "warning" when user needs to do some
             # action or provide some information; use mode "error"
             # when invalid parameters have been provided; 
@@ -229,7 +233,8 @@ class DemoTextableWidget(OWTextableBaseWidget):
         # progress bar will go through (e.g. number of input
         # segments, number of selected files, etc.), then
         # set current iteration to 1.
-        #TODO mettre 1 url maxitr = longueur url
+        #TODO mettre 1 url max_itr = longueur url
+        # number of segment ça veut dire number of url
         max_itr = int(self.numberOfSegments)
         cur_itr = 1
 
@@ -237,15 +242,27 @@ class DemoTextableWidget(OWTextableBaseWidget):
         
         # TODO for url in urls
         # For each progress bar iteration...
-        for _ in range(int(self.numberOfSegments)):
+        #for _ in range(int(self.numberOfSegments)):
+
+        urls = ["https://www.youtube.com/watch?v=ScMzIvxBSi4"]
+
+        # la chaine qui contient les commentaires
+        comments = ""
+
+        for url in urls:
 
             # Update progress bar manually...
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
             cur_itr += 1
             
-            # Create an LTTL.Input...           
+            # Create an LTTL.Input...  
+             
+                     
             #TODO len(urls)
-            if int(self.numberOfSegments) == 1:
+
+            #if int(self.numberOfSegments) == 1:
+
+            if len(urls) == 1:
                 # self.captionTitle is the name of the widget,
                 # which will become the label of the output
                 # segmentation.
@@ -253,11 +270,18 @@ class DemoTextableWidget(OWTextableBaseWidget):
             else:
                 label = None # will be set later.
 
-            #TODO self.segmentContent devient la chaine de charactère qui contient les commentaires
+            #TODO self.segmentURL devient la chaine de charactère qui contient les commentaires en l'occurence : comments
             #TODO faire 1 seul segment
-            #TODO boucler dans les comms et faire une chaine list comprehension \n.join([lm.text for lm in commnet_list])
+            #TODO boucler dans les commentaires et faire une chaine, list comprehension \n.join([lm.text for lm in commnet_list])
 
-            myInput = Input(self.segmentContent, label)
+            # on fetch les commentaires depuis l'url spécifié plus haut, attention ce n'est encore l'url entrée par l'utilisateur
+            comments_ycd = Fetch.from_url(url, limit=5)
+
+            #on créé une chaine de caractères séparés d'un retour à la ligne 
+            comments += "\n".join([comment["text"] for comment in comments_ycd ])
+            print(comments)
+
+            myInput = Input(comments, label)
 
             # Extract the first (and single) segment in the 
             # newly created LTTL.Input and annotate it with 
