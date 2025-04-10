@@ -27,8 +27,8 @@ __email__ = "aris.xanthos@unil.ch"
 
 from functools import partial
 import time
-from scidownl import scihub_download
 import tempfile
+from scidownl import scihub_download
 import pdfplumber
 import os
 import requests
@@ -231,7 +231,13 @@ class DemoSciHUB(OWTextableBaseWidget):
             except Exception as ex:
                 print(ex)
                 self.sendNoneToOutputs()
-                self.infoBox.setText(ex, 'error')
+                self.infoBox.setText("An error occurred when downloading", 'error')
+                return
+            # Cancel operation if requested by user...
+            time.sleep(0.00001)  # Needed somehow!
+            if self.cancel_operation:
+                self.signal_prog.emit(100, False)
+                return
 
         # Update infobox and reset progress bar...
         self.signal_text.emit("Step 2/2: Processing...",
