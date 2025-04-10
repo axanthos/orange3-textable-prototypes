@@ -169,7 +169,7 @@ class DemoSciHUB(OWTextableBaseWidget):
         # processing" and "post-processing" steps before and 
         # after it. If there are no optional steps, notify 
         # "Preprocessing...".
-        self.infoBox.setText("Step 1/2: Processing...", "warning")
+        self.infoBox.setText("Step 1/2: Pre-processing...", "warning")
         
         # Progress bar should be initialized at this point.
         self.progressBarInit()
@@ -234,7 +234,7 @@ class DemoSciHUB(OWTextableBaseWidget):
                 self.infoBox.setText(ex, 'error')
 
         # Update infobox and reset progress bar...
-        self.signal_text.emit("Step 2/2: Post-processing...", 
+        self.signal_text.emit("Step 2/2: Processing...",
                               "warning")
         cur_itr = 0
         self.signal_prog.emit(0, True)
