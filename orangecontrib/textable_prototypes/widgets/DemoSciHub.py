@@ -266,8 +266,8 @@ class DemoSciHUB(OWTextableBaseWidget):
             # newly created LTTL.Input and annotate it with 
             # the length of the input segmentation. 
             segment = myInput[0]
-            segment.annotations["demo_annotation"]  \
-                = self.inputSegmentationLength
+            segment.annotations["DOI"]  \
+                = DOI
             # For the annotation to be saved in the LTTL.Input, 
             # the extracted and annotated segment must be re-assigned
             # to the first (and only) segment of the LTTL.Input.
