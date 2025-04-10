@@ -27,8 +27,8 @@ __email__ = "aris.xanthos@unil.ch"
 
 from functools import partial
 import time
-from scidownl import scihub_download
 import tempfile
+from scidownl import scihub_download
 import pdfplumber
 import os
 import requests
@@ -169,7 +169,7 @@ class DemoSciHUB(OWTextableBaseWidget):
         # processing" and "post-processing" steps before and 
         # after it. If there are no optional steps, notify 
         # "Preprocessing...".
-        self.infoBox.setText("Step 1/2: Processing...", "warning")
+        self.infoBox.setText("Step 1/2: Pre-processing...", "warning")
         
         # Progress bar should be initialized at this point.
         self.progressBarInit()
@@ -204,13 +204,13 @@ class DemoSciHUB(OWTextableBaseWidget):
         # progress bar will go through (e.g. number of input
         # segments, number of selected files, etc.), then
         # set current iteration to 1.
-        max_itr = len(DOIList)+1
+        max_itr = len(DOIList)
         cur_itr = 1
 
         # Permet de tester la connexion à Sci-Hub
         if not test_scihub_accessible():
             self.sendNoneToOutputs()
-            self.infoBox.setText("SciHub inaccessible - vérifiez votre connexion", 'error')
+            self.infoBox.setText("SciHub inaccessible - verify your connexion", 'error')
             return
         # Actual processing...
 
@@ -220,7 +220,7 @@ class DemoSciHUB(OWTextableBaseWidget):
 
             # Update progress bar manually...
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
-            #cur_itr += 1
+            cur_itr += 1
 
             # code ajouté ici
             paper = DOI
@@ -231,61 +231,71 @@ class DemoSciHUB(OWTextableBaseWidget):
             except Exception as ex:
                 print(ex)
                 self.sendNoneToOutputs()
-                self.infoBox.setText(ex, 'error')
+                self.infoBox.setText("An error occurred when downloading", 'error')
+                return
+            # Cancel operation if requested by user...
+            time.sleep(0.00001)  # Needed somehow!
+            if self.cancel_operation:
+                self.signal_prog.emit(100, False)
+                return
+
+        # Update infobox and reset progress bar...
+        self.signal_text.emit("Step 2/2: Processing...",
+                              "warning")
+        cur_itr = 0
+        self.signal_prog.emit(0, True)
+        for DOI in DOIList:
             DOIText = ""
-            if os.path.exists(f"{out}.pdf"):
+            if os.path.exists(f"{tempdir.name}/{DOIList.index(DOI)}.pdf"):
                 try:
-                    with pdfplumber.open(f"{out}.pdf") as pdf:
+                    with pdfplumber.open(f"{tempdir.name}/{DOIList.index(DOI)}.pdf") as pdf:
                         for page in pdf.pages:
                             self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                            cur_itr += (1/len(pdf.pages))
+                            cur_itr += (1 / len(pdf.pages))
                             DOIText += page.extract_text()
                 except Exception as e:
                     self.sendNoneToOutputs()
-                    self.infoBox.setText(f"Erreur lors de la lecture du PDF: {str(e)}", 'error')
+                    self.infoBox.setText(f"Error occurred when reading PDF: {str(e)}", 'error')
                     return
             else:
                 print("Bonjour")
                 self.sendNoneToOutputs()
-                self.infoBox.setText("Le téléchargement a échoué - vérifiez le DOI ou réessayez plus tard.", 'error')
+                self.infoBox.setText("Download failed. Please, verify DOI or connexion", 'error')
                 return
             ########
 
-            # Create an LTTL.Input...           
+            # Create an LTTL.Input...
             if len(DOIList) == 1:
                 # self.captionTitle is the name of the widget,
                 # which will become the label of the output
                 # segmentation.
                 label = self.captionTitle
             else:
-                label = None # will be set later.
+                label = None  # will be set later.
             print(DOIText)
             myInput = Input(DOIText, label)
 
-            # Extract the first (and single) segment in the 
-            # newly created LTTL.Input and annotate it with 
-            # the length of the input segmentation. 
+            # Extract the first (and single) segment in the
+            # newly created LTTL.Input and annotate it with
+            # the length of the input segmentation.
             segment = myInput[0]
-            segment.annotations["DOI"]  \
+            segment.annotations["DOI"] \
                 = DOI
-            # For the annotation to be saved in the LTTL.Input, 
+            # For the annotation to be saved in the LTTL.Input,
             # the extracted and annotated segment must be re-assigned
             # to the first (and only) segment of the LTTL.Input.
             myInput[0] = segment
-            
+
             # Add the  LTTL.Input to self.createdInputs.
             self.createdInputs.append(myInput)
-            
+
             # Cancel operation if requested by user...
-            time.sleep(0.00001) # Needed somehow!
+            time.sleep(0.00001)  # Needed somehow!
             if self.cancel_operation:
                 self.signal_prog.emit(100, False)
                 return
         tempdir.cleanup()
-        # Update infobox and reset progress bar...
-        self.signal_text.emit("Step 2/2: Post-processing...", 
-                              "warning")
-        self.signal_prog.emit(1, True)
+
 
         # If there's only one LTTL.Input created, it is the 
         # widget's output...
