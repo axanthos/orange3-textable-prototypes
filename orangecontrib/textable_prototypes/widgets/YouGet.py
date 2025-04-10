@@ -79,6 +79,7 @@ class YouGet(OWTextableBaseWidget):
 
         # Attributes...
         self.inputSegmentationLength = 0
+        self.comments = []
         
         # The following attribute is required by every widget
         # that imports new strings into Textable.
@@ -273,7 +274,10 @@ class YouGet(OWTextableBaseWidget):
             #TODO boucler dans les commentaires et faire une chaine, list comprehension \n.join([lm.text for lm in commnet_list])
             print("1")
             # on fetch les commentaires depuis l'url spécifié plus haut, attention ce n'est encore l'url entrée par l'utilisateur
+            limit = 5
             comments_ycd = self.fetch_from_url(url, limit=5)
+            if limit != 0:
+                comments_ycd = comments_ycd[0:limit]
 
             #on créé une chaine de caractères séparés d'un retour à la ligne 
             comments = "\n".join([comment["text"] for comment in comments_ycd ])
@@ -371,26 +375,36 @@ class YouGet(OWTextableBaseWidget):
     def fetch_from_url(self, url, limit=0, order='desc') -> list:
         # TODO: add sorting function
         print("3")
-        if url != self.url:
-            print("3b")
-            comments = self.scrape(url)
-            print("3c")
-            print(comments)
-            print("3d")
-            self.url = url
-        return comments if limit == 0 else comments[0:limit]
+        print(
+            url
+        )
+        #if url != self.url:
+        #    print("3b")
+        #    self.comments = self.scrape(url)
+        #    print("3c")
+        #    print(self.comments)
+        #    print("3d")
+        #    print("test statement.")
+        #    self.url = url
+        #return self.comments if limit == 0 else self.comments[0:limit]
+        return self.scrape(url)
         #if limit == 0:
         #    return cls.comments
         #else:
         #    return cls.comments[0:limit]
 
-
     def scrape(self, url) -> list:
-        print(url)
-        print("4")
+        print(
+            f'scrape() | url={url}'
+        )
+        print('this print statement is frustrating me.')
+        print(">:(")
         # that's where we go fetch the comments!
         downloader = YoutubeCommentDownloader()
         comments = downloader.get_comments_from_url(url)
+        print(
+            f'scrape() | returning comments={comments}'
+        )
         return [x for x in comments]
 
     def updateGUI(self):
