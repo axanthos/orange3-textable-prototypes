@@ -47,10 +47,10 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 from youtube_comment_downloader import *
 
 
-class DemoTextableWidget(OWTextableBaseWidget):
+class YouGet(OWTextableBaseWidget):
     """Demo Orange3-Textable widget"""
 
-    name = "You Get"
+    name = "YouGet"
     description = "Widget that downloads comments from a youtube URL"
     icon = "icons/YouGet.svg"
     priority = 99
@@ -66,12 +66,11 @@ class DemoTextableWidget(OWTextableBaseWidget):
     )
 
     # Settings...
-    segmentUrl = settings.Setting("Url")
+    #url = settings.Setting("https://www.youtube.com/watch?v=ScMzIvxBSi4")
+    url = settings.Setting("")
 
     #numberOfSegments = settings.Setting("10")
 
-    #pour l'instant c'est 1
-    numberOfSegments = 1
 
     want_main_area = False
 
@@ -112,7 +111,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
         gui.lineEdit(
             widget=optionsBox,
             master=self,
-            value="segmentUrl",
+            value="url",
             orientation="horizontal",
             label="Url :",
             labelWidth=130,
@@ -176,7 +175,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
         processing.
         """
         #TODO changer le nom de variable segmentContent en url, toutes les occurences, variable de classe etc
-        if self.segmentUrl == "":
+        if self.url == "":
             # Use mode "warning" when user needs to do some
             # action or provide some information; use mode "error"
             # when invalid parameters have been provided; 
@@ -184,7 +183,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
             # don't use a mode. Use formulations that emphasize
             # what should be done rather than what is wrong or
             # missing.
-            self.infoBox.setText("Please type segment content.", 
+            self.infoBox.setText("Please type youtube url.", 
                                  "warning")
             # Make sure to send None and return if the widget 
             # cannot operate properly at this point.
@@ -228,14 +227,14 @@ class DemoTextableWidget(OWTextableBaseWidget):
         # Within this method, this is done using the following
         # instruction.
         self.signal_prog.emit(1, False)
-        
+        urls = [self.url]
         # Indicate the total number of iterations that the
         # progress bar will go through (e.g. number of input
         # segments, number of selected files, etc.), then
         # set current iteration to 1.
         #TODO mettre 1 url max_itr = longueur url
         # number of segment ça veut dire number of url
-        max_itr = int(self.numberOfSegments)
+        max_itr = len(urls)
         cur_itr = 1
 
         # Actual processing...
@@ -244,10 +243,9 @@ class DemoTextableWidget(OWTextableBaseWidget):
         # For each progress bar iteration...
         #for _ in range(int(self.numberOfSegments)):
 
-        urls = ["https://www.youtube.com/watch?v=ScMzIvxBSi4"]
 
-        # la chaine qui contient les commentaires
-        comments = ""
+
+
 
         for url in urls:
 
@@ -273,15 +271,15 @@ class DemoTextableWidget(OWTextableBaseWidget):
             #TODO self.segmentURL devient la chaine de charactère qui contient les commentaires en l'occurence : comments
             #TODO faire 1 seul segment
             #TODO boucler dans les commentaires et faire une chaine, list comprehension \n.join([lm.text for lm in commnet_list])
-
+            print("1")
             # on fetch les commentaires depuis l'url spécifié plus haut, attention ce n'est encore l'url entrée par l'utilisateur
-            comments_ycd = Fetch.from_url(url, limit=5)
+            comments_ycd = self.fetch_from_url(url, limit=5)
 
             #on créé une chaine de caractères séparés d'un retour à la ligne 
-            comments += "\n".join([comment["text"] for comment in comments_ycd ])
-            print(comments)
-
-            myInput = Input(comments, label)
+            comments = "\n".join([comment["text"] for comment in comments_ycd ])
+            print(comments_ycd)
+            print("2")
+            myInput = Input("hello", label)
 
             # Extract the first (and single) segment in the 
             # newly created LTTL.Input and annotate it with 
@@ -310,7 +308,7 @@ class DemoTextableWidget(OWTextableBaseWidget):
 
         # If there's only one LTTL.Input created, it is the 
         # widget's output...
-        if int(self.numberOfSegments) == 1:
+        if len(urls) == 1:
             return self.createdInputs[0]
 
         # Otherwise the widget's output is a concatenation...        
@@ -370,36 +368,37 @@ class DemoTextableWidget(OWTextableBaseWidget):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
 
-class Fetch:
-    # Get comments once per URL -> caching
-
-    url: str
-    comments: list
-
-    @classmethod
-    def from_url(cls, url='', limit=0, order='desc') -> list:
+    def fetch_from_url(self, url, limit=0, order='desc') -> list:
         # TODO: add sorting function
-        if url != cls.url:
-            cls.comments = cls.scrape(url)
-            cls.url = url
-        return cls.comments if limit == 0 else cls.comments[0:limit]
+        print("3")
+        if url != self.url:
+            print("3b")
+            comments = self.scrape(url)
+            print("3c")
+            print(comments)
+            print("3d")
+            self.url = url
+        return comments if limit == 0 else comments[0:limit]
         #if limit == 0:
         #    return cls.comments
         #else:
         #    return cls.comments[0:limit]
 
-    @staticmethod
-    def scrape(url='https://www.youtube.com/watch?v=ScMzIvxBSi4') -> list:
+
+    def scrape(self, url) -> list:
         print(url)
+        print("4")
         # that's where we go fetch the comments!
         downloader = YoutubeCommentDownloader()
         comments = downloader.get_comments_from_url(url)
         return [x for x in comments]
 
+    def updateGUI(self):
+        pass
 
-Fetch.url = ''
-test = Fetch.from_url('https://www.youtube.com/watch?v=ScMzIvxBSi4', limit=5)
-print(test)
-print(len(test))
+#Fetch.url = ''
+#test = Fetch.from_url('https://www.youtube.com/watch?v=ScMzIvxBSi4', limit=5)
+#print(test)
+#print(len(test))
 if __name__ == '__main__':
-        WidgetPreview(DemoTextableWidget).run()
+        WidgetPreview(YouGet).run()
