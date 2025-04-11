@@ -79,7 +79,12 @@ class YouGet(OWTextableBaseWidget):
 
         # Attributes...
         self.inputSegmentationLength = 0
-        self.comments = []
+
+        # This attribute stores scraped comments to prevent duplicate
+        # queries and make the widget both faster and less resource-intensive.
+        # Comments are stored as follows:
+        # 'url': list of comments on url
+        self.cached_comments = {}
         
         # The following attribute is required by every widget
         # that imports new strings into Textable.
@@ -223,6 +228,9 @@ class YouGet(OWTextableBaseWidget):
         which is run in a worker thread so that GUI stays
         responsive and operations can be cancelled
         """
+        print(
+            f'▓▓▓▓▓▓▓▓▓▓▓▓ processData()'
+        )
         
         # At start of processing, set progress bar to 1%.
         # Within this method, this is done using the following
@@ -274,8 +282,22 @@ class YouGet(OWTextableBaseWidget):
             #TODO boucler dans les commentaires et faire une chaine, list comprehension \n.join([lm.text for lm in commnet_list])
             print("1")
             # on fetch les commentaires depuis l'url spécifié plus haut, attention ce n'est encore l'url entrée par l'utilisateur
+
+            # Check if we already have an entry for the url in the cached
+            # comments. If yes, we return it; if not, we scrape and cache.
+            if url in self.cached_comments:
+                comments_ycd = self.cached_comments.get(url)
+                print('    using the cache')
+            else:
+                comments_ycd = self.scrape(url)
+                self.cached_comments[url] = comments_ycd
+                print('    not using the cache')
+
+            # Placeholder limit for testing. TODO: delete.
             limit = 5
-            comments_ycd = self.fetch_from_url(url, limit=5)
+
+            # While we cache everything that was scraped, we only return as
+            # many as the user requested.
             if limit != 0:
                 comments_ycd = comments_ycd[0:limit]
 
@@ -372,38 +394,20 @@ class YouGet(OWTextableBaseWidget):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
 
-    def fetch_from_url(self, url, limit=0, order='desc') -> list:
-        # TODO: add sorting function
-        print("3")
-        print(
-            url
-        )
-        #if url != self.url:
-        #    print("3b")
-        #    self.comments = self.scrape(url)
-        #    print("3c")
-        #    print(self.comments)
-        #    print("3d")
-        #    print("test statement.")
-        #    self.url = url
-        #return self.comments if limit == 0 else self.comments[0:limit]
-        return self.scrape(url)
-        #if limit == 0:
-        #    return cls.comments
-        #else:
-        #    return cls.comments[0:limit]
-
     def scrape(self, url) -> list:
+        """
+        Sets up a virtual browser through YoutubeCommentDownloader and uses
+        it to scrape all comments on a given url, returning them as a list.
+        """
         print(
-            f'scrape() | url={url}'
+            f'▓▓▓▓▓▓▓▓▓▓▓▓ scrape()'
+            f'    url={url}'
         )
-        print('this print statement is frustrating me.')
-        print(">:(")
         # that's where we go fetch the comments!
         downloader = YoutubeCommentDownloader()
         comments = downloader.get_comments_from_url(url)
         print(
-            f'scrape() | returning comments={comments}'
+            f'    returning comments=\n{comments}'
         )
         return [x for x in comments]
 
