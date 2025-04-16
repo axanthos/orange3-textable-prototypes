@@ -68,7 +68,7 @@ Sources
 The **Sources** section contains all the controls related to the way **YouGet**
 processes the input data. 
 
-The user chooses a YouTube video which they would like to extract its comments. Once the video chosen, they
+The user chooses a YouTube video which they would like to extract its comments. Once the video is chosen, they
 add its URL in the empty **URL section**. To confirm their URL, they must press on the **Add** button which
 will add their URL to a list in the section below "Sources". The user can add one or more URLs to their list.
 If they wish to remove an URL, they can press on the **Remove** button. If they wish to not only remove one, 
