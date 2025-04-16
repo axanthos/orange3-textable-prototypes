@@ -52,7 +52,7 @@ selected.
 Basic Interface
 ~~~~~~~~~~~~~~~
 
-In its basic version, user controls are divided into two sections: **Sources** and **Options**.
+In its basic version, user controls are divided into two main sections: **Sources**, which holds the **URL** subsection, and **Options**.
 
 .. _YouGet_principal:
 
