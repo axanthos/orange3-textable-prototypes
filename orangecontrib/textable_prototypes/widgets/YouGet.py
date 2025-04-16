@@ -189,7 +189,7 @@ class YouGet(OWTextableBaseWidget):
             # don't use a mode. Use formulations that emphasize
             # what should be done rather than what is wrong or
             # missing.
-            self.infoBox.setText("Please type a YouTube URL.", 
+            self.infoBox.setText("Please add a YouTube URL.", 
                                  "warning")
             # Make sure to send None and return if the widget 
             # cannot operate properly at this point.
