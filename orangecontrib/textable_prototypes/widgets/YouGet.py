@@ -248,13 +248,8 @@ class YouGet(OWTextableBaseWidget):
 
         # Actual processing...
         
-        # TODO for url in urls
         # For each progress bar iteration...
         #for _ in range(int(self.numberOfSegments)):
-
-
-
-
 
         for url in urls:
 
@@ -264,8 +259,6 @@ class YouGet(OWTextableBaseWidget):
             
             # Create an LTTL.Input...  
              
-                     
-            #TODO len(urls)
 
             #if int(self.numberOfSegments) == 1:
 
@@ -277,10 +270,7 @@ class YouGet(OWTextableBaseWidget):
             else:
                 label = None # will be set later.
 
-            #TODO self.segmentURL devient la chaine de charactère qui contient les commentaires en l'occurence : comments
-            #TODO faire 1 seul segment
-            #TODO boucler dans les commentaires et faire une chaine, list comprehension \n.join([lm.text for lm in commnet_list])
-            print("1")
+            #print("1")
             # on fetch les commentaires depuis l'url spécifié plus haut, attention ce n'est encore l'url entrée par l'utilisateur
 
             # Check if we already have an entry for the url in the cached
@@ -305,14 +295,15 @@ class YouGet(OWTextableBaseWidget):
             comments = "\n".join([comment["text"] for comment in comments_ycd ])
             print(comments_ycd)
             print("2")
-            myInput = Input("hello", label)
+            #myInput = Input("hello", label)
+            myInput = Input(comments, label) 
 
             # Extract the first (and single) segment in the 
             # newly created LTTL.Input and annotate it with 
             # the length of the input segmentation. 
             segment = myInput[0]
-            segment.annotations["demo_annotation"]  \
-                = self.inputSegmentationLength
+            segment.annotations["url"]  \
+                = self.url
             # For the annotation to be saved in the LTTL.Input, 
             # the extracted and annotated segment must be re-assigned
             # to the first (and only) segment of the LTTL.Input.
