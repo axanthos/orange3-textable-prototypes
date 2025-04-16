@@ -102,21 +102,21 @@ to be added
 Warnings
 ~~~~~~~~
 
-**Settings were changed, please click 'Send' when ready.**
+*Settings were changed, please click 'Send' when ready.*
 Settings have changed but the **Send automatically** checkbox has not been selected, 
 so the user is prompted to click the **Send** button (or equivalently check the box) 
 in order for computation and data emission to proceed.
 
-**Step 1/2: Processing...**
+*Step 1/2: Processing...*
 The requested analysis is being performed.
 
-**Please type youtube url**
+*Please type youtube url*
 The URL section is empty, so the user has to add at least one URL before sending.
 
 Errors
 ~~~~~~~~
 
-**Please make sure that input is well-formed XML**
+*Please make sure that input is well-formed XML*
 The URL section must only contain URLs.
 
 Note
