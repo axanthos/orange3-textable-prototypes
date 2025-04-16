@@ -102,6 +102,9 @@ to be added
 Warnings
 ~~~~~~~~
 
+*Please type youtube url*
+   The URL section is empty, so the user has to add at least one URL before sending.
+
 *Settings were changed, please click 'Send' when ready.*
    Settings have changed but the **Send automatically** checkbox has not been selected, 
    so the user is prompted to click the **Send** button (or equivalently check the box) 
@@ -109,9 +112,6 @@ Warnings
 
 *Step 1/2: Processing...*
    The requested analysis is being performed.
-
-*Please type youtube url*
-   The URL section is empty, so the user has to add at least one URL before sending.
 
 Errors
 ~~~~~~~~
