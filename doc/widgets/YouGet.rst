@@ -102,7 +102,7 @@ to be added
 Warnings
 ~~~~~~~~
 
-*Please type youtube url*
+*Please add a YouTube URL*
    The URL section is empty, so the user has to add at least one URL before sending.
 
 *Settings were changed, please click 'Send' when ready.*
