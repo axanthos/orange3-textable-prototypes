@@ -77,12 +77,8 @@ but all of their URLs, they can press on the **Clear All** button.
 Options
 *******
 
-The **Options** section contains the controls to choose the **number of comments** desired in output.
-
-The user can choose between having 1 comment (minimum requirement), 100, 1000, or an illimited amount 
-of comments in output.
-
-Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
+The **Options** section contains the controls to choose the **number of comments** desired in output. The user can choose between having 1 comment (minimum requirement), 100, 1000, or an illimited amount 
+of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
 
 Advanced Interface
