@@ -45,8 +45,9 @@ from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from youtube_comment_downloader import *
+# pour tester l'url
+import requests
 
-import re
 
 
 class YouGet(OWTextableBaseWidget):
@@ -182,7 +183,6 @@ class YouGet(OWTextableBaseWidget):
         before calling the method that does the actual 
         processing.
         """
-        #TODO changer le nom de variable segmentContent en url, toutes les occurences, variable de classe etc
         if self.url == "":
             # Use mode "warning" when user needs to do some
             # action or provide some information; use mode "error"
@@ -197,11 +197,14 @@ class YouGet(OWTextableBaseWidget):
             # cannot operate properly at this point.
             self.send("New segmentation", None)
             return
-        if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
-            self.infoBox.setText("Please only add YouTube URLs.", "error")
+        
+        elif self.youtube_video_existe(self.url) == False:
+            self.infoBox.setText("Please check your internet connections.", 
+                                 "warning")
+            # Make sure to send None and return if the widget 
+            # cannot operate properly at this point.
             self.send("New segmentation", None)
             return
-            "https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
 
         # If the widget creates new LTTL.Input objects (i.e.
         # if it imports new strings in Textable), make sure to
@@ -392,6 +395,17 @@ class YouGet(OWTextableBaseWidget):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
 
+    # Pour tester s'il y a une connection internet
+    def youtube_video_existe(self, urll):
+        headers = {
+            "User-Agent": "Mozilla/5.0"  # éviter le blocage par YouTube
+        }
+        try:
+            response = requests.get(urll, headers=headers, timeout=5)
+            return response.status_code
+        except requests.RequestException:
+            return False
+
     def scrape(self, url) -> list:
         """
         Sets up a virtual browser through YoutubeCommentDownloader and uses
@@ -401,6 +415,7 @@ class YouGet(OWTextableBaseWidget):
             f'▓▓▓▓▓▓▓▓▓▓▓▓ scrape()'
             f'    url={url}'
         )
+
         # that's where we go fetch the comments!
         downloader = YoutubeCommentDownloader()
         comments = downloader.get_comments_from_url(url)
@@ -408,6 +423,7 @@ class YouGet(OWTextableBaseWidget):
             f'    returning comments=\n{comments}'
         )
         return [x for x in comments]
+    
 
     def updateGUI(self):
         pass
