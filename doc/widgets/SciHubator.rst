@@ -1,4 +1,5 @@
 sarah's note: searh for TODO for all missing and needing of correction areas
+
 .. meta::
    :description: Orange3 Textable Prototypes documentation, SciHubator widget
    :keywords: Orange3, Textable, Prototypes, documentation, SciHubator, widget
@@ -19,14 +20,14 @@ Sarah Perreti-Poix, Borgeaud Matthias, Chétioui Orsowen, Luginbühl Colin
 Signals
 -------
 
-Inputs: ``Message``
+Inputs: ``None``
 
-  JSON Message controlling the list of imported text files TODO
+  None
 
 
 Outputs: ``Text data``
 
-  Segmentation covering the content of downloaded pdf text files
+  Segmentation covering the content of downloaded pdf files
 
 Requirements ???? TODO
 -------------------------
