@@ -258,7 +258,6 @@ class DemoSciHUB(OWTextableBaseWidget):
                     self.infoBox.setText(f"Error occurred when reading PDF: {str(e)}", 'error')
                     return
             else:
-                print("Bonjour")
                 self.sendNoneToOutputs()
                 self.infoBox.setText("Download failed. Please, verify DOI or connexion", 'error')
                 return
