@@ -197,7 +197,6 @@ class YouGet(OWTextableBaseWidget):
             # cannot operate properly at this point.
             self.send("New segmentation", None)
             return
-        """ if self.url == "bonjour": """
         if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
             self.infoBox.setText("Please only add YouTube URLs.", "error")
             self.send("New segmentation", None)
