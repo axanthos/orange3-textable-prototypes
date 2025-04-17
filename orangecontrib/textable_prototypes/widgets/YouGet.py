@@ -258,7 +258,7 @@ class YouGet(OWTextableBaseWidget):
             cur_itr += 1
             
             # Create an LTTL.Input...  
-             
+
 
             #if int(self.numberOfSegments) == 1:
 
