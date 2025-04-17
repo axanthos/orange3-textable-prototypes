@@ -52,7 +52,7 @@ selected.
 Basic Interface
 ~~~~~~~~~~~~~~~
 
-In its basic version, user controls are divided into two sections: **Sources** and **Options**.
+In its basic version, user controls are divided into two main sections: **Sources**, which holds the **URL** subsection, and **Options**.
 
 .. _YouGet_principal:
 
@@ -65,30 +65,26 @@ In its basic version, user controls are divided into two sections: **Sources** a
 Sources
 *******
 
-The **Sources** section contains all the controls related to the way YouGet
+The **Sources** section contains all the controls related to the way **YouGet**
 processes the input data. 
 
-The user adds the YouTube video's URL of their choice in the **URL**'s section and presses
-on the **Add** button to add their URL to the list. The user can add one or more URLs to their list which will then appear
-in the empty section above. If they wish to remove an URL, they can press on the **Remove** 
-button. If they wish to not only remove one, but all of their URLs, they can press on the 
-**Clear All** button.
+The user chooses a YouTube video which they would like to extract its comments. Once the video is chosen, they
+add its URL in the empty **URL section**. To confirm their URL, they must press on the **Add** button which
+will add their URL to a list in the section below "Sources". The user can add one or more URLs to their list.
+If they wish to remove an URL, they can press on the **Remove** button. If they wish to not only remove one, 
+but all of their URLs, they can press on the **Clear All** button.
 
 Options
 *******
 
-The **Options** section contains the controls to choose how many comments is desired in output.
-
-The user can choose the **number of comments** they would like have in output. They can choose between 
-having 1 comment (minimum requirement), 100, 1000, or an illimited amount of comments in output.
-
-Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
+The **Options** section contains the controls to choose the **number of comments** desired in output. The user can choose between having 1 comment (minimum requirement), 100, 1000, or an illimited amount 
+of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
 
 Advanced Interface
 ~~~~~~~~~~~~~~~~~~
 In its advanced version, **YouGet** offers the same functionnalities as the basic one, but adds the 
-possibility of filtering the YouTube comments according to their number of **likes** or by their
+possibility of filtering YouTube comments according to their number of **likes** or by their
 **date of publication**.
 
 Messages
@@ -102,14 +98,24 @@ to be added
 Warnings
 ~~~~~~~~
 
-to be added
+*Please add a YouTube URL*
+   The URL section is empty, so the user has to add at least one URL before sending.
+
+*Settings were changed, please click 'Send' when ready.*
+   Settings have changed but the **Send automatically** checkbox has not been selected, 
+   so the user is prompted to click the **Send** button (or equivalently check the box) 
+   in order for computation and data emission to proceed.
+
+*Step 1/2: Processing...*
+   The requested analysis is being performed.
 
 Errors
 ~~~~~~~~
 
-to be added
+*Please make sure that input is well-formed XML*
+   The URL section must only contain URLs.
 
 Note
 ~~~~~~~~
 
-to be added if notes needed
+If there is a break in WIFI connection, please press cancel and start again.
