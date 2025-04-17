@@ -28,6 +28,8 @@ __email__ = "aris.xanthos@unil.ch"
 # Standard imports...
 import re
 import http
+
+from PyQt5.QtWidgets import QMessageBox
 from scidownl import scihub_download
 import pdfplumber
 from Orange.widgets import widget, gui, settings
@@ -228,7 +230,7 @@ class SciHubator(OWTextableBaseWidget):
             orientation='horizontal',
             label=u'DOI(s):',
             labelWidth=101,
-            callback=self.updateGUI,
+            callback=self.updateURLBoxButtons,
             tooltip=(
                 u"The DOI(s) that will be added to the list when\n"
                 u"button 'Add' is clicked.\n\n"
@@ -473,9 +475,8 @@ class SciHubator(OWTextableBaseWidget):
         del self.DOIs[:]
         del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
-        # Ne devrait pas être nécessaire non ?
-        # Rajoutée anyway
-        self.updateGUI()
+        self.URLLabel = self.URLLabel
+        self.clearAllButton.setDisabled(True)
 
     def remove(self):
         """Remove URL from DOIs attr"""
@@ -484,62 +485,66 @@ class SciHubator(OWTextableBaseWidget):
             self.DOIs.pop(index)
             del self.selectedURLLabel[:]
             self.sendButton.settingsChanged()
-            # Ne devrait pas être nécessaire non ?
-            # Rajoutée anyway
-            self.updateGUI()
+            self.URLLabel = self.URLLabel
+        self.clearAllButton.setDisabled(not bool(self.URLLabel))
 
     def add(self):
         """Add DOIs to DOIs attr"""
-        DOIList = re.split(r'/', self.newDOI)
+        DOIList = re.split(r',', self.newDOI)
         print(DOIList)
         for DOI in DOIList:
             print(DOI)
             self.DOIs.append(DOI)
-        self.sendButton.settingsChanged()
-        # Ne devrait pas être nécessaire non ?
-        # Rajoutée anyway
-        self.updateGUI()
-    
-    def updateGUI(self):
-        """Update GUI state"""
-        # if self.selectedURLLabel:
-        #     cachedLabel = self.selectedURLLabel[0]
-        # else:
-        #     cachedLabel = None
-        del self.URLLabel[:]
         if self.DOIs:
-            DOIs = [f for f in self.DOIs]
-            self.URLLabel = DOIs
-            # maxURLLen = max([len(n) for n in DOIs])
-            # for DOI in DOIs:    #range(len(self.DOIs)):
-                # format = u'%-' + str(maxURLLen + 2) + u's'
-                #format % DOIs[index]
-                # self.URLLabel.append(DOI)
+            tempSet = set(self.DOIs)
+            if(len(tempSet)<len(self.DOIs)):
+                QMessageBox.information(
+                    None, "SciHubator", "Duplicate DOI(s) found and deleted.",
+                    QMessageBox.Ok
+                )
+            self.DOIs = list(tempSet)
+            self.URLLabel = self.DOIs
         self.URLLabel = self.URLLabel
-        # if cachedLabel is not None:
-        #     self.sendButton.sendIfPreCallback = None
-        #     self.selectedURLLabel = [cachedLabel]
-        #     self.sendButton.sendIfPreCallback = self.updateGUI
-        if self.newDOI:
-            self.addButton.setDisabled(False)
-        else:
-            self.addButton.setDisabled(True)
-        # if self.importDOIs:
-        #     self.importDOIsKeyLineEdit.setDisabled(False)
-        # else:
-        #     self.importDOIsKeyLineEdit.setDisabled(True)
-        self.updateURLBoxButtons()
+        self.clearAllButton.setDisabled(not bool(self.DOIs))
+        self.sendButton.settingsChanged()
+    
+    def addDisabledOrNot(self):
+        self.addButton.setDisabled(not bool(self.newDOI))
+
+    # def updateGUI(self):
+    #     """Update GUI state"""
+    #     # if self.selectedURLLabel:
+    #     #     cachedLabel = self.selectedURLLabel[0]
+    #     # else:
+    #     #     cachedLabel = None
+    #     del self.URLLabel[:]
+    #     if self.DOIs:
+    #         DOIs = [f for f in self.DOIs]
+    #         self.URLLabel = DOIs
+    #         # maxURLLen = max([len(n) for n in DOIs])
+    #         # for DOI in DOIs:    #range(len(self.DOIs)):
+    #             # format = u'%-' + str(maxURLLen + 2) + u's'
+    #             #format % DOIs[index]
+    #             # self.URLLabel.append(DOI)
+    #     self.URLLabel = self.URLLabel
+    #     # if cachedLabel is not None:
+    #     #     self.sendButton.sendIfPreCallback = None
+    #     #     self.selectedURLLabel = [cachedLabel]
+    #     #     self.sendButton.sendIfPreCallback = self.updateGUI
+    #     if self.newDOI:
+    #         self.addButton.setDisabled(False)
+    #     else:
+    #         self.addButton.setDisabled(True)
+    #     # if self.importDOIs:
+    #     #     self.importDOIsKeyLineEdit.setDisabled(False)
+    #     # else:
+    #     #     self.importDOIsKeyLineEdit.setDisabled(True)
+    #     self.updateURLBoxButtons()
 
     def updateURLBoxButtons(self):
         """Update state of File box buttons"""
-        if self.selectedURLLabel:
-            self.removeButton.setDisabled(False)
-        else:
-            self.removeButton.setDisabled(True)
-        if len(self.DOIs):
-            self.clearAllButton.setDisabled(False)
-        else:
-            self.clearAllButton.setDisabled(True)
+        self.addButton.setDisabled(not bool(self.newDOI))
+        self.removeButton.setDisabled(not bool(self.selectedURLLabel))
 
 
     # The following two methods should be copied verbatim in 
