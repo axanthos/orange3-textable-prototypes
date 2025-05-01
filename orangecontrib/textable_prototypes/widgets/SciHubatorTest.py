@@ -507,9 +507,6 @@ class SciHubator(OWTextableBaseWidget):
         self.URLLabel = self.URLLabel
         self.clearAllButton.setDisabled(not bool(self.DOIs))
         self.sendButton.settingsChanged()
-    
-    def addDisabledOrNot(self):
-        self.addButton.setDisabled(not bool(self.newDOI))
 
     # def updateGUI(self):
     #     """Update GUI state"""
