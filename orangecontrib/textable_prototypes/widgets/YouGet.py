@@ -284,53 +284,53 @@ class YouGet(OWTextableBaseWidget):
             orientation='vertical',
             addSpace=False,
         )
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importAll',
-            label=u'All',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import DOIs as annotations."
-            ),
-        )
-        gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importAbstract',
-            label=u'Abstract',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import DOIs as annotations."
-            ),
-        )
-        gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importText',
-            label=u'Top Level Sections',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import DOIs as annotations."
-            ),
-        )
-        gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importBibliography',
-            label=u'Bibliography',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import DOIs as annotations."
-            ),
-        )
+        # gui.checkBox(
+        #     widget=advOptionsBox,
+        #     master=self,
+        #     value='importAll',
+        #     label=u'All',
+        #     labelWidth=180,
+        #     callback=self.sendButton.settingsChanged,
+        #     tooltip=(
+        #         u"Import DOIs as annotations."
+        #     ),
+        # )
+        # gui.separator(widget=advOptionsBox, height=3)
+        # gui.checkBox(
+        #     widget=advOptionsBox,
+        #     master=self,
+        #     value='importAbstract',
+        #     label=u'Abstract',
+        #     labelWidth=180,
+        #     callback=self.sendButton.settingsChanged,
+        #     tooltip=(
+        #         u"Import DOIs as annotations."
+        #     ),
+        # )
+        # gui.separator(widget=advOptionsBox, height=3)
+        # gui.checkBox(
+        #     widget=advOptionsBox,
+        #     master=self,
+        #     value='importText',
+        #     label=u'Top Level Sections',
+        #     labelWidth=180,
+        #     callback=self.sendButton.settingsChanged,
+        #     tooltip=(
+        #         u"Import DOIs as annotations."
+        #     ),
+        # )
+        # gui.separator(widget=advOptionsBox, height=3)
+        # gui.checkBox(
+        #     widget=advOptionsBox,
+        #     master=self,
+        #     value='importBibliography',
+        #     label=u'Bibliography',
+        #     labelWidth=180,
+        #     callback=self.sendButton.settingsChanged,
+        #     tooltip=(
+        #         u"Import DOIs as annotations."
+        #     ),
+        # )
         gui.separator(widget=addURLBox, height=3)
         self.addButton = gui.button(
             widget=addURLBox,
@@ -626,19 +626,22 @@ class YouGet(OWTextableBaseWidget):
     def add(self):
         """Add Urls to URLs attr"""
         DOIList = re.split(r',', self.new_url)
-        print(DOIList)
+        # print(DOIList)
+        old_urls = list(self.DOIs)
+        print(old_urls)
         for DOI in DOIList:
             print(DOI)
             self.DOIs.append(DOI)
         if self.DOIs:
-            tempSet = set(self.DOIs)
+            tempSet = set(self.DOIs)        # ici on créé un set pour supprimer tous les doublons
+            def_set = set(tempSet)    
             if(len(tempSet)<len(self.DOIs)):
                 QMessageBox.information(
                     None, "YouGet", "Duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
                 )
 
-            #----------------- notre code dans leur code début-------------------
+            #----------------- notre code dans leur code -------------------
             # if self.new_url == "":
             #     # Use mode "warning" when user needs to do some
             #     # action or provide some information; use mode "error"
@@ -659,9 +662,15 @@ class YouGet(OWTextableBaseWidget):
             #     self.send("New segmentation", None)
             #     return
             #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
-            if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
+            not_an_url = False
+            for single_url in tempSet:
+                # si une ou plus url dans la liste n'est pas la forme d'une url ytb, ne pas autoriser l'ajout
+                if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
+                    not_an_url = True
+            if not_an_url == True:
+                tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "Please only add YouTube URLs.",
+                    None, "YouGet", "One or more element are not Youtube URLs, please only add YouTube URLs.",
                     QMessageBox.Ok
                 )
             elif self.youtube_video_existe(self.new_url) == False:
@@ -675,7 +684,7 @@ class YouGet(OWTextableBaseWidget):
             self.DOIs = list(tempSet)
             self.URLLabel = self.DOIs
 
-        self.URLLabel = self.URLLabel
+        # self.URLLabel = self.URLLabel
         self.clearAllButton.setDisabled(not bool(self.DOIs))
         self.sendButton.settingsChanged()
     
@@ -700,7 +709,7 @@ class YouGet(OWTextableBaseWidget):
     def onDeleteWidget(self):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
-    #--------------------------------------------------------------------------------------------------------------
+    #-----------------------------code emprunté à sci hub fin---------------------------------------------------------------------------------
 
 
     def updateGUI(self):
