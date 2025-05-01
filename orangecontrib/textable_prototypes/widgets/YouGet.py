@@ -370,19 +370,21 @@ class YouGet(OWTextableBaseWidget):
         #     self.send("New segmentation", None)
         #     return
         
-        # """ if self.url == "bonjour": """
-        # if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
-        #     self.infoBox.setText("Please only add YouTube URLs.", "error")
-        #     self.send("New segmentation", None)
-        #     return
-        #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
-        # elif self.youtube_video_existe(self.url) == False:
-        #     self.infoBox.setText("Please check your internet connections.", 
-        #                          "warning")
-        #     # Make sure to send None and return if the widget 
-        #     # cannot operate properly at this point.
-        #     self.send("New segmentation", None)
-        #     return
+        """ if self.url == "bonjour": """
+        if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
+            self.infoBox.setText("Please only add YouTube URLs.", "error")
+            self.send("New segmentation", None)
+            return
+            "https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
+        elif self.youtube_video_existe(self.url) == False:
+            self.infoBox.setText("Please check your internet connections.", 
+                                 "warning")
+            # Make sure to send None and return if the widget 
+            # cannot operate properly at this point.
+            self.send("New segmentation", None)
+            return
+        
+
 
         # If the widget creates new LTTL.Input objects (i.e.
         # if it imports new strings in Textable), make sure to
@@ -710,3 +712,47 @@ class YouGet(OWTextableBaseWidget):
 #print(len(test))
 if __name__ == '__main__':
         WidgetPreview(YouGet).run()
+
+
+
+'''import requests
+import re
+import json
+
+def youtube_video_exists(url):
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            return False
+
+        html = response.text
+
+        # Extraction du JSON "ytInitialPlayerResponse"
+        initial_data_match = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', html)
+        if not initial_data_match:
+            print("Impossible d'extraire ytInitialPlayerResponse")
+            return False
+
+        data = json.loads(initial_data_match.group(1))
+        status = data.get("playabilityStatus", {}).get("status", "UNKNOWN")
+
+        if status == "OK":
+            return True
+        else:
+            print(f"Statut de lecture : {status}")
+            return False
+
+    except Exception as e:
+        print(f"Erreur lors de l'analyse : {e}")
+        return False
+
+# Test
+url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Change le lien ici pour tester
+if youtube_video_exists(url):
+    print("✅ La vidéo existe et est accessible.")
+else:
+    print("❌ La vidéo n'existe pas ou n'est pas disponible.")'''
