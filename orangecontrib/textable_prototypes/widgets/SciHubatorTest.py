@@ -314,6 +314,43 @@ class SciHubator(OWTextableBaseWidget):
         before calling the method that does the actual 
         processing.
         """
+        # Verify DOIs
+        if not self.DOIContent.strip():
+            self.infoBox.setText("Please enter one or many valid DOIs.", "warning")
+            self.send("New segmentation", None)
+            return
+        
+        #DOIs' validation
+        doi_list = [doi.strip() for doi in self.DOIContent.split(",") if doi.strip()]
+        if not doi_list: 
+            self.infoBox.setText("No valid DOI detected", "warning")
+            self.send("New segmentation", None)
+            return 
+
+        # If the widget creates new LTTL.Input objects (i.e.
+        # if it imports new strings in Textable), make sure to
+        # clear previously created Inputs with this method.
+        self.clearCreatedInputs()    
+
+        # Notify processing in infobox. Typically, there should
+        # always be a "processing" step, with optional "pre-
+        # processing" and "post-processing" steps before and 
+        # after it. If there are no optional steps, notify 
+        # "Preprocessing...".
+        self.infoBox.setText("Step 1/2: Processing...", "warning")
+
+        # Progress bar should be initialized at this point.
+        self.progressBarInit()
+
+        # Create a threaded function to do the actual processing
+        # and specify its arguments (here there are none).
+        threaded_function = partial(
+            self.processData,
+            # argument1, 
+            # argument2, 
+            # ...
+        )
+
 
         if self.DOI == "":
             # Use mode "warning" when user needs to do some
