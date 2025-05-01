@@ -1,3 +1,5 @@
+#/(?<=\n)\n((biblio|r(e|é)f)\w*\W*\n)(.|\n)*/
+#/(Abstract.+?\n{1,})((.|\n)*)(?=\n\n)/gmi
 """
 Class DemoTextableWidget
 Copyright 2025 University of Lausanne
@@ -55,7 +57,7 @@ class DemoSciHUB(OWTextableBaseWidget):
 
     name = "Demo Scihub"
     description = "Export a text segmentation from a DOI or URL"
-    icon = "icons/someIcon.svg"
+    icon = "icons/scihubator.png"
     priority = 99
 
     # Input and output channels (remove if not needed)...
