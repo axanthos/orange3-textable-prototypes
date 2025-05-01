@@ -50,6 +50,12 @@ import requests
 
 import re
 
+# import re
+import http
+
+from PyQt5.QtWidgets import QMessageBox
+from Orange.widgets.settings import Setting
+
 
 class YouGet(OWTextableBaseWidget):
     """Demo Orange3-Textable widget"""
@@ -60,7 +66,7 @@ class YouGet(OWTextableBaseWidget):
     priority = 99
 
     # Input and output channels (remove if not needed)...
-    inputs = [("Segmentation", Segmentation, "inputData")]
+    inputs = []
     outputs = [("New segmentation", Segmentation)]
 
     # Copied verbatim in every Textable widget to facilitate 
@@ -78,8 +84,31 @@ class YouGet(OWTextableBaseWidget):
 
     want_main_area = False
 
+    #------------------------code volé--------------------
+    DOIs = Setting([])
+    autoSend = settings.Setting(False)
+    importDOIs = Setting(True)
+    importDOIsKey = Setting(u'url')
+    DOI = Setting(u'')
+
+    # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
+    importAll = Setting(True)
+    importAbstract = Setting(False)
+    importText = Setting(False)
+    importBibliography = Setting(False)
+    #------------------------code volé fin-----------------------------
+
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        #----------------------- code volé à scihub--------------------
+        self.URLLabel = list()
+        self.selectedURLLabel = list()
+        self.new_url = u''
+        self.extractedText = u''
+        self.DOI = u''
+        self.DOIs = list()
+        #-----------------------code volé fin------------------------------
 
         # Attributes...
         self.inputSegmentationLength = 0
@@ -101,117 +130,259 @@ class YouGet(OWTextableBaseWidget):
             callback=self.sendData,
             cancelCallback=self.cancel_manually,
             infoBoxAttribute="infoBox",
-        )
-
+        ) 
+# notre vieux code >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         # GUI...
 
         # Top-level GUI boxes are created using method
         # create_widgetbox(), so that they are automatically
         # enabled/disabled when processes are running.
-        optionsBox = self.create_widgetbox(
-            box=u'Source',
-            orientation='vertical',
-            addSpace=False,
-            )
+        # optionsBox = self.create_widgetbox(
+        #     box=u'Source',
+        #     orientation='vertical',
+        #     addSpace=False,
+        #     )
 
         # GUI elements can be assigned to variables or even
         # attributes (e.g. self.segmentContentLineEdit) if 
         # they must be referred to elsewhere, e.g., to enable
         # or disable them, etc. It is not the case below.
-        gui.lineEdit(
-            widget=optionsBox,
+#         gui.lineEdit(
+#             widget=optionsBox,
+#             master=self,
+#             value="url",
+#             orientation="horizontal",
+#             label="Url :",
+#             labelWidth=130,
+#             # self.sendButton.settingsChanged should be used in 
+#             # in cases where using a GUI element should result
+#             # in sending data to output. If it should result in
+#             # other operations being done, use a custom method 
+#             # instead, and at the end of it, if data should be
+#             # sent to output, call self.sendButton.settingsChanged(). 
+#             # If using the GUI element should not result in   
+#             # anything at that moment, delete the "callback" 
+#             # parameter.
+#             callback=self.sendButton.settingsChanged,
+#             tooltip=(
+#                 "A string that defines the content "
+#                 "each segment."
+#             ),
+#         )
+        
+# #        gui.comboBox(
+# #           widget=optionsBox,
+# #            master=self,
+# #            value="numberOfSegments",
+# #            items=["1", "10", "100", "1000", "10000"],
+# #            sendSelectedValue=True,
+# #            orientation='horizontal',
+# #            label="Number of segments:",
+# #            labelWidth=130,
+# #            callback=self.sendButton.settingsChanged,
+# #            tooltip="Number of segments to create.",
+# #        )
+
+#         # Stretchable vertical spacing between "options"
+#         # and Send button etc.
+#         gui.rubber(self.controlArea)
+
+#         # Draw send button & Info box...
+#         self.sendButton.draw()
+#         self.infoBox.draw()
+        
+#         # Send data if needed. 
+#         self.sendButton.settingsChanged()
+
+# vieux code fin >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+        # -------------- code emprunté à SciHub ------------------------
+        # URL box
+        URLBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Sources',
+            orientation='vertical',
+            addSpace=False,
+        )
+        URLBoxLine1 = gui.widgetBox(
+            widget=URLBox,
+            box=False,
+            orientation='horizontal',
+            addSpace=True,
+        )
+        self.fileListbox = gui.listBox(
+            widget=URLBoxLine1,
             master=self,
-            value="url",
-            orientation="horizontal",
-            label="Url :",
-            labelWidth=130,
-            # self.sendButton.settingsChanged should be used in 
-            # in cases where using a GUI element should result
-            # in sending data to output. If it should result in
-            # other operations being done, use a custom method 
-            # instead, and at the end of it, if data should be
-            # sent to output, call self.sendButton.settingsChanged(). 
-            # If using the GUI element should not result in   
-            # anything at that moment, delete the "callback" 
-            # parameter.
-            callback=self.sendButton.settingsChanged,
+            value='selectedURLLabel',
+            labels='URLLabel',
+            callback=self.updateURLBoxButtons,
             tooltip=(
-                "A string that defines the content "
-                "each segment."
+                u"The list of DOIs whose content will be imported.\n"
+                u"\nIn the output segmentation, the content of each\n"
+                u"URL appears in the same position as in the list.\n"
+                u"\nColumn 1 shows the URL.\n"
+                u"Column 2 shows the associated annotation (if any).\n"
+                u"Column 3 shows the associated encoding."
             ),
         )
-        
-#        gui.comboBox(
-#           widget=optionsBox,
-#            master=self,
-#            value="numberOfSegments",
-#            items=["1", "10", "100", "1000", "10000"],
-#            sendSelectedValue=True,
-#            orientation='horizontal',
-#            label="Number of segments:",
-#            labelWidth=130,
-#            callback=self.sendButton.settingsChanged,
-#            tooltip="Number of segments to create.",
-#        )
-
-        # Stretchable vertical spacing between "options"
-        # and Send button etc.
+        URLBoxCol2 = gui.widgetBox(
+            widget=URLBoxLine1,
+            orientation='vertical',
+        )
+        self.removeButton = gui.button(
+            widget=URLBoxCol2,
+            master=self,
+            label=u'Remove',
+            callback=self.remove,
+            tooltip=(
+                u"Remove the selected URL from the list."
+            ),
+            disabled = True,
+        )
+        self.clearAllButton = gui.button(
+            widget=URLBoxCol2,
+            master=self,
+            label=u'Clear All',
+            callback=self.clearAll,
+            tooltip=(
+                u"Remove all DOIs from the list."
+            ),
+            disabled = True,
+        )
+        URLBoxLine2 = gui.widgetBox(
+            widget=URLBox,
+            box=False,
+            orientation='vertical',
+        )
+        # Add URL box
+        addURLBox = gui.widgetBox(
+            widget=URLBoxLine2,
+            box=True,
+            orientation='vertical',
+            addSpace=False,
+        )
+        gui.lineEdit(
+            widget=addURLBox,
+            master=self,
+            value='new_url',
+            orientation='horizontal',
+            label=u'URLS(s):',
+            labelWidth=101,
+            callback=self.updateURLBoxButtons,
+            tooltip=(
+                u"The DOI(s) that will be added to the list when\n"
+                u"button 'Add' is clicked.\n\n"
+                u"Successive DOIs must be separated with ' / ' \n"
+                u"(space + slash + space). Their order in the list\n"
+                u" will be the same as in this field."
+            ),
+        )
+        advOptionsBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Options',
+            orientation='vertical',
+            addSpace=False,
+        )
+        gui.checkBox(
+            widget=advOptionsBox,
+            master=self,
+            value='importAll',
+            label=u'All',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Import DOIs as annotations."
+            ),
+        )
+        gui.separator(widget=advOptionsBox, height=3)
+        gui.checkBox(
+            widget=advOptionsBox,
+            master=self,
+            value='importAbstract',
+            label=u'Abstract',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Import DOIs as annotations."
+            ),
+        )
+        gui.separator(widget=advOptionsBox, height=3)
+        gui.checkBox(
+            widget=advOptionsBox,
+            master=self,
+            value='importText',
+            label=u'Top Level Sections',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Import DOIs as annotations."
+            ),
+        )
+        gui.separator(widget=advOptionsBox, height=3)
+        gui.checkBox(
+            widget=advOptionsBox,
+            master=self,
+            value='importBibliography',
+            label=u'Bibliography',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Import DOIs as annotations."
+            ),
+        )
+        gui.separator(widget=addURLBox, height=3)
+        self.addButton = gui.button(
+            widget=addURLBox,
+            master=self,
+            label=u'Add',
+            callback=self.add,
+            tooltip=(
+                u"Add the URL currently displayed in the 'URL'\n"
+                u"text field to the list."
+            ),
+            disabled = True,
+        )
         gui.rubber(self.controlArea)
-
-        # Draw send button & Info box...
         self.sendButton.draw()
         self.infoBox.draw()
-        
-        # Send data if needed. 
-        self.sendButton.settingsChanged()
-
-    def inputData(self, segmentation):
-        """Handle segmentation on input connection"""
-        
-        # If the input is None and it is needed for the widget
-        # to operate, send None to output(s) then return.
-        # Here, the widget can still operate without input.
-        if segmentation is None:
-            self.inputSegmentationLength = 0
-        else:
-            self.inputSegmentationLength = len(segmentation)
-
-        # Display the standard message for "input changed".
-        self.infoBox.inputChanged()
+        self.sendButton.sendIf()
+        # -------------- code emprunté fin ------------------------
 
     def sendData(self):
         """Perform every required check and operation 
         before calling the method that does the actual 
         processing.
         """
-        if self.url == "":
-            # Use mode "warning" when user needs to do some
-            # action or provide some information; use mode "error"
-            # when invalid parameters have been provided; 
-            # for notifications that don't require user action,
-            # don't use a mode. Use formulations that emphasize
-            # what should be done rather than what is wrong or
-            # missing.
-            self.infoBox.setText("Please add a YouTube URL.", 
-                                 "warning")
-            # Make sure to send None and return if the widget 
-            # cannot operate properly at this point.
-            self.send("New segmentation", None)
-            return
+        # Déplacé plus bas, dans add
+        # if self.url == "":
+        #     # Use mode "warning" when user needs to do some
+        #     # action or provide some information; use mode "error"
+        #     # when invalid parameters have been provided; 
+        #     # for notifications that don't require user action,
+        #     # don't use a mode. Use formulations that emphasize
+        #     # what should be done rather than what is wrong or
+        #     # missing.
+        #     self.infoBox.setText("Please add a YouTube URL.", 
+        #                          "warning")
+        #     # Make sure to send None and return if the widget 
+        #     # cannot operate properly at this point.
+        #     self.send("New segmentation", None)
+        #     return
         
-        """ if self.url == "bonjour": """
-        if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
-            self.infoBox.setText("Please only add YouTube URLs.", "error")
-            self.send("New segmentation", None)
-            return
-            "https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
-        elif self.youtube_video_existe(self.url) == False:
-            self.infoBox.setText("Please check your internet connections.", 
-                                 "warning")
-            # Make sure to send None and return if the widget 
-            # cannot operate properly at this point.
-            self.send("New segmentation", None)
-            return
+        # """ if self.url == "bonjour": """
+        # if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
+        #     self.infoBox.setText("Please only add YouTube URLs.", "error")
+        #     self.send("New segmentation", None)
+        #     return
+        #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
+        # elif self.youtube_video_existe(self.url) == False:
+        #     self.infoBox.setText("Please check your internet connections.", 
+        #                          "warning")
+        #     # Make sure to send None and return if the widget 
+        #     # cannot operate properly at this point.
+        #     self.send("New segmentation", None)
+        #     return
 
         # If the widget creates new LTTL.Input objects (i.e.
         # if it imports new strings in Textable), make sure to
@@ -431,6 +602,104 @@ class YouGet(OWTextableBaseWidget):
         )
         return [x for x in comments]
     
+    #---------------------code emprunté à sci hub ------------------------------------------------------------------------
+    def clearAll(self):
+        """Remove all DOIs from DOIs attr"""
+        del self.DOIs[:]
+        del self.selectedURLLabel[:]
+        self.sendButton.settingsChanged()
+        self.URLLabel = self.URLLabel
+        self.clearAllButton.setDisabled(True)
+
+    def remove(self):
+        """Remove URL from DOIs attr"""
+        if self.selectedURLLabel:
+            index = self.selectedURLLabel[0]
+            self.DOIs.pop(index)
+            del self.selectedURLLabel[:]
+            self.sendButton.settingsChanged()
+            self.URLLabel = self.URLLabel
+        self.clearAllButton.setDisabled(not bool(self.URLLabel))
+
+    def add(self):
+        """Add Urls to URLs attr"""
+        DOIList = re.split(r',', self.new_url)
+        print(DOIList)
+        for DOI in DOIList:
+            print(DOI)
+            self.DOIs.append(DOI)
+        if self.DOIs:
+            tempSet = set(self.DOIs)
+            if(len(tempSet)<len(self.DOIs)):
+                QMessageBox.information(
+                    None, "YouGet", "Duplicate URL(s) found and deleted.",
+                    QMessageBox.Ok
+                )
+
+            #----------------- notre code dans leur code début-------------------
+            # if self.new_url == "":
+            #     # Use mode "warning" when user needs to do some
+            #     # action or provide some information; use mode "error"
+            #     # when invalid parameters have been provided; 
+            #     # for notifications that don't require user action,
+            #     # don't use a mode. Use formulations that emphasize
+            #     # what should be done rather than what is wrong or
+            #     # missing.
+            #     self.infoBox.setText("Please add a YouTube URL.", 
+            #                         "warning")
+            #     # Make sure to send None and return if the widget 
+            #     # cannot operate properly at this point.
+            #     self.send("New segmentation", None)
+            #     return
+        
+            # if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
+            #     self.infoBox.setText("Please only add YouTube URLs.", "error")
+            #     self.send("New segmentation", None)
+            #     return
+            #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
+            if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
+                QMessageBox.information(
+                    None, "YouGet", "Please only add YouTube URLs.",
+                    QMessageBox.Ok
+                )
+            elif self.youtube_video_existe(self.new_url) == False:
+                self.infoBox.setText("Please check your internet connections.", 
+                                    "warning")
+                # Make sure to send None and return if the widget 
+                # cannot operate properly at this point.
+                self.send("New segmentation", None)
+                return
+            #----------------- notre code dans leur code fin-------------------
+            self.DOIs = list(tempSet)
+            self.URLLabel = self.DOIs
+
+        self.URLLabel = self.URLLabel
+        self.clearAllButton.setDisabled(not bool(self.DOIs))
+        self.sendButton.settingsChanged()
+    
+    def addDisabledOrNot(self):
+        self.addButton.setDisabled(not bool(self.new_url))
+
+    def updateURLBoxButtons(self):
+        """Update state of File box buttons"""
+        self.addButton.setDisabled(not bool(self.new_url))
+        self.removeButton.setDisabled(not bool(self.selectedURLLabel))
+
+
+    # The following two methods should be copied verbatim in 
+    # every Textable widget that creates LTTL.Input objects.
+
+    def clearCreatedInputs(self):
+        """Clear created inputs"""
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
+
+    def onDeleteWidget(self):
+        """Clear created inputs on widget deletion"""
+        self.clearCreatedInputs()
+    #--------------------------------------------------------------------------------------------------------------
+
 
     def updateGUI(self):
         pass
