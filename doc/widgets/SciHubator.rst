@@ -57,7 +57,7 @@ The interface contains a **Source** section enabling the user to type the DOI.
 
 .. _SciHubator_basicinterface:
 
-.. figure:: figures/scihubator_basicinterface.png
+.. figure:: specs/images/scihubator_minimal.png
     :align: center
     :alt: Basic interface of the SciHubator widget
 
