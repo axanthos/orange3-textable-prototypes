@@ -403,7 +403,7 @@ class YouGet(OWTextableBaseWidget):
             #return
             #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
         elif self.youtube_video_existe(self.url) == False:
-            self.infoBox.setText("Please check your internet connections.", 
+            self.infoBox.setText("Please check your internet connection.", 
                                  "warning")
             # Make sure to send None and return if the widget 
             # cannot operate properly at this point.
@@ -714,7 +714,7 @@ class YouGet(OWTextableBaseWidget):
                     QMessageBox.Ok
                 )
             elif self.youtube_video_existe(self.new_url) == False:
-                self.infoBox.setText("Please check your internet connections.", 
+                self.infoBox.setText("Please check your internet connection.", 
                                     "warning")
                 # Make sure to send None and return if the widget 
                 # cannot operate properly at this point.
