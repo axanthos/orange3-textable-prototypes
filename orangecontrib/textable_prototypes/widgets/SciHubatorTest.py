@@ -140,6 +140,7 @@ class SciHubator(OWTextableBaseWidget):
     def __init__(self):
         super().__init__()
         self.URLLabel = self.DOIs[:]
+        print(self.URLLabel)
         self.selectedURLLabel = list()
         self.newDOI = u''
         self.extractedText = u''
@@ -305,6 +306,8 @@ class SciHubator(OWTextableBaseWidget):
             disabled = True,
         )
         gui.rubber(self.controlArea)
+        self.URLLabel = self.URLLabel
+        self.updateURLBoxButtons()
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
@@ -327,7 +330,7 @@ class SciHubator(OWTextableBaseWidget):
         # processing" and "post-processing" steps before and
         # after it. If there are no optional steps, notify
         # "Preprocessing...".
-        self.infoBox.setText("Step 1/2: Pre-processing...", "warning")
+        self.infoBox.setText(f"Step 1/3: Pre-processing...", "warning")
 
         # Progress bar should be initialized at this point.
         self.progressBarInit()
@@ -397,7 +400,7 @@ class SciHubator(OWTextableBaseWidget):
                     return
 
             # Update infobox and reset progress bar...
-            self.signal_text.emit("Step 2/2: Processing...",
+            self.signal_text.emit(f"Step 2/3: Processing...",
                                   "warning")
             cur_itr = 0
             self.signal_prog.emit(0, True)
@@ -450,6 +453,27 @@ class SciHubator(OWTextableBaseWidget):
                     self.signal_prog.emit(100, False)
                     return
             tempdir.cleanup()
+
+            #Ajouter les regex
+            
+            if(not self.importAll and (self.importAbstract or self.importText or self.importBibliography)):
+                self.signal_text.emit("Step 3/3: Post-processing...",
+                                    "warning")
+                cur_itr = 0
+                self.signal_prog.emit(0, True)
+                max_itr = int(self.importAll) + int(self.importText) + int(self.importBibliography) + int(self.importAbstract)
+
+                if(self.importAbstract):
+                    regex = r'/(Abstract.+?\n{1,})((.|\n)*)(?=\n\n)/gmi'
+                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+
+                if(self.importText):
+                    regex = r'???'
+                
+                if(self.importBibliography):
+                    regex = r'#/(?<=\n)\n((biblio|r(e|é)f)\w*\W*\n)(.|\n)*/'
+                
+            
 
             # If there's only one LTTL.Input created, it is the
             # widget's output...
@@ -574,6 +598,7 @@ class SciHubator(OWTextableBaseWidget):
         """Update state of File box buttons"""
         self.addButton.setDisabled(not bool(self.newDOI))
         self.removeButton.setDisabled(not bool(self.selectedURLLabel))
+        self.clearAllButton.setDisabled(not bool(self.URLLabel))
 
 
     # The following two methods should be copied verbatim in
