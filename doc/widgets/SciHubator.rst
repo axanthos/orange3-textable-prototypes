@@ -32,15 +32,16 @@ Outputs: ``Text data``
 Requirements ???? TODO
 -------------------------
 
-from functools import partial
-import time
-from scidownl import scihub_download
-import tempfile
-import pdfplumber
-import os
-import requests
-
-
+* Orange 3.38.1
+* Orange Textable 3.2.2
+* from functools import partial
+* import time
+* from scidownl import scihub_download
+* import tempfile
+* import pdfplumber
+* import os
+* import requests
+ 
 Description
 -----------
 
