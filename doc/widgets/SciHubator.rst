@@ -29,18 +29,19 @@ Outputs: ``Text data``
 
   Segmentation covering the content of downloaded pdf files
 
-Requirements ???? TODO
--------------------------
+Requirements 
+------------
 
-from functools import partial
-import time
-from scidownl import scihub_download
-import tempfile
-import pdfplumber
-import os
-import requests
-
-
+* Orange 3.38.1
+* Orange Textable 3.2.2
+* from functools import partial
+* import time
+* from scidownl import scihub_download
+* import tempfile
+* import pdfplumber
+* import os
+* import requests
+ 
 Description
 -----------
 
@@ -148,6 +149,18 @@ Warnings
 *No label was provided.*
     A label must be entered in the **Output segmentation label** field in
     order for computation and data emission to proceed.
+
+*Please enter one or many valid DOIs.*
+
+*No valid DOI detected.*
+
+*Step 1/2: Processing...*
+
+*Step 2/2: Post-processing...*
+
+*Please type DOI.*
+
+
 
 Errors
 ~~~~~~
