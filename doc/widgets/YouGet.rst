@@ -112,6 +112,10 @@ Warnings
 Errors
 ~~~~~~~~
 
+*Duplicate URL(s) found and deleted.
+
+*One or more elements are not YouTube URLs, please only add YouTube URLs.
+
 *Please make sure that input is well-formed XML*
    The URL section must only contain URLs.
 
