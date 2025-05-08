@@ -42,7 +42,7 @@ This widget provides a graphical interface which permits the user to enter an Yo
 download its comments (`<https://www.youtube.com>`_).
 The output is a segmentation containing the comments of the chosen YouTube video. 
 
-* Choose one or more URL(s) and write it in the **URL(s)** section in the following format: 1st URL, 2nd URL, 3rd URL, etc.
+* Choose one or more URL(s) and write it in the **URL(s)** section in the following format: URL1, URL2, URL3, etc.
 * Add it to the **Sources** section
 * Choose the **Number of comments** you would like to download
 * Press **Send** to see the comments in the form of a segmentation
