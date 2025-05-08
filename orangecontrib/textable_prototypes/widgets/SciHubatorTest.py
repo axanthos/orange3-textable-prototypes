@@ -32,6 +32,11 @@ import http
 from PyQt5.QtWidgets import QMessageBox
 from scidownl import scihub_download
 import pdfplumber
+import requests
+import time
+import tempfile
+import os
+from functools import partial
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from Orange.widgets.settings import Setting
@@ -315,70 +320,20 @@ class SciHubator(OWTextableBaseWidget):
         processing.
         """
         # Verify DOIs
-        if not self.DOIContent.strip():
+        if not self.DOIs:
             self.infoBox.setText("Please enter one or many valid DOIs.", "warning")
             self.send("New segmentation", None)
             return
-        
-        #DOIs' validation
-        doi_list = [doi.strip() for doi in self.DOIContent.split(",") if doi.strip()]
-        if not doi_list: 
-            self.infoBox.setText("No valid DOI detected", "warning")
-            self.send("New segmentation", None)
-            return 
 
-        # If the widget creates new LTTL.Input objects (i.e.
-        # if it imports new strings in Textable), make sure to
-        # clear previously created Inputs with this method.
-        self.clearCreatedInputs()    
-
-        # Notify processing in infobox. Typically, there should
-        # always be a "processing" step, with optional "pre-
-        # processing" and "post-processing" steps before and 
-        # after it. If there are no optional steps, notify 
-        # "Preprocessing...".
-        self.infoBox.setText("Step 1/2: Processing...", "warning")
-
-        # Progress bar should be initialized at this point.
-        self.progressBarInit()
-
-        # Create a threaded function to do the actual processing
-        # and specify its arguments (here there are none).
-        threaded_function = partial(
-            self.processData,
-            # argument1, 
-            # argument2, 
-            # ...
-        )
-
-
-        if self.DOI == "":
-            # Use mode "warning" when user needs to do some
-            # action or provide some information; use mode "error"
-            # when invalid parameters have been provided; 
-            # for notifications that don't require user action,
-            # don't use a mode. Use formulations that emphasize
-            # what should be done rather than what is wrong or
-            # missing.
-            self.infoBox.setText("Please type DOI.", 
-                                 "warning")
-            # Make sure to send None and return if the widget 
-            # cannot operate properly at this point.
-            self.send("New segmentation", None)
-            return
-
-        # If the widget creates new LTTL.Input objects (i.e.
-        # if it imports new strings in Textable), make sure to
-        # clear previously created Inputs with this method.
         self.clearCreatedInputs()
 
         # Notify processing in infobox. Typically, there should
         # always be a "processing" step, with optional "pre-
-        # processing" and "post-processing" steps before and 
-        # after it. If there are no optional steps, notify 
+        # processing" and "post-processing" steps before and
+        # after it. If there are no optional steps, notify
         # "Preprocessing...".
-        self.infoBox.setText("Step 1/2: Processing...", "warning")
-        
+        self.infoBox.setText("Step 1/2: Pre-processing...", "warning")
+
         # Progress bar should be initialized at this point.
         self.progressBarInit()
 
@@ -386,8 +341,8 @@ class SciHubator(OWTextableBaseWidget):
         # and specify its arguments (here there are none).
         threaded_function = partial(
             self.processData,
-            # argument1, 
-            # argument2, 
+            # argument1,
+            # argument2,
             # ...
         )
 
@@ -405,72 +360,116 @@ class SciHubator(OWTextableBaseWidget):
             # instruction.
             self.signal_prog.emit(1, False)
 
-            DOIs.append(self.DOIContent)
-            
+            # DOIList.append(self.DOIContent)
+
             # Indicate the total number of iterations that the
             # progress bar will go through (e.g. number of input
             # segments, number of selected files, etc.), then
             # set current iteration to 1.
-            max_itr = int(self.numberOfSegments)
+            max_itr = len(self.DOIs)
             cur_itr = 1
 
+            # Permet de tester la connexion à Sci-Hub
+            if not test_scihub_accessible():
+                self.sendNoneToOutputs()
+                self.infoBox.setText("SciHub inaccessible - verify your connexion", 'error')
+                return
             # Actual processing...
-            
+
             # For each progress bar iteration...
-            for _ in range(int(self.numberOfSegments)):
+            tempdir = tempfile.TemporaryDirectory()
+            for DOI in self.DOIs:
 
                 # Update progress bar manually...
-                self.signal_prog.emit(int(100*cur_itr/max_itr), False)
+                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
                 cur_itr += 1
-                
-                # Create an LTTL.Input...           
-                if int(self.numberOfSegments) == 1:
+
+                # code ajouté ici
+                paper = DOI
+                paper_type = "doi"
+                out = f"{tempdir.name}/{self.DOIs.index(DOI)}"
+                try:
+                    scihub_download(paper, paper_type=paper_type, out=out)
+                except Exception as ex:
+                    print(ex)
+                    self.sendNoneToOutputs()
+                    self.infoBox.setText("An error occurred when downloading", 'error')
+                    return
+                # Cancel operation if requested by user...
+                time.sleep(0.00001)  # Needed somehow!
+                if self.cancel_operation:
+                    self.signal_prog.emit(100, False)
+                    return
+
+            # Update infobox and reset progress bar...
+            self.signal_text.emit("Step 2/2: Processing...",
+                                  "warning")
+            cur_itr = 0
+            self.signal_prog.emit(0, True)
+            for DOI in self.DOIs:
+                DOIText = ""
+                if os.path.exists(f"{tempdir.name}/{self.DOIs.index(DOI)}.pdf"):
+                    try:
+                        with pdfplumber.open(f"{tempdir.name}/{self.DOIs.index(DOI)}.pdf") as pdf:
+                            for page in pdf.pages:
+                                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                                cur_itr += (1 / len(pdf.pages))
+                                DOIText += page.extract_text()
+                    except Exception as e:
+                        self.sendNoneToOutputs()
+                        self.infoBox.setText(f"Error occurred when reading PDF: {str(e)}", 'error')
+                        return
+                else:
+                    self.sendNoneToOutputs()
+                    self.infoBox.setText("Download failed. Please, verify DOI or connexion", 'error')
+                    return
+                ########
+
+                # Create an LTTL.Input...
+                if len(self.DOIs) == 1:
                     # self.captionTitle is the name of the widget,
                     # which will become the label of the output
                     # segmentation.
                     label = self.captionTitle
                 else:
-                    label = None # will be set later.
-                myInput = Input(self.segmentContent, label)
+                    label = None  # will be set later.
+                print(DOIText)
+                myInput = Input(DOIText, label)
 
-                # Extract the first (and single) segment in the 
-                # newly created LTTL.Input and annotate it with 
-                # the length of the input segmentation. 
+                # Extract the first (and single) segment in the
+                # newly created LTTL.Input and annotate it with
+                # the length of the input segmentation.
                 segment = myInput[0]
-                segment.annotations["demo_annotation"]  \
-                    = self.inputSegmentationLength
-                # For the annotation to be saved in the LTTL.Input, 
+                segment.annotations["DOI"] \
+                    = DOI
+                # For the annotation to be saved in the LTTL.Input,
                 # the extracted and annotated segment must be re-assigned
                 # to the first (and only) segment of the LTTL.Input.
                 myInput[0] = segment
-                
+
                 # Add the  LTTL.Input to self.createdInputs.
                 self.createdInputs.append(myInput)
-                
+
                 # Cancel operation if requested by user...
-                time.sleep(0.00001) # Needed somehow!
+                time.sleep(0.00001)  # Needed somehow!
                 if self.cancel_operation:
                     self.signal_prog.emit(100, False)
-                    return            
+                    return
+            tempdir.cleanup()
 
-            # Update infobox and reset progress bar...
-            self.signal_text.emit("Step 2/2: Post-processing...", 
-                                "warning")
-            self.signal_prog.emit(1, True)
-
-            # If there's only one LTTL.Input created, it is the 
+            # If there's only one LTTL.Input created, it is the
             # widget's output...
-            if int(self.numberOfSegments) == 1:
+            if len(self.DOIs) == 1:
                 return self.createdInputs[0]
 
-            # Otherwise the widget's output is a concatenation...        
+            # Otherwise the widget's output is a concatenation...
             else:
                 return Segmenter.concatenate(
                     caller=self,
                     segmentations=self.createdInputs,
                     label=self.captionTitle,
                     import_labels_as=None,
-                ) 
+                )
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -527,8 +526,9 @@ class SciHubator(OWTextableBaseWidget):
 
     def add(self):
         """Add DOIs to DOIs attr"""
-        DOIList = re.split(r',', self.newDOI)
+        DOIList = [x.strip() for x in self.newDOI.strip().split(',')]
         print(DOIList)
+        #Pas besoin de la boucle DOIList
         for DOI in DOIList:
             print(DOI)
             self.DOIs.append(DOI)
@@ -593,6 +593,12 @@ class SciHubator(OWTextableBaseWidget):
     def onDeleteWidget(self):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
+def test_scihub_accessible():
+    try:
+        response = requests.get("https://sci-hub.se", timeout=10)
+        return response.status_code == 200
+    except:
+        return False
 
 if __name__ == '__main__':
         WidgetPreview(SciHubator).run()
