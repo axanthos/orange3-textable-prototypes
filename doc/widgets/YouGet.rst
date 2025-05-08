@@ -116,7 +116,7 @@ Errors
    The system finds one or multiple duplicate URL(s) and deletes them instead of adding them.
 
 *One or more elements are not YouTube URLs, please only add YouTube URLs.*
-   If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of the elements will not be added to the **sources** section.
+   If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of the elements will not be added to the **Sources** section.
 
 *Please make sure that input is well-formed XML*
    The URL section must only contain URLs.
