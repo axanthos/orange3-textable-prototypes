@@ -112,7 +112,8 @@ Warnings
 Errors
 ~~~~~~~~
 
-*Duplicate URL(s) found and deleted.*
+*Duplicate URL(s) found and delete*
+   The system finds one or multiple duplicate URL(s) and deletes them instead of adding them.
 
 *One or more elements are not YouTube URLs, please only add YouTube URLs.*
 
