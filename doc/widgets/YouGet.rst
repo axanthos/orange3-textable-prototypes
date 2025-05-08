@@ -43,6 +43,7 @@ download its comments (`<https://www.youtube.com>`_).
 The output is a segmentation containing the comments of the chosen YouTube video. 
 
 * Choose an URL
+* Add it to the **Sources** section
 * Choose the number of comments you would like to download
 * See the comments in the form of a segmentation
 
