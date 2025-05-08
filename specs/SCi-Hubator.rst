@@ -89,7 +89,7 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 * créer et émettre une segmentation par thème.
 * créer et émettre un résumé/abstract.
 * créer et émettre un tableau de cross-reference.
-* importer un JSON contenant des nombreux liens
+* importer un JSON contenant plusieurs DOI.
 
 2.5 Tests
 =========

@@ -57,7 +57,7 @@ The interface contains a **Source** section enabling the user to type the DOI.
 
 .. _SciHubator_basicinterface:
 
-.. figure:: figures/scihubator_basicinterface.png
+.. figure:: specs/images/scihubator_minimal.png
     :align: center
     :alt: Basic interface of the SciHubator widget
 
@@ -78,7 +78,7 @@ segmentation is emitted (no input data, encoding issue, etc.).
 Advanced interface TODO
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of **SciHubator** allows the user to import several DOIs
+The advanced version of **SciHubator** allows the user to type several DOIs
 in a determined order; each outputed text file can moreover be segmented into
 specific segmentations (introduction, mais corpus and bibliography) with specific
 annotations. The emitted segmentation contains a segment
