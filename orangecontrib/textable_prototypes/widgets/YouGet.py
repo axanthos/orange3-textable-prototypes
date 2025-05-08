@@ -79,6 +79,9 @@ class YouGet(OWTextableBaseWidget):
     #url = settings.Setting("https://www.youtube.com/watch?v=ScMzIvxBSi4")
     url = settings.Setting("")
 
+    # widget will fetch n=0 comments -> default is all
+    n_desired_comments = 0
+
     #numberOfSegments = settings.Setting("10")
 
 
@@ -118,6 +121,10 @@ class YouGet(OWTextableBaseWidget):
         # Comments are stored as follows:
         # 'url': list of comments on url
         self.cached_comments = {}
+
+        # This attribute stores a per-widget number of comments desired as
+        # output. This can be changed by the user at any time via the GUI.
+        n_desired_comments = 0
         
         # The following attribute is required by every widget
         # that imports new strings into Textable.
@@ -280,10 +287,26 @@ class YouGet(OWTextableBaseWidget):
         )
         advOptionsBox = gui.widgetBox(
             widget=self.controlArea,
-            box=u'Options',
+            box=u'More Options',
             orientation='vertical',
             addSpace=False,
         )
+        optionLine1 = gui.widgetBox(
+            widget=advOptionsBox,
+            box=False,
+            orientation='horizontal',
+            addSpace=True,
+        )
+        commentsSelector = gui.comboBox(
+            widget=advOptionsBox,
+            master=self,
+            value='n_desired_comments',
+            label='Select number of comments:',
+            tooltip='Default 0 is all comments.',
+            items=[1, 5, 10, 100, 1000, 10000, 0],
+            #sendSelectedValue=True,
+        )
+
         # gui.checkBox(
         #     widget=advOptionsBox,
         #     master=self,
@@ -369,13 +392,16 @@ class YouGet(OWTextableBaseWidget):
         #     # cannot operate properly at this point.
         #     self.send("New segmentation", None)
         #     return
-        
+        print('another test!')
+        print(self.url)
+
         """ if self.url == "bonjour": """
         if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
+            print('regex failure')
             self.infoBox.setText("Please only add YouTube URLs.", "error")
             self.send("New segmentation", None)
-            return
-            "https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
+            #return
+            #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
         elif self.youtube_video_existe(self.url) == False:
             self.infoBox.setText("Please check your internet connections.", 
                                  "warning")
@@ -418,9 +444,6 @@ class YouGet(OWTextableBaseWidget):
         which is run in a worker thread so that GUI stays
         responsive and operations can be cancelled
         """
-        print(
-            f'▓▓▓▓▓▓▓▓▓▓▓▓ processData()'
-        )
         
         # At start of processing, set progress bar to 1%.
         # Within this method, this is done using the following
@@ -435,6 +458,17 @@ class YouGet(OWTextableBaseWidget):
         # number of segment ça veut dire number of url
         max_itr = len(urls)
         cur_itr = 1
+
+        # TODO: remove useless debug statements
+        # TODO: change 'borrowed code' to match project
+        # TODO: DOIs -> URLs, etc.
+        print('url debug:')
+        print(urls)
+        #print(url)
+        print('DOIs:')
+        print(self.DOI)
+        print(self.DOIs)
+        urls = self.DOIs
 
         # Actual processing...
         
@@ -463,6 +497,7 @@ class YouGet(OWTextableBaseWidget):
             #print("1")
             # on fetch les commentaires depuis l'url spécifié plus haut, attention ce n'est encore l'url entrée par l'utilisateur
 
+            print('cache checks happens below')
             # Check if we already have an entry for the url in the cached
             # comments. If yes, we return it; if not, we scrape and cache.
             if url in self.cached_comments:
@@ -472,6 +507,7 @@ class YouGet(OWTextableBaseWidget):
                 comments_ycd = self.scrape(url)
                 self.cached_comments[url] = comments_ycd
                 print('    not using the cache')
+            print('cache check happened!')
 
             # Placeholder limit for testing. TODO: delete.
             limit = 5
@@ -582,8 +618,10 @@ class YouGet(OWTextableBaseWidget):
         }
         try:
             response = requests.get(urll, headers=headers, timeout=5)
+            print(f'headers test: {response}')
             return response.status_code
         except requests.RequestException:
+            print('headers errors')
             return False
 
     def scrape(self, url) -> list:
@@ -602,6 +640,8 @@ class YouGet(OWTextableBaseWidget):
         print(
             f'    returning comments=\n{comments}'
         )
+        print('look at all these comments!s')
+        print([x for x in comments])
         return [x for x in comments]
     
     #---------------------code emprunté à sci hub ------------------------------------------------------------------------
