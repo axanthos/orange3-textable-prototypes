@@ -26,29 +26,25 @@ __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
 # Standard imports...
-import re
-import http
-
-from PyQt5.QtWidgets import QMessageBox
-from scidownl import scihub_download
-import pdfplumber
-import requests
 import time
 import tempfile
+import pdfplumber
 import os
+import requests
+import LTTL.SegmenterThread as Segmenter
+
 from functools import partial
-from Orange.widgets import widget, gui, settings
-from Orange.widgets.utils.widgetpreview import WidgetPreview
-from Orange.widgets.settings import Setting
+from scidownl import scihub_download
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
-    JSONMessage, InfoBox, SendButton, AdvancedSettings,
-    addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
-    normalizeCarriageReturns, getPredefinedEncodings, pluralize
+    InfoBox, SendButton, pluralize, Task
 )
 from LTTL.Segmentation import Segmentation
-
-
+from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+from LTTL.Input import Input
+from Orange.widgets.settings import Setting
+from PyQt5.QtWidgets import QMessageBox
 
 class SciHubator(OWTextableBaseWidget):
     """An Orange widget that lets the user select an integer value"""
@@ -114,7 +110,7 @@ class SciHubator(OWTextableBaseWidget):
     # ----------------------------------------------------------------------
     # Channel definitions (NB: no input in this case)...
 
-    outputs = [('Text data', Segmentation)]
+    outputs = [('Segmentation', Segmentation)]
 
     # ----------------------------------------------------------------------
     # GUI layout parameters...
@@ -322,7 +318,7 @@ class SciHubator(OWTextableBaseWidget):
         # Verify DOIs
         if not self.DOIs:
             self.infoBox.setText("Please enter one or many valid DOIs.", "warning")
-            self.send("New segmentation", None)
+            self.send("Segmentation", None)
             return
 
         self.clearCreatedInputs()
@@ -433,7 +429,6 @@ class SciHubator(OWTextableBaseWidget):
                     label = self.captionTitle
                 else:
                     label = None  # will be set later.
-                print(DOIText)
                 myInput = Input(DOIText, label)
 
                 # Extract the first (and single) segment in the
@@ -473,25 +468,25 @@ class SciHubator(OWTextableBaseWidget):
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
-            """All operations following the successful termination
-            of self.processData
-            """
-            
-            # Get the result value of self.processData.
-            processed_data = f.result()
+        """All operations following the successful termination
+        of self.processData
+        """
 
-            # If it is not None...
-            if processed_data:
-                message = f"{len(processed_data)} segment@p sent to output " 
-                message = pluralize(message, len(processed_data))
-                numChars = 0
-                for segment in processed_data:
-                    segmentLength = len(Segmentation.get_data(segment.str_index))
-                    numChars += segmentLength
-                message += f"({numChars} character@p)."
-                message = pluralize(message, numChars)
-                self.infoBox.setText(message)
-                self.send("New segmentation", processed_data)
+        # Get the result value of self.processData.
+        processed_data = f.result()
+
+        # If it is not None...
+        if processed_data:
+            message = "Text sent to output "
+            message = pluralize(message, len(processed_data))
+            """numChars = 0
+            for segment in processed_data:
+                segmentLength = len(Segmentation.get_data(segment.str_index))
+                numChars += segmentLength
+            message += f"({numChars} character@p)."
+            message = pluralize(message, numChars)"""
+            self.infoBox.setText(message)
+            self.send("Segmentation", processed_data)
 
     # The following method should be copied verbatim in 
     # every Textable widget.
@@ -528,7 +523,7 @@ class SciHubator(OWTextableBaseWidget):
         """Add DOIs to DOIs attr"""
         DOIList = [x.strip() for x in self.newDOI.strip().split(',')]
         print(DOIList)
-        #Pas besoin de la boucle DOIList
+        #--> Pas besoin de la boucle DOIList non?? <--
         for DOI in DOIList:
             print(DOI)
             self.DOIs.append(DOI)
