@@ -15,7 +15,7 @@ Import YouTube video comments (`<https://www.youtube.com>`_).
 Author
 ------
 
-Virgile Albasini, Sophie Ward, Lorelei Chevroulet, et Vincent Joris
+Virgile Albasini, Sophie Ward, Lorelei Chevroulet, and Vincent Joris.
 
 Signals
 -------
