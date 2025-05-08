@@ -150,6 +150,18 @@ Warnings
     A label must be entered in the **Output segmentation label** field in
     order for computation and data emission to proceed.
 
+*Please enter one or many valid DOIs.*
+
+*No valid DOI detected.*
+
+*Step 1/2: Processing...*
+
+*Step 2/2: Post-processing...*
+
+*Please type DOI.*
+
+
+
 Errors
 ~~~~~~
 
