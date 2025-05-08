@@ -29,8 +29,8 @@ Outputs: ``Text data``
 
   Segmentation covering the content of downloaded pdf files
 
-Requirements ???? TODO
--------------------------
+Requirements 
+------------
 
 * Orange 3.38.1
 * Orange Textable 3.2.2
