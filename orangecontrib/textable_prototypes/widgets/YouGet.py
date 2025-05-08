@@ -87,7 +87,7 @@ class YouGet(OWTextableBaseWidget):
 
     want_main_area = False
 
-    #------------------------code volé--------------------
+    #------------------------code emprunté--------------------
     DOIs = Setting([])
     autoSend = settings.Setting(False)
     importDOIs = Setting(True)
@@ -99,19 +99,19 @@ class YouGet(OWTextableBaseWidget):
     importAbstract = Setting(False)
     importText = Setting(False)
     importBibliography = Setting(False)
-    #------------------------code volé fin-----------------------------
+    #------------------------code emprunté fin-----------------------------
 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #----------------------- code volé à scihub--------------------
+        #----------------------- code emprunté à scihub--------------------
         self.URLLabel = list()
         self.selectedURLLabel = list()
         self.new_url = u''
         self.extractedText = u''
         self.DOI = u''
         self.DOIs = list()
-        #-----------------------code volé fin------------------------------
+        #-----------------------code emprunté fin------------------------------
 
         # Attributes...
         self.inputSegmentationLength = 0
@@ -710,7 +710,7 @@ class YouGet(OWTextableBaseWidget):
             if not_an_url == True:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "One or more element are not Youtube URLs, please only add YouTube URLs.",
+                    None, "YouGet", "One or more element are not YouTube URLs, please only add YouTube URLs.",
                     QMessageBox.Ok
                 )
             elif self.youtube_video_existe(self.new_url) == False:
