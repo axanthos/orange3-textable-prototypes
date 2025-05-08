@@ -139,12 +139,11 @@ class SciHubator(OWTextableBaseWidget):
 
     def __init__(self):
         super().__init__()
-        self.URLLabel = list()
+        self.URLLabel = self.DOIs[:]
         self.selectedURLLabel = list()
         self.newDOI = u''
         self.extractedText = u''
         self.DOI = u''
-        self.DOIs = list()
         self.createdInputs = list()
 
         self.infoBox = InfoBox(widget=self.controlArea)
@@ -309,10 +308,10 @@ class SciHubator(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-    
+
     def sendData(self):
-        """Perform every required check and operation 
-        before calling the method that does the actual 
+        """Perform every required check and operation
+        before calling the method that does the actual
         processing.
         """
         # Verify DOIs
@@ -350,7 +349,7 @@ class SciHubator(OWTextableBaseWidget):
             which is run in a worker thread so that GUI stays
             responsive and operations can be cancelled
             """
-            
+
             # At start of processing, set progress bar to 1%.
             # Within this method, this is done using the following
             # instruction.
@@ -488,7 +487,7 @@ class SciHubator(OWTextableBaseWidget):
             self.infoBox.setText(message)
             self.send("Segmentation", processed_data)
 
-    # The following method should be copied verbatim in 
+    # The following method should be copied verbatim in
     # every Textable widget.
     def setCaption(self, title):
         """Register captionTitle changes and send if needed"""
@@ -506,8 +505,9 @@ class SciHubator(OWTextableBaseWidget):
         del self.DOIs[:]
         del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
-        self.URLLabel = self.URLLabel
+        self.URLLabel = self.DOIs
         self.clearAllButton.setDisabled(True)
+        self.removeButton.setDisabled(True)
 
     def remove(self):
         """Remove URL from DOIs attr"""
@@ -576,7 +576,7 @@ class SciHubator(OWTextableBaseWidget):
         self.removeButton.setDisabled(not bool(self.selectedURLLabel))
 
 
-    # The following two methods should be copied verbatim in 
+    # The following two methods should be copied verbatim in
     # every Textable widget that creates LTTL.Input objects.
 
     def clearCreatedInputs(self):
@@ -598,7 +598,7 @@ def test_scihub_accessible():
 if __name__ == '__main__':
         WidgetPreview(SciHubator).run()
 
-    
+
     # def clearAll(self):
     #     """Remove all DOIs from DOIs attr"""
     #     del self.DOIs[:]
