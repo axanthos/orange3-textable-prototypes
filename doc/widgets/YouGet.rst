@@ -93,7 +93,8 @@ Messages
 Information
 ~~~~~~~~~~~
 
-to be added
+*f"{len(processed_data)} segment@p sent to output"*
+   This confirms that the widget has operated correctly and that the segments have been sent to output.
 
 Warnings
 ~~~~~~~~
