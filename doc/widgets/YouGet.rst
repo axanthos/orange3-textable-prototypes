@@ -42,10 +42,10 @@ This widget provides a graphical interface which permits the user to enter an Yo
 download its comments (`<https://www.youtube.com>`_).
 The output is a segmentation containing the comments of the chosen YouTube video. 
 
-* Choose an URL and write in the **URL(s)** section
+* Choose an URL and write it in the **URL(s)** section
 * Add it to the **Sources** section
-* Choose the number of comments you would like to download
-* See the comments in the form of a segmentation
+* Choose the **Number of comments** you would like to download
+* Press **Send** to see the comments in the form of a segmentation
 
 **YouGet**'s interface is available in two versions, depending on whether or not the Advanced Settings is
 selected.
@@ -70,15 +70,15 @@ The **Sources** section contains all the controls related to the way **YouGet**
 processes the input data. 
 
 The user chooses a YouTube video which they would like to extract its comments. Once the video is chosen, they
-add its URL in the empty **URL section**. To confirm their URL, they must press on the **Add** button which
-will add their URL to a list in the section below "Sources". The user can add one or more URLs to their list.
+add its URL in the empty **URL(s) section**. To confirm their URL, they must press on the **Add** button which
+will add their URL to a list in the section above called **Sources**. The user can add one or more URLs to their list.
 If they wish to remove an URL, they can press on the **Remove** button. If they wish to not only remove one, 
 but all of their URLs, they can press on the **Clear All** button.
 
 Options
 *******
 
-The **Options** section contains the controls to choose the **number of comments** desired in output. The user can choose between having 1 comment (minimum requirement), 100, 1000, or an illimited amount 
+The **Options** section contains the controls to choose the **Number of comments** desired in output. The user can choose between having **1 comment (minimum requirement), 100, 1000, or an illimited amount** 
 of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
 
@@ -113,11 +113,14 @@ Warnings
 Errors
 ~~~~~~~~
 
-*Duplicate URL(s) found and delete*
+*Duplicate URL(s) found and deleted.*
    The system finds one or multiple duplicate URL(s) and deletes them instead of adding them.
 
 *One or more elements are not YouTube URLs, please only add YouTube URLs.*
-   If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of the elements will not be added to the **Sources** section.
+   If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of these elements will not be added to the **Sources** section.
+
+*Please check your internet connection*
+   If the internet connection is interrupted during the process of adding URLs to the **Sources** section or during the loading process of the comments, there will be an error message that will appear to please check your internet connection.
 
 *Please make sure that input is well-formed XML*
    The URL section must only contain URLs.
