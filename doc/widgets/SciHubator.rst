@@ -151,6 +151,7 @@ Warnings
     order for computation and data emission to proceed.
 
 *Please enter one or many valid DOIs.*
+   A valid DOI is required for being processed by Sci-Hub.
 
 *No valid DOI detected.*
 
@@ -164,5 +165,15 @@ Warnings
 
 Errors
 ~~~~~~
+
+*SciHub inaccessible - verify your connexion.*
+
+*An error occurred when downloading.*
+
+*Error occurred when reading PDF:*
+
+*Download failed. Please, verify DOI or connexion.*
+
+
 
     
