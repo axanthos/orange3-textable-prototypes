@@ -15,7 +15,7 @@ Download pdf files from `Sci-HUB <https://www.sci-hub.se/>`_ and extract textual
 
 Authors
 -------
-Sarah Perreti-Poix, Borgeaud Matthias, Chétioui Orsowen, Luginbühl Colin
+Peretti-Poix Sarah, Borgeaud Matthias, Chétioui Orsowen, Luginbühl Colin
 
 Signals
 -------
