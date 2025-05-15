@@ -718,7 +718,7 @@ class YouGet(OWTextableBaseWidget):
             if self.youtube_video_existe(self.new_url) == False:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "Warning Message: <br><br>One or more element(s) are not YouTube URLs or please check your internet connection .",
+                    None, "YouGet", "Warning Message: <br><br>One or more element(s) are not YouTube URLs or please check your internet connection.",
                     QMessageBox.Ok
                 )
             elif not_available == True:
