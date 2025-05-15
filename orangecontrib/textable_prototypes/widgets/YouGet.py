@@ -715,22 +715,17 @@ class YouGet(OWTextableBaseWidget):
                 if not youtube_video_exists(single_url):
                     # print(single_url)
                     not_available = True
-            if not_an_url == True:
-                tempSet = set(old_urls)
-                QMessageBox.information(
-                    None, "YouGet", "Error Message: <br><br>One or more element are not YouTube URLs, please only add YouTube URLs.",
-                    QMessageBox.Ok
-                )
-            if not_available == True:
-                tempSet = set(old_urls)
-                QMessageBox.information(
-                    None, "YouGet", "Error Message: <br><br>One or more videos do not exist or are not available.",
-                    QMessageBox.Ok
-                )
             if self.youtube_video_existe(self.new_url) == False:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "Warning Message: <br><br>Please check your internet connection.",
+                    None, "YouGet", "Warning Message: <br><br>One or more element(s) are not YouTube URLs or please check your internet connection .",
+                    QMessageBox.Ok
+                )
+            elif not_available == True:
+                tempSet = set(old_urls)
+            
+                QMessageBox.information(
+                    None, "YouGet", "Error Message: <br><br>One or more videos do not exist or are not available.",
                     QMessageBox.Ok
                 )
                 """ self.infoBox.setText("Warning Message: <br><br>Please check your internet connection.", 
@@ -739,6 +734,13 @@ class YouGet(OWTextableBaseWidget):
                 # cannot operate properly at this point.
                 """ self.send("New segmentation", None) """
                 return
+
+                """ elif not_an_url == True:
+                tempSet = set(old_urls)
+                QMessageBox.information(
+                    None, "YouGet", "Error Message: <br><br>One or more element(s) are not YouTube URLs, please only add YouTube URLs.",
+                    QMessageBox.Ok
+                ) """
                         #----------------- notre code dans leur code fin-------------------
             self.DOIs = list(tempSet)
             self.URLLabel = self.DOIs
