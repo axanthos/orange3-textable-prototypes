@@ -724,15 +724,20 @@ class YouGet(OWTextableBaseWidget):
             if not_available == True:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "Error Message: <br><br>Une ou plusieurs vidéos n'existent pas ou n'est pas disponible.",
+                    None, "YouGet", "Error Message: <br><br>One or more videos do not exist or are not available.",
                     QMessageBox.Ok
                 )
-            elif self.youtube_video_existe(self.new_url) == False:
-                self.infoBox.setText("Warning Message: <br><br>Please check your internet connection.", 
-                                    "warning")
+            if self.youtube_video_existe(self.new_url) == False:
+                tempSet = set(old_urls)
+                QMessageBox.information(
+                    None, "YouGet", "Warning Message: <br><br>Please check your internet connection.",
+                    QMessageBox.Ok
+                )
+                """ self.infoBox.setText("Warning Message: <br><br>Please check your internet connection.", 
+                                    "warning") """
                 # Make sure to send None and return if the widget 
                 # cannot operate properly at this point.
-                self.send("New segmentation", None)
+                """ self.send("New segmentation", None) """
                 return
                         #----------------- notre code dans leur code fin-------------------
             self.DOIs = list(tempSet)
