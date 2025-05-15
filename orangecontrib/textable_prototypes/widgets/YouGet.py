@@ -679,7 +679,7 @@ class YouGet(OWTextableBaseWidget):
             def_set = set(tempSet)    
             if(len(tempSet)<len(self.DOIs)):
                 QMessageBox.information(
-                    None, "YouGet", "Duplicate URL(s) found and deleted.",
+                    None, "YouGet", "Error Message: <br><br>Duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
                 )
 
@@ -718,17 +718,17 @@ class YouGet(OWTextableBaseWidget):
             if not_an_url == True:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "One or more element are not YouTube URLs, please only add YouTube URLs.",
+                    None, "YouGet", "Error Message: <br><br>One or more element are not YouTube URLs, please only add YouTube URLs.",
                     QMessageBox.Ok
                 )
             if not_available == True:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "Une ou plusieurs vidéos n'existent pas ou n'est pas disponible.",
+                    None, "YouGet", "Error Message: <br><br>Une ou plusieurs vidéos n'existent pas ou n'est pas disponible.",
                     QMessageBox.Ok
                 )
             elif self.youtube_video_existe(self.new_url) == False:
-                self.infoBox.setText("Please check your internet connection.", 
+                self.infoBox.setText("Warning Message: <br><br>Please check your internet connection.", 
                                     "warning")
                 # Make sure to send None and return if the widget 
                 # cannot operate properly at this point.
