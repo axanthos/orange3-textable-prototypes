@@ -441,7 +441,21 @@ class SciHubator(OWTextableBaseWidget):
                 cur_itr = 0
                 self.signal_prog.emit(0, True)
                 max_itr = int(self.importAll) + int(self.importText) + int(self.importBibliography)
-
+                if self.importAll:
+                    cur_itr += 1
+                    myInput = Input(DOIText, label)
+                    # Extract the first (and single) segment in the
+                    # newly created LTTL.Input and annotate it with
+                    # the length of the input segmentation.
+                    segment = myInput[0]
+                    segment.annotations["DOI"] \
+                        = DOI
+                    # For the annotation to be saved in the LTTL.Input,
+                    # the extracted and annotated segment must be re-assigned
+                    # to the first (and only) segment of the LTTL.Input.
+                    myInput[0] = segment
+                    # Add the  LTTL.Input to self.createdInputs.
+                    self.createdInputs.append(myInput)
                 if self.importText:
                     cur_itr += 1
                     ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
@@ -455,7 +469,6 @@ class SciHubator(OWTextableBaseWidget):
                         new_segmentation = Segmentation(Segment())
                     new_segmentation[0].annotations["part"] = "Top level sections"
                     self.createdInputs.append(new_segmentation)
-
                 if self.importBibliography:
                     cur_itr += 1
                     ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
