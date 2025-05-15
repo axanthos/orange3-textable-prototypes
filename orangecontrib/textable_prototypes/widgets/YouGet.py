@@ -666,8 +666,8 @@ class YouGet(OWTextableBaseWidget):
     def add(self):
         """Add Urls to URLs attr"""
         """ DOIList = re.split(r',', self.new_url) """
-        DOIList = [url.strip() for url in re.split(r',', self.new_url)]
-        
+        DOIList = [url.strip() for url in re.split(r'\s*,\s*', self.new_url)]
+
         # print(DOIList)
         old_urls = list(self.DOIs)
         print(old_urls)
@@ -704,7 +704,6 @@ class YouGet(OWTextableBaseWidget):
             #     self.send("New segmentation", None)
             #     return
             #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
-            input_urls = [url.strip() for url in self.url.split(",")]
             
             not_an_url = False
             not_available = False
@@ -793,6 +792,8 @@ def youtube_video_exists(url):
             return False
 
         html = response.text
+        print(html)
+        print()
 
         # Extraction du JSON "ytInitialPlayerResponse"
         initial_data_match = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', html)
