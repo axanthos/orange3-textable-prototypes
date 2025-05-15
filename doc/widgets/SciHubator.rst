@@ -58,7 +58,7 @@ The interface contains a **Source** section enabling the user to type the DOI.
 
 .. _SciHubator_basicinterface:
 
-.. figure:: specs/images/scihubator_minimal.png
+.. figure:: https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/specs/images/scihubator_minimal.png
     :align: center
     :alt: Basic interface of the SciHubator widget
 
@@ -76,7 +76,7 @@ The text below the **Send** button indicates the number TODO of characters in th
 segment contained in the output segmentation, or the reasons why no
 segmentation is emitted (no input data, encoding issue, etc.).
 
-Advanced interface TODO
+Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
 The advanced version of **SciHubator** allows the user to type several DOIs
