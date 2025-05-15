@@ -319,6 +319,11 @@ class SciHubator(OWTextableBaseWidget):
         before calling the method that does the actual
         processing.
         """
+        # Verify checkboxes
+        if not (self.importAll or self.importBibliography or self.importText):
+            self.infoBox.setText("Please select one or more checkboxes.", "warning")
+            self.send("Segmentation", None)
+            return
         # Verify DOIs
         if not self.DOIs:
             self.infoBox.setText("Please enter one or many valid DOIs.", "warning")
@@ -406,6 +411,7 @@ class SciHubator(OWTextableBaseWidget):
                                   "warning")
             cur_itr = 0
             self.signal_prog.emit(0, True)
+            empty_re = False
             for DOI in self.DOIs:
                 DOIText = ""
                 if os.path.exists(f"{tempdir.name}/{self.DOIs.index(DOI)}.pdf"):
@@ -442,8 +448,8 @@ class SciHubator(OWTextableBaseWidget):
                 self.signal_prog.emit(0, True)
                 max_itr = int(self.importAll) + int(self.importText) + int(self.importBibliography)
                 if self.importAll:
+
                     cur_itr += 1
-                    myInput = Input(DOIText, label)
                     # Extract the first (and single) segment in the
                     # newly created LTTL.Input and annotate it with
                     # the length of the input segmentation.
@@ -466,10 +472,15 @@ class SciHubator(OWTextableBaseWidget):
                     print(len(new_segmentation))
                     print(new_segmentation.to_string())
                     if(len(new_segmentation) == 0):
-                        new_segmentation = Segmentation(Segment())
-                    new_segmentation[0].annotations["part"] = "Top level sections"
-                    self.createdInputs.append(new_segmentation)
-                if self.importBibliography:
+                        print("cucou")
+                        empty_re = True
+                        new_input = Input("","Empty Top level sections")
+                    else:
+                        new_segmentation[0].annotations["DOI"] = "Top level sections"
+                        new_input = Input(new_segmentation.to_string(), "")
+                        new_input[0]= new_segmentation[0]
+                    self.createdInputs.append(new_input)
+                if self.importBibliography: 
                     cur_itr += 1
                     ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
                     regexes = [(ma_regex, 'tokenize')]
@@ -477,6 +488,9 @@ class SciHubator(OWTextableBaseWidget):
                     new_segmentation = tokenize(myInput, regexes)
                     print("#"*100)
                     print(new_segmentation.to_string())
+                    if (len(new_segmentation) == 0):
+                        empty_re = True
+                        new_segmentation = Input("", "Empty Bibliography section")
                     new_segmentation[0].annotations["part"] = "Bibliography"
                     self.createdInputs.append(new_segmentation)
 
@@ -510,9 +524,14 @@ class SciHubator(OWTextableBaseWidget):
 
             # If there's only one LTTL.Input created, it is the
             # widget's output...
+            print(empty_re)
+            if empty_re:
+                QMessageBox.warning(
+                    None, "SciHubator", "Not all sections were segmented",
+                    QMessageBox.Ok
+                )
             if len(self.DOIs) == 1:
                 return self.createdInputs[0]
-
             # Otherwise the widget's output is a concatenation...
             else:
                 return Segmenter.concatenate(
