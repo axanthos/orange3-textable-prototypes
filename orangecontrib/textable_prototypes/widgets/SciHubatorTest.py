@@ -25,6 +25,7 @@ __author__ = "Sarah Perreti-Poix, Borgeaud Matthias, Chétioui Orsowen, Luginbü
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
+import re
 # Standard imports...
 import time
 import tempfile
@@ -39,6 +40,7 @@ from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     InfoBox, SendButton, pluralize, Task
 )
+from LTTL.Segmenter import tokenize
 from LTTL.Segmentation import Segmentation
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
@@ -250,7 +252,7 @@ class SciHubator(OWTextableBaseWidget):
             widget=advOptionsBox,
             master=self,
             value='importAll',
-            label=u'All',
+            label=u'All in one Segment',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
@@ -431,21 +433,57 @@ class SciHubator(OWTextableBaseWidget):
                     label = self.captionTitle
                 else:
                     label = None  # will be set later.
+
                 myInput = Input(DOIText, label)
 
-                # Extract the first (and single) segment in the
-                # newly created LTTL.Input and annotate it with
-                # the length of the input segmentation.
-                segment = myInput[0]
-                segment.annotations["DOI"] \
-                    = DOI
-                # For the annotation to be saved in the LTTL.Input,
-                # the extracted and annotated segment must be re-assigned
-                # to the first (and only) segment of the LTTL.Input.
-                myInput[0] = segment
+                self.signal_text.emit("Step 3/3: Post-processing...",
+                                      "warning")
+                cur_itr = 0
+                self.signal_prog.emit(0, True)
+                max_itr = int(self.importAll) + int(self.importText) + int(self.importBibliography)
 
-                # Add the  LTTL.Input to self.createdInputs.
-                self.createdInputs.append(myInput)
+                if self.importText:
+                    cur_itr += 1
+                    ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
+                    regexes = [(ma_regex,'tokenize')]
+                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                    new_segmentation = tokenize(myInput, regexes)
+                    print("*" * 100)
+                    print(len(new_segmentation))
+                    print(new_segmentation.to_string())
+                    if(len(new_segmentation) == 0):
+                        new_segmentation = Segmentation(Segment())
+                    new_segmentation[0].annotations["part"] = "Top level sections"
+                    self.createdInputs.append(new_segmentation)
+
+                if self.importBibliography:
+                    cur_itr += 1
+                    ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
+                    regexes = [(ma_regex, 'tokenize')]
+                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                    new_segmentation = tokenize(myInput, regexes)
+                    print("#"*100)
+                    print(new_segmentation.to_string())
+                    new_segmentation[0].annotations["part"] = "Bibliography"
+                    self.createdInputs.append(new_segmentation)
+
+                if self.importAbstract:
+                    cur_itr += 1
+                    myInput = Input(DOIText, label)
+
+                    # Extract the first (and single) segment in the
+                    # newly created LTTL.Input and annotate it with
+                    # the length of the input segmentation.
+                    segment = myInput[0]
+                    segment.annotations["DOI"] \
+                        = DOI
+                    # For the annotation to be saved in the LTTL.Input,
+                    # the extracted and annotated segment must be re-assigned
+                    # to the first (and only) segment of the LTTL.Input.
+                    myInput[0] = segment
+
+                    # Add the  LTTL.Input to self.createdInputs.
+                    self.createdInputs.append(myInput)
 
                 # Cancel operation if requested by user...
                 time.sleep(0.00001)  # Needed somehow!
@@ -454,25 +492,6 @@ class SciHubator(OWTextableBaseWidget):
                     return
             tempdir.cleanup()
 
-            #Ajouter les regex
-            
-            if not self.importAll and (self.importAbstract or self.importText or self.importBibliography):
-                self.signal_text.emit("Step 3/3: Post-processing...",
-                                    "warning")
-                cur_itr = 0
-                self.signal_prog.emit(0, True)
-                max_itr = int(self.importAll) + int(self.importText) + int(self.importBibliography) + int(self.importAbstract)
-
-                if self.importAbstract:
-                    regexes = [(r'/(Abstract.+?\n{1,})((.|\n)*)(?=\n\n)/gmi', "tokenize")]
-                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                    new_segmentation = tokenize(myInput, regexes)
-
-                if self.importText:
-                    regex = r'???'
-                
-                if self.importBibliography:
-                    regex = r'#/(?<=\n)\n((biblio|r(e|é)f)\w*\W*\n)(.|\n)*/'
                 
             
 
