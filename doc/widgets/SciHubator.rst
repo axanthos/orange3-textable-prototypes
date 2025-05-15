@@ -150,11 +150,11 @@ Warnings
    A valid DOI is required for being processed by Sci-Hub. The warning indicates that nothing was typed in the DOI field.
 
 *Step 1/3: Pre-processing...*
-   
+   The PDF is being downloaded   
 *Step 2/3: Processing...*
-
+   The PDF is being processed into a raw text.
 *Step 3/3: Post-processing...*
-
+   Segmentations are applied to the text.
 
 
 
