@@ -163,7 +163,7 @@ Errors
 ~~~~~~
 
 *SciHub inaccessible - verify your connexion.*
-   Plese verify your internet connexion or check if Sci-Hub is down.
+   Plese verify your internet connexion or check if `Sci-HUB <https://www.sci-hub.se/>`_ is down.
 
 *An error occurred when downloading.*
    Donwloading the PDF didn't worked, please try again.
