@@ -703,14 +703,24 @@ class YouGet(OWTextableBaseWidget):
             #     return
             #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
             not_an_url = False
+            not_available = False
             for single_url in tempSet:
                 # si une ou plus url dans la liste n'est pas la forme d'une url ytb, ne pas autoriser l'ajout
                 if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
                     not_an_url = True
+                if not youtube_video_exists(single_url):
+                    # print(single_url)
+                    not_available = True
             if not_an_url == True:
                 tempSet = set(old_urls)
                 QMessageBox.information(
                     None, "YouGet", "One or more element are not YouTube URLs, please only add YouTube URLs.",
+                    QMessageBox.Ok
+                )
+            if not_available == True:
+                tempSet = set(old_urls)
+                QMessageBox.information(
+                    None, "YouGet", "❌ La vidéo n'existe pas ou n'est pas disponible.",
                     QMessageBox.Ok
                 )
             elif self.youtube_video_existe(self.new_url) == False:
@@ -720,7 +730,7 @@ class YouGet(OWTextableBaseWidget):
                 # cannot operate properly at this point.
                 self.send("New segmentation", None)
                 return
-            #----------------- notre code dans leur code fin-------------------
+                        #----------------- notre code dans leur code fin-------------------
             self.DOIs = list(tempSet)
             self.URLLabel = self.DOIs
 
@@ -764,7 +774,7 @@ if __name__ == '__main__':
 
 
 
-'''import requests
+import requests
 import re
 import json
 
@@ -799,9 +809,9 @@ def youtube_video_exists(url):
         print(f"Erreur lors de l'analyse : {e}")
         return False
 
-# Test
-url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Change le lien ici pour tester
-if youtube_video_exists(url):
-    print("✅ La vidéo existe et est accessible.")
-else:
-    print("❌ La vidéo n'existe pas ou n'est pas disponible.")'''
+# # Test
+# url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Change le lien ici pour tester
+# if youtube_video_exists(url):
+#     print("✅ La vidéo existe et est accessible.")
+# else:
+#     print("❌ La vidéo n'existe pas ou n'est pas disponible.")'''
