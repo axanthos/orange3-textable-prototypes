@@ -680,7 +680,7 @@ class YouGet(OWTextableBaseWidget):
             def_set = set(tempSet)    
             if(len(tempSet)<len(self.DOIs)):
                 QMessageBox.information(
-                    None, "YouGet", "Duplicate URL(s) found and deleted.",
+                    None, "YouGet", "Error Message: <br><br>Duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
                 )
 
@@ -708,6 +708,7 @@ class YouGet(OWTextableBaseWidget):
             
             not_an_url = False
             not_available = False
+            print(tempSet)
             for single_url in tempSet:
                 # si une ou plus url dans la liste n'est pas la forme d'une url ytb, ne pas autoriser l'ajout
                 if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
@@ -715,25 +716,32 @@ class YouGet(OWTextableBaseWidget):
                 if not youtube_video_exists(single_url):
                     # print(single_url)
                     not_available = True
-            if not_an_url == True:
+            if self.youtube_video_existe(self.new_url) == False:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "One or more element are not YouTube URLs, please only add YouTube URLs.",
+                    None, "YouGet", "Warning Message: <br><br>One or more element(s) are not YouTube URLs or please check your internet connection.",
                     QMessageBox.Ok
                 )
-            if not_available == True:
+            elif not_available == True:
                 tempSet = set(old_urls)
+            
                 QMessageBox.information(
-                    None, "YouGet", "❌ La vidéo n'existe pas ou n'est pas disponible.",
+                    None, "YouGet", "Error Message: <br><br>One or more videos do not exist or are not available.",
                     QMessageBox.Ok
                 )
-            elif self.youtube_video_existe(self.new_url) == False:
-                self.infoBox.setText("Please check your internet connection.", 
-                                    "warning")
+                """ self.infoBox.setText("Warning Message: <br><br>Please check your internet connection.", 
+                                    "warning") """
                 # Make sure to send None and return if the widget 
                 # cannot operate properly at this point.
-                self.send("New segmentation", None)
+                """ self.send("New segmentation", None) """
                 return
+
+                """ elif not_an_url == True:
+                tempSet = set(old_urls)
+                QMessageBox.information(
+                    None, "YouGet", "Error Message: <br><br>One or more element(s) are not YouTube URLs, please only add YouTube URLs.",
+                    QMessageBox.Ok
+                ) """
                         #----------------- notre code dans leur code fin-------------------
             self.DOIs = list(tempSet)
             self.URLLabel = self.DOIs
@@ -793,16 +801,18 @@ def youtube_video_exists(url):
             return False
 
         html = response.text
-        print(html)
-        print()
+        # print(html)
 
         # Extraction du JSON "ytInitialPlayerResponse"
         initial_data_match = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', html)
+        print(initial_data_match)
+
         if not initial_data_match:
             print("Impossible d'extraire ytInitialPlayerResponse")
             return False
 
         data = json.loads(initial_data_match.group(1))
+        print(data)
         status = data.get("playabilityStatus", {}).get("status", "UNKNOWN")
 
         if status == "OK":
