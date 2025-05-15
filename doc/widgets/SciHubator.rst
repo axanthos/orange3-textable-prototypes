@@ -9,7 +9,7 @@ sarah's note: search for TODO for all missing and needing of correction areas
 SciHubator
 ==============
 
-.. image:: figures/TODO.png 
+.. image:: https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/icons/scihubator.png
  
 Download pdf files from `Sci-HUB <https://www.sci-hub.se/>`_ and extract textual content into segmentations
 
