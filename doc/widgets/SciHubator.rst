@@ -1,5 +1,3 @@
-sarah's note: search for TODO for all missing and needing of correction areas
-
 .. meta::
    :description: Orange3 Textable Prototypes documentation, SciHubator widget
    :keywords: Orange3, Textable, Prototypes, documentation, SciHubator, widget
@@ -9,7 +7,7 @@ sarah's note: search for TODO for all missing and needing of correction areas
 SciHubator
 ==============
 
-.. image:: figures/TODO.png 
+.. image:: https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/icons/scihubator.png
  
 Download pdf files from `Sci-HUB <https://www.sci-hub.se/>`_ and extract textual content into segmentations
 
@@ -58,7 +56,7 @@ The interface contains a **Source** section enabling the user to type the DOI.
 
 .. _SciHubator_basicinterface:
 
-.. figure:: specs/images/scihubator_minimal.png
+.. figure:: https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/specs/images/scihubator_minimal.png
     :align: center
     :alt: Basic interface of the SciHubator widget
 
@@ -76,7 +74,7 @@ The text below the **Send** button indicates the number TODO of characters in th
 segment contained in the output segmentation, or the reasons why no
 segmentation is emitted (no input data, encoding issue, etc.).
 
-Advanced interface TODO
+Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
 The advanced version of **SciHubator** allows the user to type several DOIs
@@ -87,7 +85,7 @@ for each imported file.
 
 .. _scihubator_advancedinterface:
 
-.. figure:: figures/scihubator_advancedinterface.png
+.. figure:: https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/specs/images/scihubator_principal.png
     :align: center
     :alt: Advanced interface of the Super Text files widget
     :scale: 80%
@@ -146,20 +144,16 @@ Information
 Warnings
 ~~~~~~~~
 
-*No label was provided.*
-    A label must be entered in the **Output segmentation label** field in
-    order for computation and data emission to proceed.
-
 *Please enter one or many valid DOIs.*
-   A valid DOI is required for being processed by Sci-Hub.
+   A valid DOI is required for being processed by Sci-Hub. The warning indicates that nothing was typed in the DOI field.
 
-*No valid DOI detected.*
+*Step 1/3: Pre-processing...*
+   The PDF is being downloaded   
+*Step 2/3: Processing...*
+   The PDF is being processed into a raw text.
+*Step 3/3: Post-processing...*
+   Segmentations are applied to the text.
 
-*Step 1/2: Processing...*
-
-*Step 2/2: Post-processing...*
-
-*Please type DOI.*
 
 
 
@@ -167,13 +161,16 @@ Errors
 ~~~~~~
 
 *SciHub inaccessible - verify your connexion.*
+   Plese verify your internet connexion or check if `Sci-HUB <https://www.sci-hub.se/>`_ is down.
 
 *An error occurred when downloading.*
+   Donwloading the PDF didn't worked, please try again.
 
 *Error occurred when reading PDF:*
+   An unexpected error occured when reading the downloaded PDF. Please try again, if the error still happen your DOI could be not compatible.
 
 *Download failed. Please, verify DOI or connexion.*
-
+   Sci-Hub is accessible but scihubator couldn't download the PDF. Your connexion has perhaps crashed in the download process or the DOI provided is not valid.
 
 
     
