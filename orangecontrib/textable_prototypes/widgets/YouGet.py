@@ -396,7 +396,7 @@ class YouGet(OWTextableBaseWidget):
         print(self.url)
 
         """ if self.url == "bonjour": """
-        if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
+        """ if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
             print('regex failure')
             self.infoBox.setText("Please only add YouTube URLs.", "error")
             self.send("New segmentation", None)
@@ -408,7 +408,7 @@ class YouGet(OWTextableBaseWidget):
             # Make sure to send None and return if the widget 
             # cannot operate properly at this point.
             self.send("New segmentation", None)
-            return
+            return """
         
 
 
@@ -665,7 +665,9 @@ class YouGet(OWTextableBaseWidget):
 
     def add(self):
         """Add Urls to URLs attr"""
-        DOIList = re.split(r',', self.new_url)
+        """ DOIList = re.split(r',', self.new_url) """
+        DOIList = [url.strip() for url in re.split(r',', self.new_url)]
+        
         # print(DOIList)
         old_urls = list(self.DOIs)
         print(old_urls)
@@ -702,6 +704,8 @@ class YouGet(OWTextableBaseWidget):
             #     self.send("New segmentation", None)
             #     return
             #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
+            input_urls = [url.strip() for url in self.url.split(",")]
+            
             not_an_url = False
             not_available = False
             for single_url in tempSet:
