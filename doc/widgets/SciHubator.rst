@@ -87,7 +87,7 @@ for each imported file.
 
 .. _scihubator_advancedinterface:
 
-.. figure:: figures/scihubator_advancedinterface.png
+.. figure:: https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/specs/images/scihubator_principal.png
     :align: center
     :alt: Advanced interface of the Super Text files widget
     :scale: 80%
