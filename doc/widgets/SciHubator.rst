@@ -146,20 +146,16 @@ Information
 Warnings
 ~~~~~~~~
 
-*No label was provided.*
-    A label must be entered in the **Output segmentation label** field in
-    order for computation and data emission to proceed.
-
 *Please enter one or many valid DOIs.*
-   A valid DOI is required for being processed by Sci-Hub.
+   A valid DOI is required for being processed by Sci-Hub. The warning indicates that nothing was typed in the DOI field.
 
-*No valid DOI detected.*
+*Step 1/3: Pre-processing...*
+   
+*Step 2/3: Processing...*
 
-*Step 1/2: Processing...*
+*Step 3/3: Post-processing...*
 
-*Step 2/2: Post-processing...*
 
-*Please type DOI.*
 
 
 
@@ -167,13 +163,16 @@ Errors
 ~~~~~~
 
 *SciHub inaccessible - verify your connexion.*
+   Plese verify your internet connexion or check if Sci-Hub is down.
 
 *An error occurred when downloading.*
+   Donwloading the PDF didn't worked, please try again.
 
 *Error occurred when reading PDF:*
+   An unexpected error occured when reading the downloaded PDF. Please try again, if the error still happen your DOI could be not compatible.
 
 *Download failed. Please, verify DOI or connexion.*
-
+   Sci-Hub is accessible but scihubator couldn't download the PDF. Your connexion has perhaps crashed in the download process or the DOI provided is not valid.
 
 
     
