@@ -517,6 +517,7 @@ class YouGet(OWTextableBaseWidget):
             if limit != 0:
                 comments_ycd = comments_ycd[0:limit]
 
+            #TODO ajouter ici une manière d'afficher les commentaire de manière splittée (c'est tout join pour le moment)
             #on créé une chaine de caractères séparés d'un retour à la ligne 
             comments = "\n".join([comment["text"] for comment in comments_ycd ])
             print(comments_ycd)
