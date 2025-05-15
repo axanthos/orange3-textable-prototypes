@@ -135,7 +135,7 @@ class SciHubator(OWTextableBaseWidget):
 
     # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
     importAll = Setting(True)
-    importAbstract = Setting(False)
+    """importAbstract = Setting(False)"""
     importText = Setting(False)
     importBibliography = Setting(False)
 
@@ -259,7 +259,7 @@ class SciHubator(OWTextableBaseWidget):
                 u"Import DOIs as annotations."
             ),
         )
-        gui.separator(widget=advOptionsBox, height=3)
+        """gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
             widget=advOptionsBox,
             master=self,
@@ -270,7 +270,7 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"Import DOIs as annotations."
             ),
-        )
+        )"""
         gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
             widget=advOptionsBox,
@@ -467,7 +467,7 @@ class SciHubator(OWTextableBaseWidget):
                     new_segmentation[0].annotations["part"] = "Bibliography"
                     self.createdInputs.append(new_segmentation)
 
-                if self.importAbstract:
+                """if self.importAbstract:
                     cur_itr += 1
                     myInput = Input(DOIText, label)
 
@@ -483,7 +483,7 @@ class SciHubator(OWTextableBaseWidget):
                     myInput[0] = segment
 
                     # Add the  LTTL.Input to self.createdInputs.
-                    self.createdInputs.append(myInput)
+                    self.createdInputs.append(myInput)"""
 
                 # Cancel operation if requested by user...
                 time.sleep(0.00001)  # Needed somehow!
@@ -492,7 +492,7 @@ class SciHubator(OWTextableBaseWidget):
                     return
             tempdir.cleanup()
 
-                
+
             
 
             # If there's only one LTTL.Input created, it is the
