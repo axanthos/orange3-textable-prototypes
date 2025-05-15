@@ -1,5 +1,3 @@
-sarah's note: search for TODO for all missing and needing of correction areas
-
 .. meta::
    :description: Orange3 Textable Prototypes documentation, SciHubator widget
    :keywords: Orange3, Textable, Prototypes, documentation, SciHubator, widget
