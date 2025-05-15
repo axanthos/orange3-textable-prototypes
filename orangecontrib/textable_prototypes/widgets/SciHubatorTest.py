@@ -456,21 +456,22 @@ class SciHubator(OWTextableBaseWidget):
 
             #Ajouter les regex
             
-            if(not self.importAll and (self.importAbstract or self.importText or self.importBibliography)):
+            if not self.importAll and (self.importAbstract or self.importText or self.importBibliography):
                 self.signal_text.emit("Step 3/3: Post-processing...",
                                     "warning")
                 cur_itr = 0
                 self.signal_prog.emit(0, True)
                 max_itr = int(self.importAll) + int(self.importText) + int(self.importBibliography) + int(self.importAbstract)
 
-                if(self.importAbstract):
-                    regex = r'/(Abstract.+?\n{1,})((.|\n)*)(?=\n\n)/gmi'
+                if self.importAbstract:
+                    regexes = [(r'/(Abstract.+?\n{1,})((.|\n)*)(?=\n\n)/gmi', "tokenize")]
                     self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                    new_segmentation = tokenize(myInput, regexes)
 
-                if(self.importText):
+                if self.importText:
                     regex = r'???'
                 
-                if(self.importBibliography):
+                if self.importBibliography:
                     regex = r'#/(?<=\n)\n((biblio|r(e|é)f)\w*\W*\n)(.|\n)*/'
                 
             
