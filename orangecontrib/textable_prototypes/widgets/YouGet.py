@@ -708,6 +708,7 @@ class YouGet(OWTextableBaseWidget):
             
             not_an_url = False
             not_available = False
+            print(tempSet)
             for single_url in tempSet:
                 # si une ou plus url dans la liste n'est pas la forme d'une url ytb, ne pas autoriser l'ajout
                 if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
@@ -724,7 +725,7 @@ class YouGet(OWTextableBaseWidget):
             if not_available == True:
                 tempSet = set(old_urls)
                 QMessageBox.information(
-                    None, "YouGet", "❌ La vidéo n'existe pas ou n'est pas disponible.",
+                    None, "YouGet", "Une ou plusieurs vidéos n'existent pas ou n'est pas disponible.",
                     QMessageBox.Ok
                 )
             elif self.youtube_video_existe(self.new_url) == False:
@@ -793,14 +794,18 @@ def youtube_video_exists(url):
             return False
 
         html = response.text
+        # print(html)
 
         # Extraction du JSON "ytInitialPlayerResponse"
         initial_data_match = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', html)
+        print(initial_data_match)
+
         if not initial_data_match:
             print("Impossible d'extraire ytInitialPlayerResponse")
             return False
 
         data = json.loads(initial_data_match.group(1))
+        print(data)
         status = data.get("playabilityStatus", {}).get("status", "UNKNOWN")
 
         if status == "OK":
