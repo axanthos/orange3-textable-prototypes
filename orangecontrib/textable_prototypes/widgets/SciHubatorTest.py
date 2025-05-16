@@ -135,7 +135,6 @@ class SciHubator(OWTextableBaseWidget):
 
     # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
     importAll = Setting(True)
-    """importAbstract = Setting(False)"""
     importText = Setting(False)
     importBibliography = Setting(False)
 
@@ -259,18 +258,6 @@ class SciHubator(OWTextableBaseWidget):
                 u"Import DOIs as annotations."
             ),
         )
-        """gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importAbstract',
-            label=u'Abstract',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Import DOIs as annotations."
-            ),
-        )"""
         gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
             widget=advOptionsBox,
@@ -494,24 +481,6 @@ class SciHubator(OWTextableBaseWidget):
                     new_segmentation[0].annotations["part"] = "Bibliography"
                     self.createdInputs.append(new_segmentation)
 
-                """if self.importAbstract:
-                    cur_itr += 1
-                    myInput = Input(DOIText, label)
-
-                    # Extract the first (and single) segment in the
-                    # newly created LTTL.Input and annotate it with
-                    # the length of the input segmentation.
-                    segment = myInput[0]
-                    segment.annotations["DOI"] \
-                        = DOI
-                    # For the annotation to be saved in the LTTL.Input,
-                    # the extracted and annotated segment must be re-assigned
-                    # to the first (and only) segment of the LTTL.Input.
-                    myInput[0] = segment
-
-                    # Add the  LTTL.Input to self.createdInputs.
-                    self.createdInputs.append(myInput)"""
-
                 # Cancel operation if requested by user...
                 time.sleep(0.00001)  # Needed somehow!
                 if self.cancel_operation:
@@ -554,12 +523,6 @@ class SciHubator(OWTextableBaseWidget):
         if processed_data:
             message = "Text sent to output "
             message = pluralize(message, len(processed_data))
-            """numChars = 0
-            for segment in processed_data:
-                segmentLength = len(Segmentation.get_data(segment.str_index))
-                numChars += segmentLength
-            message += f"({numChars} character@p)."
-            message = pluralize(message, numChars)"""
             self.infoBox.setText(message)
             self.send("Segmentation", processed_data)
 
