@@ -80,7 +80,8 @@ class YouGet(OWTextableBaseWidget):
     url = settings.Setting("")
 
     # widget will fetch n=0 comments -> default is all
-    n_desired_comments = 0
+    # n_desired_comments = 0
+    n_desired_comments = 7 # for testing; TODO: delete.
 
     #numberOfSegments = settings.Setting("10")
 
@@ -304,7 +305,7 @@ class YouGet(OWTextableBaseWidget):
             label='Select number of comments:',
             tooltip='Default 0 is all comments.',
             items=[1, 5, 10, 100, 1000, 10000, 0],
-            #sendSelectedValue=True,
+            sendSelectedValue=True,
         )
 
         # gui.checkBox(
@@ -500,28 +501,48 @@ class YouGet(OWTextableBaseWidget):
             print('cache checks happens below')
             # Check if we already have an entry for the url in the cached
             # comments. If yes, we return it; if not, we scrape and cache.
+            print(
+                f'▓▓————————▓▓ processData(): cache check'
+            )
+            print(f'▓ cache check: url in cached comments? :\n'
+                  f'▓ ——>{url in self.cached_comments}')
             if url in self.cached_comments:
+                print(f'▓ using the cache')
                 comments_ycd = self.cached_comments.get(url)
-                print('    using the cache')
+                print(f'▓ found {len(comments_ycd)} comments')
+                #print('·   here be comments')
+                #print(comments_ycd)
             else:
+                #print(f'▓▓ results of self.scrape(url): \n{self.scrape(url)}')
+                print(f'▓ not using the cache')
                 comments_ycd = self.scrape(url)
+                print(f'▓ found {len(comments_ycd)} comments')
+                #print(f'▓▓ contents of comments_ycd: \n{comments_ycd}')
                 self.cached_comments[url] = comments_ycd
-                print('    not using the cache')
-            print('cache check happened!')
+                print(f'▓ saved {len(self.cached_comments[url])} comments')
+                #print(f'▓▓ cached comments:: \n{self.cached_comments}')
+                #print(self.cached_comments)
+            print('▓▓————————▓▓ cache check happened! ▓▓————————▓▓')
 
             # Placeholder limit for testing. TODO: delete.
-            limit = 5
+            #limit = 10
+            limit = int(self.n_desired_comments)
 
             # While we cache everything that was scraped, we only return as
             # many as the user requested.
             if limit != 0:
+                print(f'▓ desired limit is: {limit} \n'
+                      f'▓ with type: {type(limit)}')
                 comments_ycd = comments_ycd[0:limit]
+                print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
+                #print("there's a limit here!")
+                #print(comments_ycd)
 
             #TODO ajouter ici une manière d'afficher les commentaire de manière splittée (c'est tout join pour le moment)
             #on créé une chaine de caractères séparés d'un retour à la ligne 
             comments = "\n".join([comment["text"] for comment in comments_ycd ])
-            print(comments_ycd)
-            print("2")
+            #print(comments_ycd)
+            #print("2")
             #myInput = Input("hello", label)
             myInput = Input(comments, label) 
 
@@ -614,15 +635,23 @@ class YouGet(OWTextableBaseWidget):
 
     # Pour tester s'il y a une connection internet
     def youtube_video_existe(self, urll):
+        print(
+            f'▓▓▓▓▓▓▓▓▓▓▓▓ youtube_video_existe(urll)\n'
+            f'▓ youtube_video_existe() —— urll={urll}'
+        )
         headers = {
             "User-Agent": "Mozilla/5.0"  # éviter le blocage par YouTube
         }
         try:
             response = requests.get(urll, headers=headers, timeout=5)
-            print(f'headers test: {response}')
+            print(f'▓ youtube_video_existe() —— headers test: {response}')
+            print('▓ youtube_video_existe() —— work done :) returning.')
+            print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
             return response.status_code
         except requests.RequestException:
-            print('headers errors')
+            print(f'▓ youtube_video_existe() —— headers errors')
+            print('▓ youtube_video_existe() —— work done :) returning.')
+            print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
             return False
 
     def scrape(self, url) -> list:
@@ -631,19 +660,23 @@ class YouGet(OWTextableBaseWidget):
         it to scrape all comments on a given url, returning them as a list.
         """
         print(
-            f'▓▓▓▓▓▓▓▓▓▓▓▓ scrape()'
-            f'    url={url}'
+            f'▓▓▓▓▓▓▓▓▓▓▓▓ scrape(url)'
+            f'▓ scrape() —— url={url}'
         )
 
         # that's where we go fetch the comments!
         downloader = YoutubeCommentDownloader()
         comments = downloader.get_comments_from_url(url)
+        every_comment = [x for x in comments]
         print(
-            f'    returning comments=\n{comments}'
+            f'▓ scrape() —— returning {len(every_comment)} comment(s)'
         )
-        print('look at all these comments!s')
-        print([x for x in comments])
-        return [x for x in comments]
+        #print('look at all these comments!s')
+        #print([x for x in comments])
+        print('▓ scrape() —— work done :) returning.')
+        print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
+        return every_comment
+        #return [x for x in comments]
     
     #---------------------code emprunté à sci hub ------------------------------------------------------------------------
     def clearAll(self):
