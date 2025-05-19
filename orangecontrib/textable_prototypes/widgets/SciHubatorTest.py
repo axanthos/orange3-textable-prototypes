@@ -37,12 +37,12 @@ import LTTL.SegmenterThread as Segmenter
 from functools import partial
 from scidownl import scihub_download
 from _textable.widgets.TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
-    InfoBox, SendButton, pluralize, Task
+    OWTextableBaseWidget,
+    InfoBox, SendButton, pluralize
 )
 from LTTL.Segmenter import tokenize
 from LTTL.Segmentation import Segmentation
-from Orange.widgets import widget, gui, settings
+from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from LTTL.Input import Input
 from Orange.widgets.settings import Setting
@@ -52,61 +52,13 @@ class SciHubator(OWTextableBaseWidget):
     """An Orange widget that lets the user select an integer value"""
 
     #Version minimale
-    """
-    basicURLBox = gui.widgetBox(
-        widget=self.controlArea,
-        box=u'Source',
-        orientation='vertical',
-        addSpace=False,
-    )
-    basicURLBoxLine1 = gui.widgetBox(
-        widget=basicURLBox,
-        box=False,
-        orientation='horizontal',
-    )
-    gui.lineEdit(
-        widget=basicURLBoxLine1,
-        master=self,
-        value='URL',
-        orientation='horizontal',
-        label=u'DOI:',
-        labelWidth=101,
-        callback=self.sendButton.settingsChanged,
-        tooltip=(
-            u"The URL whose content will be imported."
-        ),
-    )
-    gui.rubber(self.controlArea)
-
-    self.exportButton = gui.button(
-        widget=URLBoxCol2,
-        master=self,
-        label=u'Export List',
-        callback=self.exportList,
-        tooltip=(
-            u"Open a dialog for selecting a file where the URL\n"
-            u"list can be exported in JSON format."
-        ),
-    )
-    self.importButton = gui.button(
-        widget=URLBoxCol2,
-        master=self,
-        label=u'Import List',
-        callback=self.importList,
-        tooltip=(
-            u"Open a dialog for selecting an URL list to\n"
-            u"import (in JSON format). DOIs from this list will\n"
-            u"be added to those already imported."
-        ),
-    )
-    """
 
     # ----------------------------------------------------------------------
     # Widget's metadata...
 
     name = "Sci-Hubator"
     description = "Export a text segmentation from a DOI or URL"
-    icon = "icons/lexical_hunter.svg"
+    icon = "icons/scihubator.svg"
     priority = 10
 
     # ----------------------------------------------------------------------
@@ -462,6 +414,21 @@ class SciHubator(OWTextableBaseWidget):
                     myInput[0] = segment
                     # Add the  LTTL.Input to self.createdInputs.
                     self.createdInputs.append(myInput)
+                if self.importBibliography: 
+                    cur_itr += 1
+                    ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
+                    regexes = [(ma_regex, 'tokenize')]
+                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                    new_segmentation = tokenize(myInput, regexes)
+                    if (len(new_segmentation) == 0):
+                        empty_re = True
+                        new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
+                    else:
+                        new_segmentation[0].annotations["part"] = "Bibliography"
+                        new_input = Input(new_segmentation.to_string(), "Bibliographies")
+                        new_input[0].annotations["part"] = "Bibliography"
+                        new_input[0] = new_segmentation[0]
+                    self.createdInputs.append(new_input)
                 """if self.importText:
                     cur_itr += 1
                     ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
@@ -480,22 +447,6 @@ class SciHubator(OWTextableBaseWidget):
                         new_input = Input(new_segmentation.to_string(), "")
                         new_input[0]= new_segmentation[0]
                     self.createdInputs.append(new_segmentation)"""
-                if self.importBibliography: 
-                    cur_itr += 1
-                    ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
-                    regexes = [(ma_regex, 'tokenize')]
-                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                    new_segmentation = tokenize(myInput, regexes)
-                    if (len(new_segmentation) == 0):
-                        empty_re = True
-                        new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
-                    else:
-                        new_segmentation[0].annotations["part"] = "Bibliography"
-                        new_input = Input(new_segmentation.to_string(), "Bibliographies")
-                        new_input[0].annotations["part"] = "Bibliography"
-                        new_input[0] = new_segmentation[0]
-                    self.createdInputs.append(new_input)
-
                 """if self.importAbstract:
                     cur_itr += 1
                     myInput = Input(DOIText, label)
@@ -520,8 +471,6 @@ class SciHubator(OWTextableBaseWidget):
                     self.signal_prog.emit(100, False)
                     return
             tempdir.cleanup()
-
-
             
 
             # If there's only one LTTL.Input created, it is the
@@ -556,12 +505,6 @@ class SciHubator(OWTextableBaseWidget):
         if processed_data:
             message = "Text sent to output "
             message = pluralize(message, len(processed_data))
-            """numChars = 0
-            for segment in processed_data:
-                segmentLength = len(Segmentation.get_data(segment.str_index))
-                numChars += segmentLength
-            message += f"({numChars} character@p)."
-            message = pluralize(message, numChars)"""
             self.infoBox.setText(message)
             self.send("Segmentation", processed_data)
 
@@ -618,36 +561,6 @@ class SciHubator(OWTextableBaseWidget):
         self.clearAllButton.setDisabled(not bool(self.DOIs))
         self.sendButton.settingsChanged()
 
-    # def updateGUI(self):
-    #     """Update GUI state"""
-    #     # if self.selectedURLLabel:
-    #     #     cachedLabel = self.selectedURLLabel[0]
-    #     # else:
-    #     #     cachedLabel = None
-    #     del self.URLLabel[:]
-    #     if self.DOIs:
-    #         DOIs = [f for f in self.DOIs]
-    #         self.URLLabel = DOIs
-    #         # maxURLLen = max([len(n) for n in DOIs])
-    #         # for DOI in DOIs:    #range(len(self.DOIs)):
-    #             # format = u'%-' + str(maxURLLen + 2) + u's'
-    #             #format % DOIs[index]
-    #             # self.URLLabel.append(DOI)
-    #     self.URLLabel = self.URLLabel
-    #     # if cachedLabel is not None:
-    #     #     self.sendButton.sendIfPreCallback = None
-    #     #     self.selectedURLLabel = [cachedLabel]
-    #     #     self.sendButton.sendIfPreCallback = self.updateGUI
-    #     if self.newDOI:
-    #         self.addButton.setDisabled(False)
-    #     else:
-    #         self.addButton.setDisabled(True)
-    #     # if self.importDOIs:
-    #     #     self.importDOIsKeyLineEdit.setDisabled(False)
-    #     # else:
-    #     #     self.importDOIsKeyLineEdit.setDisabled(True)
-    #     self.updateURLBoxButtons()
-
     def updateURLBoxButtons(self):
         """Update state of File box buttons"""
         self.addButton.setDisabled(not bool(self.newDOI))
@@ -676,109 +589,3 @@ def test_scihub_accessible():
 
 if __name__ == '__main__':
         WidgetPreview(SciHubator).run()
-
-
-    # def clearAll(self):
-    #     """Remove all DOIs from DOIs attr"""
-    #     del self.DOIs[:]
-    #     del self.selectedURLLabel[:]
-    #     self.sendButton.settingsChanged()
-
-    # def remove(self):
-    #     """Remove URL from DOIs attr"""
-    #     if self.selectedURLLabel:
-    #         index = self.selectedURLLabel[0]
-    #         self.DOIs.pop(index)
-    #         del self.selectedURLLabel[:]
-    #         self.sendButton.settingsChanged()
-
-    # def add(self):
-    #     """Add DOIs to DOIs attr"""
-    #     URLList = re.split(r' +/ +', self.newURL)
-    #     for URL in URLList:
-    #         encoding = re.sub(r"[ ]\(.+", "", self.encoding)
-    #         self.DOIs.append((
-    #             URL,
-    #             encoding,
-    #             self.newAnnotationKey,
-    #             self.newAnnotationValue,
-    #         ))
-    #     self.sendButton.settingsChanged()
-    # def updateGUI(self):
-    #     """Update GUI state"""
-    #     if self.displayAdvancedSettings:
-    #         if self.selectedURLLabel:
-    #             cachedLabel = self.selectedURLLabel[0]
-    #         else:
-    #             cachedLabel = None
-    #         del self.URLLabel[:]
-    #         if self.DOIs:
-    #             DOIs = [f[0] for f in self.DOIs]
-    #             encodings = [f[1] for f in self.DOIs]
-    #             annotations = ['{%s: %s}' % (f[2], f[3]) for f in self.DOIs]
-    #             maxURLLen = max([len(n) for n in DOIs])
-    #             maxAnnoLen = max([len(a) for a in annotations])
-    #             for index in range(len(self.DOIs)):
-    #                 format = u'%-' + str(maxURLLen + 2) + u's'
-    #                 URLLabel = format % DOIs[index]
-    #                 if maxAnnoLen > 4:
-    #                     if len(annotations[index]) > 4:
-    #                         format = u'%-' + str(maxAnnoLen + 2) + u's'
-    #                         URLLabel += format % annotations[index]
-    #                     else:
-    #                         URLLabel += u' ' * (maxAnnoLen + 2)
-    #                 URLLabel += encodings[index]
-    #                 self.URLLabel.append(URLLabel)
-    #         self.URLLabel = self.URLLabel
-    #         if cachedLabel is not None:
-    #             self.sendButton.sendIfPreCallback = None
-    #             self.selectedURLLabel = [cachedLabel]
-    #             self.sendButton.sendIfPreCallback = self.updateGUI
-    #         if self.newURL:
-    #             if (
-    #                 (self.newAnnotationKey and self.newAnnotationValue) or
-    #                 (not self.newAnnotationKey and not self.newAnnotationValue)
-    #             ):
-    #                 self.addButton.setDisabled(False)
-    #             else:
-    #                 self.addButton.setDisabled(True)
-    #         else:
-    #             self.addButton.setDisabled(True)
-    #         if self.autoNumber:
-    #             self.autoNumberKeyLineEdit.setDisabled(False)
-    #         else:
-    #             self.autoNumberKeyLineEdit.setDisabled(True)
-    #         if self.importDOIs:
-    #             self.importDOIsKeyLineEdit.setDisabled(False)
-    #         else:
-    #             self.importDOIsKeyLineEdit.setDisabled(True)
-    #         self.updateURLBoxButtons()
-    #         self.advancedSettings.setVisible(True)
-    #     else:
-    #         self.advancedSettings.setVisible(False)
-
-    # def updateURLBoxButtons(self):
-    #     """Update state of File box buttons"""
-    #     if self.selectedURLLabel:
-    #         self.removeButton.setDisabled(False)
-    #         if self.selectedURLLabel[0] > 0:
-    #             self.moveUpButton.setDisabled(False)
-    #         else:
-    #             self.moveUpButton.setDisabled(True)
-    #         if self.selectedURLLabel[0] < len(self.DOIs) - 1:
-    #             self.moveDownButton.setDisabled(False)
-    #         else:
-    #             self.moveDownButton.setDisabled(True)
-    #     else:
-    #         self.moveUpButton.setDisabled(True)
-    #         self.moveDownButton.setDisabled(True)
-    #         self.removeButton.setDisabled(True)
-    #     if len(self.DOIs):
-    #         self.clearAllButton.setDisabled(False)
-    #         self.exportButton.setDisabled(False)
-    #     else:
-    #         self.clearAllButton.setDisabled(True)
-    #         self.exportButton.setDisabled(True)
-
-# def checkIfDOI(string):
-#     regex = re.compile(r'\d{2}\.\d{4}.+')
