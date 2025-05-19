@@ -78,7 +78,7 @@ Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
 The advanced version of **SciHubator** allows the user to type several DOIs
-in a determined order; each outputed text file can moreover be segmented into
+in a determined order; each output text file can moreover be segmented into
 specific segmentations (introduction, mais corpus and bibliography) with specific
 annotations. The emitted segmentation contains a segment
 for each imported file.
@@ -161,13 +161,13 @@ Errors
 ~~~~~~
 
 *SciHub inaccessible - verify your connexion.*
-   Plese verify your internet connexion or check if `Sci-HUB <https://www.sci-hub.se/>`_ is down.
+   Please verify your internet connexion or check if `Sci-HUB <https://www.sci-hub.se/>`_ is down.
 
 *An error occurred when downloading.*
-   Donwloading the PDF didn't worked, please try again.
+   Downloading the PDF didn't worked, please try again.
 
 *Error occurred when reading PDF:*
-   An unexpected error occured when reading the downloaded PDF. Please try again, if the error still happen your DOI could be not compatible.
+   An unexpected error occurred when reading the downloaded PDF. Please try again, if the error still happen your DOI could be not compatible.
 
 *Download failed. Please, verify DOI or connexion.*
    Sci-Hub is accessible but scihubator couldn't download the PDF. Your connexion has perhaps crashed in the download process or the DOI provided is not valid.
