@@ -540,25 +540,30 @@ class YouGet(OWTextableBaseWidget):
 
             #TODO ajouter ici une manière d'afficher les commentaire de manière splittée (c'est tout join pour le moment)
             #on créé une chaine de caractères séparés d'un retour à la ligne 
-            comments = "\n".join([comment["text"] for comment in comments_ycd ])
-            #print(comments_ycd)
-            #print("2")
-            #myInput = Input("hello", label)
-            myInput = Input(comments, label) 
+            # comments = []
+            # for comment in comments_ycd:
+            #     comments.append(comment["text"])
 
-            # Extract the first (and single) segment in the 
-            # newly created LTTL.Input and annotate it with 
-            # the length of the input segmentation. 
-            segment = myInput[0]
-            segment.annotations["url"]  \
-                = self.url
-            # For the annotation to be saved in the LTTL.Input, 
-            # the extracted and annotated segment must be re-assigned
-            # to the first (and only) segment of the LTTL.Input.
-            myInput[0] = segment
+            # comments = "\n".join([comment["text"] for comment in comments_ycd ])
+
+            for chose in comments_ycd:
+                myInput = Input(str(chose["text"]), label) 
+                self.createdInputs.append(myInput)
+
+            # myInput = Input(comments, label) 
+
+            for input in myInput:
+                segment = input
+            # segment = myInput[0]
+                segment.annotations["url"]  \
+                    = self.url
+                input = segment
+
+                
+            # myInput[0] = segment
             
             # Add the  LTTL.Input to self.createdInputs.
-            self.createdInputs.append(myInput)
+            # self.createdInputs.append(myInput) déplacé plus haut dans la boucle
             
             # Cancel operation if requested by user...
             time.sleep(0.00001) # Needed somehow!
@@ -573,7 +578,8 @@ class YouGet(OWTextableBaseWidget):
 
         # If there's only one LTTL.Input created, it is the 
         # widget's output...
-        if len(urls) == 1:
+        # if len(urls) == 1:
+        if len(self.createdInputs) == 1:
             return self.createdInputs[0]
 
         # Otherwise the widget's output is a concatenation...        
