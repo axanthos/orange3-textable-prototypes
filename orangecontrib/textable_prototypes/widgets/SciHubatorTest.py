@@ -136,7 +136,7 @@ class SciHubator(OWTextableBaseWidget):
     # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
     importAll = Setting(True)
     """importAbstract = Setting(False)"""
-    importText = Setting(False)
+    """importText = Setting(False)"""
     importBibliography = Setting(False)
 
     def __init__(self):
@@ -271,7 +271,7 @@ class SciHubator(OWTextableBaseWidget):
                 u"Import DOIs as annotations."
             ),
         )"""
-        gui.separator(widget=advOptionsBox, height=3)
+        """gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
             widget=advOptionsBox,
             master=self,
@@ -282,7 +282,7 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"Import DOIs as annotations."
             ),
-        )
+        )"""
         gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
             widget=advOptionsBox,
@@ -320,7 +320,7 @@ class SciHubator(OWTextableBaseWidget):
         processing.
         """
         # Verify checkboxes
-        if not (self.importAll or self.importBibliography or self.importText):
+        if not (self.importAll or self.importBibliography): #or self.importText
             self.infoBox.setText("Please select one or more checkboxes.", "warning")
             self.send("Segmentation", None)
             return
@@ -446,7 +446,7 @@ class SciHubator(OWTextableBaseWidget):
                                       "warning")
                 cur_itr = 0
                 self.signal_prog.emit(0, True)
-                max_itr = int(self.importAll) + int(self.importText) + int(self.importBibliography)
+                max_itr = int(self.importAll) + int(self.importBibliography) #+ int(self.importText)
                 if self.importAll:
 
                     cur_itr += 1
@@ -462,7 +462,7 @@ class SciHubator(OWTextableBaseWidget):
                     myInput[0] = segment
                     # Add the  LTTL.Input to self.createdInputs.
                     self.createdInputs.append(myInput)
-                if self.importText:
+                """if self.importText:
                     cur_itr += 1
                     ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
                     regexes = [(ma_regex,'tokenize')]
@@ -479,20 +479,22 @@ class SciHubator(OWTextableBaseWidget):
                         new_segmentation[0].annotations["DOI"] = "Top level sections"
                         new_input = Input(new_segmentation.to_string(), "")
                         new_input[0]= new_segmentation[0]
-                    self.createdInputs.append(new_input)
+                    self.createdInputs.append(new_segmentation)"""
                 if self.importBibliography: 
                     cur_itr += 1
                     ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
                     regexes = [(ma_regex, 'tokenize')]
                     self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
                     new_segmentation = tokenize(myInput, regexes)
-                    print("#"*100)
-                    print(new_segmentation.to_string())
                     if (len(new_segmentation) == 0):
                         empty_re = True
-                        new_segmentation = Input("", "Empty Bibliography section")
-                    new_segmentation[0].annotations["part"] = "Bibliography"
-                    self.createdInputs.append(new_segmentation)
+                        new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
+                    else:
+                        new_segmentation[0].annotations["part"] = "Bibliography"
+                        new_input = Input(new_segmentation.to_string(), "Bibliographies")
+                        new_input[0].annotations["part"] = "Bibliography"
+                        new_input[0] = new_segmentation[0]
+                    self.createdInputs.append(new_input)
 
                 """if self.importAbstract:
                     cur_itr += 1
