@@ -106,7 +106,7 @@ class SciHubator(OWTextableBaseWidget):
 
     name = "Sci-Hubator"
     description = "Export a text segmentation from a DOI or URL"
-    icon = "icons/lexical_hunter.svg"
+    icon = "icons/scihubator.png"
     priority = 10
 
     # ----------------------------------------------------------------------
@@ -579,36 +579,6 @@ class SciHubator(OWTextableBaseWidget):
         self.clearAllButton.setDisabled(not bool(self.DOIs))
         self.sendButton.settingsChanged()
 
-    # def updateGUI(self):
-    #     """Update GUI state"""
-    #     # if self.selectedURLLabel:
-    #     #     cachedLabel = self.selectedURLLabel[0]
-    #     # else:
-    #     #     cachedLabel = None
-    #     del self.URLLabel[:]
-    #     if self.DOIs:
-    #         DOIs = [f for f in self.DOIs]
-    #         self.URLLabel = DOIs
-    #         # maxURLLen = max([len(n) for n in DOIs])
-    #         # for DOI in DOIs:    #range(len(self.DOIs)):
-    #             # format = u'%-' + str(maxURLLen + 2) + u's'
-    #             #format % DOIs[index]
-    #             # self.URLLabel.append(DOI)
-    #     self.URLLabel = self.URLLabel
-    #     # if cachedLabel is not None:
-    #     #     self.sendButton.sendIfPreCallback = None
-    #     #     self.selectedURLLabel = [cachedLabel]
-    #     #     self.sendButton.sendIfPreCallback = self.updateGUI
-    #     if self.newDOI:
-    #         self.addButton.setDisabled(False)
-    #     else:
-    #         self.addButton.setDisabled(True)
-    #     # if self.importDOIs:
-    #     #     self.importDOIsKeyLineEdit.setDisabled(False)
-    #     # else:
-    #     #     self.importDOIsKeyLineEdit.setDisabled(True)
-    #     self.updateURLBoxButtons()
-
     def updateURLBoxButtons(self):
         """Update state of File box buttons"""
         self.addButton.setDisabled(not bool(self.newDOI))
@@ -637,109 +607,3 @@ def test_scihub_accessible():
 
 if __name__ == '__main__':
         WidgetPreview(SciHubator).run()
-
-
-    # def clearAll(self):
-    #     """Remove all DOIs from DOIs attr"""
-    #     del self.DOIs[:]
-    #     del self.selectedURLLabel[:]
-    #     self.sendButton.settingsChanged()
-
-    # def remove(self):
-    #     """Remove URL from DOIs attr"""
-    #     if self.selectedURLLabel:
-    #         index = self.selectedURLLabel[0]
-    #         self.DOIs.pop(index)
-    #         del self.selectedURLLabel[:]
-    #         self.sendButton.settingsChanged()
-
-    # def add(self):
-    #     """Add DOIs to DOIs attr"""
-    #     URLList = re.split(r' +/ +', self.newURL)
-    #     for URL in URLList:
-    #         encoding = re.sub(r"[ ]\(.+", "", self.encoding)
-    #         self.DOIs.append((
-    #             URL,
-    #             encoding,
-    #             self.newAnnotationKey,
-    #             self.newAnnotationValue,
-    #         ))
-    #     self.sendButton.settingsChanged()
-    # def updateGUI(self):
-    #     """Update GUI state"""
-    #     if self.displayAdvancedSettings:
-    #         if self.selectedURLLabel:
-    #             cachedLabel = self.selectedURLLabel[0]
-    #         else:
-    #             cachedLabel = None
-    #         del self.URLLabel[:]
-    #         if self.DOIs:
-    #             DOIs = [f[0] for f in self.DOIs]
-    #             encodings = [f[1] for f in self.DOIs]
-    #             annotations = ['{%s: %s}' % (f[2], f[3]) for f in self.DOIs]
-    #             maxURLLen = max([len(n) for n in DOIs])
-    #             maxAnnoLen = max([len(a) for a in annotations])
-    #             for index in range(len(self.DOIs)):
-    #                 format = u'%-' + str(maxURLLen + 2) + u's'
-    #                 URLLabel = format % DOIs[index]
-    #                 if maxAnnoLen > 4:
-    #                     if len(annotations[index]) > 4:
-    #                         format = u'%-' + str(maxAnnoLen + 2) + u's'
-    #                         URLLabel += format % annotations[index]
-    #                     else:
-    #                         URLLabel += u' ' * (maxAnnoLen + 2)
-    #                 URLLabel += encodings[index]
-    #                 self.URLLabel.append(URLLabel)
-    #         self.URLLabel = self.URLLabel
-    #         if cachedLabel is not None:
-    #             self.sendButton.sendIfPreCallback = None
-    #             self.selectedURLLabel = [cachedLabel]
-    #             self.sendButton.sendIfPreCallback = self.updateGUI
-    #         if self.newURL:
-    #             if (
-    #                 (self.newAnnotationKey and self.newAnnotationValue) or
-    #                 (not self.newAnnotationKey and not self.newAnnotationValue)
-    #             ):
-    #                 self.addButton.setDisabled(False)
-    #             else:
-    #                 self.addButton.setDisabled(True)
-    #         else:
-    #             self.addButton.setDisabled(True)
-    #         if self.autoNumber:
-    #             self.autoNumberKeyLineEdit.setDisabled(False)
-    #         else:
-    #             self.autoNumberKeyLineEdit.setDisabled(True)
-    #         if self.importDOIs:
-    #             self.importDOIsKeyLineEdit.setDisabled(False)
-    #         else:
-    #             self.importDOIsKeyLineEdit.setDisabled(True)
-    #         self.updateURLBoxButtons()
-    #         self.advancedSettings.setVisible(True)
-    #     else:
-    #         self.advancedSettings.setVisible(False)
-
-    # def updateURLBoxButtons(self):
-    #     """Update state of File box buttons"""
-    #     if self.selectedURLLabel:
-    #         self.removeButton.setDisabled(False)
-    #         if self.selectedURLLabel[0] > 0:
-    #             self.moveUpButton.setDisabled(False)
-    #         else:
-    #             self.moveUpButton.setDisabled(True)
-    #         if self.selectedURLLabel[0] < len(self.DOIs) - 1:
-    #             self.moveDownButton.setDisabled(False)
-    #         else:
-    #             self.moveDownButton.setDisabled(True)
-    #     else:
-    #         self.moveUpButton.setDisabled(True)
-    #         self.moveDownButton.setDisabled(True)
-    #         self.removeButton.setDisabled(True)
-    #     if len(self.DOIs):
-    #         self.clearAllButton.setDisabled(False)
-    #         self.exportButton.setDisabled(False)
-    #     else:
-    #         self.clearAllButton.setDisabled(True)
-    #         self.exportButton.setDisabled(True)
-
-# def checkIfDOI(string):
-#     regex = re.compile(r'\d{2}\.\d{4}.+')
