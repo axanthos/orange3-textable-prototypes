@@ -700,20 +700,22 @@ class YouGet(OWTextableBaseWidget):
 
         # print(DOIList)
         old_urls = list(self.DOIs)
-        print(old_urls)
+        print("old url "+str(old_urls))
         for DOI in DOIList:
             print(DOI)
-            self.DOIs.append(DOI)
-        if self.DOIs:
-            tempSet = set(self.DOIs)        # ici on créé un set pour supprimer tous les doublons
+            # self.DOIs.append(DOI)
+        if DOIList:
+            tempSet = DOIList        # ici on créé un set pour supprimer tous les doublons
+            # print(set(DOIList))
             def_set = set(tempSet)    
-            if(len(tempSet)<len(self.DOIs)):
-                QMessageBox.information(
-                    None, "YouGet", "Error Message: <br><br>Duplicate URL(s) found and deleted.",
-                    QMessageBox.Ok
-                )
 
-            #----------------- notre code dans leur code -------------------
+            # if(len(tempSet)<len(self.DOIs)):
+            #     QMessageBox.information(
+            #         None, "YouGet", "Error Message: <br><br>Duplicate URL(s) found and deleted.",
+            #         QMessageBox.Ok
+            #     )
+
+
             # if self.new_url == "":
             #     # Use mode "warning" when user needs to do some
             #     # action or provide some information; use mode "error"
@@ -737,42 +739,83 @@ class YouGet(OWTextableBaseWidget):
             
             not_an_url = False
             not_available = False
+            doublon = False
+            nombre_de_problemes_not_url = 0
+            nombre_de_problemes_not_available = 0
+            nombre_de_problemes_doublon = 0
             print(tempSet)
+            indexx = 0
+            list_indexx = []
             for single_url in tempSet:
+                list_indexx.append(True)
+                # si une url de la liste est déjà possédée,
+                for past_url in old_urls:
+                    if single_url == past_url:
+                        doublon = True
+                        print("il y a un doublon ici")
+                        list_indexx[indexx] = False
+                        nombre_de_problemes_doublon += 1
+
                 # si une ou plus url dans la liste n'est pas la forme d'une url ytb, ne pas autoriser l'ajout
                 if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
                     not_an_url = True
-                if not youtube_video_exists(single_url):
+                    # tempSet = set(old_urls)
+                    if list_indexx[indexx] != False:
+                        list_indexx[indexx] = False
+                        nombre_de_problemes_not_url += 1
+
+                elif not youtube_video_exists(single_url):
                     # print(single_url)
                     not_available = True
-            if self.youtube_video_existe(self.new_url) == False:
-                tempSet = set(old_urls)
-                QMessageBox.information(
-                    None, "YouGet", "Warning Message: <br><br>One or more element(s) are not YouTube URLs or please check your internet connection.",
-                    QMessageBox.Ok
-                )
-            elif not_available == True:
-                tempSet = set(old_urls)
-            
-                QMessageBox.information(
-                    None, "YouGet", "Error Message: <br><br>One or more videos do not exist or are not available.",
-                    QMessageBox.Ok
-                )
-                """ self.infoBox.setText("Warning Message: <br><br>Please check your internet connection.", 
-                                    "warning") """
-                # Make sure to send None and return if the widget 
-                # cannot operate properly at this point.
-                """ self.send("New segmentation", None) """
-                return
+                    # tempSet = set(old_urls)
+                    if list_indexx[indexx] != False:
+                        list_indexx[indexx] = False
+                        nombre_de_problemes_not_available += 1
 
-                """ elif not_an_url == True:
-                tempSet = set(old_urls)
+                if doublon == False and not_an_url == False and not_available == False:
+                    print("la ou les url sont clean")
+                    list_indexx[indexx] = True
+                indexx += 1
+            
+            # if self.youtube_video_existe(self.new_url) == False:
+            #     tempSet = set(old_urls)
+            #     QMessageBox.information(
+            #         None, "YouGet", "Warning Message: <br><br>One or more element(s) are not YouTube URLs or please check your internet connection.",
+            #         QMessageBox.Ok
+            #     )
+
+            if doublon == True:
                 QMessageBox.information(
-                    None, "YouGet", "Error Message: <br><br>One or more element(s) are not YouTube URLs, please only add YouTube URLs.",
+                    None, "YouGet", f"Error Message: <br><br>{nombre_de_problemes_doublon} duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
-                ) """
-                #----------------- notre code dans leur code fin-------------------
-            self.DOIs = list(tempSet)
+                )
+
+            # on voit si l'un des url est faux
+            if not_available == True:
+                # tempSet = set(old_urls)
+                QMessageBox.information(
+                    None, "YouGet", f"Error Message: <br><br>{nombre_de_problemes_not_available} URL(s) are not valid YouTube videos",
+                    QMessageBox.Ok
+                )
+
+            if not_an_url == True:
+                # tempSet = set(old_urls)
+
+                QMessageBox.information(
+                    None, "YouGet", f"Warning Message: <br><br>{nombre_de_problemes_not_url} element(s) are not YouTube URLs or please check your internet connection.",
+                    QMessageBox.Ok
+                )
+
+            # retire les urls tagées False, en gardant les autres
+            temp_set_liste = list(tempSet)
+            filtered_list = []
+            for i, keep in enumerate(list_indexx):
+                if keep:
+                    filtered_list.append(temp_set_liste[i])
+
+
+            self.DOIs += list(filtered_list)
+            self.DOIs = list(set(self.DOIs))
             self.URLLabel = self.DOIs
 
         # self.URLLabel = self.URLLabel
