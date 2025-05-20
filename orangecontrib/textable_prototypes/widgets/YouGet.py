@@ -275,7 +275,7 @@ class YouGet(OWTextableBaseWidget):
             master=self,
             value='new_url',
             orientation='horizontal',
-            label=u'URLS(s):',
+            label=u'URL(s):',
             labelWidth=101,
             callback=self.updateURLBoxButtons,
             tooltip=(
@@ -368,9 +368,11 @@ class YouGet(OWTextableBaseWidget):
             disabled = True,
         )
         gui.rubber(self.controlArea)
+        self.updateURLBoxButtons()  #pour que le bouton add ne soit pas gris        
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
+
         # -------------- code emprunté fin ------------------------
 
     def sendData(self):
@@ -769,7 +771,7 @@ class YouGet(OWTextableBaseWidget):
                     None, "YouGet", "Error Message: <br><br>One or more element(s) are not YouTube URLs, please only add YouTube URLs.",
                     QMessageBox.Ok
                 ) """
-                        #----------------- notre code dans leur code fin-------------------
+                #----------------- notre code dans leur code fin-------------------
             self.DOIs = list(tempSet)
             self.URLLabel = self.DOIs
 
