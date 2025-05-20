@@ -455,7 +455,6 @@ class YouGet(OWTextableBaseWidget):
         # progress bar will go through (e.g. number of input
         # segments, number of selected files, etc.), then
         # set current iteration to 1.
-        #TODO mettre 1 url max_itr = longueur url
         # number of segment ça veut dire number of url
         max_itr = len(urls)
         cur_itr = 1
@@ -540,27 +539,16 @@ class YouGet(OWTextableBaseWidget):
 
             #TODO ajouter ici une manière d'afficher les commentaire de manière splittée (c'est tout join pour le moment)
             #on créé une chaine de caractères séparés d'un retour à la ligne 
-            # comments = []
-            # for comment in comments_ycd:
-            #     comments.append(comment["text"])
-
-            # comments = "\n".join([comment["text"] for comment in comments_ycd ])
 
             for chose in comments_ycd:
                 myInput = Input(str(chose["text"]), label) 
+
+                segment = myInput[0]
+                segment.annotations["author"] = str(chose["author"])
+                myInput[0] = segment
+
                 self.createdInputs.append(myInput)
 
-            # myInput = Input(comments, label) 
-
-            for input in myInput:
-                segment = input
-            # segment = myInput[0]
-                segment.annotations["url"]  \
-                    = self.url
-                input = segment
-
-                
-            # myInput[0] = segment
             
             # Add the  LTTL.Input to self.createdInputs.
             # self.createdInputs.append(myInput) déplacé plus haut dans la boucle
