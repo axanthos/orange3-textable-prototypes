@@ -50,7 +50,7 @@ into an annotated text segmentation.
 Basic interface
 ~~~~~~~~~~~~~~~
 
-In its basic version (see :ref:`figure 1 <scihubator_basicinterface>` below), 
+In its basic version, 
 the **SciHubator** widget is limited to the import of a single DOI.
 The interface contains a **Source** section enabling the user to type the DOI.
 
