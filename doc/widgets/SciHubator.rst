@@ -63,7 +63,7 @@ The interface contains a **Source** section enabling the user to type the DOI.
     Figure 1: **SciHubator** widget (basic interface).
 
 Note that pdfplumber might not work properly with none latin alphabets
-and serif typefaces. TODO
+and serif typefaces.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -92,8 +92,7 @@ for each imported file.
     
     Figure 2: **SciHubator** widget (advanced interface).
 
-The advanced interface (see :ref:`figure 2 <scihubator_advancedinterface>` 
-above) presents similarities with that of the **URLs** and **Segment**
+The advanced interface presents similarities with that of the **URLs** and **Segment**
 widgets. The **Sources** section allows the user to select the input
 DOI(s). The list
 of imported files appears at the top of the window; the columns of this list
