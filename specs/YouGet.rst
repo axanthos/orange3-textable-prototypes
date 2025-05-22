@@ -29,7 +29,6 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 	- Code
 	- Documentation
 	- Maquettes
-	- Tests
 
 * Sophie Ward (`sophie.ward@unil.ch`_):
 
@@ -39,9 +38,8 @@ Créer un widget pour Orange Textable permettant de télécharger les commentair
 	- Code
 	- Documentation
 	- GitHub
-	- Tests
 
-* Lorelei Chevroulet (`lorelei.chevroulet@unil.ch`_):
+* Lorelei Chevroulet(`lorelei.chevroulet@unil.ch`_):
 
 .. _lorelei.chevroulet@unil.ch: mailto:lorelei.chevroulet@unil.ch
 
