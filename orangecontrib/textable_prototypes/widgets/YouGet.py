@@ -284,8 +284,6 @@ class YouGet(OWTextableBaseWidget):
         before calling the method that does the actual 
         processing.
         """
-        print('another test!')
-        print(self.url)
         # If the widget creates new LTTL.Input objects (i.e.
         # if it imports new strings in Textable), make sure to
         # clear previously created Inputs with this method.
