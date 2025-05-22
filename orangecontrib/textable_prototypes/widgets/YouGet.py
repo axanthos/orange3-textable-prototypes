@@ -137,7 +137,6 @@ class YouGet(OWTextableBaseWidget):
         # This attribute stores a per-widget number of comments desired as
         # output. This can be changed by the user at any time via the GUI.
         n_desired_comments = 0
-        
         # The following attribute is required by every widget
         # that imports new strings into Textable.
         self.createdInputs = list()
@@ -150,7 +149,6 @@ class YouGet(OWTextableBaseWidget):
             cancelCallback=self.cancel_manually,
             infoBoxAttribute="infoBox",
         ) 
-
         #---------- START: The following section of code has been borrowed from SciHub.py ----------
         # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 
@@ -269,7 +267,7 @@ class YouGet(OWTextableBaseWidget):
         )
         gui.rubber(self.controlArea)
         # So that the "Add" button is not gray
-        self.updateURLBoxButtons()    
+        self.updateURLBoxButtons()  
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
@@ -284,7 +282,6 @@ class YouGet(OWTextableBaseWidget):
         """
         print('another test!')
         print(self.url)
-        
         # If the widget creates new LTTL.Input objects (i.e.
         # if it imports new strings in Textable), make sure to
         # clear previously created Inputs with this method.
@@ -292,23 +289,21 @@ class YouGet(OWTextableBaseWidget):
 
         # Notify processing in infobox. Typically, there should
         # always be a "processing" step, with optional "pre-
-        # processing" and "post-processing" steps before and 
-        # after it. If there are no optional steps, notify 
+        # processing" and "post-processing" steps before and
+        # after it. If there are no optional steps, notify
         # "Preprocessing...".
         self.infoBox.setText("Step 1/2: Processing...", "warning")
         
         # Progress bar should be initialized at this point.
         self.progressBarInit()
-
         # Create a threaded function to do the actual processing
         # and specify its arguments (here there are none).
         threaded_function = partial(
             self.processData,
-            # argument1, 
+            # argument1,
             # argument2, 
             # ...
         )
-
         # Run the threaded function...
         self.threading(threaded_function)
 
@@ -318,7 +313,6 @@ class YouGet(OWTextableBaseWidget):
         which is run in a worker thread so that GUI stays
         responsive and operations can be cancelled.
         """
-        
         # At start of processing, set progress bar to 1%.
         # Within this method, this is done using the following
         # instruction.
@@ -340,7 +334,6 @@ class YouGet(OWTextableBaseWidget):
         urls = self.DOIs
 
         # Actual processing...
-        
         # For each progress bar iteration...
         #for _ in range(int(self.numberOfSegments)):
 
@@ -392,7 +385,7 @@ class YouGet(OWTextableBaseWidget):
                 print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
 
             for chose in comments_ycd:
-                myInput = Input(str(chose["text"]), label) 
+                myInput = Input(str(chose["text"]), label)
 
                 segment = myInput[0]
                 segment.annotations["author"] = str(chose["author"])
@@ -404,27 +397,27 @@ class YouGet(OWTextableBaseWidget):
             time.sleep(0.00001) # Needed somehow!
             if self.cancel_operation:
                 self.signal_prog.emit(100, False)
-                return            
+                return
 
         # Update infobox and reset progress bar...
-        self.signal_text.emit("Step 2/2: Post-processing...", 
+        self.signal_text.emit("Step 2/2: Post-processing...",
                               "warning")
         self.signal_prog.emit(1, True)
 
-        # If there's only one LTTL.Input created, it is the 
+        # If there's only one LTTL.Input created, it is the
         # widget's output...
         # if len(urls) == 1:
         if len(self.createdInputs) == 1:
             return self.createdInputs[0]
 
-        # Otherwise the widget's output is a concatenation...        
+        # Otherwise the widget's output is a concatenation...
         else:
             return Segmenter.concatenate(
                 caller=self,
                 segmentations=self.createdInputs,
                 label=self.captionTitle,
                 import_labels_as=None,
-            ) 
+            )
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -432,13 +425,12 @@ class YouGet(OWTextableBaseWidget):
         All operations following the successful termination
         of self.processData
         """
-        
         # Get the result value of self.processData.
         processed_data = f.result()
 
         # If it is not None...
         if processed_data:
-            message = f"{len(processed_data)} segment@p sent to output " 
+            message = f"{len(processed_data)} segment@p sent to output "
             message = pluralize(message, len(processed_data))
             numChars = 0
             for segment in processed_data:
@@ -449,7 +441,7 @@ class YouGet(OWTextableBaseWidget):
             self.infoBox.setText(message)
             self.send("New segmentation", processed_data)
 
-    # The following method should be copied verbatim in 
+    # The following method should be copied verbatim in
     # every Textable widget.
     def setCaption(self, title):
         """
@@ -464,7 +456,7 @@ class YouGet(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
-    # The following two methods should be copied verbatim in 
+    # The following two methods should be copied verbatim in
     # every Textable widget that creates LTTL.Input objects.
 
     def clearCreatedInputs(self):
@@ -530,7 +522,6 @@ class YouGet(OWTextableBaseWidget):
         print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
         # Returns the list of all comments collected
         return every_comment
-    
     #---------- START: The following section of code has been borrowed from SciHub.py ----------
     # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 
