@@ -81,7 +81,8 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 * permettre l'importation de pdf tirés de SCI-HUB (à partir d'un DOI).
 * permettre d'en tirer le texte.
 * permettre la constitution d'une sélection de corpus multiples (add/remove/clear).
-* créer et émettre une segmentation avec un segment (=Input) pour chaque partie du corpus importé (résumé/abstract, bibliographie...).
+* créer et émettre une segmentation avec un segment (=Input)
+pour chaque partie du corpus importé (résumé/abstract, bibliographie...).
 * traitement correct des références
 
 2.4 Fonctionnalités optionnelles

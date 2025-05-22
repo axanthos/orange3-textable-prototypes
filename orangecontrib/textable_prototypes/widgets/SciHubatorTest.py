@@ -136,10 +136,7 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"The list of DOIs whose content will be imported.\n"
                 u"\nIn the output segmentation, the content of each\n"
-                u"URL appears in the same position as in the list.\n"
-                u"\nColumn 1 shows the URL.\n"
-                u"Column 2 shows the associated annotation (if any).\n"
-                u"Column 3 shows the associated encoding."
+                u"DOI appears in the same position as in the list.\n"
             ),
         )
         URLBoxCol2 = gui.widgetBox(
@@ -152,7 +149,7 @@ class SciHubator(OWTextableBaseWidget):
             label=u'Remove',
             callback=self.remove,
             tooltip=(
-                u"Remove the selected URL from the list."
+                u"Remove the selected DOI from the list."
             ),
             disabled = True,
         )
@@ -208,7 +205,7 @@ class SciHubator(OWTextableBaseWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Import DOIs as annotations."
+                u"Output entire text as a single segmentation."
             ),
         )
         """gui.separator(widget=advOptionsBox, height=3)
@@ -220,7 +217,7 @@ class SciHubator(OWTextableBaseWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Import DOIs as annotations."
+                u"Output Abstract as a segmentation."
             ),
         )"""
         """gui.separator(widget=advOptionsBox, height=3)
@@ -232,7 +229,7 @@ class SciHubator(OWTextableBaseWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Import DOIs as annotations."
+                u"output main text as a segmentation."
             ),
         )"""
         gui.separator(widget=advOptionsBox, height=3)
@@ -244,7 +241,7 @@ class SciHubator(OWTextableBaseWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Import DOIs as annotations."
+                u"output bibliography as a segmentation."
             ),
         )
         gui.separator(widget=addURLBox, height=3)
@@ -254,7 +251,7 @@ class SciHubator(OWTextableBaseWidget):
             label=u'Add',
             callback=self.add,
             tooltip=(
-                u"Add the URL currently displayed in the 'URL'\n"
+                u"Add the DOI currently displayed in the 'DOI'\n"
                 u"text field to the list."
             ),
             disabled = True,
@@ -503,7 +500,7 @@ class SciHubator(OWTextableBaseWidget):
 
         # If it is not None...
         if processed_data:
-            message = "Text sent to output "
+            message = f"{len(processed_data)} segment@p sent to output "
             message = pluralize(message, len(processed_data))
             self.infoBox.setText(message)
             self.send("Segmentation", processed_data)
