@@ -86,7 +86,7 @@ of a segmentation.
 .. figure:: figures/YouGet_10comments.png
     :align: center
     :alt: Interface of the YouGet widget
-    :height: 400px
+    :height: 450px
 
 Messages
 --------
