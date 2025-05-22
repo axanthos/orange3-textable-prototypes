@@ -129,6 +129,10 @@ Errors
 Note
 ~~~~~~~~
 
-Note that when starting the widget and when you add one or more URL(s) in the **URL(s)** section, the **Add** button is gray but is functional. You need to press on the **Add** button to add your URL(s) to the **Sources** section.
+Note that when starting the widget and when first add your URL(s), the **Add** button is gray, however, it is functional. Press
+it to add your URL(s) to the **Sources** section.
 
-If there is a break in WIFI connection, please press cancel and start again.
+Note also that in the **Select number of comments** section, there is a 1 there by default. If you do not choose
+a number of comments, the output will be 7 by default. If you
+wish to only have 1, even though it is written at the beginning 1, you must press again on the number 1. If you wish more comments,
+you must press on the other options.
