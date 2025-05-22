@@ -518,7 +518,8 @@ class YouGet(OWTextableBaseWidget):
         # Returns the list of all comments collected
         return every_comment
     #---------- START: The following section of code has been borrowed from SciHub.py ----------
-    # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+    # (https://github.com/sarahperettipoix/orange3-textable-prototypes/
+    # blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 
     def clearAll(self):
         """
@@ -555,13 +556,11 @@ class YouGet(OWTextableBaseWidget):
         old_urls = list(self.DOIs)
         print("old url "+str(old_urls))
         for DOI in DOIList:
-            print(DOI)
-            
+            print(DOI)    
         if DOIList:
             # Create set to delete all duplicate URLs
             tempSet = DOIList
-            def_set = set(tempSet)
-            
+            def_set = set(tempSet) 
             # Warnings
             # Invalid format
             not_an_url = False
@@ -590,10 +589,11 @@ class YouGet(OWTextableBaseWidget):
 
                 # If 1 or more URL(s) in a list are not in the form of a URL from Youtube, the URL will not be added
                 # Regex to only accept YouTube URL format
-                # ---------- With the help of ChatGPT ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47") ----------
+                # -- With the help of ChatGPT ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47") --
                 if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
                     not_an_url = True
-                    # Each element is True or False depending on whether the URL passed all checks
+                    # Each element is True or False depending 
+                    # on whether the URL passed all checks
                     if list_indexx[indexx] != False:
                         list_indexx[indexx] = False
                         nombre_de_problemes_not_url += 1
