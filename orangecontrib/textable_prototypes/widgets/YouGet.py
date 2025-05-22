@@ -148,7 +148,7 @@ class YouGet(OWTextableBaseWidget):
             callback=self.sendData,
             cancelCallback=self.cancel_manually,
             infoBoxAttribute="infoBox",
-        ) 
+        )
         #---------- START: The following section of code has been borrowed from SciHub.py ----------
         # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 
