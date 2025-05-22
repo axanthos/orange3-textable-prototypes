@@ -24,7 +24,7 @@ Inputs:
 
 * Enter a YouTube video's URL to download comments
 * Import a URL list
-* Choose the amount of comments you would like to download (minimum 1 comment, then 100, then 1000, or no limit)
+* Choose the amount of comments you would like to download (minimum 1 comment, 10, 100, 1000, 10'000 or no limit)
 
 Outputs:
 
@@ -40,20 +40,17 @@ Description
 
 This widget provides a graphical interface which is designed to allow the user to enter a YouTube video's URL and
 download its comments (`<https://www.youtube.com>`_).
-The output is a segmentation containing the **Number of Comments** desired from the chosen YouTube video, as well as it being filtered by their number of **Likes** or by their **Date of Publication**.
+The output is a segmentation containing the **Number of Comments** desired from the chosen YouTube video.
 
-* Choose one or more URL(s) and write it in the **URL(s)** section in the following format: URL1, URL2, URL3, etc.
-* Add it to the **Sources** section
-* Choose the **Number of Comments** you would like to download
-* Press on the **Advanced Settings** button to choose whether you would like to filter the comments by their number of **Likes** or by their **Date of Publication**.
+* Choose one or more URL(s) and place them in the **URL(s)** section in the following format: URL1, URL2, URL3, etc.
+* Add them to the **Sources** section
+* Choose the **Number of Comments** you would like to download from the YouTube video
 * Press **Send** to see the comments in the form of a segmentation
 
-**YouGet**'s interface is available in two versions, depending on whether or not the **Advanced Settings** button is selected.
-
-Basic Interface
+Interface
 ~~~~~~~~~~~~~~~
 
-In its basic version, user controls are divided into two main sections: **Sources**, which holds the **URL** subsection, and **Options**.
+User controls are divided into two main sections: **Sources**, which holds the **URL** subsection, and **Options**.
 
 .. _YouGet_principal:
 
@@ -77,15 +74,9 @@ but all of their URLs, they can press on the **Clear All** button.
 Options
 *******
 
-The **Options** section contains the controls to choose the **Number of Comments** desired in output. The user can choose between having **1 comment (minimum requirement), 100, 1000, or an illimited amount** 
+The **Options** section contains the controls to choose the **Number of Comments** desired in output. The user can choose between having **1 comment (minimum requirement), 10, 100, 1000, 10'000 or no limit** 
 of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
-
-Advanced Interface
-~~~~~~~~~~~~~~~~~~
-In its advanced version, **YouGet** offers the same functionnalities as the basic one, but adds the 
-possibility of filtering YouTube comments according to their number of **Likes** or by their
-**Date of Publication**.
 
 Messages
 --------
