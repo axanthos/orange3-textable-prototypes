@@ -57,7 +57,7 @@ User controls are divided into two main sections: **Sources**, which holds the *
 .. figure:: figures/YouGet_principal.png
     :align: center
     :alt: Interface of the YouGet widget
-    :scale: 20%
+    :height: 200px
 
     Figure 1: **YouGet** widget interface.
 
