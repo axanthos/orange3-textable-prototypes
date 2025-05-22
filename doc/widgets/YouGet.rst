@@ -43,7 +43,7 @@ download its comments (`<https://www.youtube.com>`_).
 The output is a segmentation containing the **Number of Comments** desired from the chosen YouTube video.
 
 * Choose one or more URL(s) and place them in the **URL(s)** section in the following format: URL1, URL2, URL3, etc.
-* Add them to the **Sources** section
+* **Add** them to the **Sources** section
 * Choose the **Number of Comments** you would like to download from the YouTube video
 * Press **Send** to see the comments in the form of a segmentation
 
@@ -68,7 +68,7 @@ The **Sources** section contains all the controls related to the way **YouGet** 
 The user chooses one ore more YouTube videos which they would like to extract its comments. Once the desired number of videos chosen, the user
 adds the URL(s) into the empty **URL(s)** section. To confirm their URL(s), they must press on the **Add** button which
 will add their URL(s) to a list in the section above called **Sources**. The user can add one or more URLs to their list in **Sources**.
-If they wish to remove an URL, they can press on the **Remove** button. If they wish to not only remove one, 
+If they wish to remove a URL, they can press on the **Remove** button. If they wish to not only remove one, 
 but all of their URLs, they can press on the **Clear All** button.
 
 Options
