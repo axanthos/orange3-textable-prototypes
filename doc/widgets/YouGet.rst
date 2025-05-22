@@ -100,9 +100,6 @@ Information
 Warnings
 ~~~~~~~~
 
-*Please add a YouTube URL*
-   The URL section is empty, so the user has to add at least one URL before sending.
-
 *Settings were changed, please click 'Send' when ready.*
    Settings have changed but the **Send automatically** checkbox has not been selected, 
    so the user is prompted to click the **Send** button (or equivalently check the box) 
