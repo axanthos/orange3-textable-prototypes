@@ -79,6 +79,13 @@ The **Options** section contains the controls to choose the **Number of Comments
 of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
 
+.. figure:: figures/YouGet_1comment.png
+    :align: center
+    :alt: Interface of the YouGet widget
+.. figure:: figures/YouGet_10comment.png
+    :align: center
+    :alt: Interface of the YouGet widget
+
 Messages
 --------
 
