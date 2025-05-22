@@ -19,6 +19,13 @@ along with Orange3-Textable-Prototypes. If not, see
  <http://www.gnu.org/licenses/>.
 """
 
+"""
+Sources that helped us code our widget "YouGet":
+    - ChatGPT (including GPT-3.5 and limited GPT-4o mini): Used ChatGPT to help with regex to only accept YouTube URLs ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47")
+    - Draw.io: Used Draw.io for the YouGet logo (https://app.diagrams.net/)
+    - Widget SciHub: for sections of code where both widgets have in common (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+"""
+
 __version__ = '0.0.1'
 __author__ = "Virgile Albasini, Sophie Ward, Lorelei Chevroulet, Vincent Joris "
 __maintainer__ = "Aris Xanthos"
@@ -50,7 +57,6 @@ import requests
 
 import re
 
-# import re
 import http
 
 from PyQt5.QtWidgets import QMessageBox
@@ -76,43 +82,44 @@ class YouGet(OWTextableBaseWidget):
     )
 
     # Settings...
-    #url = settings.Setting("https://www.youtube.com/watch?v=ScMzIvxBSi4")
+    # url = settings.Setting("https://www.youtube.com/watch?v=ScMzIvxBSi4")
     url = settings.Setting("")
 
     # widget will fetch n=0 comments -> default is all
     # n_desired_comments = 0
-    n_desired_comments = 7 # for testing; TODO: delete.
-
-    #numberOfSegments = settings.Setting("10")
+    n_desired_comments = 7 # for testing
 
 
     want_main_area = False
 
-    #------------------------code emprunté--------------------
+    #---------- START: The following section of code has been borrowed from SciHub.py ----------
+    # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
     DOIs = Setting([])
     autoSend = settings.Setting(False)
     importDOIs = Setting(True)
     importDOIsKey = Setting(u'url')
     DOI = Setting(u'')
-
-    # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
-    importAll = Setting(True)
-    importAbstract = Setting(False)
-    importText = Setting(False)
-    importBibliography = Setting(False)
-    #------------------------code emprunté fin-----------------------------
+    #---------- END: End of the section of code borrowed from SciHub.py ----------
 
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializing the widget with GUI components and internal state.
+        
+        Part of the GUI layout and URL management logic is adapted from:
+        https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py
+        """
         super().__init__(*args, **kwargs)
-        #----------------------- code emprunté à scihub--------------------
+        #---------- START: The following section of code has been borrowed from SciHub.py ----------
+        # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+
         self.URLLabel = list()
         self.selectedURLLabel = list()
         self.new_url = u''
         self.extractedText = u''
         self.DOI = u''
         self.DOIs = list()
-        #-----------------------code emprunté fin------------------------------
+        #---------- END: End of the section of code borrowed from SciHub.py ----------
 
         # Attributes...
         self.inputSegmentationLength = 0
@@ -139,73 +146,10 @@ class YouGet(OWTextableBaseWidget):
             cancelCallback=self.cancel_manually,
             infoBoxAttribute="infoBox",
         ) 
-# notre vieux code >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        # GUI...
 
-        # Top-level GUI boxes are created using method
-        # create_widgetbox(), so that they are automatically
-        # enabled/disabled when processes are running.
-        # optionsBox = self.create_widgetbox(
-        #     box=u'Source',
-        #     orientation='vertical',
-        #     addSpace=False,
-        #     )
+        #---------- START: The following section of code has been borrowed from SciHub.py ----------
+        # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 
-        # GUI elements can be assigned to variables or even
-        # attributes (e.g. self.segmentContentLineEdit) if 
-        # they must be referred to elsewhere, e.g., to enable
-        # or disable them, etc. It is not the case below.
-#         gui.lineEdit(
-#             widget=optionsBox,
-#             master=self,
-#             value="url",
-#             orientation="horizontal",
-#             label="Url :",
-#             labelWidth=130,
-#             # self.sendButton.settingsChanged should be used in 
-#             # in cases where using a GUI element should result
-#             # in sending data to output. If it should result in
-#             # other operations being done, use a custom method 
-#             # instead, and at the end of it, if data should be
-#             # sent to output, call self.sendButton.settingsChanged(). 
-#             # If using the GUI element should not result in   
-#             # anything at that moment, delete the "callback" 
-#             # parameter.
-#             callback=self.sendButton.settingsChanged,
-#             tooltip=(
-#                 "A string that defines the content "
-#                 "each segment."
-#             ),
-#         )
-        
-# #        gui.comboBox(
-# #           widget=optionsBox,
-# #            master=self,
-# #            value="numberOfSegments",
-# #            items=["1", "10", "100", "1000", "10000"],
-# #            sendSelectedValue=True,
-# #            orientation='horizontal',
-# #            label="Number of segments:",
-# #            labelWidth=130,
-# #            callback=self.sendButton.settingsChanged,
-# #            tooltip="Number of segments to create.",
-# #        )
-
-#         # Stretchable vertical spacing between "options"
-#         # and Send button etc.
-#         gui.rubber(self.controlArea)
-
-#         # Draw send button & Info box...
-#         self.sendButton.draw()
-#         self.infoBox.draw()
-        
-#         # Send data if needed. 
-#         self.sendButton.settingsChanged()
-
-# vieux code fin >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-        # -------------- code emprunté à SciHub ------------------------
         # URL box
         URLBox = gui.widgetBox(
             widget=self.controlArea,
@@ -307,54 +251,6 @@ class YouGet(OWTextableBaseWidget):
             items=[1, 5, 10, 100, 1000, 10000, "No limit"],
             sendSelectedValue=True,
         )
-
-        # gui.checkBox(
-        #     widget=advOptionsBox,
-        #     master=self,
-        #     value='importAll',
-        #     label=u'All',
-        #     labelWidth=180,
-        #     callback=self.sendButton.settingsChanged,
-        #     tooltip=(
-        #         u"Import DOIs as annotations."
-        #     ),
-        # )
-        # gui.separator(widget=advOptionsBox, height=3)
-        # gui.checkBox(
-        #     widget=advOptionsBox,
-        #     master=self,
-        #     value='importAbstract',
-        #     label=u'Abstract',
-        #     labelWidth=180,
-        #     callback=self.sendButton.settingsChanged,
-        #     tooltip=(
-        #         u"Import DOIs as annotations."
-        #     ),
-        # )
-        # gui.separator(widget=advOptionsBox, height=3)
-        # gui.checkBox(
-        #     widget=advOptionsBox,
-        #     master=self,
-        #     value='importText',
-        #     label=u'Top Level Sections',
-        #     labelWidth=180,
-        #     callback=self.sendButton.settingsChanged,
-        #     tooltip=(
-        #         u"Import DOIs as annotations."
-        #     ),
-        # )
-        # gui.separator(widget=advOptionsBox, height=3)
-        # gui.checkBox(
-        #     widget=advOptionsBox,
-        #     master=self,
-        #     value='importBibliography',
-        #     label=u'Bibliography',
-        #     labelWidth=180,
-        #     callback=self.sendButton.settingsChanged,
-        #     tooltip=(
-        #         u"Import DOIs as annotations."
-        #     ),
-        # )
         gui.separator(widget=addURLBox, height=3)
         self.addButton = gui.button(
             widget=addURLBox,
@@ -368,53 +264,23 @@ class YouGet(OWTextableBaseWidget):
             disabled = True,
         )
         gui.rubber(self.controlArea)
-        self.updateURLBoxButtons()  #pour que le bouton add ne soit pas gris        
+        # So that the "Add" button is not gray
+        self.updateURLBoxButtons()    
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
 
-        # -------------- code emprunté fin ------------------------
+        #---------- END: End of the section of code borrowed from SciHub.py ----------
 
     def sendData(self):
-        """Perform every required check and operation 
+        """
+        Perform every required check and operation 
         before calling the method that does the actual 
         processing.
         """
-        # Déplacé plus bas, dans add
-        # if self.url == "":
-        #     # Use mode "warning" when user needs to do some
-        #     # action or provide some information; use mode "error"
-        #     # when invalid parameters have been provided; 
-        #     # for notifications that don't require user action,
-        #     # don't use a mode. Use formulations that emphasize
-        #     # what should be done rather than what is wrong or
-        #     # missing.
-        #     self.infoBox.setText("Please add a YouTube URL.", 
-        #                          "warning")
-        #     # Make sure to send None and return if the widget 
-        #     # cannot operate properly at this point.
-        #     self.send("New segmentation", None)
-        #     return
         print('another test!')
         print(self.url)
-
-        """ if self.url == "bonjour": """
-        """ if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
-            print('regex failure')
-            self.infoBox.setText("Please only add YouTube URLs.", "error")
-            self.send("New segmentation", None)
-            #return
-            #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
-        elif self.youtube_video_existe(self.url) == False:
-            self.infoBox.setText("Please check your internet connection.", 
-                                 "warning")
-            # Make sure to send None and return if the widget 
-            # cannot operate properly at this point.
-            self.send("New segmentation", None)
-            return """
         
-
-
         # If the widget creates new LTTL.Input objects (i.e.
         # if it imports new strings in Textable), make sure to
         # clear previously created Inputs with this method.
@@ -443,9 +309,10 @@ class YouGet(OWTextableBaseWidget):
         self.threading(threaded_function)
 
     def processData(self):
-        """Actual processing takes place in this method,
+        """
+        Actual processing takes place in this method,
         which is run in a worker thread so that GUI stays
-        responsive and operations can be cancelled
+        responsive and operations can be cancelled.
         """
         
         # At start of processing, set progress bar to 1%.
@@ -461,12 +328,8 @@ class YouGet(OWTextableBaseWidget):
         max_itr = len(urls)
         cur_itr = 1
 
-        # TODO: remove useless debug statements
-        # TODO: change 'borrowed code' to match project
-        # TODO: DOIs -> URLs, etc.
         print('url debug:')
         print(urls)
-        #print(url)
         print('DOIs:')
         print(self.DOI)
         print(self.DOIs)
@@ -482,12 +345,8 @@ class YouGet(OWTextableBaseWidget):
             # Update progress bar manually...
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
             cur_itr += 1
-            
-            # Create an LTTL.Input...  
 
-
-            #if int(self.numberOfSegments) == 1:
-
+            # If int(self.numberOfSegments) == 1:
             if len(urls) == 1:
                 # self.captionTitle is the name of the widget,
                 # which will become the label of the output
@@ -495,9 +354,6 @@ class YouGet(OWTextableBaseWidget):
                 label = self.captionTitle
             else:
                 label = None # will be set later.
-
-            #print("1")
-            # on fetch les commentaires depuis l'url spécifié plus haut, attention ce n'est encore l'url entrée par l'utilisateur
 
             print('cache checks happens below')
             # Check if we already have an entry for the url in the cached
@@ -511,22 +367,16 @@ class YouGet(OWTextableBaseWidget):
                 print(f'▓ using the cache')
                 comments_ycd = self.cached_comments.get(url)
                 print(f'▓ found {len(comments_ycd)} comments')
-                #print('·   here be comments')
-                #print(comments_ycd)
             else:
-                #print(f'▓▓ results of self.scrape(url): \n{self.scrape(url)}')
                 print(f'▓ not using the cache')
                 comments_ycd = self.scrape(url)
                 print(f'▓ found {len(comments_ycd)} comments')
-                #print(f'▓▓ contents of comments_ycd: \n{comments_ycd}')
                 self.cached_comments[url] = comments_ycd
                 print(f'▓ saved {len(self.cached_comments[url])} comments')
-                #print(f'▓▓ cached comments:: \n{self.cached_comments}')
-                #print(self.cached_comments)
             print('▓▓————————▓▓ cache check happened! ▓▓————————▓▓')
 
-            # Placeholder limit for testing. TODO: delete.
-            #limit = 10
+            # Placeholder limit for testing.
+            # limit = 10
             limit = int(self.n_desired_comments)
 
             # While we cache everything that was scraped, we only return as
@@ -536,11 +386,6 @@ class YouGet(OWTextableBaseWidget):
                       f'▓ with type: {type(limit)}')
                 comments_ycd = comments_ycd[0:limit]
                 print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
-                #print("there's a limit here!")
-                #print(comments_ycd)
-
-            #TODO ajouter ici une manière d'afficher les commentaire de manière splittée (c'est tout join pour le moment)
-            #on créé une chaine de caractères séparés d'un retour à la ligne 
 
             for chose in comments_ycd:
                 myInput = Input(str(chose["text"]), label) 
@@ -551,10 +396,6 @@ class YouGet(OWTextableBaseWidget):
 
                 self.createdInputs.append(myInput)
 
-            
-            # Add the  LTTL.Input to self.createdInputs.
-            # self.createdInputs.append(myInput) déplacé plus haut dans la boucle
-            
             # Cancel operation if requested by user...
             time.sleep(0.00001) # Needed somehow!
             if self.cancel_operation:
@@ -583,7 +424,8 @@ class YouGet(OWTextableBaseWidget):
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
-        """All operations following the successful termination
+        """
+        All operations following the successful termination
         of self.processData
         """
         
@@ -606,7 +448,9 @@ class YouGet(OWTextableBaseWidget):
     # The following method should be copied verbatim in 
     # every Textable widget.
     def setCaption(self, title):
-        """Register captionTitle changes and send if needed"""
+        """
+        Register captionTitle changes and send if needed
+        """
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
             super().setCaption(title)
@@ -620,23 +464,33 @@ class YouGet(OWTextableBaseWidget):
     # every Textable widget that creates LTTL.Input objects.
 
     def clearCreatedInputs(self):
-        """Clear created inputs"""
+        """
+        Clear created inputs
+        """
+        # List of inputs/URLs
         for i in self.createdInputs:
+            # Database: clearing ID of URL to clear, set value to None (= erase data)
             Segmentation.set_data(i[0].str_index, None)
+        # GUI: clears contents of list
         del self.createdInputs[:]
 
     def onDeleteWidget(self):
-        """Clear created inputs on widget deletion"""
+        """
+        Clear created inputs on widget deletion
+        """
         self.clearCreatedInputs()
 
-    # Pour tester s'il y a une connection internet
     def youtube_video_existe(self, urll):
+        """
+        This function tests the Internet connection.
+        """
         print(
             f'▓▓▓▓▓▓▓▓▓▓▓▓ youtube_video_existe(urll)\n'
             f'▓ youtube_video_existe() —— urll={urll}'
         )
+        # Mimicking a browser so there is no blockage when requesting a URL
         headers = {
-            "User-Agent": "Mozilla/5.0"  # éviter le blocage par YouTube
+            "User-Agent": "Mozilla/5.0"
         }
         try:
             response = requests.get(urll, headers=headers, timeout=5)
@@ -660,23 +514,26 @@ class YouGet(OWTextableBaseWidget):
             f'▓ scrape() —— url={url}'
         )
 
-        # that's where we go fetch the comments!
+        # Fetch the comments
         downloader = YoutubeCommentDownloader()
         comments = downloader.get_comments_from_url(url)
         every_comment = [x for x in comments]
+        # Prints number of comments found
         print(
             f'▓ scrape() —— returning {len(every_comment)} comment(s)'
         )
-        #print('look at all these comments!s')
-        #print([x for x in comments])
         print('▓ scrape() —— work done :) returning.')
         print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
+        # Returns the list of all comments collected
         return every_comment
-        #return [x for x in comments]
     
-    #---------------------code emprunté à sci hub ------------------------------------------------------------------------
+    #---------- START: The following section of code has been borrowed from SciHub.py ----------
+    # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+
     def clearAll(self):
-        """Remove all DOIs from DOIs attr"""
+        """
+        Remove all DOIs from DOIs attr
+        """
         del self.DOIs[:]
         del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
@@ -684,7 +541,9 @@ class YouGet(OWTextableBaseWidget):
         self.clearAllButton.setDisabled(True)
 
     def remove(self):
-        """Remove URL from DOIs attr"""
+        """
+        Remove URL from DOIs attr
+        """
         if self.selectedURLLabel:
             index = self.selectedURLLabel[0]
             self.DOIs.pop(index)
@@ -694,139 +553,127 @@ class YouGet(OWTextableBaseWidget):
         self.clearAllButton.setDisabled(not bool(self.URLLabel))
 
     def add(self):
-        """Add Urls to URLs attr"""
-        """ DOIList = re.split(r',', self.new_url) """
+        """
+        Add Urls to URLs attr
+        DOIList = re.split(r',', self.new_url)
+        """
+        # String of comma-separated URLs (url1, url2, ...)
+        # re.split(r'\s*,\s*') splits strong on commas, allows whtiespace
         DOIList = [url.strip() for url in re.split(r'\s*,\s*', self.new_url)]
 
-        # print(DOIList)
+        # Saves list of added URLs
         old_urls = list(self.DOIs)
         print("old url "+str(old_urls))
         for DOI in DOIList:
             print(DOI)
-            # self.DOIs.append(DOI)
-        if DOIList:
-            tempSet = DOIList        # ici on créé un set pour supprimer tous les doublons
-            # print(set(DOIList))
-            def_set = set(tempSet)    
-
-            # if(len(tempSet)<len(self.DOIs)):
-            #     QMessageBox.information(
-            #         None, "YouGet", "Error Message: <br><br>Duplicate URL(s) found and deleted.",
-            #         QMessageBox.Ok
-            #     )
-
-
-            # if self.new_url == "":
-            #     # Use mode "warning" when user needs to do some
-            #     # action or provide some information; use mode "error"
-            #     # when invalid parameters have been provided; 
-            #     # for notifications that don't require user action,
-            #     # don't use a mode. Use formulations that emphasize
-            #     # what should be done rather than what is wrong or
-            #     # missing.
-            #     self.infoBox.setText("Please add a YouTube URL.", 
-            #                         "warning")
-            #     # Make sure to send None and return if the widget 
-            #     # cannot operate properly at this point.
-            #     self.send("New segmentation", None)
-            #     return
-        
-            # if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", self.url):
-            #     self.infoBox.setText("Please only add YouTube URLs.", "error")
-            #     self.send("New segmentation", None)
-            #     return
-            #     #"https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47"
             
+        if DOIList:
+            # Create set to delete all duplicate URLs
+            tempSet = DOIList
+            def_set = set(tempSet)
+            
+            # Warnings
+            # Invalid format
             not_an_url = False
+            # Video does not exist
             not_available = False
+            # Duplicate
             doublon = False
+            # Numbers of each problem
             nombre_de_problemes_not_url = 0
             nombre_de_problemes_not_available = 0
             nombre_de_problemes_doublon = 0
             print(tempSet)
             indexx = 0
             list_indexx = []
+
+            # Loop over each new URL to validate it
             for single_url in tempSet:
                 list_indexx.append(True)
-                # si une url de la liste est déjà possédée,
                 for past_url in old_urls:
+                    # Mark as duplicate if it already exists in old_urls
                     if single_url == past_url:
                         doublon = True
                         print("il y a un doublon ici")
                         list_indexx[indexx] = False
                         nombre_de_problemes_doublon += 1
 
-                # si une ou plus url dans la liste n'est pas la forme d'une url ytb, ne pas autoriser l'ajout
+                # If 1 or more URL(s) in a list are not in the form of a URL from Youtube, the URL will not be added
+                # Regex to only accept YouTube URL format
+                # ---------- With the help of ChatGPT ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47") ----------
                 if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
                     not_an_url = True
-                    # tempSet = set(old_urls)
+                    # Each element is True or False depending on whether the URL passed all checks
                     if list_indexx[indexx] != False:
                         list_indexx[indexx] = False
                         nombre_de_problemes_not_url += 1
 
+                # Check if the URL exists
                 elif not youtube_video_exists(single_url):
-                    # print(single_url)
                     not_available = True
-                    # tempSet = set(old_urls)
+                    # Each element is True or False depending on whether the URL passed all checks
                     if list_indexx[indexx] != False:
                         list_indexx[indexx] = False
                         nombre_de_problemes_not_available += 1
-
+                
+                # Check that the URL is not a duplicate and is available 
                 if doublon == False and not_an_url == False and not_available == False:
                     print("la ou les url sont clean")
                     list_indexx[indexx] = True
+                # If this is the case, URL is added to the list indexx
                 indexx += 1
-            
-            # if self.youtube_video_existe(self.new_url) == False:
-            #     tempSet = set(old_urls)
-            #     QMessageBox.information(
-            #         None, "YouGet", "Warning Message: <br><br>One or more element(s) are not YouTube URLs or please check your internet connection.",
-            #         QMessageBox.Ok
-            #     )
 
+            # If an URL is a duplicate, then there is an error message
             if doublon == True:
                 QMessageBox.information(
+                    # The error message gives the numbers of duplicates found
                     None, "YouGet", f"Error Message: <br><br>{nombre_de_problemes_doublon} duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
                 )
 
-            # on voit si l'un des url est faux
+            # If a URL is not available or misspelled
             if not_available == True:
-                # tempSet = set(old_urls)
                 QMessageBox.information(
+                    # The error message gives the numbers of non available URLs found
                     None, "YouGet", f"Error Message: <br><br>{nombre_de_problemes_not_available} URL(s) are not valid YouTube videos",
                     QMessageBox.Ok
                 )
 
+            # If a URL is not a URL
             if not_an_url == True:
-                # tempSet = set(old_urls)
-
                 QMessageBox.information(
+                    # The error message gives the numbers of non URLs found
                     None, "YouGet", f"Warning Message: <br><br>{nombre_de_problemes_not_url} element(s) are not YouTube URLs or please check your internet connection.",
                     QMessageBox.Ok
                 )
 
-            # retire les urls tagées False, en gardant les autres
+            # Removes the False URL(s) and keeps the rest
             temp_set_liste = list(tempSet)
             filtered_list = []
             for i, keep in enumerate(list_indexx):
                 if keep:
                     filtered_list.append(temp_set_liste[i])
-
-
+            # Only URL(s) that pass all checks are kept and added to self.DOIs  
             self.DOIs += list(filtered_list)
             self.DOIs = list(set(self.DOIs))
             self.URLLabel = self.DOIs
 
-        # self.URLLabel = self.URLLabel
+        # Update on buttons
+        # Disable "Clear All" button if there are no URL(s)
         self.clearAllButton.setDisabled(not bool(self.DOIs))
+        # Trigger settings changed for the send button
         self.sendButton.settingsChanged()
     
     def addDisabledOrNot(self):
+        """
+        Disables the add button if no new URL is entered
+        """
         self.addButton.setDisabled(not bool(self.new_url))
 
     def updateURLBoxButtons(self):
-        """Update state of File box buttons"""
+        """
+        Update state of the "Add" and "Remove" buttons
+        """
         self.addButton.setDisabled(not bool(self.new_url))
         self.removeButton.setDisabled(not bool(self.selectedURLLabel))
 
@@ -835,7 +682,9 @@ class YouGet(OWTextableBaseWidget):
     # every Textable widget that creates LTTL.Input objects.
 
     def clearCreatedInputs(self):
-        """Clear created inputs"""
+        """
+        Clear created inputs
+        """
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
         del self.createdInputs[:]
@@ -843,63 +692,69 @@ class YouGet(OWTextableBaseWidget):
     def onDeleteWidget(self):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
-    #-----------------------------code emprunté à sci hub fin---------------------------------------------------------------------------------
-
+    #---------- END: End of the section of code borrowed from SciHub.py ----------
 
     def updateGUI(self):
+        """
+        This method is intended to refresh or modify GUI elements based on the current
+        internal state or user interactions.
+        """
         pass
 
-#Fetch.url = ''
-#test = Fetch.from_url('https://www.youtube.com/watch?v=ScMzIvxBSi4', limit=5)
-#print(test)
-#print(len(test))
 if __name__ == '__main__':
         WidgetPreview(YouGet).run()
 
 
-
-import requests
 import re
+import requests
 import json
 
 def youtube_video_exists(url):
+    """
+    This function checks whether a YouTube video exists and is playable at a given URL.
+    """
+    # Mimicking a browser so there is no blockage when requesting a URL
     headers = {
         "User-Agent": "Mozilla/5.0"
     }
 
+    # Sending an HTTP GET request to the YouTube video URL
+    # Grab data with the help of the internet
     try:
         response = requests.get(url, headers=headers)
+        # Check for successful response
+        # 200 means success, != 200 means failure
         if response.status_code != 200:
             return False
 
+        # Extract the YouTube video content content
         html = response.text
-        # print(html)
 
         # Extraction du JSON "ytInitialPlayerResponse"
         initial_data_match = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', html)
         print(initial_data_match)
 
+        # If nothing is found, return False and print Error
         if not initial_data_match:
             print("Impossible d'extraire ytInitialPlayerResponse")
             return False
 
+        # Parse extracted JSON into a Python dict
         data = json.loads(initial_data_match.group(1))
         print(data)
+        # Check playability status
         status = data.get("playabilityStatus", {}).get("status", "UNKNOWN")
 
+        # Indicate the URL's playability status
         if status == "OK":
+            # "OK" means that the URL is available
             return True
         else:
+            # If video not playable, return False
             print(f"Statut de lecture : {status}")
             return False
-
+    
+    # Catch errors during the request
     except Exception as e:
         print(f"Erreur lors de l'analyse : {e}")
         return False
-
-# # Test
-# url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Change le lien ici pour tester
-# if youtube_video_exists(url):
-#     print("✅ La vidéo existe et est accessible.")
-# else:
-#     print("❌ La vidéo n'existe pas ou n'est pas disponible.")'''
