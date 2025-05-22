@@ -304,7 +304,7 @@ class YouGet(OWTextableBaseWidget):
             value='n_desired_comments',
             label='Select number of comments:',
             tooltip='Default 0 is all comments.',
-            items=[1, 5, 10, 100, 1000, 10000, 0],
+            items=[1, 5, 10, 100, 1000, 10000, "No limit"],
             sendSelectedValue=True,
         )
 
