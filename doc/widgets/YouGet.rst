@@ -121,7 +121,7 @@ Errors
    The widget detects that the URL(s) are misspelt and does not add them to the list.
 
 *One or more elements are not YouTube URLs or please check your internet connection*
-   The widget detetcs that there is an error with the URL(s). Either in terms of the URL(s) themselves or the internet connection. If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of these elements will not be added to the **Sources** section. If the internet connection is interrupted during the process of adding URLs to the **Sources** section or during the loading process of the comments, there will be an error message that will appear to please check your internet connection.
+   The widget detetcs that there is an error with the process. Either in terms of the URL(s) themselves or with the internet connection. If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of these elements will not be added to the **Sources** section. If the internet connection is interrupted during the process of adding URLs to the **Sources** section or during the loading process of the comments, there will be an error message that will appear to please check your internet connection.
 
 Note
 ~~~~~~~~
