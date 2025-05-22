@@ -114,17 +114,14 @@ Warnings
 Errors
 ~~~~~~~~
 
-*Duplicate URL(s) found and deleted.*
+*(nb) duplicate URL(s) found and deleted*
    The system finds one or multiple duplicate URL(s) and deletes them instead of adding them.
 
-*One or more elements are not YouTube URLs, please only add YouTube URLs.*
-   If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of these elements will not be added to the **Sources** section.
+*(nb) URL(s) are not valid YouTube videos*
+   The widget detects that the URL(s) are misspelt and does not add them to the list.
 
-*Please check your internet connection*
-   If the internet connection is interrupted during the process of adding URLs to the **Sources** section or during the loading process of the comments, there will be an error message that will appear to please check your internet connection.
-
-*Please make sure that input is well-formed XML*
-   The URL section must only contain URLs.
+*One or more elements are not YouTube URLs or please check your internet connection*
+   The widget detetcs that there is an error with the URL(s). Either in terms of the URL(s) themselves or the internet connection. If there are multiple elements added in the **URL(s)** section and one of them is not an URL, then all of these elements will not be added to the **Sources** section. If the internet connection is interrupted during the process of adding URLs to the **Sources** section or during the loading process of the comments, there will be an error message that will appear to please check your internet connection.
 
 Note
 ~~~~~~~~
