@@ -129,8 +129,7 @@ Errors
 Note
 ~~~~~~~~
 
-Note that when starting the widget and when first adding your URL(s), the **Add** button is gray, however, it is functional. Press
-it to add your URL(s) to the **Sources** section.
+Note that when starting the widget and when first adding your URL(s), the **Add** button is gray, however, it is functional. Press the **Add** button to add your URL(s) to the **Sources** section.
 
 Note also that in the **Select number of comments** section, there is a 1 there by default. If you do not choose
 a number of comments, the output will be 7 by default. If you
