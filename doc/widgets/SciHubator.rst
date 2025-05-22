@@ -32,13 +32,8 @@ Requirements
 
 * Orange 3.38.1
 * Orange Textable 3.2.2
-* from functools import partial
-* import time
 * from scidownl import scihub_download
-* import tempfile
 * import pdfplumber
-* import os
-* import requests
  
 Description
 -----------
@@ -130,9 +125,9 @@ Information
     button (or equivalently check the box) in order for computation and data
     emission to proceed.
 
-*No data sent to output yet: no file selected.*
+*No data sent to output yet: no DOI selected.*
     The widget instance is not able to emit data to output because no input 
-    file has been selected.
+    DOI has been selected.
 
 *No data sent to output yet, see 'Widget state' below.*
     A problem with the instance's parameters and/or input data prevents it
@@ -140,11 +135,20 @@ Information
     found in the **Widget state** box at the bottom of the instance's
     interface (see `Warnings`_ and `Errors`_ below).
 
+*Duplicate DOI(s) found and deleted.*
+    A duplicate DOI was found in the DOI list.
+    Adding operation is halted so that no duplicates appear
+
+
 Warnings
 ~~~~~~~~
 
 *Please enter one or many valid DOIs.*
-   A valid DOI is required for being processed by Sci-Hub. The warning indicates that nothing was typed in the DOI field.
+   A valid DOI is required for being processed by Sci-Hub.
+The warning indicates that nothing was typed in the DOI field.
+
+*Not all sections were segmented*
+    The regex was not able to segment the content of certain DOIs.
 
 *Step 1/3: Pre-processing...*
    The PDF is being downloaded   
