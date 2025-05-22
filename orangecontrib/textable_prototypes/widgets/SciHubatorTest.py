@@ -264,8 +264,8 @@ class SciHubator(OWTextableBaseWidget):
             widget=advOptionsBox,
             master=self,
             value='importAllorBib',
-            btnLabels=['Bib', 'All'],
-            label=u'Bibliography',
+            btnLabels=['All in one Segment', 'Bibliography'],
+            label=u'Choose what to import',
             callback=self.sendButton.settingsChanged,
             tooltips=["Import all article's in one segment", "Import only bibliography (if found)"]
         )
