@@ -82,9 +82,11 @@ of a segmentation.
 .. figure:: figures/YouGet_1comment.png
     :align: center
     :alt: Interface of the YouGet widget
-.. figure:: figures/YouGet_10comment.png
+    :height: 600px
+.. figure:: figures/YouGet_10comments.png
     :align: center
     :alt: Interface of the YouGet widget
+    :height: 600px
 
 Messages
 --------
