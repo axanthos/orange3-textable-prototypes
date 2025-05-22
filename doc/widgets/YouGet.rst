@@ -69,7 +69,7 @@ but all of their URLs, they can press on the **Clear All** button.
 Options
 *******
 
-The **Options** section contains the controls to choose the **Number of Comments** desired in output. The user can choose between having **1 comment (minimum requirement), 10, 100, 1000, 10'000 or no limit** 
+The **Options** section contains the controls to choose the **Number of Comments** desired in output. The user can choose between having **1 comment (minimum requirement), 5, 10, 100, 1000, 10'000 or no limit** 
 of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
 
