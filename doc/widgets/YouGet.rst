@@ -22,17 +22,11 @@ Signals
 
 Inputs: 
 
-* Enter a YouTube video's URL to download comments
-* Import a URL list
-* Choose the amount of comments you would like to download (minimum 1 comment, 10, 100, 1000, 10'000 or no limit)
+* None
 
 Outputs:
 
 * The comments from a YouTube video in the form of a segmentation
-
-Optional 
-
-* Have the comments in output ordered by likes or by their date
 
 
 Description
