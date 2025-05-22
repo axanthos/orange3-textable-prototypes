@@ -131,7 +131,7 @@ Note
 
 Note that when starting the widget and when first adding your URL(s), the **Add** button is gray, however, it is functional. Press the **Add** button to add your URL(s) to the **Sources** section.
 
-Note also that in the **Select number of comments** section, there is a 1 there by default. If you do not choose
+Note also that in the **Select number of comments** section, there is a 1 there by default, but it does not do anything. If you do not choose
 a number of comments, the output will be 7 by default. If you
 wish to only have 1, even though it is written at the beginning 1, you must press again on the number 1. If you wish more comments,
 you must press on the other options.
