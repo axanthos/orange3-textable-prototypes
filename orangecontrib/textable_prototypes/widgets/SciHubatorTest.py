@@ -42,14 +42,25 @@ from _textable.widgets.TextableUtils import (
 )
 from LTTL.Segmenter import tokenize
 from LTTL.Segmentation import Segmentation
-from Orange.widgets import gui, settings
+from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from LTTL.Input import Input
 from Orange.widgets.settings import Setting
 from PyQt5.QtWidgets import QMessageBox
 
 class SciHubator(OWTextableBaseWidget):
-    """An Orange widget that lets the user select an integer value"""
+    """
+    Orange widget for importing and segmenting text from DOIs using Sci-Hub.
+
+    Attributes :
+        URLLabel (list) : List of labels for the DOIs.
+        selectedURLLabel (list) : List of selected labels from the URL list.
+        newDOI (str) : DOI entered by the user for addition.
+        extractedText (str) : Extracted text from the downladed PDF
+        DOI (str) : Single DOI value.
+        DOIs (list) : List of DOIs added by the user
+        createdInputs (list) : List of created LTTL.Inputs
+    """
 
     #Version minimale
 
@@ -86,12 +97,16 @@ class SciHubator(OWTextableBaseWidget):
     DOI = Setting(u'')
 
     # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
-    importAll = Setting(True)
+    """importAll = Setting(True)"""
     """importAbstract = Setting(False)"""
     """importText = Setting(False)"""
-    importBibliography = Setting(False)
+    """importBibliography = Setting(False)"""
+    importAllorBib = Setting(0)
 
     def __init__(self):
+        """
+        Initializes the SciHubator widget, including the GUI components and settings
+        """
         super().__init__()
         self.URLLabel = self.DOIs[:]
         print(self.URLLabel)
@@ -200,7 +215,7 @@ class SciHubator(OWTextableBaseWidget):
             orientation='vertical',
             addSpace=False,
         )
-        gui.checkBox(
+        """gui.checkBox(
             widget=advOptionsBox,
             master=self,
             value='importAll',
@@ -210,7 +225,7 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"Import DOIs as annotations."
             ),
-        )
+        )"""
         """gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
             widget=advOptionsBox,
@@ -235,7 +250,7 @@ class SciHubator(OWTextableBaseWidget):
                 u"Import DOIs as annotations."
             ),
         )"""
-        gui.separator(widget=advOptionsBox, height=3)
+        """gui.separator(widget=advOptionsBox, height=3)
         gui.checkBox(
             widget=advOptionsBox,
             master=self,
@@ -246,6 +261,16 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"Import DOIs as annotations."
             ),
+        )"""
+        gui.separator(widget=advOptionsBox, height=3)
+        gui.radioButtonsInBox(
+            widget=advOptionsBox,
+            master=self,
+            value='importAllorBib',
+            btnLabels=['Bib', 'All'],
+            label=u'Bibliography',
+            callback=self.sendButton.settingsChanged,
+            tooltips=["Import all article's in one segment", "Import only bibliography (if found)"]
         )
         gui.separator(widget=addURLBox, height=3)
         self.addButton = gui.button(
@@ -267,9 +292,15 @@ class SciHubator(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
     def sendData(self):
-        """Perform every required check and operation
-        before calling the method that does the actual
-        processing.
+        """
+        Trigger the data processing workflow from user-provided DOIs.
+
+        This method:
+            - Validates the presence of at least one DOI.
+            - Displays a warning if no DOI is provided.
+            - Clears any previously created inputs.
+            - Updates the UI to indicate the start of preprocessing.
+            - Launches the processing asynchronously using a background thread
         """
         # Verify checkboxes
         if not (self.importAll or self.importBibliography): #or self.importText
@@ -307,195 +338,224 @@ class SciHubator(OWTextableBaseWidget):
         self.threading(threaded_function)
 
     def processData(self):
-            """Actual processing takes place in this method,
-            which is run in a worker thread so that GUI stays
-            responsive and operations can be cancelled
-            """
+        """
+        Download and process academic articles from DOIs using Sci-Hub.
 
-            # At start of processing, set progress bar to 1%.
-            # Within this method, this is done using the following
-            # instruction.
-            self.signal_prog.emit(1, False)
+        This method handles the full pipeline for downloading PDFs via Sci-Hub,
+        extracting their text content, and converting them into LTTL-compatible
+        input segmentations.
 
-            # DOIList.append(self.DOIContent)
+        Steps:
+            1. Verifies Sci-Hub accessibility.
+            2. Downloads PDFs for each DOI.
+            3. Extracts text from each PDF using pdfplumber.
+            4. Wraps extracted text into LTTL.Inputs with DOI annotations.
+            5. Concatenates inputs if multiple DOIs are processed.
 
-            # Indicate the total number of iterations that the
-            # progress bar will go through (e.g. number of input
-            # segments, number of selected files, etc.), then
-            # set current iteration to 1.
-            max_itr = len(self.DOIs)
-            cur_itr = 1
+        Returns :
+            Segmentation: A single or concatenated segmentation(s) ready for output.
 
-            # Permet de tester la connexion à Sci-Hub
-            if not test_scihub_accessible():
+        Raises:
+            Emits error messages and halts processing if:
+            - Sci-Hub is unreachable.
+            - A download fails.
+            - A PDF cannot be parsed.
+        """
+
+        # At start of processing, set progress bar to 1%.
+        # Within this method, this is done using the following
+        # instruction.
+        self.signal_prog.emit(1, False)
+
+        # DOIList.append(self.DOIContent)
+
+        # Indicate the total number of iterations that the
+        # progress bar will go through (e.g. number of input
+        # segments, number of selected files, etc.), then
+        # set current iteration to 1.
+        max_itr = len(self.DOIs)
+        cur_itr = 1
+
+        # Permet de tester la connexion à Sci-Hub
+        if not test_scihub_accessible():
+            self.sendNoneToOutputs()
+            self.infoBox.setText("SciHub inaccessible - verify your connexion", 'error')
+            return
+        # Actual processing...
+
+        # For each progress bar iteration...
+        tempdir = tempfile.TemporaryDirectory()
+        for DOI in self.DOIs:
+
+            # Update progress bar manually...
+            self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+            cur_itr += 1
+
+            # code ajouté ici
+            paper = DOI
+            paper_type = "doi"
+            out = f"{tempdir.name}/{self.DOIs.index(DOI)}"
+            try:
+                scihub_download(paper, paper_type=paper_type, out=out)
+            except Exception as ex:
+                print(ex)
                 self.sendNoneToOutputs()
-                self.infoBox.setText("SciHub inaccessible - verify your connexion", 'error')
+                self.infoBox.setText("An error occurred when downloading", 'error')
                 return
-            # Actual processing...
+            # Cancel operation if requested by user...
+            time.sleep(0.00001)  # Needed somehow!
+            if self.cancel_operation:
+                self.signal_prog.emit(100, False)
+                return
 
-            # For each progress bar iteration...
-            tempdir = tempfile.TemporaryDirectory()
-            for DOI in self.DOIs:
-
-                # Update progress bar manually...
-                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                cur_itr += 1
-
-                # code ajouté ici
-                paper = DOI
-                paper_type = "doi"
-                out = f"{tempdir.name}/{self.DOIs.index(DOI)}"
+        # Update infobox and reset progress bar...
+        self.signal_text.emit(f"Step 2/3: Processing...",
+                              "warning")
+        cur_itr = 0
+        cur_itr_p3 = 0
+        self.signal_prog.emit(0, True)
+        empty_re = False
+        for DOI in self.DOIs:
+            DOIText = ""
+            if os.path.exists(f"{tempdir.name}/{self.DOIs.index(DOI)}.pdf"):
                 try:
-                    scihub_download(paper, paper_type=paper_type, out=out)
-                except Exception as ex:
-                    print(ex)
+                    with pdfplumber.open(f"{tempdir.name}/{self.DOIs.index(DOI)}.pdf") as pdf:
+                        for page in pdf.pages:
+                            self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                            cur_itr += (1 / len(pdf.pages))
+                            DOIText += page.extract_text()
+                except Exception as e:
                     self.sendNoneToOutputs()
-                    self.infoBox.setText("An error occurred when downloading", 'error')
+                    self.infoBox.setText(f"Error occurred when reading PDF: {str(e)}", 'error')
                     return
-                # Cancel operation if requested by user...
-                time.sleep(0.00001)  # Needed somehow!
-                if self.cancel_operation:
-                    self.signal_prog.emit(100, False)
-                    return
+            else:
+                self.sendNoneToOutputs()
+                self.infoBox.setText("Download failed. Please, verify DOI or connexion", 'error')
+                return
+            ########
 
-            # Update infobox and reset progress bar...
-            self.signal_text.emit(f"Step 2/3: Processing...",
+            # Create an LTTL.Input...
+            if len(self.DOIs) == 1:
+                # self.captionTitle is the name of the widget,
+                # which will become the label of the output
+                # segmentation.
+                label = self.captionTitle
+            else:
+                label = None  # will be set later.
+
+            myInput = Input(DOIText, label)
+
+            self.signal_text.emit("Step 3/3: Post-processing...",
                                   "warning")
-            cur_itr = 0
-            self.signal_prog.emit(0, True)
-            empty_re = False
-            for DOI in self.DOIs:
-                DOIText = ""
-                if os.path.exists(f"{tempdir.name}/{self.DOIs.index(DOI)}.pdf"):
-                    try:
-                        with pdfplumber.open(f"{tempdir.name}/{self.DOIs.index(DOI)}.pdf") as pdf:
-                            for page in pdf.pages:
-                                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                                cur_itr += (1 / len(pdf.pages))
-                                DOIText += page.extract_text()
-                    except Exception as e:
-                        self.sendNoneToOutputs()
-                        self.infoBox.setText(f"Error occurred when reading PDF: {str(e)}", 'error')
-                        return
-                else:
-                    self.sendNoneToOutputs()
-                    self.infoBox.setText("Download failed. Please, verify DOI or connexion", 'error')
-                    return
-                ########
+            max_itr = (int(self.importAll) + int(self.importBibliography))*(len(self.DOIs)+1) #+ int(self.importText)
+            if self.importAll:
 
-                # Create an LTTL.Input...
-                if len(self.DOIs) == 1:
-                    # self.captionTitle is the name of the widget,
-                    # which will become the label of the output
-                    # segmentation.
-                    label = self.captionTitle
+                cur_itr_p3 += 1*len(self.DOIs)
+                # Extract the first (and single) segment in the
+                # newly created LTTL.Input and annotate it with
+                # the length of the input segmentation.
+                segment = myInput[0]
+                segment.annotations["DOI"] \
+                    = DOI
+                # For the annotation to be saved in the LTTL.Input,
+                # the extracted and annotated segment must be re-assigned
+                # to the first (and only) segment of the LTTL.Input.
+                myInput[0] = segment
+                # Add the  LTTL.Input to self.createdInputs.
+                self.createdInputs.append(myInput)
+            if self.importBibliography:
+                cur_itr_p3 += 1*len(self.DOIs)
+                ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
+                regexes = [(ma_regex, 'tokenize')]
+                self.signal_prog.emit(int(100 * cur_itr_p3 / max_itr), False)
+                new_segmentation = tokenize(myInput, regexes)
+                if (len(new_segmentation) == 0):
+                    empty_re = True
+                    new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
                 else:
-                    label = None  # will be set later.
-
+                    new_input = Input(new_segmentation.to_string(), "Bibliographies")
+                    segment = new_input[0]
+                    segment.annotations["part"] = "Bibliography"
+                    segment.annotations["DOI"] = DOI
+                    new_input[0] = segment
+                self.createdInputs.append(new_input)
+            """if self.importText:
+                cur_itr += 1
+                ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
+                regexes = [(ma_regex,'tokenize')]
+                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
+                new_segmentation = tokenize(myInput, regexes)
+                print("*" * 100)
+                print(len(new_segmentation))
+                print(new_segmentation.to_string())
+                if(len(new_segmentation) == 0):
+                    print("cucou")
+                    empty_re = True
+                    new_input = Input("","Empty Top level sections")
+                else:
+                    new_segmentation[0].annotations["DOI"] = "Top level sections"
+                    new_input = Input(new_segmentation.to_string(), "")
+                    new_input[0]= new_segmentation[0]
+                self.createdInputs.append(new_segmentation)"""
+            """if self.importAbstract:
+                cur_itr += 1
                 myInput = Input(DOIText, label)
 
-                self.signal_text.emit("Step 3/3: Post-processing...",
-                                      "warning")
-                cur_itr = 0
-                self.signal_prog.emit(0, True)
-                max_itr = int(self.importAll) + int(self.importBibliography) #+ int(self.importText)
-                if self.importAll:
+                # Extract the first (and single) segment in the
+                # newly created LTTL.Input and annotate it with
+                # the length of the input segmentation.
+                segment = myInput[0]
+                segment.annotations["DOI"] \
+                    = DOI
+                # For the annotation to be saved in the LTTL.Input,
+                # the extracted and annotated segment must be re-assigned
+                # to the first (and only) segment of the LTTL.Input.
+                myInput[0] = segment
 
-                    cur_itr += 1
-                    # Extract the first (and single) segment in the
-                    # newly created LTTL.Input and annotate it with
-                    # the length of the input segmentation.
-                    segment = myInput[0]
-                    segment.annotations["DOI"] \
-                        = DOI
-                    # For the annotation to be saved in the LTTL.Input,
-                    # the extracted and annotated segment must be re-assigned
-                    # to the first (and only) segment of the LTTL.Input.
-                    myInput[0] = segment
-                    # Add the  LTTL.Input to self.createdInputs.
-                    self.createdInputs.append(myInput)
-                if self.importBibliography: 
-                    cur_itr += 1
-                    ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
-                    regexes = [(ma_regex, 'tokenize')]
-                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                    new_segmentation = tokenize(myInput, regexes)
-                    if (len(new_segmentation) == 0):
-                        empty_re = True
-                        new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
-                    else:
-                        new_segmentation[0].annotations["part"] = "Bibliography"
-                        new_input = Input(new_segmentation.to_string(), "Bibliographies")
-                        new_input[0].annotations["part"] = "Bibliography"
-                        new_input[0] = new_segmentation[0]
-                    self.createdInputs.append(new_input)
-                """if self.importText:
-                    cur_itr += 1
-                    ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
-                    regexes = [(ma_regex,'tokenize')]
-                    self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                    new_segmentation = tokenize(myInput, regexes)
-                    print("*" * 100)
-                    print(len(new_segmentation))
-                    print(new_segmentation.to_string())
-                    if(len(new_segmentation) == 0):
-                        print("cucou")
-                        empty_re = True
-                        new_input = Input("","Empty Top level sections")
-                    else:
-                        new_segmentation[0].annotations["DOI"] = "Top level sections"
-                        new_input = Input(new_segmentation.to_string(), "")
-                        new_input[0]= new_segmentation[0]
-                    self.createdInputs.append(new_segmentation)"""
-                """if self.importAbstract:
-                    cur_itr += 1
-                    myInput = Input(DOIText, label)
+                # Add the  LTTL.Input to self.createdInputs.
+                self.createdInputs.append(myInput)"""
 
-                    # Extract the first (and single) segment in the
-                    # newly created LTTL.Input and annotate it with
-                    # the length of the input segmentation.
-                    segment = myInput[0]
-                    segment.annotations["DOI"] \
-                        = DOI
-                    # For the annotation to be saved in the LTTL.Input,
-                    # the extracted and annotated segment must be re-assigned
-                    # to the first (and only) segment of the LTTL.Input.
-                    myInput[0] = segment
+            # Cancel operation if requested by user...
+            time.sleep(0.00001)  # Needed somehow!
+            if self.cancel_operation:
+                self.signal_prog.emit(100, False)
+                return
+        tempdir.cleanup()
 
-                    # Add the  LTTL.Input to self.createdInputs.
-                    self.createdInputs.append(myInput)"""
 
-                # Cancel operation if requested by user...
-                time.sleep(0.00001)  # Needed somehow!
-                if self.cancel_operation:
-                    self.signal_prog.emit(100, False)
-                    return
-            tempdir.cleanup()
-            
-
-            # If there's only one LTTL.Input created, it is the
-            # widget's output...
-            print(empty_re)
-            if empty_re:
-                QMessageBox.warning(
-                    None, "SciHubator", "Not all sections were segmented",
-                    QMessageBox.Ok
-                )
-            if len(self.DOIs) == 1:
-                return self.createdInputs[0]
-            # Otherwise the widget's output is a concatenation...
-            else:
-                return Segmenter.concatenate(
-                    caller=self,
-                    segmentations=self.createdInputs,
-                    label=self.captionTitle,
-                    import_labels_as=None,
-                )
+        # If there's only one LTTL.Input created, it is the
+        # widget's output...
+        print(empty_re)
+        if empty_re:
+            QMessageBox.warning(
+                None, "SciHubator", "Not all sections were segmented",
+                QMessageBox.Ok
+            )
+        if len(self.DOIs) == 1:
+            return self.createdInputs[0]
+        # Otherwise the widget's output is a concatenation...
+        else:
+            return Segmenter.concatenate(
+                caller=self,
+                segmentations=self.createdInputs,
+                label=self.captionTitle,
+                import_labels_as=None,
+            )
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
-        """All operations following the successful termination
-        of self.processData
+        """
+        Handle the output after asynchronous DOI processing is complete.
+
+        This method :
+            - Retrieves the result of the processing task.
+            - Calculates the number of segments and total characters.
+            - Displays an informative message to the user.
+            - Sends the processed data to the output.
+
+        Args :
+            f (Future): A Future object containing the result from `processData`.
+
         """
 
         # Get the result value of self.processData.
@@ -511,7 +571,15 @@ class SciHubator(OWTextableBaseWidget):
     # The following method should be copied verbatim in
     # every Textable widget.
     def setCaption(self, title):
-        """Register captionTitle changes and send if needed"""
+        """
+        Set or update the widget's caption title.
+
+        If the caption has changed, it triggers cancellation of ongoing tasks
+        and marks the settings as changed to prompt UI updates.
+
+        Args :
+            title (str): The new caption/title to be displayed on the widget.
+        """
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
             super().setCaption(title)
@@ -522,7 +590,12 @@ class SciHubator(OWTextableBaseWidget):
             super().setCaption(title)
 
     def clearAll(self):
-        """Remove all DOIs from DOIs attr"""
+        """
+        Clear all stored DOIs and reset related UI elements.
+
+        This method empties the DOI list and selection,
+        disables the 'Clear All' button, and updates the interface state.
+        """
         del self.DOIs[:]
         del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
@@ -531,7 +604,13 @@ class SciHubator(OWTextableBaseWidget):
         self.removeButton.setDisabled(True)
 
     def remove(self):
-        """Remove URL from DOIs attr"""
+        """
+        Remove the selected DOI from the list.
+
+        Removes the DOI corresponding to the currently selected index in the GUI,
+        updates the list of DOIs and labels, and disables the clear button if the
+        list is empty.
+        """
         if self.selectedURLLabel:
             index = self.selectedURLLabel[0]
             self.DOIs.pop(index)
@@ -541,7 +620,13 @@ class SciHubator(OWTextableBaseWidget):
         self.clearAllButton.setDisabled(not bool(self.URLLabel))
 
     def add(self):
-        """Add DOIs to DOIs attr"""
+        """
+        Add new DOI(s) from the input field to the list.
+
+        Parses the input string for comma-separated DOIs, adds them to the internal list,
+        removes duplicates if any, updates the display labels, and enables relevant UI buttons.
+        Shows a message box if duplicates are found and removed.
+        """
         DOIList = [x.strip() for x in self.newDOI.strip().split(',')]
         print(DOIList)
         #--> Pas besoin de la boucle DOIList non?? <--
@@ -581,6 +666,9 @@ class SciHubator(OWTextableBaseWidget):
         """Clear created inputs on widget deletion"""
         self.clearCreatedInputs()
 def test_scihub_accessible():
+    """
+    Test the internet connection and/or sci-hub's accessibility.
+    """
     try:
         response = requests.get("https://sci-hub.se", timeout=10)
         return response.status_code == 200
