@@ -21,9 +21,11 @@ along with Orange3-Textable-Prototypes. If not, see
 
 """
 Sources that helped us code our widget "YouGet":
-    - ChatGPT (including GPT-3.5 and limited GPT-4o mini): Used ChatGPT to help with regex to only accept YouTube URLs ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47")
+    - ChatGPT (including GPT-3.5 and limited GPT-4o mini): Used ChatGPT to help with 
+    regex to only accept YouTube URLs ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47")
     - Draw.io: Used Draw.io for the YouGet logo (https://app.diagrams.net/)
-    - Widget SciHub: for sections of code where both widgets have in common (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+    - Widget SciHub: for sections of code where both widgets have in common (https://github.com/sarahperettipoix/orange3
+    -textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 """
 
 __version__ = '0.0.1'
@@ -75,7 +77,7 @@ class YouGet(OWTextableBaseWidget):
     inputs = []
     outputs = [("New segmentation", Segmentation)]
 
-    # Copied verbatim in every Textable widget to facilitate 
+    # Copied verbatim in every Textable widget to facilitate
     # settings management.
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -93,7 +95,8 @@ class YouGet(OWTextableBaseWidget):
     want_main_area = False
 
     #---------- START: The following section of code has been borrowed from SciHub.py ----------
-    # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+    # (https://github.com/sarahperettipoix/orange3-textable-prototypes/
+    # blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
     DOIs = Setting([])
     autoSend = settings.Setting(False)
     importDOIs = Setting(True)
@@ -111,7 +114,8 @@ class YouGet(OWTextableBaseWidget):
         """
         super().__init__(*args, **kwargs)
         #---------- START: The following section of code has been borrowed from SciHub.py ----------
-        # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+        # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/
+        # master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 
         self.URLLabel = list()
         self.selectedURLLabel = list()
