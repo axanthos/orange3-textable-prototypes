@@ -22,9 +22,11 @@ along with Orange3-Textable-Prototypes. If not, see
 """
 Sources that helped us code our widget "YouGet":
     - ChatGPT (including GPT-3.5 and limited GPT-4o mini): Used ChatGPT to help with 
-    regex to only accept YouTube URLs ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47")
+    regex to only accept YouTube URLs ("https://chatgpt.com/
+    share/6800c404-cb74-8000-afef-e321b9517c47")
     - Draw.io: Used Draw.io for the YouGet logo (https://app.diagrams.net/)
-    - Widget SciHub: for sections of code where both widgets have in common (https://github.com/sarahperettipoix/orange3
+    - Widget SciHub: for sections of code where both widgets have in common
+     (https://github.com/sarahperettipoix/orange3
     -textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 """
 
@@ -151,7 +153,8 @@ class YouGet(OWTextableBaseWidget):
             infoBoxAttribute="infoBox",
         )
         #---------- START: The following section of code has been borrowed from SciHub.py ----------
-        # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
+        # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/master/orangecontrib
+        # /textable_prototypes/widgets/SciHubatorTest.py)
 
         # URL box
         URLBox = gui.widgetBox(
@@ -268,7 +271,7 @@ class YouGet(OWTextableBaseWidget):
         )
         gui.rubber(self.controlArea)
         # So that the "Add" button is not gray
-        self.updateURLBoxButtons()  
+        self.updateURLBoxButtons()
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
@@ -294,7 +297,6 @@ class YouGet(OWTextableBaseWidget):
         # after it. If there are no optional steps, notify
         # "Preprocessing...".
         self.infoBox.setText("Step 1/2: Processing...", "warning")
-        
         # Progress bar should be initialized at this point.
         self.progressBarInit()
         # Create a threaded function to do the actual processing
@@ -302,7 +304,7 @@ class YouGet(OWTextableBaseWidget):
         threaded_function = partial(
             self.processData,
             # argument1,
-            # argument2, 
+            # argument2,
             # ...
         )
         # Run the threaded function...
