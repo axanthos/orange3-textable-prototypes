@@ -1,3 +1,34 @@
+from functools import partial
+import time
+import json
+
+from _textable.widgets.TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
+    InfoBox, SendButton, pluralize, Task
+)
+
+from LTTL.Segmentation import Segmentation
+from LTTL.Input import Input
+
+
+# Using the threaded version of LTTL.Segmenter to create
+# a "responsive" widget.
+import LTTL.SegmenterThread as Segmenter
+
+from Orange.widgets import widget, gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+
+from youtube_comment_downloader import *
+# pour tester l'url
+import requests
+
+import re
+
+import http
+
+from PyQt5.QtWidgets import QMessageBox
+from Orange.widgets.settings import Setting
+
 """
 Class DemoTextableWidget
 Copyright 2025 University of Lausanne
@@ -34,39 +65,6 @@ __version__ = '0.0.1'
 __author__ = "Virgile Albasini, Sophie Ward, Lorelei Chevroulet, Vincent Joris "
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
-
-
-from functools import partial
-import time
-import json
-
-from _textable.widgets.TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
-    InfoBox, SendButton, pluralize, Task
-)
-
-from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
-
-
-# Using the threaded version of LTTL.Segmenter to create
-# a "responsive" widget.
-import LTTL.SegmenterThread as Segmenter
-
-from Orange.widgets import widget, gui, settings
-from Orange.widgets.utils.widgetpreview import WidgetPreview
-
-from youtube_comment_downloader import *
-# pour tester l'url
-import requests
-
-import re
-
-import http
-
-from PyQt5.QtWidgets import QMessageBox
-from Orange.widgets.settings import Setting
-
 
 class YouGet(OWTextableBaseWidget):
     """Demo Orange3-Textable widget"""
