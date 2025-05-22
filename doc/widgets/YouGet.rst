@@ -133,5 +133,4 @@ Note that when starting the widget and when first adding your URL(s), the **Add*
 
 Note also that in the **Select number of comments** section, there is a 1 there by default, but it does not do anything. If you do not choose
 a number of comments, the output will be 7 by default. If you
-wish to only have 1, even though it is written at the beginning 1, you must press again on the number 1. If you wish more comments,
-you must press on the other options.
+wish to only have 1, even though it is written at the beginning 1, you must make sure to click yourself on the number 1. If you wish more comments, you must click on the other options.
