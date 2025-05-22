@@ -36,6 +36,7 @@ __email__ = "aris.xanthos@unil.ch"
 
 from functools import partial
 import time
+import json
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
@@ -325,12 +326,6 @@ class YouGet(OWTextableBaseWidget):
         # number of segment ça veut dire number of url
         max_itr = len(urls)
         cur_itr = 1
-
-        print('url debug:')
-        print(urls)
-        print('DOIs:')
-        print(self.DOI)
-        print(self.DOIs)
         urls = self.DOIs
 
         # Actual processing...
@@ -672,21 +667,6 @@ class YouGet(OWTextableBaseWidget):
         self.addButton.setDisabled(not bool(self.new_url))
         self.removeButton.setDisabled(not bool(self.selectedURLLabel))
 
-
-    # The following two methods should be copied verbatim in 
-    # every Textable widget that creates LTTL.Input objects.
-
-    def clearCreatedInputs(self):
-        """
-        Clear created inputs
-        """
-        for i in self.createdInputs:
-            Segmentation.set_data(i[0].str_index, None)
-        del self.createdInputs[:]
-
-    def onDeleteWidget(self):
-        """Clear created inputs on widget deletion"""
-        self.clearCreatedInputs()
     #---------- END: End of the section of code borrowed from SciHub.py ----------
 
     def updateGUI(self):
@@ -699,10 +679,6 @@ class YouGet(OWTextableBaseWidget):
 if __name__ == '__main__':
         WidgetPreview(YouGet).run()
 
-
-import re
-import requests
-import json
 
 def youtube_video_exists(url):
     """
