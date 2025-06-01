@@ -1,6 +1,7 @@
 from functools import partial
 import time
 import json
+import dateparser
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
@@ -90,7 +91,7 @@ class YouGet(OWTextableBaseWidget):
 
     # widget will fetch n=0 comments -> default is all
     # n_desired_comments = 0
-    n_desired_comments = 7 # for testing
+    # n_desired_comments = 1 # for testing
 
 
     want_main_area = False
@@ -99,10 +100,15 @@ class YouGet(OWTextableBaseWidget):
     # (https://github.com/sarahperettipoix/orange3-textable-prototypes/
     # blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
     DOIs = Setting([])
+    URLLabel = Setting([])
+    selectedURLLabel = Setting([])
+    new_url = Setting("")
     autoSend = settings.Setting(False)
     importDOIs = Setting(True)
     importDOIsKey = Setting(u'url')
     DOI = Setting(u'')
+    n_desired_comments = Setting("")
+    sortBy = Setting("")
     #---------- END: End of the section of code borrowed from SciHub.py ----------
 
 
@@ -118,12 +124,12 @@ class YouGet(OWTextableBaseWidget):
         # (https://github.com/sarahperettipoix/orange3-textable-prototypes/blob/
         # master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 
-        self.URLLabel = list()
-        self.selectedURLLabel = list()
-        self.new_url = u''
-        self.extractedText = u''
-        self.DOI = u''
-        self.DOIs = list()
+        # self.URLLabel = list()
+        # self.selectedURLLabel = list()
+        # self.new_url = u''
+        # self.extractedText = u''
+        # self.DOI = u''
+        # self.DOIs = list()
         #---------- END: End of the section of code borrowed from SciHub.py ----------
 
         # Attributes...
@@ -137,7 +143,7 @@ class YouGet(OWTextableBaseWidget):
 
         # This attribute stores a per-widget number of comments desired as
         # output. This can be changed by the user at any time via the GUI.
-        n_desired_comments = 0
+        # n_desired_comments = 1
         # The following attribute is required by every widget
         # that imports new strings into Textable.
         self.createdInputs = list()
@@ -174,12 +180,7 @@ class YouGet(OWTextableBaseWidget):
             labels='URLLabel',
             callback=self.updateURLBoxButtons,
             tooltip=(
-                u"The list of DOIs whose content will be imported.\n"
-                u"\nIn the output segmentation, the content of each\n"
-                u"URL appears in the same position as in the list.\n"
-                u"\nColumn 1 shows the URL.\n"
-                u"Column 2 shows the associated annotation (if any).\n"
-                u"Column 3 shows the associated encoding."
+                u"The list of URLs whose comments will be imported.\n"
             ),
         )
         URLBoxCol2 = gui.widgetBox(
@@ -202,7 +203,7 @@ class YouGet(OWTextableBaseWidget):
             label=u'Clear All',
             callback=self.clearAll,
             tooltip=(
-                u"Remove all DOIs from the list."
+                u"Remove all URLs from the list."
             ),
             disabled = True,
         )
@@ -227,11 +228,11 @@ class YouGet(OWTextableBaseWidget):
             labelWidth=101,
             callback=self.updateURLBoxButtons,
             tooltip=(
-                u"The DOI(s) that will be added to the list when\n"
+                u"The URL(s) that will be added to the list when\n"
                 u"button 'Add' is clicked.\n\n"
-                u"Successive DOIs must be separated with ' / ' \n"
-                u"(space + slash + space). Their order in the list\n"
-                u" will be the same as in this field."
+                u"Successive URLs must be separated with ' , ' \n"
+                u"Their order in the list will be the same as\n"
+                u"in this field."
             ),
         )
         advOptionsBox = gui.widgetBox(
@@ -240,21 +241,41 @@ class YouGet(OWTextableBaseWidget):
             orientation='vertical',
             addSpace=False,
         )
-        optionLine1 = gui.widgetBox(
+        self.optionLine1 = gui.widgetBox(
             widget=advOptionsBox,
-            box=False,
             orientation='horizontal',
-            addSpace=True,
+            addSpace=False,
         )
         commentsSelector = gui.comboBox(
             widget=advOptionsBox,
             master=self,
+            orientation='horizontal',
             value='n_desired_comments',
             label='Select number of comments:',
             tooltip='Default 0 is all comments.',
             items=[1, 5, 10, 100, 1000, 10000, "No limit"],
             sendSelectedValue=True,
+            labelWidth=220,
         )
+
+        self.sortByFilter = gui.widgetBox(
+            widget=advOptionsBox,
+            orientation='horizontal',
+            addSpace=False,
+        )
+
+        sortBy = gui.comboBox(
+            widget=self.sortByFilter,
+            master=self,
+            value='sortBy',
+            label=u'Sort by:',
+            tooltip= "Choose how the comment will be sorted",
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["Date", "Popularity"],
+            labelWidth=220,
+        )
+
         gui.separator(widget=addURLBox, height=3)
         self.addButton = gui.button(
             widget=addURLBox,
@@ -275,6 +296,17 @@ class YouGet(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
         #---------- END: End of the section of code borrowed from SciHub.py ----------
+
+        # no idea why but this allows to save settings when quit and reload
+        self.fileListbox.update()
+        URLBoxLine1.update()
+        self.DOIs = list(set(self.DOIs))
+        self.URLLabel = self.DOIs
+        self.selectedURLLabel = self.DOIs
+        commentsSelector.update()
+        self.n_desired_comments = self.n_desired_comments
+        self.sortBy = self.sortBy
+        self.sendButton.settingsChanged()
 
     def sendData(self):
         """
@@ -345,43 +377,61 @@ class YouGet(OWTextableBaseWidget):
             else:
                 label = None # will be set later.
 
-            print('cache checks happens below')
-            # Check if we already have an entry for the url in the cached
-            # comments. If yes, we return it; if not, we scrape and cache.
-            print(
-                f'▓▓————————▓▓ processData(): cache check'
-            )
-            print(f'▓ cache check: url in cached comments? :\n'
-                  f'▓ ——>{url in self.cached_comments}')
+            # print('cache checks happens below')
+            # # Check if we already have an entry for the url in the cached
+            # # comments. If yes, we return it; if not, we scrape and cache.
+            # print(
+            #     f'▓▓————————▓▓ processData(): cache check'
+            # # )
+            # print(f'▓ cache check: url in cached comments? :\n'
+            #       f'▓ ——>{url in self.cached_comments}')
             if url in self.cached_comments:
-                print(f'▓ using the cache')
+                # print(f'▓ using the cache')
                 comments_ycd = self.cached_comments.get(url)
-                print(f'▓ found {len(comments_ycd)} comments')
+                # print(f'▓ found {len(comments_ycd)} comments')
             else:
-                print(f'▓ not using the cache')
+                # print(f'▓ not using the cache')
                 comments_ycd = self.scrape(url)
-                print(f'▓ found {len(comments_ycd)} comments')
+                # print(f'▓ found {len(comments_ycd)} comments')
                 self.cached_comments[url] = comments_ycd
-                print(f'▓ saved {len(self.cached_comments[url])} comments')
-            print('▓▓————————▓▓ cache check happened! ▓▓————————▓▓')
+                # print(f'▓ saved {len(self.cached_comments[url])} comments')
+            # print('▓▓————————▓▓ cache check happened! ▓▓————————▓▓')
 
             # Placeholder limit for testing.
             # limit = 10
-            limit = int(self.n_desired_comments)
+            # dont know how to do infinite, so if "no limit" is selected, its value will
+            # be 1 milliard
+            if self.n_desired_comments == "No limit":
+                limit = 10000000
+            else :
+                limit = int(self.n_desired_comments)
 
             # While we cache everything that was scraped, we only return as
             # many as the user requested.
             if limit != 0:
-                print(f'▓ desired limit is: {limit} \n'
-                      f'▓ with type: {type(limit)}')
-                comments_ycd = comments_ycd[0:limit]
-                print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
+                # print(f'▓ desired limit is: {limit} \n'
+                #       f'▓ with type: {type(limit)}')
+                # comments_ycd = comments_ycd[0:limit]
+                if self.sortBy == "Date":
+                    comments_ycd = sorted(
+                        comments_ycd,
+                        key=lambda x: dateparser.parse(x["time"]),
+                        reverse=False  # ou True pour plus récents d'abord
+                    )
+                elif self.sortBy == "Popularity":
+                    comments_ycd = sorted(comments_ycd, key=lambda x: int(x["votes"]), reverse=True)
+                # print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
 
             for chose in comments_ycd:
                 myInput = Input(str(chose["text"]), label)
 
                 segment = myInput[0]
                 segment.annotations["author"] = str(chose["author"])
+                segment.annotations["url"] = url
+                segment.annotations["likes"] = str(chose["votes"])
+                # parsed_time = dateparser.parse(chose["time"])
+                # segment.annotations["time"] = parsed_time.strftime('%Y-%m-%d')
+                segment.annotations["time"] = str(chose["time"])
                 myInput[0] = segment
 
                 self.createdInputs.append(myInput)
@@ -473,24 +523,24 @@ class YouGet(OWTextableBaseWidget):
         """
         This function tests the Internet connection.
         """
-        print(
-            f'▓▓▓▓▓▓▓▓▓▓▓▓ youtube_video_existe(urll)\n'
-            f'▓ youtube_video_existe() —— urll={urll}'
-        )
+        # print(
+        #     f'▓▓▓▓▓▓▓▓▓▓▓▓ youtube_video_existe(urll)\n'
+        #     f'▓ youtube_video_existe() —— urll={urll}'
+        # )
         # Mimicking a browser so there is no blockage when requesting a URL
         headers = {
-            "User-Agent": "Mozilla/5.0"
+            "User-Agent": "Mozilla/5.0"            
         }
         try:
             response = requests.get(urll, headers=headers, timeout=5)
-            print(f'▓ youtube_video_existe() —— headers test: {response}')
-            print('▓ youtube_video_existe() —— work done :) returning.')
-            print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
+            # print(f'▓ youtube_video_existe() —— headers test: {response}')
+            # print('▓ youtube_video_existe() —— work done :) returning.')
+            # print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
             return response.status_code
         except requests.RequestException:
-            print(f'▓ youtube_video_existe() —— headers errors')
-            print('▓ youtube_video_existe() —— work done :) returning.')
-            print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
+            # print(f'▓ youtube_video_existe() —— headers errors')
+            # print('▓ youtube_video_existe() —— work done :) returning.')
+            # print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
             return False
 
     def scrape(self, url) -> list:
@@ -498,21 +548,21 @@ class YouGet(OWTextableBaseWidget):
         Sets up a virtual browser through YoutubeCommentDownloader and uses
         it to scrape all comments on a given url, returning them as a list.
         """
-        print(
-            f'▓▓▓▓▓▓▓▓▓▓▓▓ scrape(url)'
-            f'▓ scrape() —— url={url}'
-        )
+        # print(
+        #     f'▓▓▓▓▓▓▓▓▓▓▓▓ scrape(url)'
+        #     f'▓ scrape() —— url={url}'
+        # )
 
         # Fetch the comments
         downloader = YoutubeCommentDownloader()
-        comments = downloader.get_comments_from_url(url)
+        comments = downloader.get_comments_from_url(url,language='en')
         every_comment = [x for x in comments]
         # Prints number of comments found
-        print(
-            f'▓ scrape() —— returning {len(every_comment)} comment(s)'
-        )
-        print('▓ scrape() —— work done :) returning.')
-        print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
+        # print(
+        #     f'▓ scrape() —— returning {len(every_comment)} comment(s)'
+        # )
+        # print('▓ scrape() —— work done :) returning.')
+        # print('▓▓▓▓▓▓▓▓▓▓▓▓ scrape() ▓▓▓▓▓▓▓▓▓▓▓▓')
         # Returns the list of all comments collected
         return every_comment
     #---------- START: The following section of code has been borrowed from SciHub.py ----------
@@ -552,9 +602,8 @@ class YouGet(OWTextableBaseWidget):
 
         # Saves list of added URLs
         old_urls = list(self.DOIs)
-        print("old url "+str(old_urls))
-        for DOI in DOIList:
-            print(DOI)
+        # print("old url "+str(old_urls))
+
         if DOIList:
             # Create set to delete all duplicate URLs
             tempSet = DOIList
@@ -570,7 +619,7 @@ class YouGet(OWTextableBaseWidget):
             nombre_de_problemes_not_url = 0
             nombre_de_problemes_not_available = 0
             nombre_de_problemes_doublon = 0
-            print(tempSet)
+            # print(tempSet)
             indexx = 0
             list_indexx = []
 
@@ -581,7 +630,7 @@ class YouGet(OWTextableBaseWidget):
                     # Mark as duplicate if it already exists in old_urls
                     if single_url == past_url:
                         doublon = True
-                        print("il y a un doublon ici")
+                        # print("il y a un doublon ici")
                         list_indexx[indexx] = False
                         nombre_de_problemes_doublon += 1
 
@@ -608,7 +657,7 @@ class YouGet(OWTextableBaseWidget):
                 
                 # Check that the URL is not a duplicate and is available 
                 if doublon == False and not_an_url == False and not_available == False:
-                    print("la ou les url sont clean")
+                    # print("la ou les url sont clean")
                     list_indexx[indexx] = True
                 # If this is the case, URL is added to the list indexx
                 indexx += 1
@@ -647,7 +696,11 @@ class YouGet(OWTextableBaseWidget):
             self.DOIs += list(filtered_list)
             self.DOIs = list(set(self.DOIs))
             self.URLLabel = self.DOIs
-
+            self.selectedURLLabel = self.DOIs
+            self.n_desired_comments = self.n_desired_comments
+            
+            
+        self.URLLabel = self.URLLabel
         # Update on buttons
         # Disable "Clear All" button if there are no URL(s)
         self.clearAllButton.setDisabled(not bool(self.DOIs))
@@ -703,16 +756,16 @@ def youtube_video_exists(url):
 
         # Extraction du JSON "ytInitialPlayerResponse"
         initial_data_match = re.search(r'ytInitialPlayerResponse\s*=\s*({.+?});', html)
-        print(initial_data_match)
+        # print(initial_data_match)
 
         # If nothing is found, return False and print Error
         if not initial_data_match:
-            print("Impossible d'extraire ytInitialPlayerResponse")
+            # print("Impossible d'extraire ytInitialPlayerResponse")
             return False
 
         # Parse extracted JSON into a Python dict
         data = json.loads(initial_data_match.group(1))
-        print(data)
+        # print(data)
         # Check playability status
         status = data.get("playabilityStatus", {}).get("status", "UNKNOWN")
 
@@ -722,10 +775,10 @@ def youtube_video_exists(url):
             return True
         else:
             # If video not playable, return False
-            print(f"Statut de lecture : {status}")
+            # print(f"Statut de lecture : {status}")
             return False
     
     # Catch errors during the request
     except Exception as e:
-        print(f"Erreur lors de l'analyse : {e}")
+        # print(f"Erreur lors de l'analyse : {e}")
         return False
