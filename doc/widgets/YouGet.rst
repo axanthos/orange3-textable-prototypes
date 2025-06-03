@@ -50,7 +50,7 @@ of Comments** and **Sort By** **Date** or **Popularity**.
 
 .. _YouGet_principal:
 
-.. figure:: figures/_YouGet_principal.png
+.. figure:: figures/YouGet_principal.png
     :align: center
     :alt: Interface of the YouGet widget
     :height: 600px
