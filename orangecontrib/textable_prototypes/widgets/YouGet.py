@@ -634,14 +634,14 @@ class YouGet(OWTextableBaseWidget):
                         list_indexx[indexx] = False
                         nombre_de_problemes_doublon += 1
 
-                # If 1 or more URL(s) in a list are not in the form 
+                # If 1 or more URL(s) in a list are not in the form
                 # of a URL from Youtube, the URL will not be added
                 # Regex to only accept YouTube URL format
-                # -- With the help of ChatGPT 
+                # -- With the help of ChatGPT
                 # ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47") --
                 if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
                     not_an_url = True
-                    # Each element is True or False depending 
+                    # Each element is True or False depending
                     # on whether the URL passed all checks
                     if list_indexx[indexx] != False:
                         list_indexx[indexx] = False
@@ -654,8 +654,8 @@ class YouGet(OWTextableBaseWidget):
                     if list_indexx[indexx] != False:
                         list_indexx[indexx] = False
                         nombre_de_problemes_not_available += 1
-                
-                # Check that the URL is not a duplicate and is available 
+
+                # Check that the URL is not a duplicate and is available
                 if doublon == False and not_an_url == False and not_available == False:
                     # print("la ou les url sont clean")
                     list_indexx[indexx] = True
@@ -698,15 +698,15 @@ class YouGet(OWTextableBaseWidget):
             self.URLLabel = self.DOIs
             self.selectedURLLabel = self.DOIs
             self.n_desired_comments = self.n_desired_comments
-            
-            
+
+
         self.URLLabel = self.URLLabel
         # Update on buttons
         # Disable "Clear All" button if there are no URL(s)
         self.clearAllButton.setDisabled(not bool(self.DOIs))
         # Trigger settings changed for the send button
         self.sendButton.settingsChanged()
-    
+
     def addDisabledOrNot(self):
         """
         Disables the add button if no new URL is entered
@@ -777,7 +777,7 @@ def youtube_video_exists(url):
             # If video not playable, return False
             # print(f"Statut de lecture : {status}")
             return False
-    
+
     # Catch errors during the request
     except Exception as e:
         # print(f"Erreur lors de l'analyse : {e}")
