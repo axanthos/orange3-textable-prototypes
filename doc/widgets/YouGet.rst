@@ -89,8 +89,8 @@ of a segmentation.
     :align: center
     :alt: Interface of the YouGet widget with 10 comments
     :height: 600px
-
-     Figure 3: **YouGet** widget output with **10 comments** selected and sorted by **Popularity**.
+    
+    Figure 3: **YouGet** widget output with **10 comments** selected and sorted by **Popularity**.
 
 Messages
 --------
