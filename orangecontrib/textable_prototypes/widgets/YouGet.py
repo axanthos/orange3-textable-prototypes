@@ -617,7 +617,8 @@ class YouGet(OWTextableBaseWidget):
         # print(self.DOIs)
         del self.DOIs[:]
         # print(self.selectedURLLabel[:])
-        self.selectedURLLabel = None
+        self.selectedURLLabel = []
+        # self.selectedURLLabel = None
         # del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
         self.URLLabel = self.URLLabel
