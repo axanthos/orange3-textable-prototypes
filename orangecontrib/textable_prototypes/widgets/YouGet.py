@@ -1,6 +1,8 @@
 from functools import partial
 import time
 import json
+import re
+import http
 import dateparser
 
 from _textable.widgets.TextableUtils import (
@@ -22,10 +24,6 @@ from Orange.widgets.utils.widgetpreview import WidgetPreview
 from youtube_comment_downloader import *
 # pour tester l'url
 import requests
-
-import re
-
-import http
 
 from PyQt5.QtWidgets import QMessageBox
 from Orange.widgets.settings import Setting
@@ -784,5 +782,4 @@ def youtube_video_exists(url):
 
     # Catch errors during the request
     except Exception as e:
-        # print(f"Erreur lors de l'analyse : {e}")
         return False
