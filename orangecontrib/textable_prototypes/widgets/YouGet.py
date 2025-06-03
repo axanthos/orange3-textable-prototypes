@@ -685,8 +685,8 @@ class YouGet(OWTextableBaseWidget):
                     # The error message gives the numbers of non URLs found
                     None, "YouGet",
                     f"Warning Message:<br><br>"
-                    f"{nombre_de_problemes_not_url} element(s) are not YouTube URLs"
-                    f" or please check your internet connection.",
+                    f"{nombre_de_problemes_not_url} element(s) are not "
+                    f"YouTube URLs or please check your internet connection.",
                     QMessageBox.Ok
                 )
 
