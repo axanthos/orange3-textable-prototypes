@@ -423,7 +423,7 @@ class YouGet(OWTextableBaseWidget):
             #         )
 
             #     elif self.sortBy == "Popularity":
-            #         sorted_comments = sorted(comments_ycd, 
+            #         sorted_comments = sorted(comments_ycd,
             #         key=lambda x: int(x["votes"]), reverse=True)
             #     # print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
 
