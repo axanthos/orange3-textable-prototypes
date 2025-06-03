@@ -45,8 +45,13 @@ The output is a segmentation containing the **Number of Comments** desired from 
 Interface
 ~~~~~~~~~~~~~~~
 
-User controls are divided into two main sections: **Sources**, which holds the **URL** subsection, and **More Options** where you can select the **Number
-of Comments** and **Sort By** **Date** or **Popularity**.
+User controls are divided into two main sections: **Sources** and **More Options**.
+
+**Sources** contains the **URL**, and the **Add**, **Clear All** and **Remove** button.
+
+**More Options** contains the **Select number of comments** and the **Sort by**. 
+In the **Select number of comments**,  the user can select the number of comments
+they wish to see displayed, and in the **Sort by**, the user can choose to either sort the comments by **Date** or by **Popularity**.
 
 .. _YouGet_principal:
 
@@ -62,27 +67,32 @@ Sources
 
 The **Sources** section contains all the controls related to the way **YouGet** processes the input data. 
 
-The user chooses one ore more YouTube videos which they would like to extract its comments. Once the desired number of videos chosen, the user
-adds the URL(s) into the empty **URL(s)** section. To confirm their URL(s), they must press on the **Add** button which
-will add their URL(s) to a list in the section above called **Sources**. The user can add one or more URLs to their list in **Sources**.
+The user chooses one ore more YouTube videos which they would like to extract its comments. To confirm their URL(s), they must press on the **Add** button which
+will then add their URL(s) to a list in the section above called **Sources**. The user can add one or more URLs to their list.
 If they wish to remove a URL, they can press on the **Remove** button. If they wish to not only remove one, 
 but all of their URLs, they can press on the **Clear All** button.
 
-Options
+More Options
 *******
 
-The **Options** section contains the controls to choose the **Number of Comments** desired in output and how you would like to sort the comments, by **Date** or by **Popularity**. The user can choose between having **1 comment (minimum requirement), 5, 10, 100, 1000, 10'000 or no limit** 
+The **More Options** section contains the controls to select the **Number of comments** desired in output and how you would like to sort the comments, by **Date** or by **Popularity**. The user can choose between having **1 comment (minimum requirement), 5, 10, 100, 1000, 10'000 or no limit** 
 of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
+
+When sorting by **Date**, the oldest comment will appear first in the list. When sorting by **Popularity**, the most liked comment will appear first.
 
 .. figure:: figures/YouGet_5comments.png
     :align: center
     :alt: Interface of the YouGet widget with 5 comments
     :height: 600px
+
+    Figure 2: **YouGet** widget output with **5 comments** selected and sorted by **Date**.
 .. figure:: figures/YouGet_10comments.png
     :align: center
     :alt: Interface of the YouGet widget with 10 comments
     :height: 600px
+
+     Figure 2: **YouGet** widget output with **10 comments** selected and sorted by **Popularity**.
 
 Messages
 --------
@@ -120,7 +130,3 @@ Note
 ~~~~~~~~
 
 Note that when starting the widget and when first adding your URL(s), the **Add** button is gray, however, it is functional. Press the **Add** button to add your URL(s) to the **Sources** section.
-
-Note also that in the **Select number of comments** section, there is a 1 there by default, but it does not do anything. If you do not choose
-a number of comments, the output will be 7 by default. If you
-wish to only have 1, even though it is written at the beginning 1, you must make sure to click yourself on the number 1. If you wish more comments, you must click on the other options.
