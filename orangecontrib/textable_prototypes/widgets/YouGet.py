@@ -451,14 +451,12 @@ class YouGet(OWTextableBaseWidget):
         if len(self.createdInputs) == 1:
             return self.createdInputs[0]
 
-        # Otherwise the widget's output is a concatenation...
-        else:
-            return Segmenter.concatenate(
+        return Segmenter.concatenate(
                 caller=self,
                 segmentations=self.createdInputs,
                 label=self.captionTitle,
                 import_labels_as=None,
-            )
+        )
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
