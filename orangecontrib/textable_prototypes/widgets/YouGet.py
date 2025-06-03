@@ -779,6 +779,7 @@ def clean_date_str(date_str):
     return date_str.replace("(edited)", "").strip()
 
 def parse_date_safe(date_str):
+    # Parsing date
     cleaned = clean_date_str(date_str)
     dt = dateparser.parse(cleaned)
     return dt
