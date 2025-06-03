@@ -76,7 +76,7 @@ Créer un widget pour Orange Textable (v3.2.2) permettant l'importation et l'ext
 2.3 Fonctionnalités principales
 ===============================
 
-.. image:: images/scihubator_principal.png
+.. image:: images/scihubator_principal_specs.png
 
 * permettre l'importation de pdf tirés de SCI-HUB (à partir d'un DOI).
 * permettre d'en tirer le texte.
