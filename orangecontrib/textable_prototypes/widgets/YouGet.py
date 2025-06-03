@@ -664,7 +664,8 @@ class YouGet(OWTextableBaseWidget):
                 QMessageBox.information(
                     # The error message gives the numbers of duplicates found
                     None, "YouGet",
-                    f"Error Message:<br><br>{nombre_de_problemes_doublon} duplicate URL(s) found and deleted.",
+                    f"Error Message:<br><br>"
+                    f"{nombre_de_problemes_doublon} duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
                 )
 
@@ -673,7 +674,8 @@ class YouGet(OWTextableBaseWidget):
                 QMessageBox.information(
                     # The error message gives the numbers of non available URLs found
                     None, "YouGet",
-                    f"Error Message:<br><br>{nombre_de_problemes_not_available} URL(s) are not valid YouTube videos",
+                    f"Error Message:<br><br>"
+                    f"{nombre_de_problemes_not_available} URL(s) are not valid YouTube videos",
                     QMessageBox.Ok
                 )
 
@@ -682,7 +684,8 @@ class YouGet(OWTextableBaseWidget):
                 QMessageBox.information(
                     # The error message gives the numbers of non URLs found
                     None, "YouGet",
-                    f"Warning Message:<br><br>{nombre_de_problemes_not_url} element(s) are not YouTube URLs or please check your internet connection.",
+                    f"Warning Message:<br><br>"
+                    f"{nombre_de_problemes_not_url} element(s) are not YouTube URLs or please check your internet connection.",
                     QMessageBox.Ok
                 )
 
