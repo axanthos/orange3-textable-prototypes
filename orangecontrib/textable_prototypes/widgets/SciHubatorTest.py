@@ -98,8 +98,6 @@ class SciHubator(OWTextableBaseWidget):
 
     # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
     """importAll = Setting(True)"""
-    """importAbstract = Setting(False)"""
-    """importText = Setting(False)"""
     """importBibliography = Setting(False)"""
     importAllorBib = Setting(0)
 
@@ -227,30 +225,6 @@ class SciHubator(OWTextableBaseWidget):
         gui.checkBox(
             widget=advOptionsBox,
             master=self,
-            value='importAbstract',
-            label=u'Abstract',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Output Abstract as a segmentation."
-            ),
-        )"""
-        """gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importText',
-            label=u'Top Level Sections',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"output main text as a segmentation."
-            ),
-        )"""
-        """gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
             value='importBibliography',
             label=u'Bibliography',
             labelWidth=180,
@@ -299,11 +273,6 @@ class SciHubator(OWTextableBaseWidget):
             - Updates the UI to indicate the start of preprocessing.
             - Launches the processing asynchronously using a background thread
         """
-        # Verify checkboxes
-        if not (self.importAll or self.importBibliography): #or self.importText
-            self.infoBox.setText("Please select one or more checkboxes.", "warning")
-            self.send("Segmentation", None)
-            return
         # Verify DOIs
         if not self.DOIs:
             self.infoBox.setText("Please enter one or many valid DOIs.", "warning")
@@ -444,7 +413,7 @@ class SciHubator(OWTextableBaseWidget):
 
             self.signal_text.emit("Step 3/3: Post-processing...",
                                   "warning")
-            max_itr = (int(self.importAll) + int(self.importBibliography))*(len(self.DOIs)+1) #+ int(self.importText)
+            max_itr = (int(self.importAllorBib))
             if self.importAllorBib == 0:
                 cur_itr_p3 += 1 * len(self.DOIs)
                 # Extract the first (and single) segment in the
@@ -506,40 +475,6 @@ class SciHubator(OWTextableBaseWidget):
                     segment.annotations["DOI"] = DOI
                     new_input[0] = segment
                 self.createdInputs.append(new_input)"""
-            """if self.importText:
-                cur_itr += 1
-                ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
-                regexes = [(ma_regex,'tokenize')]
-                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                new_segmentation = tokenize(myInput, regexes)
-                print("*" * 100)
-                print(len(new_segmentation))
-                print(new_segmentation.to_string())
-                if(len(new_segmentation) == 0):
-                    empty_re = True
-                    new_input = Input("","Empty Top level sections")
-                else:
-                    new_segmentation[0].annotations["DOI"] = "Top level sections"
-                    new_input = Input(new_segmentation.to_string(), "")
-                    new_input[0]= new_segmentation[0]
-                self.createdInputs.append(new_segmentation)"""
-            """if self.importAbstract:
-                cur_itr += 1
-                myInput = Input(DOIText, label)
-
-                # Extract the first (and single) segment in the
-                # newly created LTTL.Input and annotate it with
-                # the length of the input segmentation.
-                segment = myInput[0]
-                segment.annotations["DOI"] \
-                    = DOI
-                # For the annotation to be saved in the LTTL.Input,
-                # the extracted and annotated segment must be re-assigned
-                # to the first (and only) segment of the LTTL.Input.
-                myInput[0] = segment
-
-                # Add the  LTTL.Input to self.createdInputs.
-                self.createdInputs.append(myInput)"""
 
             # Cancel operation if requested by user...
             time.sleep(0.00001)  # Needed somehow!
