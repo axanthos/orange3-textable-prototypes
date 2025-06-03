@@ -58,6 +58,7 @@ Sources that helped us code our widget "YouGet":
     - Draw.io: Used Draw.io for the YouGet logo (https://app.diagrams.net/)
     - Widget SciHub: for sections of code where both widgets have in common
      (https://github.com/sarahperettipoix/orange3
+    - url settings: (https://www.youtube.com/watch?v=ScMzIvxBSi4)
     -textable-prototypes/blob/master/orangecontrib/textable_prototypes/widgets/SciHubatorTest.py)
 """
 
@@ -294,7 +295,7 @@ class YouGet(OWTextableBaseWidget):
 
         #---------- END: End of the section of code borrowed from SciHub.py ----------
 
-        # no idea why but this allows to save settings when quit and reload
+        # Allows to save settings when quit and reload
         self.fileListbox.update()
         URLBoxLine1.update()
         self.DOIs = list(set(self.DOIs))
@@ -377,14 +378,6 @@ class YouGet(OWTextableBaseWidget):
             else:
                 label = None # will be set later.
 
-            # print('cache checks happens below')
-            # # Check if we already have an entry for the url in the cached
-            # # comments. If yes, we return it; if not, we scrape and cache.
-            # print(
-            #     f'▓▓————————▓▓ processData(): cache check'
-            # # )
-            # print(f'▓ cache check: url in cached comments? :\n'
-            #       f'▓ ——>{url in self.cached_comments}')
             if url in self.cached_comments:
                 # print(f'▓ using the cache')
                 comments_ycd = self.cached_comments.get(url)
@@ -399,56 +392,8 @@ class YouGet(OWTextableBaseWidget):
 
             all_comments.extend(comments_ycd)
 
-            # Placeholder limit for testing.
-            # limit = 10
-            # # dont know how to do infinite, so if "no limit" is selected, its value will
-            # # be 1 milliard
-            # if self.n_desired_comments == "No limit":
-            #     limit = 10000000
-            # else :
-            #     limit = int(self.n_desired_comments)
-
-            # While we cache everything that was scraped, we only return as
-            # many as the user requested.
-            # if limit != 0:
-            #     # print(f'▓ desired limit is: {limit} \n'
-            #     #       f'▓ with type: {type(limit)}')
-            #     # comments_ycd = comments_ycd[0:limit]
-
-            #     if self.sortBy == "Date":
-            #         sorted_comments = sorted(
-            #             comments_ycd,
-            #             key=lambda c: parse_date_safe(c["time"]) or datetime.max,
-            #             reverse=False  # False = plus anciens en premier
-            #         )
-
-            #     elif self.sortBy == "Popularity":
-            #         sorted_comments = sorted(comments_ycd,
-            #         key=lambda x: int(x["votes"]), reverse=True)
-            #     # print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
-
-            # for chose in sorted_comments:
-            #     myInput = Input(str(chose["text"]), label)
-
-            #     segment = myInput[0]
-            #     segment.annotations["author"] = str(chose["author"])
-            #     segment.annotations["url"] = url
-            #     segment.annotations["likes"] = str(chose["votes"])
-            #     # parsed_time = dateparser.parse(chose["time"])
-            #     # segment.annotations["time"] = parsed_time.strftime('%Y-%m-%d')
-            #     segment.annotations["time"] = str(chose["time"])
-            #     myInput[0] = segment
-
-            #     self.createdInputs.append(myInput)
-
-            # Cancel operation if requested by user...
-            # time.sleep(0.00001) # Needed somehow!
-            # if self.cancel_operation:
-            #     self.signal_prog.emit(100, False)
-            #     return
-
-        # dont know how to do infinite, so if "no limit" is selected, its value will
-        # be 1 milliard
+        # If "no limit" is selected, its value will
+        # be 1 million
         if self.n_desired_comments == "No limit":
             limit = 10000000
         else :
@@ -461,7 +406,7 @@ class YouGet(OWTextableBaseWidget):
                 sorted_comments = sorted(
                     comments_ycd,
                     key=lambda c: parse_date_safe(c["time"]) or datetime.max,
-                    reverse=False  # False = plus anciens en premier
+                    reverse=False  # False = oldest first
                 )
 
             elif self.sortBy == "Popularity":
@@ -474,14 +419,12 @@ class YouGet(OWTextableBaseWidget):
                 segment.annotations["author"] = str(chose["author"])
                 segment.annotations["url"] = url
                 segment.annotations["likes"] = str(chose["votes"])
-                # parsed_time = dateparser.parse(chose["time"])
-                # segment.annotations["time"] = parsed_time.strftime('%Y-%m-%d')
                 segment.annotations["time"] = str(chose["time"])
                 myInput[0] = segment
 
                 self.createdInputs.append(myInput)
 
-            time.sleep(0.00001) # Needed somehow!
+            time.sleep(0.00001)
             if self.cancel_operation:
                 self.signal_prog.emit(100, False)
                 return
@@ -615,12 +558,8 @@ class YouGet(OWTextableBaseWidget):
         """
         Remove all DOIs from DOIs attr
         """
-        # print(self.DOIs)
         del self.DOIs[:]
-        # print(self.selectedURLLabel[:])
         self.selectedURLLabel = []
-        # self.selectedURLLabel = None
-        # del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
         self.URLLabel = self.URLLabel
         self.clearAllButton.setDisabled(True)
@@ -648,7 +587,6 @@ class YouGet(OWTextableBaseWidget):
 
         # Saves list of added URLs
         old_urls = list(self.DOIs)
-        # print("old url "+str(old_urls))
 
         if DOIList:
             # Create set to delete all duplicate URLs
@@ -665,7 +603,6 @@ class YouGet(OWTextableBaseWidget):
             nombre_de_problemes_not_url = 0
             nombre_de_problemes_not_available = 0
             nombre_de_problemes_doublon = 0
-            # print(tempSet)
             indexx = 0
             list_indexx = []
 
@@ -838,7 +775,7 @@ def youtube_video_exists(url):
 
 
 def clean_date_str(date_str):
-    # Enlève la mention "(edited)" et les espaces autour
+    # Takes off mention "(edited)" and the spaces around it
     return date_str.replace("(edited)", "").strip()
 
 def parse_date_safe(date_str):
