@@ -299,11 +299,6 @@ class SciHubator(OWTextableBaseWidget):
             - Updates the UI to indicate the start of preprocessing.
             - Launches the processing asynchronously using a background thread
         """
-        # Verify checkboxes
-        if not (self.importAll or self.importBibliography): #or self.importText
-            self.infoBox.setText("Please select one or more checkboxes.", "warning")
-            self.send("Segmentation", None)
-            return
         # Verify DOIs
         if not self.DOIs:
             self.infoBox.setText("Please enter one or many valid DOIs.", "warning")
@@ -376,7 +371,7 @@ class SciHubator(OWTextableBaseWidget):
         # Permet de tester la connexion à Sci-Hub
         if not test_scihub_accessible():
             self.sendNoneToOutputs()
-            self.infoBox.setText("SciHub inaccessible - verify your connexion", 'error')
+            self.infoBox.setText("SciHub inaccessible - vérifiez votre connexion", 'error')
             return
         # Actual processing...
 
@@ -444,9 +439,9 @@ class SciHubator(OWTextableBaseWidget):
 
             self.signal_text.emit("Step 3/3: Post-processing...",
                                   "warning")
-            max_itr = (int(self.importAll) + int(self.importBibliography))*(len(self.DOIs)+1) #+ int(self.importText)
+            max_itr = 2*len(self.DOIs) #+ int(self.importText)
             if self.importAllorBib == 0:
-                cur_itr_p3 += 1 * len(self.DOIs)
+                cur_itr_p3 += 1
                 # Extract the first (and single) segment in the
                 # newly created LTTL.Input and annotate it with
                 # the length of the input segmentation.
@@ -460,7 +455,7 @@ class SciHubator(OWTextableBaseWidget):
                 # Add the  LTTL.Input to self.createdInputs.
                 self.createdInputs.append(myInput)
             if self.importAllorBib == 1:
-                cur_itr_p3 += 1 * len(self.DOIs)
+                cur_itr_p3 += 1
                 ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
                 regexes = [(ma_regex, 'tokenize')]
                 self.signal_prog.emit(int(100 * cur_itr_p3 / max_itr), False)
@@ -475,72 +470,6 @@ class SciHubator(OWTextableBaseWidget):
                     segment.annotations["DOI"] = DOI
                     new_input[0] = segment
                 self.createdInputs.append(new_input)
-            """if self.importAll:
-
-                cur_itr_p3 += 1*len(self.DOIs)
-                # Extract the first (and single) segment in the
-                # newly created LTTL.Input and annotate it with
-                # the length of the input segmentation.
-                segment = myInput[0]
-                segment.annotations["DOI"] \
-                    = DOI
-                # For the annotation to be saved in the LTTL.Input,
-                # the extracted and annotated segment must be re-assigned
-                # to the first (and only) segment of the LTTL.Input.
-                myInput[0] = segment
-                # Add the  LTTL.Input to self.createdInputs.
-                self.createdInputs.append(myInput)
-            if self.importBibliography:
-                cur_itr_p3 += 1*len(self.DOIs)
-                ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
-                regexes = [(ma_regex, 'tokenize')]
-                self.signal_prog.emit(int(100 * cur_itr_p3 / max_itr), False)
-                new_segmentation = tokenize(myInput, regexes)
-                if (len(new_segmentation) == 0):
-                    empty_re = True
-                    new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
-                else:
-                    new_input = Input(new_segmentation.to_string(), "Bibliographies")
-                    segment = new_input[0]
-                    segment.annotations["part"] = "Bibliography"
-                    segment.annotations["DOI"] = DOI
-                    new_input[0] = segment
-                self.createdInputs.append(new_input)"""
-            """if self.importText:
-                cur_itr += 1
-                ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
-                regexes = [(ma_regex,'tokenize')]
-                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                new_segmentation = tokenize(myInput, regexes)
-                print("*" * 100)
-                print(len(new_segmentation))
-                print(new_segmentation.to_string())
-                if(len(new_segmentation) == 0):
-                    empty_re = True
-                    new_input = Input("","Empty Top level sections")
-                else:
-                    new_segmentation[0].annotations["DOI"] = "Top level sections"
-                    new_input = Input(new_segmentation.to_string(), "")
-                    new_input[0]= new_segmentation[0]
-                self.createdInputs.append(new_segmentation)"""
-            """if self.importAbstract:
-                cur_itr += 1
-                myInput = Input(DOIText, label)
-
-                # Extract the first (and single) segment in the
-                # newly created LTTL.Input and annotate it with
-                # the length of the input segmentation.
-                segment = myInput[0]
-                segment.annotations["DOI"] \
-                    = DOI
-                # For the annotation to be saved in the LTTL.Input,
-                # the extracted and annotated segment must be re-assigned
-                # to the first (and only) segment of the LTTL.Input.
-                myInput[0] = segment
-
-                # Add the  LTTL.Input to self.createdInputs.
-                self.createdInputs.append(myInput)"""
-
             # Cancel operation if requested by user...
             time.sleep(0.00001)  # Needed somehow!
             if self.cancel_operation:
@@ -696,7 +625,7 @@ def test_scihub_accessible():
     Test the internet connection and/or sci-hub's accessibility.
     """
     try:
-        response = requests.get("https://sci-hub.se", timeout=10)
+        response = requests.get("https://sci-hub.st", timeout=10)
         return response.status_code == 200
     except:
         return False
