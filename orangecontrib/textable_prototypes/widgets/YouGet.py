@@ -639,7 +639,8 @@ class YouGet(OWTextableBaseWidget):
                 # Regex to only accept YouTube URL format
                 # -- With the help of ChatGPT
                 # ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47") --
-                if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", single_url):
+                if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", 
+                single_url):
                     not_an_url = True
                     # Each element is True or False depending
                     # on whether the URL passed all checks
@@ -666,7 +667,8 @@ class YouGet(OWTextableBaseWidget):
             if doublon == True:
                 QMessageBox.information(
                     # The error message gives the numbers of duplicates found
-                    None, "YouGet", f"Error Message: <br><br>{nombre_de_problemes_doublon} duplicate URL(s) found and deleted.",
+                    None, "YouGet", 
+                    f"Error Message:<br><br>{nombre_de_problemes_doublon} duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
                 )
 
@@ -674,7 +676,8 @@ class YouGet(OWTextableBaseWidget):
             if not_available == True:
                 QMessageBox.information(
                     # The error message gives the numbers of non available URLs found
-                    None, "YouGet", f"Error Message: <br><br>{nombre_de_problemes_not_available} URL(s) are not valid YouTube videos",
+                    None, "YouGet", 
+                    f"Error Message:<br><br>{nombre_de_problemes_not_available} URL(s) are not valid YouTube videos",
                     QMessageBox.Ok
                 )
 
@@ -682,7 +685,8 @@ class YouGet(OWTextableBaseWidget):
             if not_an_url == True:
                 QMessageBox.information(
                     # The error message gives the numbers of non URLs found
-                    None, "YouGet", f"Warning Message: <br><br>{nombre_de_problemes_not_url} element(s) are not YouTube URLs or please check your internet connection.",
+                    None, "YouGet", 
+                    f"Warning Message:<br><br>{nombre_de_problemes_not_url} element(s) are not YouTube URLs or please check your internet connection.",
                     QMessageBox.Ok
                 )
 
