@@ -38,17 +38,19 @@ The output is a segmentation containing the **Number of Comments** desired from 
 
 * Choose one or more URL(s) and place them in the **URL(s)** section in the following format: URL1, URL2, URL3, etc.
 * **Add** them to the **Sources** section
-* Choose the **Number of Comments** you would like to download from the YouTube video
-* Press **Send** to see the comments in the form of a segmentation
+* Select the **Number of Comments** you would like to download from the YouTube video
+* Select whether you would like them sorted by **Date** or **Popularity**
+* Press **Send** to see the comments as well as additional information about the comments in the form of a segmentation
 
 Interface
 ~~~~~~~~~~~~~~~
 
-User controls are divided into two main sections: **Sources**, which holds the **URL** subsection, and **Options**.
+User controls are divided into two main sections: **Sources**, which holds the **URL** subsection, and **More Options** where you can select the **Number
+of Comments** and **Sort By** **Date** or **Popularity**.
 
 .. _YouGet_principal:
 
-.. figure:: figures/YouGet_principal.png
+.. figure:: 
     :align: center
     :alt: Interface of the YouGet widget
     :height: 600px
@@ -69,17 +71,17 @@ but all of their URLs, they can press on the **Clear All** button.
 Options
 *******
 
-The **Options** section contains the controls to choose the **Number of Comments** desired in output. The user can choose between having **1 comment (minimum requirement), 5, 10, 100, 1000, 10'000 or no limit** 
+The **Options** section contains the controls to choose the **Number of Comments** desired in output and how you would like to sort the comments, by **Date** or by **Popularity**. The user can choose between having **1 comment (minimum requirement), 5, 10, 100, 1000, 10'000 or no limit** 
 of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
 
-.. figure:: figures/YouGet_1comment.png
+.. figure:: 
     :align: center
-    :alt: Interface of the YouGet widget
+    :alt: Interface of the YouGet widget with 5 comments
     :height: 400px
-.. figure:: figures/YouGet_10comments.png
+.. figure:: 
     :align: center
-    :alt: Interface of the YouGet widget
+    :alt: Interface of the YouGet widget with 10 comments
     :height: 415px
 
 Messages
