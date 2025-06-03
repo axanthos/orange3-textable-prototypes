@@ -335,7 +335,7 @@ class YouGet(OWTextableBaseWidget):
         # Run the threaded function...
         self.threading(threaded_function)
 
-    
+
 
     def processData(self):
         """
@@ -363,7 +363,7 @@ class YouGet(OWTextableBaseWidget):
         #for _ in range(int(self.numberOfSegments)):
 
         for url in urls:
-            
+
             # Update progress bar manually...
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
             cur_itr += 1
@@ -414,7 +414,7 @@ class YouGet(OWTextableBaseWidget):
             #     # print(f'▓ desired limit is: {limit} \n'
             #     #       f'▓ with type: {type(limit)}')
             #     # comments_ycd = comments_ycd[0:limit]
-                
+
             #     if self.sortBy == "Date":
             #         sorted_comments = sorted(
             #             comments_ycd,
@@ -423,7 +423,8 @@ class YouGet(OWTextableBaseWidget):
             #         )
 
             #     elif self.sortBy == "Popularity":
-            #         sorted_comments = sorted(comments_ycd, key=lambda x: int(x["votes"]), reverse=True)
+            #         sorted_comments = sorted(comments_ycd, 
+            #         key=lambda x: int(x["votes"]), reverse=True)
             #     # print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
 
             # for chose in sorted_comments:
@@ -445,7 +446,7 @@ class YouGet(OWTextableBaseWidget):
             # if self.cancel_operation:
             #     self.signal_prog.emit(100, False)
             #     return
-            
+
         # dont know how to do infinite, so if "no limit" is selected, its value will
         # be 1 milliard
         if self.n_desired_comments == "No limit":
@@ -465,7 +466,7 @@ class YouGet(OWTextableBaseWidget):
 
             elif self.sortBy == "Popularity":
                 sorted_comments = sorted(comments_ycd, key=lambda x: int(x["votes"]), reverse=True)
-            
+
             for chose in sorted_comments:
                 myInput = Input(str(chose["text"]), label)
 
