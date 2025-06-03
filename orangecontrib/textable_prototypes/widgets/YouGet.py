@@ -4,6 +4,7 @@ import time
 import json
 import re
 import dateparser
+from datetime import datetime
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
@@ -102,11 +103,9 @@ class YouGet(OWTextableBaseWidget):
     selectedURLLabel = Setting([])
     new_url = Setting("")
     autoSend = settings.Setting(False)
-    importDOIs = Setting(True)
-    importDOIsKey = Setting(u'url')
     DOI = Setting(u'')
     n_desired_comments = Setting("")
-    sortBy = Setting("")
+    sortBy = Setting("Date")
     #---------- END: End of the section of code borrowed from SciHub.py ----------
 
 
@@ -336,6 +335,8 @@ class YouGet(OWTextableBaseWidget):
         # Run the threaded function...
         self.threading(threaded_function)
 
+    
+
     def processData(self):
         """
         Actual processing takes place in this method,
@@ -355,13 +356,14 @@ class YouGet(OWTextableBaseWidget):
         max_itr = len(urls)
         cur_itr = 1
         urls = self.DOIs
+        all_comments = []
 
         # Actual processing...
         # For each progress bar iteration...
         #for _ in range(int(self.numberOfSegments)):
 
         for url in urls:
-
+            
             # Update progress bar manually...
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
             cur_itr += 1
@@ -395,32 +397,76 @@ class YouGet(OWTextableBaseWidget):
                 # print(f'▓ saved {len(self.cached_comments[url])} comments')
             # print('▓▓————————▓▓ cache check happened! ▓▓————————▓▓')
 
+            all_comments.extend(comments_ycd)
+
             # Placeholder limit for testing.
             # limit = 10
-            # dont know how to do infinite, so if "no limit" is selected, its value will
-            # be 1 milliard
-            if self.n_desired_comments == "No limit":
-                limit = 10000000
-            else :
-                limit = int(self.n_desired_comments)
+            # # dont know how to do infinite, so if "no limit" is selected, its value will
+            # # be 1 milliard
+            # if self.n_desired_comments == "No limit":
+            #     limit = 10000000
+            # else :
+            #     limit = int(self.n_desired_comments)
 
             # While we cache everything that was scraped, we only return as
             # many as the user requested.
-            if limit != 0:
-                # print(f'▓ desired limit is: {limit} \n'
-                #       f'▓ with type: {type(limit)}')
-                # comments_ycd = comments_ycd[0:limit]
-                if self.sortBy == "Date":
-                    comments_ycd = sorted(
-                        comments_ycd,
-                        key=lambda x: dateparser.parse(x["time"]),
-                        reverse=False  # ou True pour plus récents d'abord
-                    )
-                elif self.sortBy == "Popularity":
-                    comments_ycd = sorted(comments_ycd, key=lambda x: int(x["votes"]), reverse=True)
-                # print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
+            # if limit != 0:
+            #     # print(f'▓ desired limit is: {limit} \n'
+            #     #       f'▓ with type: {type(limit)}')
+            #     # comments_ycd = comments_ycd[0:limit]
+                
+            #     if self.sortBy == "Date":
+            #         sorted_comments = sorted(
+            #             comments_ycd,
+            #             key=lambda c: parse_date_safe(c["time"]) or datetime.max,
+            #             reverse=False  # False = plus anciens en premier
+            #         )
 
-            for chose in comments_ycd:
+            #     elif self.sortBy == "Popularity":
+            #         sorted_comments = sorted(comments_ycd, key=lambda x: int(x["votes"]), reverse=True)
+            #     # print(f'▓ trimmed comments to {limit} => {len(comments_ycd)} out.')
+
+            # for chose in sorted_comments:
+            #     myInput = Input(str(chose["text"]), label)
+
+            #     segment = myInput[0]
+            #     segment.annotations["author"] = str(chose["author"])
+            #     segment.annotations["url"] = url
+            #     segment.annotations["likes"] = str(chose["votes"])
+            #     # parsed_time = dateparser.parse(chose["time"])
+            #     # segment.annotations["time"] = parsed_time.strftime('%Y-%m-%d')
+            #     segment.annotations["time"] = str(chose["time"])
+            #     myInput[0] = segment
+
+            #     self.createdInputs.append(myInput)
+
+            # Cancel operation if requested by user...
+            # time.sleep(0.00001) # Needed somehow!
+            # if self.cancel_operation:
+            #     self.signal_prog.emit(100, False)
+            #     return
+            
+        # dont know how to do infinite, so if "no limit" is selected, its value will
+        # be 1 milliard
+        if self.n_desired_comments == "No limit":
+            limit = 10000000
+        else :
+            limit = int(self.n_desired_comments)
+
+        if limit != 0:
+            comments_ycd = all_comments
+            comments_ycd = comments_ycd[0:limit]
+            if self.sortBy == "Date":
+                sorted_comments = sorted(
+                    comments_ycd,
+                    key=lambda c: parse_date_safe(c["time"]) or datetime.max,
+                    reverse=False  # False = plus anciens en premier
+                )
+
+            elif self.sortBy == "Popularity":
+                sorted_comments = sorted(comments_ycd, key=lambda x: int(x["votes"]), reverse=True)
+            
+            for chose in sorted_comments:
                 myInput = Input(str(chose["text"]), label)
 
                 segment = myInput[0]
@@ -434,7 +480,6 @@ class YouGet(OWTextableBaseWidget):
 
                 self.createdInputs.append(myInput)
 
-            # Cancel operation if requested by user...
             time.sleep(0.00001) # Needed somehow!
             if self.cancel_operation:
                 self.signal_prog.emit(100, False)
@@ -569,8 +614,11 @@ class YouGet(OWTextableBaseWidget):
         """
         Remove all DOIs from DOIs attr
         """
+        # print(self.DOIs)
         del self.DOIs[:]
-        del self.selectedURLLabel[:]
+        # print(self.selectedURLLabel[:])
+        self.selectedURLLabel = None
+        # del self.selectedURLLabel[:]
         self.sendButton.settingsChanged()
         self.URLLabel = self.URLLabel
         self.clearAllButton.setDisabled(True)
@@ -785,3 +833,13 @@ def youtube_video_exists(url):
     # Catch errors during the request
     except Exception as e:
         return False
+
+
+def clean_date_str(date_str):
+    # Enlève la mention "(edited)" et les espaces autour
+    return date_str.replace("(edited)", "").strip()
+
+def parse_date_safe(date_str):
+    cleaned = clean_date_str(date_str)
+    dt = dateparser.parse(cleaned)
+    return dt
