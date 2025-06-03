@@ -38,7 +38,7 @@ from functools import partial
 from scidownl import scihub_download
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget,
-    InfoBox, SendButton, pluralize
+    InfoBox, SendButton, pluralize #, processRadioButtons (un truc dans le genre), sûrement callback de radiobuttons
 )
 from LTTL.Segmenter import tokenize
 from LTTL.Segmentation import Segmentation
