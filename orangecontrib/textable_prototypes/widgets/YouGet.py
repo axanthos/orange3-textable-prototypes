@@ -2,7 +2,7 @@ from functools import partial
 import time
 import json
 import re
-import http
+""" import http """
 import dateparser
 
 from _textable.widgets.TextableUtils import (
