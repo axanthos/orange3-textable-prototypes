@@ -50,7 +50,7 @@ of Comments** and **Sort By** **Date** or **Popularity**.
 
 .. _YouGet_principal:
 
-.. figure:: 
+.. figure:: figures/_YouGet_principal.png
     :align: center
     :alt: Interface of the YouGet widget
     :height: 600px
@@ -75,11 +75,11 @@ The **Options** section contains the controls to choose the **Number of Comments
 of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
 
-.. figure:: 
+.. figure:: figures/YouGet_5comments.png
     :align: center
     :alt: Interface of the YouGet widget with 5 comments
     :height: 400px
-.. figure:: 
+.. figure:: figures/YouGet_10comments.png
     :align: center
     :alt: Interface of the YouGet widget with 10 comments
     :height: 415px
