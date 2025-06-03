@@ -734,7 +734,7 @@ class YouGet(OWTextableBaseWidget):
         pass
 
 if __name__ == '__main__':
-        WidgetPreview(YouGet).run()
+    WidgetPreview(YouGet).run()
 
 
 def youtube_video_exists(url):
