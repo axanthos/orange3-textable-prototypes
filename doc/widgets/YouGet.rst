@@ -78,11 +78,11 @@ of a segmentation.
 .. figure:: figures/YouGet_5comments.png
     :align: center
     :alt: Interface of the YouGet widget with 5 comments
-    :height: 400px
+    :height: 600px
 .. figure:: figures/YouGet_10comments.png
     :align: center
     :alt: Interface of the YouGet widget with 10 comments
-    :height: 415px
+    :height: 600px
 
 Messages
 --------
