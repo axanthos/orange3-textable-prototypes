@@ -40,7 +40,7 @@ The output is a segmentation containing the **Number of Comments** desired from 
 * **Add** them to the **Sources** section
 * Select the **Number of Comments** you would like to download from the YouTube video
 * Select whether you would like them sorted by **Date** or **Popularity**
-* Press **Send** to see the comments as well as additional information about the comments in the form of a segmentation
+* Press **Send** to see the comments as well as some additional information in the form of a segmentation
 
 Interface
 ~~~~~~~~~~~~~~~
@@ -69,17 +69,15 @@ The **Sources** section contains all the controls related to the way **YouGet** 
 
 The user chooses one ore more YouTube videos which they would like to extract its comments. To confirm their URL(s), they must press on the **Add** button which
 will then add their URL(s) to a list in the section above called **Sources**. The user can add one or more URLs to their list.
-If they wish to remove a URL, they can press on the **Remove** button. If they wish to not only remove one, 
+If they wish to remove a URL, they can select the URL they wish to delelte and press on the **Remove** button. If they wish to not only remove one, 
 but all of their URLs, they can press on the **Clear All** button.
 
 More Options
 *******
 
-The **More Options** section contains the controls to select the **Number of comments** desired in output and how you would like to sort the comments, by **Date** or by **Popularity**. The user can choose between having **1 comment (minimum requirement), 5, 10, 100, 1000, 10'000 or no limit** 
-of comments in output. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
+The **More Options** section contains the controls to select the **number of comments** desired in output and how you would like to sort the comments, by **Date** or by **Popularity**. The user can choose between having **1 comment (minimum requirement), 5, 10, 100, 1000, 10'000 or no limit** 
+of comments in output. When sorting by **Date**, the oldest comment will appear first in the list. When sorting by **Popularity**, the most liked comment will appear first. Once the user presses on the **Send** button, the comments will then be displayed in output in the form 
 of a segmentation.
-
-When sorting by **Date**, the oldest comment will appear first in the list. When sorting by **Popularity**, the most liked comment will appear first.
 
 .. figure:: figures/YouGet_5comments.png
     :align: center
@@ -92,7 +90,7 @@ When sorting by **Date**, the oldest comment will appear first in the list. When
     :alt: Interface of the YouGet widget with 10 comments
     :height: 600px
 
-     Figure 2: **YouGet** widget output with **10 comments** selected and sorted by **Popularity**.
+     Figure 3: **YouGet** widget output with **10 comments** selected and sorted by **Popularity**.
 
 Messages
 --------
