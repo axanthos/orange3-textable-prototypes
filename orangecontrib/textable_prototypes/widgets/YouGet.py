@@ -639,7 +639,7 @@ class YouGet(OWTextableBaseWidget):
                 # Regex to only accept YouTube URL format
                 # -- With the help of ChatGPT
                 # ("https://chatgpt.com/share/6800c404-cb74-8000-afef-e321b9517c47") --
-                if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$", 
+                if not re.match(r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$",
                 single_url):
                     not_an_url = True
                     # Each element is True or False depending
@@ -667,7 +667,7 @@ class YouGet(OWTextableBaseWidget):
             if doublon == True:
                 QMessageBox.information(
                     # The error message gives the numbers of duplicates found
-                    None, "YouGet", 
+                    None, "YouGet",
                     f"Error Message:<br><br>{nombre_de_problemes_doublon} duplicate URL(s) found and deleted.",
                     QMessageBox.Ok
                 )
@@ -676,7 +676,7 @@ class YouGet(OWTextableBaseWidget):
             if not_available == True:
                 QMessageBox.information(
                     # The error message gives the numbers of non available URLs found
-                    None, "YouGet", 
+                    None, "YouGet",
                     f"Error Message:<br><br>{nombre_de_problemes_not_available} URL(s) are not valid YouTube videos",
                     QMessageBox.Ok
                 )
@@ -685,7 +685,7 @@ class YouGet(OWTextableBaseWidget):
             if not_an_url == True:
                 QMessageBox.information(
                     # The error message gives the numbers of non URLs found
-                    None, "YouGet", 
+                    None, "YouGet",
                     f"Warning Message:<br><br>{nombre_de_problemes_not_url} element(s) are not YouTube URLs or please check your internet connection.",
                     QMessageBox.Ok
                 )
@@ -696,7 +696,7 @@ class YouGet(OWTextableBaseWidget):
             for i, keep in enumerate(list_indexx):
                 if keep:
                     filtered_list.append(temp_set_liste[i])
-            # Only URL(s) that pass all checks are kept and added to self.DOIs  
+            # Only URL(s) that pass all checks are kept and added to self.DOIs
             self.DOIs += list(filtered_list)
             self.DOIs = list(set(self.DOIs))
             self.URLLabel = self.DOIs
