@@ -38,7 +38,7 @@ from functools import partial
 from scidownl import scihub_download
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget,
-    InfoBox, SendButton, pluralize #, processRadioButtons (un truc dans le genre), sûrement callback de radiobuttons
+    InfoBox, SendButton, pluralize
 )
 from LTTL.Segmenter import tokenize
 from LTTL.Segmentation import Segmentation
@@ -201,8 +201,8 @@ class SciHubator(OWTextableBaseWidget):
             tooltip=(
                 u"The DOI(s) that will be added to the list when\n"
                 u"button 'Add' is clicked.\n\n"
-                u"Successive DOIs must be separated with ' / ' \n"
-                u"(space + slash + space). Their order in the list\n"
+                u"Successive DOIs must be separated with ' , '. \n"
+                u"Their order in the list\n"
                 u" will be the same as in this field."
             ),
         )
@@ -212,53 +212,6 @@ class SciHubator(OWTextableBaseWidget):
             orientation='vertical',
             addSpace=False,
         )
-        """gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importAll',
-            label=u'All in one Segment',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Output entire text as a single segmentation."
-            ),
-        )"""
-        """gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importAbstract',
-            label=u'Abstract',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Output Abstract as a segmentation."
-            ),
-        )"""
-        """gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importText',
-            label=u'Top Level Sections',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"output main text as a segmentation."
-            ),
-        )"""
-        """gui.separator(widget=advOptionsBox, height=3)
-        gui.checkBox(
-            widget=advOptionsBox,
-            master=self,
-            value='importBibliography',
-            label=u'Bibliography',
-            labelWidth=180,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"output bibliography as a segmentation."
-            ),
-        )"""
         gui.separator(widget=advOptionsBox, height=3)
         gui.radioButtonsInBox(
             widget=advOptionsBox,
@@ -276,7 +229,7 @@ class SciHubator(OWTextableBaseWidget):
             label=u'Add',
             callback=self.add,
             tooltip=(
-                u"Add the DOI currently displayed in the 'DOI'\n"
+                u"Add the DOI(s) currently displayed in the 'DOI'\n"
                 u"text field to the list."
             ),
             disabled = True,
@@ -444,7 +397,7 @@ class SciHubator(OWTextableBaseWidget):
 
             self.signal_text.emit("Step 3/3: Post-processing...",
                                   "warning")
-            max_itr = (int(self.importAll) + int(self.importBibliography))*(len(self.DOIs)+1) #+ int(self.importText)
+            max_itr = (2*int(importAllorBib))
             if self.importAllorBib == 0:
                 cur_itr_p3 += 1 * len(self.DOIs)
                 # Extract the first (and single) segment in the
@@ -475,71 +428,6 @@ class SciHubator(OWTextableBaseWidget):
                     segment.annotations["DOI"] = DOI
                     new_input[0] = segment
                 self.createdInputs.append(new_input)
-            """if self.importAll:
-
-                cur_itr_p3 += 1*len(self.DOIs)
-                # Extract the first (and single) segment in the
-                # newly created LTTL.Input and annotate it with
-                # the length of the input segmentation.
-                segment = myInput[0]
-                segment.annotations["DOI"] \
-                    = DOI
-                # For the annotation to be saved in the LTTL.Input,
-                # the extracted and annotated segment must be re-assigned
-                # to the first (and only) segment of the LTTL.Input.
-                myInput[0] = segment
-                # Add the  LTTL.Input to self.createdInputs.
-                self.createdInputs.append(myInput)
-            if self.importBibliography:
-                cur_itr_p3 += 1*len(self.DOIs)
-                ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
-                regexes = [(ma_regex, 'tokenize')]
-                self.signal_prog.emit(int(100 * cur_itr_p3 / max_itr), False)
-                new_segmentation = tokenize(myInput, regexes)
-                if (len(new_segmentation) == 0):
-                    empty_re = True
-                    new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
-                else:
-                    new_input = Input(new_segmentation.to_string(), "Bibliographies")
-                    segment = new_input[0]
-                    segment.annotations["part"] = "Bibliography"
-                    segment.annotations["DOI"] = DOI
-                    new_input[0] = segment
-                self.createdInputs.append(new_input)"""
-            """if self.importText:
-                cur_itr += 1
-                ma_regex = re.compile(r'(.|\n)*(?=([Bb]iblio|[Rr][eé]f))')
-                regexes = [(ma_regex,'tokenize')]
-                self.signal_prog.emit(int(100 * cur_itr / max_itr), False)
-                new_segmentation = tokenize(myInput, regexes)
-                print("*" * 100)
-                print(len(new_segmentation))
-                print(new_segmentation.to_string())
-                if(len(new_segmentation) == 0):
-                    empty_re = True
-                    new_input = Input("","Empty Top level sections")
-                else:
-                    new_segmentation[0].annotations["DOI"] = "Top level sections"
-                    new_input = Input(new_segmentation.to_string(), "")
-                    new_input[0]= new_segmentation[0]
-                self.createdInputs.append(new_segmentation)"""
-            """if self.importAbstract:
-                cur_itr += 1
-                myInput = Input(DOIText, label)
-
-                # Extract the first (and single) segment in the
-                # newly created LTTL.Input and annotate it with
-                # the length of the input segmentation.
-                segment = myInput[0]
-                segment.annotations["DOI"] \
-                    = DOI
-                # For the annotation to be saved in the LTTL.Input,
-                # the extracted and annotated segment must be re-assigned
-                # to the first (and only) segment of the LTTL.Input.
-                myInput[0] = segment
-
-                # Add the  LTTL.Input to self.createdInputs.
-                self.createdInputs.append(myInput)"""
 
             # Cancel operation if requested by user...
             time.sleep(0.00001)  # Needed somehow!
