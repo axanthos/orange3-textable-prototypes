@@ -20,31 +20,31 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = "0.0.1"
 __author__ = "Sarah Perreti-Poix, Borgeaud Matthias, Chétioui Orsowen, Luginbühl Colin"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
 
-import re
 # Standard imports...
+import re
 import time
 import tempfile
-import pdfplumber
 import os
-import requests
-import LTTL.SegmenterThread as Segmenter
 
 from functools import partial
+import pdfplumber
+import requests
 from scidownl import scihub_download
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget,
     InfoBox, SendButton, pluralize
 )
+import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmenter import tokenize
 from LTTL.Segmentation import Segmentation
-from Orange.widgets import widget, gui, settings
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from LTTL.Input import Input
+from Orange.widgets import gui, settings
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 from Orange.widgets.settings import Setting
 from PyQt5.QtWidgets import QMessageBox
 
@@ -81,7 +81,7 @@ class SciHubator(OWTextableBaseWidget):
     # GUI layout parameters...
 
     want_main_area = False
-    resizing_enabled = False
+    resizing_enabled = True
 
     # ----------------------------------------------------------------------
     # Settings declaration and initializations (default values)...
@@ -89,18 +89,14 @@ class SciHubator(OWTextableBaseWidget):
     DOIs = Setting([])
     encoding = Setting('(auto-detect)')
     autoNumber = Setting(False)
-    autoNumberKey = Setting(u'num')
+    autoNumberKey = Setting('num')
     autoSend = settings.Setting(False)
     importDOIs = Setting(True)
-    importDOIsKey = Setting(u'url')
+    importDOIsKey = Setting('url')
     lastLocation = Setting('.')
-    DOI = Setting(u'')
+    DOI = Setting('')
 
     # Ici-dessous les variables qui n'ont pas été copiées, et conçues spécialement pour SciHubator
-    """importAll = Setting(True)"""
-    """importAbstract = Setting(False)"""
-    """importText = Setting(False)"""
-    """importBibliography = Setting(False)"""
     importAllorBib = Setting(0)
 
     def __init__(self):
@@ -110,11 +106,11 @@ class SciHubator(OWTextableBaseWidget):
         super().__init__()
         self.URLLabel = self.DOIs[:]
         print(self.URLLabel)
-        self.selectedURLLabel = list()
-        self.newDOI = u''
-        self.extractedText = u''
-        self.DOI = u''
-        self.createdInputs = list()
+        self.selectedURLLabel = []
+        self.newDOI = ''
+        self.extractedText = ''
+        self.DOI = ''
+        self.createdInputs = []
 
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
@@ -132,7 +128,7 @@ class SciHubator(OWTextableBaseWidget):
         # URL box
         URLBox = gui.widgetBox(
             widget=self.controlArea,
-            box=u'Sources',
+            box='Sources',
             orientation='vertical',
             addSpace=False,
         )
@@ -149,9 +145,9 @@ class SciHubator(OWTextableBaseWidget):
             labels='URLLabel',
             callback=self.updateURLBoxButtons,
             tooltip=(
-                u"The list of DOIs whose content will be imported.\n"
-                u"\nIn the output segmentation, the content of each\n"
-                u"DOI appears in the same position as in the list.\n"
+                "The list of DOIs whose content will be imported.\n"
+                "\nIn the output segmentation, the content of each\n"
+                "DOI appears in the same position as in the list.\n"
             ),
         )
         URLBoxCol2 = gui.widgetBox(
@@ -161,20 +157,20 @@ class SciHubator(OWTextableBaseWidget):
         self.removeButton = gui.button(
             widget=URLBoxCol2,
             master=self,
-            label=u'Remove',
+            label='Remove',
             callback=self.remove,
             tooltip=(
-                u"Remove the selected DOI from the list."
+                "Remove the selected DOI from the list."
             ),
             disabled = True,
         )
         self.clearAllButton = gui.button(
             widget=URLBoxCol2,
             master=self,
-            label=u'Clear All',
+            label='Clear All',
             callback=self.clearAll,
             tooltip=(
-                u"Remove all DOIs from the list."
+                "Remove all DOIs from the list."
             ),
             disabled = True,
         )
@@ -195,20 +191,20 @@ class SciHubator(OWTextableBaseWidget):
             master=self,
             value='newDOI',
             orientation='horizontal',
-            label=u'DOI(s):',
+            label='DOI(s):',
             labelWidth=101,
             callback=self.updateURLBoxButtons,
             tooltip=(
-                u"The DOI(s) that will be added to the list when\n"
-                u"button 'Add' is clicked.\n\n"
-                u"Successive DOIs must be separated with ' , '. \n"
-                u"Their order in the list\n"
-                u" will be the same as in this field."
+                "The DOI(s) that will be added to the list when\n"
+                "button 'Add' is clicked.\n\n"
+                "Successive DOIs must be separated with ' , '. \n"
+                "Their order in the list\n"
+                " will be the same as in this field."
             ),
         )
         advOptionsBox = gui.widgetBox(
             widget=self.controlArea,
-            box=u'Options',
+            box='Options',
             orientation='vertical',
             addSpace=False,
         )
@@ -218,19 +214,21 @@ class SciHubator(OWTextableBaseWidget):
             master=self,
             value='importAllorBib',
             btnLabels=['All in one Segment', 'Bibliography'],
-            label=u'Choose what to import',
+            label='Choose what to import',
             callback=self.sendButton.settingsChanged,
-            tooltips=["Import all article's content in one segment", "Import only bibliography (if found)"]
+            tooltips=[
+                "Import all article's content in one segment", "Import only bibliography (if found)"
+            ]
         )
         gui.separator(widget=addURLBox, height=3)
         self.addButton = gui.button(
             widget=addURLBox,
             master=self,
-            label=u'Add',
+            label='Add',
             callback=self.add,
             tooltip=(
-                u"Add the DOI(s) currently displayed in the 'DOI'\n"
-                u"text field to the list."
+                "Add the DOI(s) currently displayed in the 'DOI'\n"
+                "text field to the list."
             ),
             disabled = True,
         )
@@ -252,11 +250,6 @@ class SciHubator(OWTextableBaseWidget):
             - Updates the UI to indicate the start of preprocessing.
             - Launches the processing asynchronously using a background thread
         """
-        # Verify checkboxes
-        if not (self.importAll or self.importBibliography): #or self.importText
-            self.infoBox.setText("Please select one or more checkboxes.", "warning")
-            self.send("Segmentation", None)
-            return
         # Verify DOIs
         if not self.DOIs:
             self.infoBox.setText("Please enter one or many valid DOIs.", "warning")
@@ -270,7 +263,7 @@ class SciHubator(OWTextableBaseWidget):
         # processing" and "post-processing" steps before and
         # after it. If there are no optional steps, notify
         # "Preprocessing...".
-        self.infoBox.setText(f"Step 1/3: Pre-processing...", "warning")
+        self.infoBox.setText("Step 1/3: Pre-processing...", "warning")
 
         # Progress bar should be initialized at this point.
         self.progressBarInit()
@@ -359,7 +352,7 @@ class SciHubator(OWTextableBaseWidget):
                 return
 
         # Update infobox and reset progress bar...
-        self.signal_text.emit(f"Step 2/3: Processing...",
+        self.signal_text.emit("Step 2/3: Processing...",
                               "warning")
         cur_itr = 0
         cur_itr_p3 = 0
@@ -397,9 +390,9 @@ class SciHubator(OWTextableBaseWidget):
 
             self.signal_text.emit("Step 3/3: Post-processing...",
                                   "warning")
-            max_itr = (2*int(importAllorBib))
+            max_itr = 2*len(self.DOIs) #+ int(self.importText)
             if self.importAllorBib == 0:
-                cur_itr_p3 += 1 * len(self.DOIs)
+                cur_itr_p3 += 1
                 # Extract the first (and single) segment in the
                 # newly created LTTL.Input and annotate it with
                 # the length of the input segmentation.
@@ -413,14 +406,16 @@ class SciHubator(OWTextableBaseWidget):
                 # Add the  LTTL.Input to self.createdInputs.
                 self.createdInputs.append(myInput)
             if self.importAllorBib == 1:
-                cur_itr_p3 += 1 * len(self.DOIs)
+                cur_itr_p3 += 1
                 ma_regex = re.compile(r'(?<=\n)\n?(([Bb]iblio|[Rr][eé]f)\w*\W*\n)(.|\n)*')
                 regexes = [(ma_regex, 'tokenize')]
                 self.signal_prog.emit(int(100 * cur_itr_p3 / max_itr), False)
                 new_segmentation = tokenize(myInput, regexes)
-                if (len(new_segmentation) == 0):
+                if len(new_segmentation) == 0:
                     empty_re = True
-                    new_input = Input(f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section")
+                    new_input = Input(
+                        f"Empty search Bib for DOI: {DOI}", "Empty Bibliography section"
+                    )
                 else:
                     new_input = Input(new_segmentation.to_string(), "Bibliographies")
                     segment = new_input[0]
@@ -439,7 +434,6 @@ class SciHubator(OWTextableBaseWidget):
 
         # If there's only one LTTL.Input created, it is the
         # widget's output...
-        print(empty_re)
         if empty_re:
             QMessageBox.warning(
                 None, "SciHubator", "Not all sections were segmented",
@@ -448,13 +442,12 @@ class SciHubator(OWTextableBaseWidget):
         if len(self.DOIs) == 1:
             return self.createdInputs[0]
         # Otherwise the widget's output is a concatenation...
-        else:
-            return Segmenter.concatenate(
-                caller=self,
-                segmentations=self.createdInputs,
-                label=self.captionTitle,
-                import_labels_as=None,
-            )
+        return Segmenter.concatenate(
+            caller=self,
+            segmentations=self.createdInputs,
+            label=self.captionTitle,
+            import_labels_as=None,
+        )
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -508,7 +501,8 @@ class SciHubator(OWTextableBaseWidget):
         Clear all stored DOIs and reset related UI elements.
 
         This method empties the DOI list and selection,
-        disables the 'Clear All' button, and updates the interface state.
+        disables the 'Clear All' button,
+        and updates the interface state.
         """
         del self.DOIs[:]
         del self.selectedURLLabel[:]
@@ -542,14 +536,12 @@ class SciHubator(OWTextableBaseWidget):
         Shows a message box if duplicates are found and removed.
         """
         DOIList = [x.strip() for x in self.newDOI.strip().split(',')]
-        print(DOIList)
-        #--> Pas besoin de la boucle DOIList non?? <--
+
         for DOI in DOIList:
-            print(DOI)
             self.DOIs.append(DOI)
         if self.DOIs:
             tempSet = set(self.DOIs)
-            if(len(tempSet)<len(self.DOIs)):
+            if len(tempSet)<len(self.DOIs):
                 QMessageBox.information(
                     None, "SciHubator", "Duplicate DOI(s) found and deleted.",
                     QMessageBox.Ok
@@ -590,4 +582,4 @@ def test_scihub_accessible():
         return False
 
 if __name__ == '__main__':
-        WidgetPreview(SciHubator).run()
+    WidgetPreview(SciHubator).run()
