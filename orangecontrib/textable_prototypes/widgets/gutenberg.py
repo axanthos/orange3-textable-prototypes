@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.1"
+__version__ = u"0.0.2"
 __author__ = "Florian Rieder, Paul Zignani"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -687,11 +687,4 @@ class Gutenberg(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = Gutenberg()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(Gutenberg).run()

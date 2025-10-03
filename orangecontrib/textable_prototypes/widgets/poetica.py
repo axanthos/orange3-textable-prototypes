@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __author__ = "Sinem Kilic, Laure Margot, Leonie Nussbaum, Olivia Verbrugge"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -37,7 +37,7 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 from LTTL.Input import Input
 
-from PyQt5.QtWidgets import QMessageBox
+from AnyQt.QtWidgets import QMessageBox
 
 from urllib.request import urlopen
 

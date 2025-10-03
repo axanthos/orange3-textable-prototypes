@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -945,11 +945,4 @@ class Childes(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = Childes()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(Childes).run()

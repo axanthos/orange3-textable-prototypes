@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __author__ = "David Fluhmann, Leonardo Cavaliere, Kirill Melnikov"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -27,7 +27,7 @@ __email__ = "aris.xanthos@unil.ch"
 import os
 import re
 import copy
-import PyQt5
+import AnyQt
 import urllib
 import pickle
 import inspect
@@ -360,7 +360,7 @@ class MovieTranscripts(OWTextableBaseWidget):
             )
         cachedFilename = self.__class__.cacheFilename
 
-        dialog = PyQt5.QtWidgets.QMessageBox()
+        dialog = AnyQt.QtWidgets.QMessageBox()
         response = dialog.question(
             self,
             "springfieldspringfield",
@@ -633,11 +633,4 @@ class MovieTranscripts(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = MovieTranscripts()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(MovieTranscripts).run()

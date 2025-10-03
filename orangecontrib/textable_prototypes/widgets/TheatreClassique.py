@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.7"
+__version__ = u"0.1.8"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -38,7 +38,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
 
-from PyQt5.QtWidgets import QMessageBox
+from AnyQt.QtWidgets import QMessageBox
 
 import urllib
 import re
@@ -590,11 +590,4 @@ class TheatreClassique(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = TheatreClassique()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(TheatreClassique).run()

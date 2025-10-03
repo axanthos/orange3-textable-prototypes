@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.7"
+__version__ = u"0.0.8"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -30,7 +30,7 @@ import itertools
 from Orange.widgets import widget, gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from PyQt4.QtGui import QTabWidget, QWidget, QFont, QHBoxLayout
+from AnyQt.QtGui import QTabWidget, QWidget, QFont, QHBoxLayout
 
 from LTTL.Segmentation import Segmentation
 
@@ -582,13 +582,6 @@ class Linguistica(OWTextableBaseWidget):
 
             
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = Linguistica()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     from LTTL.Input import Input
     import LTTL.Segmenter as Segmenter
     import re

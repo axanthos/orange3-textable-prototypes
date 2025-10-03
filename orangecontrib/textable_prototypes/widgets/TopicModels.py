@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.7"
+__version__ = u"0.1.8"
 __author__ = "Aris Xanthos"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -513,11 +513,4 @@ def pivot_crosstab_to_gensim(table, callback=None):
 
     
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = TopicModels()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(TopicModels).run()

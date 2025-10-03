@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.7"
+__version__ = u"0.1.8"
 __author__ = " Gavin Vinasi, Johan Cuda, Rebecca Kneubuehler"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -29,7 +29,7 @@ from Orange.widgets import widget, gui, settings
 from Orange.widgets.settings import Setting
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from AnyQt.QtWidgets import QFileDialog, QMessageBox
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 from LTTL.Segment import Segment 
@@ -405,10 +405,3 @@ class AudioFile(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     WidgetPreview(AudioFile).run()
-    # import sys
-    # from PyQt5.QtWidgets import QApplication
-    # myApplication = QApplication(sys.argv)
-    # myWidget = AudioFile()
-    # myWidget.show()
-    # myApplication.exec_()
-    #myWidget.saveSettings()

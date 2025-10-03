@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.2"
+__version__ = u"0.0.3"
 __authors__ = "Zakari Rabet, Joël Huck, Matthieu Perring, Lara Lambelet"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -36,8 +36,8 @@ from pathlib import Path
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
 from LTTL.Segmenter import bypass
-from PyQt5.QtWidgets import QMessageBox
-from PyQt4.QtGui import QTabWidget, QWidget, QHBoxLayout
+from AnyQt.QtWidgets import QMessageBox
+from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
@@ -627,14 +627,5 @@ class Parathon(OWTextableBaseWidget):
 
         
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
     from LTTL.Input import Input
-    #myApplication = QApplication(sys.argv)
-    #myWidget = Parathon()
-    #myWidget.inputData(Input('03/02/2021, 19:30 - sorcha: *LMAO'))
-    #myWidget.inputData(Input('a simple example :) ;)'))
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(Parathon).run(inputData=Input("Hello world !!! How are you doinggg ?"))

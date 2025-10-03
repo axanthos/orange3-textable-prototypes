@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Nahuel Degonda, Olivia Edelman, Loris Rimaz"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -1011,12 +1011,4 @@ class Redditor(OWTextableBaseWidget):
 # The following code lets you execute the code (to view the
 # resulting interface)...
 if __name__ == "__main__":
-    #from PyQt5.QtWidgets import QApplication
-    #import sys
-    #my_app = QApplication(list(sys.argv))
-    #my_widget = Redditor()
-    #my_widget.show()
-    #my_widget.raise_()
-    #my_app.exec_()
-    #my_widget.saveSettings()
     WidgetPreview(Redditor).run()

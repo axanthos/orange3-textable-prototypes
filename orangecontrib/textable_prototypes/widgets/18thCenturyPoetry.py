@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.5"
+__version__ = u"0.0.6"
 __author__ = "Frank Dattai Pham & Adriano Matos Barbosa"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -38,7 +38,7 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton, AdvancedSettings, ProgressBar
 )
 
-from PyQt5.QtWidgets import QMessageBox
+from AnyQt.QtWidgets import QMessageBox
 
 import urllib
 import re
@@ -614,11 +614,4 @@ class ECP(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = ECP()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(ECP).run()

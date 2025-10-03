@@ -20,7 +20,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Loïc Aubrays, Fàbio Torres Cabral"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -38,9 +38,9 @@ import fitz # SuperTextFiles OCR
 from pytesseract import TesseractError, image_to_string # SuperTextFiles OCR
 from PIL import Image # SuperTextFiles OCR
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from AnyQt.QtCore import QTimer
+from AnyQt.QtGui import QFont
+from AnyQt.QtWidgets import QFileDialog, QMessageBox
 
 from chardet.universaldetector import UniversalDetector
 
@@ -1191,11 +1191,4 @@ class SuperTextFiles(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #appl = QApplication(sys.argv)
-    #ow = SuperTextFiles()
-    #ow.show()
-    #appl.exec_()
-    #ow.saveSettings()
     WidgetPreview(SuperTextFiles).run()

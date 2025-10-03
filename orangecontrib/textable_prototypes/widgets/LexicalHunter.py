@@ -19,7 +19,7 @@ along with Orange-Textable-Prototypes. If not, see
 <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.0.3"
+__version__ = u"0.0.4"
 __author__ = "Bony Maxime, Cappelle Simon, Pitteloud Robin"
 __maintainer__ = "Aris Xanthos"
 __email__ = "aris.xanthos@unil.ch"
@@ -36,9 +36,8 @@ from _textable.widgets.TextableUtils import (
     InfoBox, SendButton
 )
 
-from PyQt5.QtWidgets import QPlainTextEdit, QFileDialog, QMessageBox
-
-import PyQt5.QtCore as QtCore
+from AnyQt.QtWidgets import QPlainTextEdit, QFileDialog, QMessageBox
+import AnyQt.QtCore as QtCore
 
 import os
 import codecs
@@ -881,11 +880,4 @@ class WidgetEditList(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    #import sys
-    #from PyQt5.QtWidgets import QApplication
-    #myApplication = QApplication(sys.argv)
-    #myWidget = LexicalHunter()
-    #myWidget.show()
-    #myApplication.exec_()
-    #myWidget.saveSettings()
     WidgetPreview(LexicalHunter).run(inputData=Input("Hello world. How are you doing ?"))
